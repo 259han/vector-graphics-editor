@@ -1,0 +1,2 @@
+# Hashes of file build rules.
+3b5eedadc8cb2fd24bd3a3a52ee8932a vector-graphics-editor_autogen/timestamp

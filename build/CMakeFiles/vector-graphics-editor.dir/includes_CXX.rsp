@@ -1,0 +1,1 @@
+-I"F:/program/claudegraph/build/vector-graphics-editor_autogen/include" -IF:/program/claudegraph/include -isystem D:/Qt/6.8.2/mingw_64/include/QtWidgets -isystem D:/Qt/6.8.2/mingw_64/include -isystem D:/Qt/6.8.2/mingw_64/include/QtCore -isystem "D:/Qt/6.8.2/mingw_64/mkspecs/win32-g++" -isystem D:/Qt/6.8.2/mingw_64/include/QtGui

@@ -1,0 +1,3 @@
+F:/program/claudegraph/build/CMakeFiles/vector-graphics-editor.dir
+F:/program/claudegraph/build/CMakeFiles/ALL_BUILD.dir
+F:/program/claudegraph/build/CMakeFiles/ZERO_CHECK.dir
