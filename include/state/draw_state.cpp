@@ -8,35 +8,74 @@
 DrawState::DrawState(Graphic::GraphicType type) : m_graphicType(type) {}
 
 void DrawState::mousePressEvent(DrawArea* drawArea, QMouseEvent* event) {
-    if (m_fillMode) {
-        QPointF clickPoint = event->pos();
-        // 直接使用 DrawArea 的 m_image
-        QImage& canvasImage = drawArea->m_image; // 直接引用
-        if (canvasImage.isNull()) {
-            qDebug() << "Canvas image is null.";
-            return;
+    // 1. 优先处理贝塞尔模式
+    if (m_graphicType == Graphic::BEZIER) {
+        if (event->button() == Qt::LeftButton) {
+            // 左键：添加控制点
+            m_controlPoints.push_back(event->pos());
+            m_isDrawing = true;
+            drawArea->update();
+            return; // 关键：隔离事件处理
+        } 
+        else if (event->button() == Qt::RightButton) {
+            // 右键：生成贝塞尔曲线（至少2个控制点）
+            if (m_controlPoints.size() >= 2) {
+                auto graphic = drawArea->getGraphicFactory()->createCustomGraphic(
+                    Graphic::BEZIER, 
+                    m_controlPoints // 传递实际控制点
+                );
+                if (graphic) {
+                    drawArea->getGraphicManager().addGraphic(std::move(graphic));
+                }
+            }
+            m_controlPoints.clear();
+            m_isDrawing = false;
+            drawArea->update();
+            return; // 关键：隔离事件处理
         }
+    }
+
+    // 2. 处理填色模式
+    if (m_fillMode && event->button() == Qt::LeftButton) {
+        QPointF clickPoint = event->pos();
+        QImage& canvasImage = drawArea->m_image;
+        if (canvasImage.isNull()) return;
 
         QColor targetColor = canvasImage.pixelColor(clickPoint.toPoint());
         if (targetColor == m_fillColor) return;
 
         fillRegion(drawArea, clickPoint, targetColor, m_fillColor);
         drawArea->update();
-    }  else {
-        m_isDrawing = true;
-        m_startPoint = event->pos();
+        return;
+    }
+
+    // 3. 其他图形模式（直线、矩形等）
+    if (event->button() == Qt::LeftButton) {
+        if (!m_isDrawing) {
+            m_controlPoints.clear();
+            m_startPoint = QPointF();
+            m_currentPoint = QPointF();
+        }
+        m_controlPoints.push_back(event->pos());
+        if (m_controlPoints.size() == 1) {
+            m_startPoint = event->pos();
+        }
         m_currentPoint = event->pos();
+        m_isDrawing = true;
+        drawArea->update();
     }
 }
 
 void DrawState::mouseReleaseEvent(DrawArea* drawArea, QMouseEvent* event) {
-    if (m_isDrawing) {
+    // 关键：贝塞尔模式不处理释放事件
+    if (m_isDrawing && m_graphicType != Graphic::BEZIER) { 
         m_currentPoint = event->pos();
         
         auto factory = drawArea->getGraphicFactory();
         std::unique_ptr<Graphic> graphic;
         std::vector<QPointF> points = {m_startPoint, m_currentPoint};
         
+        // 根据类型创建图形
         switch (m_graphicType) {
             case Graphic::LINE:
                 graphic = factory->createCustomGraphic(Graphic::LINE, points);
@@ -50,7 +89,6 @@ void DrawState::mouseReleaseEvent(DrawArea* drawArea, QMouseEvent* event) {
             case Graphic::ELLIPSE:
                 graphic = factory->createCustomGraphic(Graphic::ELLIPSE, points);
                 break;
-            // 其他图形类型（如 TRIANGLE）需要单独处理，此处略
             default:
                 break;
         }
@@ -58,8 +96,11 @@ void DrawState::mouseReleaseEvent(DrawArea* drawArea, QMouseEvent* event) {
         if (graphic) {
             drawArea->getGraphicManager().addGraphic(std::move(graphic));
         }
-        
-        // 结束绘制
+
+        // 重置状态
+        m_startPoint = QPointF();
+        m_currentPoint = QPointF();
+        m_controlPoints.clear();
         m_isDrawing = false;
         drawArea->update();
     }
@@ -159,7 +200,7 @@ void DrawState::paintEvent(DrawArea* drawArea, QPainter* painter) {
             case Graphic::CIRCLE: {
                 QPointF center = m_startPoint;
                 double radius = std::sqrt(std::pow(m_currentPoint.x() - center.x(), 2) +
-                                          std::pow(m_currentPoint.y() - center.y(), 2));
+                                std::pow(m_currentPoint.y() - center.y(), 2));
                 painter->drawEllipse(center, radius, radius);
                 if (m_fillMode) {
                     painter->setBrush(QBrush(m_fillColor));
@@ -175,6 +216,26 @@ void DrawState::paintEvent(DrawArea* drawArea, QPainter* painter) {
                 if (m_fillMode) {
                     painter->setBrush(QBrush(m_fillColor));
                     painter->drawEllipse(center, width / 2, height / 2);
+                }
+                break;
+            }
+            case Graphic::BEZIER: {
+                // 1. 绘制控制点（蓝色圆点）
+                painter->setPen(QPen(Qt::blue, 2));
+                for (const auto& point : m_controlPoints) {
+                    painter->drawEllipse(point, 3, 3);
+                }
+
+                // 2. 绘制控制点连线（灰色虚线）
+                painter->setPen(QPen(Qt::gray, 1, Qt::DashLine));
+                for (size_t i = 1; i < m_controlPoints.size(); ++i) {
+                    painter->drawLine(m_controlPoints[i-1], m_controlPoints[i]);
+                }
+
+                // 3. 实时预览贝塞尔曲线（至少2个点）
+                if (m_controlPoints.size() >= 2) {
+                    BezierDrawStrategy bezierStrategy;
+                    bezierStrategy.draw(*painter, m_controlPoints);
                 }
                 break;
             }

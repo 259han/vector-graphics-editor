@@ -1,5 +1,5 @@
-#include "../../include/ui/main_window.h"
-#include "../../include/state/draw_state.h"
+#include "../ui/main_window.h"
+#include "../state/draw_state.h"
 #include <QAction>
 #include <QMenuBar>
 #include <QToolBar>

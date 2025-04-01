@@ -99,5 +99,14 @@ private:
     int m_lineWidth = 2;
 };
 
+class BezierDrawStrategy : public DrawStrategy {
+public:
+    void draw(QPainter& painter, const std::vector<QPointF>& points) const override;
+    void setColor(const QColor& color) override { m_color = color; }
+    void setLineWidth(int width) override { m_lineWidth = width; }
+
+private:
+    void drawBezierCurve(QPainter& painter, const std::vector<QPointF>& points) const;
+};
 
 #endif // DRAW_STRATEGY_H

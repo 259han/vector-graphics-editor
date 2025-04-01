@@ -138,3 +138,37 @@ void CircleDrawStrategy::drawCircle(QPainter& painter, const QPointF& center, in
             }
         }
 }
+void BezierDrawStrategy::draw(QPainter& painter, const std::vector<QPointF>& points) const {
+    if (points.size() < 2) return; // At least two points are needed
+
+    painter.setPen(QPen(m_color, m_lineWidth));
+    drawBezierCurve(painter, points);
+}
+
+// draw_strategy.cpp
+void BezierDrawStrategy::drawBezierCurve(QPainter& painter, const std::vector<QPointF>& points) const {
+    if (points.size() < 2) return;
+
+    const int steps = 200;
+    QPointF prevPoint = points[0];
+    
+    for (int i = 1; i <= steps; ++i) {
+        double t = static_cast<double>(i) / steps;
+        std::vector<QPointF> temp = points;
+        
+        // 德卡斯特里奥算法
+        for (int k = 1; k < temp.size(); ++k) {
+            for (int j = 0; j < temp.size() - k; ++j) {
+                temp[j] = (1 - t) * temp[j] + t * temp[j + 1];
+            }
+        }
+        
+        QPointF currentPoint = temp[0];
+        painter.drawLine(prevPoint, currentPoint); // 绘制连续线段
+        prevPoint = currentPoint;
+    }
+}
+
+int factorial(int n) {
+    return (n <= 1) ? 1 : n * factorial(n - 1);
+} 

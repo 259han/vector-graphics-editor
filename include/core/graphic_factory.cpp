@@ -20,6 +20,9 @@ public:
             case Graphic::ELLIPSE:
                 m_drawStrategy = std::make_shared<EllipseDrawStrategy>();
                 break;
+            case Graphic::BEZIER:
+                m_drawStrategy = std::make_shared<BezierDrawStrategy>();
+                break;
             case Graphic::FLOWCHART_NODE:
                 m_drawStrategy = std::make_shared<FlowchartNodeDrawStrategy>();
                 break;
@@ -161,8 +164,7 @@ std::unique_ptr<Graphic> DefaultGraphicFactory::createGraphic(Graphic::GraphicTy
             return graphic;
         }
         case Graphic::BEZIER: {
-            // Handle Bezier case if needed
-            break;
+            return std::make_unique<ConcreteGraphic>(type, std::vector<QPointF>());
         }
         default:
             throw std::runtime_error("Unsupported graphic type");
