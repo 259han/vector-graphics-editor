@@ -252,3 +252,8 @@ void DrawState::setFillColor(const QColor& color) {
 void DrawState::setFillMode(bool enabled) {
     m_fillMode = enabled;
 }
+
+void DrawState::resetFillMode() {
+    m_fillMode = false; // 重置填色模式
+    m_fillColor = QColor(); // 清空填充颜色
+}

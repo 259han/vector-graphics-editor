@@ -568,115 +568,34 @@ vector-graphics-editor_autogen/timestamp: C:/msys64/mingw64/include/_mingw.h \
   D:/Qt/6.8.2/mingw_64/lib/cmake/Qt6ZlibPrivate/Qt6ZlibPrivateTargets.cmake \
   D:/Qt/6.8.2/mingw_64/lib/cmake/Qt6ZlibPrivate/Qt6ZlibPrivateVersionlessAliasTargets.cmake \
   D:/Qt/Tools/CMake_64/bin/cmake.exe \
-  D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/CMakeCCompiler.cmake.in \
-  D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/CMakeCCompilerABI.c \
   D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/CMakeCInformation.cmake \
-  D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/CMakeCXXCompiler.cmake.in \
-  D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/CMakeCXXCompilerABI.cpp \
   D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/CMakeCXXInformation.cmake \
   D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/CMakeCheckCompilerFlagCommonPatterns.cmake \
   D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/CMakeCommonLanguageInclude.cmake \
-  D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/CMakeCompilerIdDetection.cmake \
-  D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/CMakeDetermineCCompiler.cmake \
-  D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/CMakeDetermineCXXCompiler.cmake \
-  D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/CMakeDetermineCompileFeatures.cmake \
-  D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/CMakeDetermineCompiler.cmake \
-  D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/CMakeDetermineCompilerABI.cmake \
-  D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/CMakeDetermineCompilerId.cmake \
-  D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/CMakeDetermineRCCompiler.cmake \
-  D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/CMakeDetermineSystem.cmake \
-  D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/CMakeFindBinUtils.cmake \
   D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/CMakeFindDependencyMacro.cmake \
   D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/CMakeGenericSystem.cmake \
   D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/CMakeInitializeConfigs.cmake \
   D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/CMakeLanguageInformation.cmake \
-  D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/CMakeMinGWFindMake.cmake \
-  D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/CMakeParseImplicitIncludeInfo.cmake \
-  D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/CMakeParseImplicitLinkInfo.cmake \
-  D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/CMakeParseLibraryArchitecture.cmake \
-  D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/CMakeRCCompiler.cmake.in \
   D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/CMakeRCInformation.cmake \
-  D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/CMakeSystem.cmake.in \
   D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/CMakeSystemSpecificInformation.cmake \
   D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/CMakeSystemSpecificInitialize.cmake \
-  D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/CMakeTestCCompiler.cmake \
-  D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/CMakeTestCXXCompiler.cmake \
-  D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/CMakeTestCompilerCommon.cmake \
-  D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/CMakeTestRCCompiler.cmake \
   D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/CheckCSourceCompiles.cmake \
   D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/CheckCXXCompilerFlag.cmake \
   D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/CheckCXXSourceCompiles.cmake \
   D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/CheckIncludeFile.cmake \
   D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/CheckLibraryExists.cmake \
-  D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/Compiler/ADSP-DetermineCompiler.cmake \
-  D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/Compiler/ARMCC-DetermineCompiler.cmake \
-  D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/Compiler/ARMClang-DetermineCompiler.cmake \
-  D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/Compiler/AppleClang-DetermineCompiler.cmake \
-  D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/Compiler/Borland-DetermineCompiler.cmake \
-  D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/Compiler/Bruce-C-DetermineCompiler.cmake \
   D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/Compiler/CMakeCommonCompilerMacros.cmake \
-  D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/Compiler/Clang-DetermineCompiler.cmake \
-  D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/Compiler/Clang-DetermineCompilerInternal.cmake \
-  D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/Compiler/Compaq-C-DetermineCompiler.cmake \
-  D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/Compiler/Compaq-CXX-DetermineCompiler.cmake \
-  D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/Compiler/Cray-DetermineCompiler.cmake \
-  D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/Compiler/CrayClang-DetermineCompiler.cmake \
-  D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/Compiler/Embarcadero-DetermineCompiler.cmake \
-  D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/Compiler/Fujitsu-DetermineCompiler.cmake \
-  D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/Compiler/FujitsuClang-DetermineCompiler.cmake \
-  D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/Compiler/GHS-DetermineCompiler.cmake \
-  D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/Compiler/GNU-C-DetermineCompiler.cmake \
   D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/Compiler/GNU-C.cmake \
-  D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/Compiler/GNU-CXX-DetermineCompiler.cmake \
   D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/Compiler/GNU-CXX.cmake \
-  D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/Compiler/GNU-FindBinUtils.cmake \
   D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/Compiler/GNU.cmake \
-  D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/Compiler/HP-C-DetermineCompiler.cmake \
-  D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/Compiler/HP-CXX-DetermineCompiler.cmake \
-  D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/Compiler/IAR-DetermineCompiler.cmake \
-  D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/Compiler/IBMCPP-C-DetermineVersionInternal.cmake \
-  D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/Compiler/IBMCPP-CXX-DetermineVersionInternal.cmake \
-  D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/Compiler/IBMClang-C-DetermineCompiler.cmake \
-  D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/Compiler/IBMClang-CXX-DetermineCompiler.cmake \
-  D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/Compiler/Intel-DetermineCompiler.cmake \
-  D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/Compiler/IntelLLVM-DetermineCompiler.cmake \
-  D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/Compiler/LCC-C-DetermineCompiler.cmake \
-  D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/Compiler/LCC-CXX-DetermineCompiler.cmake \
-  D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/Compiler/MSVC-DetermineCompiler.cmake \
-  D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/Compiler/NVHPC-DetermineCompiler.cmake \
-  D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/Compiler/NVIDIA-DetermineCompiler.cmake \
-  D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/Compiler/OpenWatcom-DetermineCompiler.cmake \
-  D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/Compiler/OrangeC-DetermineCompiler.cmake \
-  D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/Compiler/PGI-DetermineCompiler.cmake \
-  D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/Compiler/PathScale-DetermineCompiler.cmake \
-  D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/Compiler/SCO-DetermineCompiler.cmake \
-  D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/Compiler/SDCC-C-DetermineCompiler.cmake \
-  D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/Compiler/SunPro-C-DetermineCompiler.cmake \
-  D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/Compiler/SunPro-CXX-DetermineCompiler.cmake \
-  D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/Compiler/TI-DetermineCompiler.cmake \
-  D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/Compiler/TIClang-DetermineCompiler.cmake \
-  D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/Compiler/Tasking-DetermineCompiler.cmake \
-  D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/Compiler/TinyCC-C-DetermineCompiler.cmake \
-  D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/Compiler/VisualAge-C-DetermineCompiler.cmake \
-  D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/Compiler/VisualAge-CXX-DetermineCompiler.cmake \
-  D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/Compiler/Watcom-DetermineCompiler.cmake \
-  D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/Compiler/XL-C-DetermineCompiler.cmake \
-  D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/Compiler/XL-CXX-DetermineCompiler.cmake \
-  D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/Compiler/XLClang-C-DetermineCompiler.cmake \
-  D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/Compiler/XLClang-CXX-DetermineCompiler.cmake \
-  D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/Compiler/zOS-C-DetermineCompiler.cmake \
-  D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/Compiler/zOS-CXX-DetermineCompiler.cmake \
   D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/FindPackageHandleStandardArgs.cmake \
   D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/FindPackageMessage.cmake \
   D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/FindThreads.cmake \
   D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/FindVulkan.cmake \
   D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/GNUInstallDirs.cmake \
-  D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/Internal/CMakeDetermineLinkerId.cmake \
   D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/Internal/CheckCompilerFlag.cmake \
   D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/Internal/CheckFlagCommonConfig.cmake \
   D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/Internal/CheckSourceCompiles.cmake \
-  D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/Internal/FeatureTesting.cmake \
-  D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/Platform/Windows-Determine-CXX.cmake \
   D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/Platform/Windows-GNU-C-ABI.cmake \
   D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/Platform/Windows-GNU-C.cmake \
   D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/Platform/Windows-GNU-CXX-ABI.cmake \
@@ -851,8 +770,6 @@ C:/msys64/mingw64/include/c++/14.2.0/bits/allocated_ptr.h:
 
 D:/Qt/6.8.2/mingw_64/include/QtCore/qtconfiginclude.h:
 
-D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/Compiler/ARMCC-DetermineCompiler.cmake:
-
 C:/msys64/mingw64/include/c++/14.2.0/bits/ostream_insert.h:
 
 C:/msys64/mingw64/include/c++/14.2.0/bits/allocator.h:
@@ -987,8 +904,6 @@ D:/Qt/6.8.2/mingw_64/include/QtCore/qarraydata.h:
 
 D:/Qt/6.8.2/mingw_64/include/QtGui/qrgb.h:
 
-D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/Compiler/SDCC-C-DetermineCompiler.cmake:
-
 C:/msys64/mingw64/include/c++/14.2.0/bits/stl_iterator_base_funcs.h:
 
 C:/msys64/mingw64/include/process.h:
@@ -1025,8 +940,6 @@ C:/msys64/mingw64/include/c++/14.2.0/bits/streambuf.tcc:
 
 D:/Qt/6.8.2/mingw_64/include/QtCore/qanystringview.h:
 
-D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/Compiler/PGI-DetermineCompiler.cmake:
-
 C:/msys64/mingw64/include/c++/14.2.0/bits/string_view.tcc:
 
 C:/msys64/mingw64/include/c++/14.2.0/bits/stringfwd.h:
@@ -1041,13 +954,9 @@ C:/msys64/mingw64/include/c++/14.2.0/bits/unordered_map.h:
 
 D:/Qt/6.8.2/mingw_64/lib/cmake/Qt6Core/Qt6CoreVersionlessAliasTargets.cmake:
 
-D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/Compiler/XL-CXX-DetermineCompiler.cmake:
-
 D:/Qt/6.8.2/mingw_64/include/QtGui/qwindowdefs.h:
 
 D:/Qt/6.8.2/mingw_64/lib/cmake/Qt6/Qt6VersionlessAliasTargets.cmake:
-
-D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/Compiler/OpenWatcom-DetermineCompiler.cmake:
 
 C:/msys64/mingw64/include/c++/14.2.0/bits/uses_allocator.h:
 
@@ -1129,8 +1038,6 @@ C:/msys64/mingw64/include/c++/14.2.0/ctime:
 
 D:/Qt/6.8.2/mingw_64/include/QtCore/QPointF:
 
-D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/Compiler/LCC-CXX-DetermineCompiler.cmake:
-
 D:/Qt/6.8.2/mingw_64/include/QtGui/qtguiexports.h:
 
 D:/Qt/6.8.2/mingw_64/lib/cmake/Qt6WidgetsTools/Qt6WidgetsToolsVersionlessTargets.cmake:
@@ -1178,8 +1085,6 @@ C:/msys64/mingw64/include/c++/14.2.0/limits:
 C:/msys64/mingw64/include/c++/14.2.0/list:
 
 D:/Qt/6.8.2/mingw_64/include/QtCore/qdarwinhelpers.h:
-
-D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/CMakeDetermineSystem.cmake:
 
 C:/msys64/mingw64/include/c++/14.2.0/map:
 
@@ -1299,11 +1204,7 @@ C:/msys64/mingw64/include/c++/14.2.0/x86_64-w64-mingw32/bits/error_constants.h:
 
 D:/Qt/6.8.2/mingw_64/include/QtCore/q20memory.h:
 
-D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/Compiler/zOS-CXX-DetermineCompiler.cmake:
-
 C:/msys64/mingw64/include/c++/14.2.0/x86_64-w64-mingw32/bits/gthr-default.h:
-
-D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/Compiler/Clang-DetermineCompilerInternal.cmake:
 
 C:/msys64/mingw64/include/c++/14.2.0/x86_64-w64-mingw32/bits/gthr.h:
 
@@ -1322,8 +1223,6 @@ D:/Qt/6.8.2/mingw_64/lib/cmake/Qt6Gui/Qt6QSvgIconPluginAdditionalTargetInfo.cmak
 C:/msys64/mingw64/include/corecrt_stdio_config.h:
 
 C:/msys64/mingw64/include/ctype.h:
-
-D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/CMakeCCompilerABI.c:
 
 D:/Qt/6.8.2/mingw_64/lib/cmake/Qt6Gui/Qt6QOffscreenIntegrationPluginTargets-relwithdebinfo.cmake:
 
@@ -1350,8 +1249,6 @@ C:/msys64/mingw64/include/pthread_unistd.h:
 D:/Qt/6.8.2/mingw_64/lib/cmake/Qt6CoreTools/Qt6CoreToolsTargets-relwithdebinfo.cmake:
 
 D:/Qt/6.8.2/mingw_64/include/QtCore/qtaggedpointer.h:
-
-D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/CMakeDetermineCompilerId.cmake:
 
 C:/msys64/mingw64/include/sdks/_mingw_ddk.h:
 
@@ -1398,8 +1295,6 @@ D:/Qt/6.8.2/mingw_64/lib/cmake/Qt6Gui/Qt6QICNSPluginConfig.cmake:
 D:/Qt/6.8.2/mingw_64/lib/cmake/Qt6Gui/Qt6QICNSPluginTargets.cmake:
 
 D:/Qt/6.8.2/mingw_64/include/QtCore/qtversionchecks.h:
-
-D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/CMakeParseImplicitIncludeInfo.cmake:
 
 C:/msys64/mingw64/lib/gcc/x86_64-w64-mingw32/14.2.0/include/stddef.h:
 
@@ -1503,13 +1398,9 @@ D:/Qt/6.8.2/mingw_64/include/QtCore/qeventloop.h:
 
 D:/Qt/6.8.2/mingw_64/include/QtCore/qflags.h:
 
-D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/Compiler/IAR-DetermineCompiler.cmake:
-
 D:/Qt/6.8.2/mingw_64/include/QtCore/qforeach.h:
 
 D:/Qt/6.8.2/mingw_64/include/QtCore/qfunctionaltools_impl.h:
-
-D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/CMakeParseLibraryArchitecture.cmake:
 
 D:/Qt/6.8.2/mingw_64/include/QtCore/qglobal.h:
 
@@ -1520,8 +1411,6 @@ D:/Qt/6.8.2/mingw_64/include/QtCore/qglobalstatic.h:
 D:/Qt/6.8.2/mingw_64/include/QtCore/qstringlist.h:
 
 D:/Qt/6.8.2/mingw_64/include/QtCore/qiodevice.h:
-
-D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/CMakeCompilerIdDetection.cmake:
 
 D:/Qt/6.8.2/mingw_64/include/QtCore/qiodevicebase.h:
 
@@ -1587,8 +1476,6 @@ D:/Qt/6.8.2/mingw_64/lib/cmake/Qt6/QtPublicSbomCpeHelpers.cmake:
 
 D:/Qt/6.8.2/mingw_64/include/QtCore/qset.h:
 
-D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/Compiler/TI-DetermineCompiler.cmake:
-
 D:/Qt/6.8.2/mingw_64/include/QtCore/qshareddata.h:
 
 vector-graphics-editor_autogen/moc_predefs.h:
@@ -1619,8 +1506,6 @@ D:/Qt/6.8.2/mingw_64/include/QtCore/qstringtokenizer.h:
 
 D:/Qt/6.8.2/mingw_64/include/QtCore/qstringview.h:
 
-D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/CMakeSystem.cmake.in:
-
 D:/Qt/6.8.2/mingw_64/include/QtCore/qsystemdetection.h:
 
 D:/Qt/6.8.2/mingw_64/include/QtCore/qtclasshelpermacros.h:
@@ -1636,8 +1521,6 @@ D:/Qt/6.8.2/mingw_64/include/QtCore/qtmetamacros.h:
 D:/Qt/6.8.2/mingw_64/include/QtCore/qttypetraits.h:
 
 D:/Qt/6.8.2/mingw_64/include/QtCore/qtypeinfo.h:
-
-D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/CMakeDetermineCompileFeatures.cmake:
 
 D:/Qt/6.8.2/mingw_64/include/QtCore/qutf8stringview.h:
 
@@ -1677,8 +1560,6 @@ D:/Qt/6.8.2/mingw_64/include/QtGui/qpalette.h:
 
 D:/Qt/6.8.2/mingw_64/lib/cmake/Qt6Gui/Qt6QGifPluginTargets-relwithdebinfo.cmake:
 
-D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/Compiler/GNU-FindBinUtils.cmake:
-
 D:/Qt/6.8.2/mingw_64/include/QtGui/qpen.h:
 
 D:/Qt/6.8.2/mingw_64/include/QtGui/qpixelformat.h:
@@ -1703,8 +1584,6 @@ D:/Qt/6.8.2/mingw_64/include/QtGui/qtransform.h:
 
 D:/Qt/6.8.2/mingw_64/include/QtGui/qvector2d.h:
 
-D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/Compiler/IBMCPP-CXX-DetermineVersionInternal.cmake:
-
 D:/Qt/6.8.2/mingw_64/include/QtGui/qvectornd.h:
 
 D:/Qt/6.8.2/mingw_64/include/QtWidgets/QToolBar:
@@ -1718,8 +1597,6 @@ D:/Qt/6.8.2/mingw_64/include/QtWidgets/qmainwindow.h:
 D:/Qt/6.8.2/mingw_64/include/QtWidgets/qtabwidget.h:
 
 D:/Qt/6.8.2/mingw_64/include/QtWidgets/qtwidgets-config.h:
-
-D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/CMakeTestRCCompiler.cmake:
 
 D:/Qt/6.8.2/mingw_64/include/QtWidgets/qwidget.h:
 
@@ -1783,8 +1660,6 @@ D:/Qt/6.8.2/mingw_64/lib/cmake/Qt6/QtPublicSbomDepHelpers.cmake:
 
 D:/Qt/6.8.2/mingw_64/lib/cmake/Qt6/QtPublicSbomHelpers.cmake:
 
-D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/Compiler/OrangeC-DetermineCompiler.cmake:
-
 D:/Qt/6.8.2/mingw_64/lib/cmake/Qt6/QtPublicSbomPurlHelpers.cmake:
 
 D:/Qt/6.8.2/mingw_64/lib/cmake/Qt6Gui/Qt6QICNSPluginTargets-relwithdebinfo.cmake:
@@ -1804,8 +1679,6 @@ D:/Qt/6.8.2/mingw_64/lib/cmake/Qt6CoreTools/Qt6CoreToolsConfigVersion.cmake:
 D:/Qt/6.8.2/mingw_64/lib/cmake/Qt6CoreTools/Qt6CoreToolsTargets.cmake:
 
 D:/Qt/6.8.2/mingw_64/lib/cmake/Qt6EntryPointPrivate/Qt6EntryPointPrivateConfigVersion.cmake:
-
-D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/Compiler/IntelLLVM-DetermineCompiler.cmake:
 
 D:/Qt/6.8.2/mingw_64/lib/cmake/Qt6Gui/Qt6QICNSPluginAdditionalTargetInfo.cmake:
 
@@ -1877,13 +1750,9 @@ D:/Qt/6.8.2/mingw_64/lib/cmake/Qt6Gui/Qt6QWebpPluginConfig.cmake:
 
 D:/Qt/6.8.2/mingw_64/lib/cmake/Qt6Gui/Qt6QWebpPluginTargets.cmake:
 
-D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/CMakeTestCCompiler.cmake:
-
 D:/Qt/6.8.2/mingw_64/lib/cmake/Qt6Widgets/Qt6WidgetsVersionlessAliasTargets.cmake:
 
 D:/Qt/6.8.2/mingw_64/lib/cmake/Qt6Gui/Qt6QWindowsDirect2DIntegrationPluginAdditionalTargetInfo.cmake:
-
-D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/Compiler/HP-CXX-DetermineCompiler.cmake:
 
 D:/Qt/6.8.2/mingw_64/lib/cmake/Qt6Gui/Qt6QWindowsDirect2DIntegrationPluginConfig.cmake:
 
@@ -1891,19 +1760,11 @@ D:/Qt/6.8.2/mingw_64/lib/cmake/Qt6Gui/Qt6QWindowsDirect2DIntegrationPluginTarget
 
 D:/Qt/6.8.2/mingw_64/lib/cmake/Qt6Gui/Qt6QWindowsIntegrationPluginAdditionalTargetInfo.cmake:
 
-D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/Compiler/zOS-C-DetermineCompiler.cmake:
-
-D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/CMakeTestCompilerCommon.cmake:
-
 D:/Qt/6.8.2/mingw_64/lib/cmake/Qt6Gui/Qt6QWindowsIntegrationPluginTargets-relwithdebinfo.cmake:
-
-D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/Compiler/MSVC-DetermineCompiler.cmake:
 
 D:/Qt/6.8.2/mingw_64/lib/cmake/Qt6GuiTools/Qt6GuiToolsAdditionalTargetInfo.cmake:
 
 D:/Qt/6.8.2/mingw_64/lib/cmake/Qt6GuiTools/Qt6GuiToolsConfig.cmake:
-
-D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/Compiler/IBMCPP-C-DetermineVersionInternal.cmake:
 
 D:/Qt/6.8.2/mingw_64/lib/cmake/Qt6GuiTools/Qt6GuiToolsConfigVersion.cmake:
 
@@ -1951,15 +1812,7 @@ D:/Qt/6.8.2/mingw_64/lib/cmake/Qt6ZlibPrivate/Qt6ZlibPrivateConfigVersion.cmake:
 
 D:/Qt/6.8.2/mingw_64/lib/cmake/Qt6ZlibPrivate/Qt6ZlibPrivateVersionlessAliasTargets.cmake:
 
-D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/Compiler/GNU-C-DetermineCompiler.cmake:
-
 D:/Qt/Tools/CMake_64/bin/cmake.exe:
-
-D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/CMakeCCompiler.cmake.in:
-
-D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/CMakeCXXCompiler.cmake.in:
-
-D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/CMakeCXXCompilerABI.cpp:
 
 D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/CMakeCXXInformation.cmake:
 
@@ -1967,39 +1820,13 @@ F:/program/claudegraph/include/command/scale_command.h:
 
 D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/CMakeCheckCompilerFlagCommonPatterns.cmake:
 
-D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/CMakeDetermineCCompiler.cmake:
-
-D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/CMakeDetermineCXXCompiler.cmake:
-
-D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/CMakeDetermineCompiler.cmake:
-
-F:/program/claudegraph/include/core/graphic.cpp:
-
-D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/CMakeDetermineCompilerABI.cmake:
-
-D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/CMakeDetermineRCCompiler.cmake:
-
-D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/Compiler/SunPro-CXX-DetermineCompiler.cmake:
-
-D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/CMakeFindBinUtils.cmake:
-
 D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/CMakeLanguageInformation.cmake:
-
-D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/CMakeMinGWFindMake.cmake:
-
-D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/CMakeParseImplicitLinkInfo.cmake:
-
-D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/CMakeRCCompiler.cmake.in:
-
-D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/Compiler/Compaq-C-DetermineCompiler.cmake:
 
 D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/CMakeRCInformation.cmake:
 
 D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/CMakeSystemSpecificInformation.cmake:
 
 D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/CMakeSystemSpecificInitialize.cmake:
-
-D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/CMakeTestCXXCompiler.cmake:
 
 D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/CheckCSourceCompiles.cmake:
 
@@ -2009,81 +1836,9 @@ D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/CheckIncludeFile.cmake:
 
 D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/CheckLibraryExists.cmake:
 
-F:/program/claudegraph/main.cpp:
-
-D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/Compiler/ADSP-DetermineCompiler.cmake:
-
-D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/Compiler/ARMClang-DetermineCompiler.cmake:
-
-D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/Compiler/AppleClang-DetermineCompiler.cmake:
-
-D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/Compiler/Borland-DetermineCompiler.cmake:
-
-D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/Compiler/Bruce-C-DetermineCompiler.cmake:
-
-D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/Compiler/Clang-DetermineCompiler.cmake:
-
-D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/Compiler/Compaq-CXX-DetermineCompiler.cmake:
-
-D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/Compiler/Cray-DetermineCompiler.cmake:
-
-D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/Compiler/HP-C-DetermineCompiler.cmake:
-
-D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/Compiler/CrayClang-DetermineCompiler.cmake:
-
-D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/Compiler/Embarcadero-DetermineCompiler.cmake:
-
-D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/Compiler/Fujitsu-DetermineCompiler.cmake:
-
-D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/Compiler/FujitsuClang-DetermineCompiler.cmake:
-
-D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/GNUInstallDirs.cmake:
-
-D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/Compiler/GHS-DetermineCompiler.cmake:
-
 D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/Compiler/GNU-C.cmake:
 
-D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/Compiler/GNU-CXX-DetermineCompiler.cmake:
-
 D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/Compiler/GNU-CXX.cmake:
-
-D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/Compiler/IBMClang-C-DetermineCompiler.cmake:
-
-D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/Compiler/IBMClang-CXX-DetermineCompiler.cmake:
-
-D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/Compiler/Intel-DetermineCompiler.cmake:
-
-D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/Compiler/LCC-C-DetermineCompiler.cmake:
-
-D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/Compiler/NVHPC-DetermineCompiler.cmake:
-
-D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/Compiler/NVIDIA-DetermineCompiler.cmake:
-
-D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/Compiler/PathScale-DetermineCompiler.cmake:
-
-D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/Platform/Windows-windres.cmake:
-
-D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/Compiler/SCO-DetermineCompiler.cmake:
-
-D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/Compiler/SunPro-C-DetermineCompiler.cmake:
-
-D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/Compiler/TIClang-DetermineCompiler.cmake:
-
-D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/Compiler/Tasking-DetermineCompiler.cmake:
-
-D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/Compiler/TinyCC-C-DetermineCompiler.cmake:
-
-D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/Compiler/VisualAge-C-DetermineCompiler.cmake:
-
-D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/Compiler/VisualAge-CXX-DetermineCompiler.cmake:
-
-D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/Compiler/Watcom-DetermineCompiler.cmake:
-
-D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/Compiler/XL-C-DetermineCompiler.cmake:
-
-D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/Compiler/XLClang-C-DetermineCompiler.cmake:
-
-D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/Compiler/XLClang-CXX-DetermineCompiler.cmake:
 
 D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/FindPackageHandleStandardArgs.cmake:
 
@@ -2093,19 +1848,17 @@ D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/FindThreads.cmake:
 
 D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/FindVulkan.cmake:
 
-D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/Internal/CMakeDetermineLinkerId.cmake:
+D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/GNUInstallDirs.cmake:
 
 D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/Internal/CheckCompilerFlag.cmake:
-
-D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/Internal/FeatureTesting.cmake:
-
-D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/Platform/Windows-Determine-CXX.cmake:
 
 D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/Platform/Windows-GNU-C.cmake:
 
 D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/Platform/Windows-GNU-CXX-ABI.cmake:
 
 D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/Platform/Windows-GNU-CXX.cmake:
+
+D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/Platform/Windows-windres.cmake:
 
 D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/Platform/Windows.cmake:
 
@@ -2133,6 +1886,8 @@ F:/program/claudegraph/include/command/scale_command.cpp:
 
 F:/program/claudegraph/include/core/draw_strategy.h:
 
+F:/program/claudegraph/include/core/graphic.cpp:
+
 F:/program/claudegraph/include/core/graphic.h:
 
 F:/program/claudegraph/include/core/graphic_manager.cpp:
@@ -2156,3 +1911,5 @@ F:/program/claudegraph/include/ui/draw_area.h:
 F:/program/claudegraph/include/ui/main_window.cpp:
 
 F:/program/claudegraph/include/ui/main_window.h:
+
+F:/program/claudegraph/main.cpp:

@@ -98,6 +98,12 @@ void MainWindow::createActions() {
             }
         }
     });
+
+    // Clear Screen
+    m_clearAction = new QAction("Clear Screen", this);
+    connect(m_clearAction, &QAction::triggered, [this]() {
+        m_drawArea->clearGraphics();
+    });
 }
 
 void MainWindow::createToolBar() {
@@ -109,6 +115,10 @@ void MainWindow::createToolBar() {
     drawActionGroup->addAction(m_circleAction);
     drawActionGroup->addAction(m_triangleAction);
     drawActionGroup->addAction(m_flowchartAction);
+    
+    // 在工具栏中添加分隔符
+    m_toolBar->addSeparator(); // 添加分隔符到工具栏
+
     drawActionGroup->addAction(m_editAction);
     drawActionGroup->addAction(m_ellipseAction);
     drawActionGroup->addAction(m_bezierAction);
@@ -120,9 +130,17 @@ void MainWindow::createToolBar() {
     m_toolBar->addAction(m_circleAction);
     m_toolBar->addAction(m_triangleAction);
     m_toolBar->addAction(m_flowchartAction);
-    m_toolBar->addSeparator();
+    
+    // 添加分隔符到工具栏
+    m_toolBar->addSeparator(); // 添加分隔符到工具栏
+
     m_toolBar->addAction(m_editAction);
     m_toolBar->addAction(m_ellipseAction);
     m_toolBar->addAction(m_bezierAction);
     m_toolBar->addAction(m_fillColorAction);
+    
+    // 添加分隔符到工具栏
+    m_toolBar->addSeparator(); // 添加分隔符到工具栏
+
+    m_toolBar->addAction(m_clearAction);
 }

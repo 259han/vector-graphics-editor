@@ -27,6 +27,7 @@ private:
     QAction* m_bezierAction;
     QAction* m_fillColorAction;
     QAction* m_loadImageAction;
+    QAction* m_clearAction;
 };
 
 #endif // MAIN_WINDOW_H

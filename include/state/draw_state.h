@@ -21,6 +21,7 @@ public:
     void setFillColor(const QColor& color);
     void setFillMode(bool enabled);
     void fillRegion(DrawArea* drawArea, QPointF startPoint, QColor targetColor, QColor fillColor);
+    void resetFillMode();
 
 private:
     Graphic::GraphicType m_graphicType;

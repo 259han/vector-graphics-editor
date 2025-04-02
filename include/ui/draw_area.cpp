@@ -86,3 +86,15 @@ void DrawArea::mouseMoveEvent(QMouseEvent *event) {
 EditorState* DrawArea::getCurrentDrawState() {
     return m_currentState.get(); // 返回当前状态的指针
 }
+
+void DrawArea::clearGraphics() {
+    m_graphicManager.clearGraphics(); // 清空所有图形对象
+    m_image.fill(Qt::white);          // 将图像重置为白色
+
+    // 检查当前状态是否为 DrawState 类型
+    if (auto* drawState = dynamic_cast<DrawState*>(m_currentState.get())) {
+        drawState->resetFillMode(); // 重置填色模式
+    }
+
+    update();                         // 更新绘图区域
+}

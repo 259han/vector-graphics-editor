@@ -23,6 +23,8 @@ public:
 
     void setImage(const QImage& image);
 
+    void clearGraphics();
+
     QImage m_image;
 
 protected:

@@ -342,4 +342,18 @@ CMakeFiles/vector-graphics-editor.dir/include/core/graphic_manager.cpp.obj: \
  D:/Qt/6.8.2/mingw_64/include/QtGui/qfontinfo.h \
  D:/Qt/6.8.2/mingw_64/include/QtGui/qfont.h \
  D:/Qt/6.8.2/mingw_64/include/QtCore/qendian.h \
- D:/Qt/6.8.2/mingw_64/include/QtGui/qfontmetrics.h
+ D:/Qt/6.8.2/mingw_64/include/QtGui/qfontmetrics.h \
+ C:/msys64/mingw64/include/c++/14.2.0/iostream \
+ C:/msys64/mingw64/include/c++/14.2.0/ostream \
+ C:/msys64/mingw64/include/c++/14.2.0/ios \
+ C:/msys64/mingw64/include/c++/14.2.0/bits/basic_ios.h \
+ C:/msys64/mingw64/include/c++/14.2.0/bits/locale_facets.h \
+ C:/msys64/mingw64/include/c++/14.2.0/cwctype \
+ C:/msys64/mingw64/include/wctype.h \
+ C:/msys64/mingw64/include/c++/14.2.0/x86_64-w64-mingw32/bits/ctype_base.h \
+ C:/msys64/mingw64/include/c++/14.2.0/x86_64-w64-mingw32/bits/ctype_inline.h \
+ C:/msys64/mingw64/include/c++/14.2.0/bits/locale_facets.tcc \
+ C:/msys64/mingw64/include/c++/14.2.0/bits/basic_ios.tcc \
+ C:/msys64/mingw64/include/c++/14.2.0/bits/ostream.tcc \
+ C:/msys64/mingw64/include/c++/14.2.0/istream \
+ C:/msys64/mingw64/include/c++/14.2.0/bits/istream.tcc
