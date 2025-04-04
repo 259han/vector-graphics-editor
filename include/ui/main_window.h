@@ -26,7 +26,8 @@ private:
     QAction* m_ellipseAction;
     QAction* m_bezierAction;
     QAction* m_fillColorAction;
-    QAction* m_loadImageAction;
+    QAction* m_importImageAction;
+    QAction* m_saveImageAction;
     QAction* m_clearAction;
 };
 

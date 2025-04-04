@@ -27,11 +27,15 @@ public:
 
     QImage m_image;
 
+    void saveImage();
+    void importImage();
+
 protected:
     void paintEvent(QPaintEvent *event) override;
     void mousePressEvent(QMouseEvent *event) override;
     void mouseReleaseEvent(QMouseEvent *event) override;
     void mouseMoveEvent(QMouseEvent *event) override;
+    void resizeEvent(QResizeEvent *event) override;
 
 private:
     GraphicManager m_graphicManager;

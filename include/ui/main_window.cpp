@@ -5,6 +5,9 @@
 #include <QToolBar>
 #include <QActionGroup>
 #include <QColorDialog>
+#include <QFileDialog>
+#include <QImageReader>
+#include <QMessageBox>
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     m_drawArea = new DrawArea(this);
@@ -104,6 +107,18 @@ void MainWindow::createActions() {
     connect(m_clearAction, &QAction::triggered, [this]() {
         m_drawArea->clearGraphics();
     });
+
+    // 导入图片
+    m_importImageAction = new QAction("Import Image", this);
+    connect(m_importImageAction, &QAction::triggered, [this]() {
+        m_drawArea->importImage();
+    });
+
+    // 保存图片
+    m_saveImageAction = new QAction("Save Image", this);
+    connect(m_saveImageAction, &QAction::triggered, [this]() {
+        m_drawArea->saveImage();
+    });
 }
 
 void MainWindow::createToolBar() {
@@ -143,4 +158,6 @@ void MainWindow::createToolBar() {
     m_toolBar->addSeparator(); // 添加分隔符到工具栏
 
     m_toolBar->addAction(m_clearAction);
+    m_toolBar->addAction(m_importImageAction);
+    m_toolBar->addAction(m_saveImageAction);
 }
