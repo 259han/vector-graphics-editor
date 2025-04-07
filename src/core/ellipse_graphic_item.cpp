@@ -30,10 +30,10 @@ QRectF EllipseGraphicItem::boundingRect() const
 std::vector<QPointF> EllipseGraphicItem::getDrawPoints() const
 {
     // 提供给DrawStrategy的点集合
-    // 对于椭圆，需要中心点和边界点
+    // 对于椭圆，需要左上角和右下角点来定义包围矩形
     return {
-        m_center,  // 中心点
-        QPointF(m_width/2, m_height/2)  // 半宽和半高，用于计算椭圆尺寸
+        QPointF(-m_width/2, -m_height/2),  // 左上角点
+        QPointF(m_width/2, m_height/2)     // 右下角点
     };
 }
 

@@ -400,6 +400,8 @@ CMakeFiles/vector-graphics-editor.dir/src/core/bezier_graphic_item.cpp.obj: \
  D:/Qt/6.8.2/mingw_64/include/QtGui/qbrush.h \
  D:/Qt/6.8.2/mingw_64/include/QtCore/QDataStream \
  D:/Qt/6.8.2/mingw_64/include/QtCore/qdatastream.h \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/QString \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/qstring.h \
  F:\program\claudegraph\src\core\draw_strategy.h \
  D:/Qt/6.8.2/mingw_64/include/QtGui/QPainterPath \
  D:/Qt/6.8.2/mingw_64/include/QtGui/qpainterpath.h

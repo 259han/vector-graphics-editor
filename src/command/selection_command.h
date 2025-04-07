@@ -15,8 +15,8 @@ public:
     // 命令类型枚举
     enum SelectionCommandType {
         MoveSelection,   // 移动选择区域
-        DeleteSelection, // 删除选择区域
-        ClipSelection    // 裁剪选择区域
+        DeleteSelection  // 删除选择区域
+        // 裁剪功能已移至future/clip目录
     };
 
     // 构造函数
@@ -31,15 +31,21 @@ public:
     // 撤销命令 (实现自Command基类)
     virtual void undo() override;
     
+    // 获取命令描述 (实现自Command基类)
+    virtual QString getDescription() const override;
+    
+    // 获取命令类型 (实现自Command基类)
+    virtual QString getType() const override;
+    
     // 设置移动选择区域的信息
     void setMoveInfo(const QList<QGraphicsItem*>& items, const QPointF& offset);
     
     // 设置删除选择区域的信息
     void setDeleteInfo(const QList<QGraphicsItem*>& items);
     
-    // 设置裁剪选择区域的信息
-    void setClipInfo(const QList<QGraphicsItem*>& originalItems, 
-                     const QList<QGraphicsItem*>& clippedItems);
+    // 裁剪功能已移至future/clip目录
+    // void setClipInfo(const QList<QGraphicsItem*>& originalItems, 
+    //                  const QList<QGraphicsItem*>& clippedItems);
 
 private:
     DrawArea* m_drawArea;
@@ -58,9 +64,9 @@ private:
     };
     QList<ItemState> m_itemStates;
     
-    // 裁剪命令相关
-    QList<QGraphicsItem*> m_originalItems;
-    QList<QGraphicsItem*> m_clippedItems;
+    // 裁剪功能已移至future/clip目录
+    // QList<QGraphicsItem*> m_originalItems;
+    // QList<QGraphicsItem*> m_clippedItems;
     
     // 保存图形项的状态
     void saveItemStates();

@@ -14,3 +14,14 @@ void RotateCommand::undo() {
         m_graphic->rotate(-m_angle);
     }
 }
+
+QString RotateCommand::getDescription() const {
+    if (!m_graphic) return "旋转图形";
+    
+    QString graphicType = Graphic::graphicTypeToString(m_graphic->getType());
+    return QString("旋转%1 (%2°)").arg(graphicType).arg(m_angle);
+}
+
+QString RotateCommand::getType() const {
+    return "transform";
+}

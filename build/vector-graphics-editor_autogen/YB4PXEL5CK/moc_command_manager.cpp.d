@@ -205,7 +205,9 @@ F:/program/claudegraph/build/vector-graphics-editor_autogen/YB4PXEL5CK/moc_comma
   C:/msys64/mingw64/lib/gcc/x86_64-w64-mingw32/14.2.0/include/stdint.h \
   C:/msys64/mingw64/lib/gcc/x86_64-w64-mingw32/14.2.0/include/syslimits.h \
   D:/Qt/6.8.2/mingw_64/include/QtCore/QObject \
+  D:/Qt/6.8.2/mingw_64/include/QtCore/QReadWriteLock \
   D:/Qt/6.8.2/mingw_64/include/QtCore/QStack \
+  D:/Qt/6.8.2/mingw_64/include/QtCore/QString \
   D:/Qt/6.8.2/mingw_64/include/QtCore/q20functional.h \
   D:/Qt/6.8.2/mingw_64/include/QtCore/q20memory.h \
   D:/Qt/6.8.2/mingw_64/include/QtCore/q20type_traits.h \
@@ -235,6 +237,8 @@ F:/program/claudegraph/build/vector-graphics-editor_autogen/YB4PXEL5CK/moc_comma
   D:/Qt/6.8.2/mingw_64/include/QtCore/qcontainertools_impl.h \
   D:/Qt/6.8.2/mingw_64/include/QtCore/qdarwinhelpers.h \
   D:/Qt/6.8.2/mingw_64/include/QtCore/qdatastream.h \
+  D:/Qt/6.8.2/mingw_64/include/QtCore/qdeadlinetimer.h \
+  D:/Qt/6.8.2/mingw_64/include/QtCore/qelapsedtimer.h \
   D:/Qt/6.8.2/mingw_64/include/QtCore/qexceptionhandling.h \
   D:/Qt/6.8.2/mingw_64/include/QtCore/qflags.h \
   D:/Qt/6.8.2/mingw_64/include/QtCore/qfloat16.h \
@@ -265,6 +269,7 @@ F:/program/claudegraph/build/vector-graphics-editor_autogen/YB4PXEL5CK/moc_comma
   D:/Qt/6.8.2/mingw_64/include/QtCore/qoverload.h \
   D:/Qt/6.8.2/mingw_64/include/QtCore/qpair.h \
   D:/Qt/6.8.2/mingw_64/include/QtCore/qprocessordetection.h \
+  D:/Qt/6.8.2/mingw_64/include/QtCore/qreadwritelock.h \
   D:/Qt/6.8.2/mingw_64/include/QtCore/qrefcount.h \
   D:/Qt/6.8.2/mingw_64/include/QtCore/qscopedpointer.h \
   D:/Qt/6.8.2/mingw_64/include/QtCore/qscopeguard.h \

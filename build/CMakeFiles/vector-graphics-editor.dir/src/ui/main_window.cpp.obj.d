@@ -1,6 +1,6 @@
 CMakeFiles/vector-graphics-editor.dir/src/ui/main_window.cpp.obj: \
  F:\program\claudegraph\src\ui\main_window.cpp \
- F:/program/claudegraph/src/ui/main_window.h \
+ F:\program\claudegraph\src\ui\main_window.h \
  D:/Qt/6.8.2/mingw_64/include/QtWidgets/QMainWindow \
  D:/Qt/6.8.2/mingw_64/include/QtWidgets/qmainwindow.h \
  D:/Qt/6.8.2/mingw_64/include/QtWidgets/qtwidgetsglobal.h \
@@ -405,7 +405,7 @@ CMakeFiles/vector-graphics-editor.dir/src/ui/main_window.cpp.obj: \
  D:/Qt/6.8.2/mingw_64/include/QtWidgets/qtabbar.h \
  D:/Qt/6.8.2/mingw_64/include/QtWidgets/qrubberband.h \
  D:/Qt/6.8.2/mingw_64/include/QtCore/qabstractitemmodel.h \
- F:/program/claudegraph/src/ui/draw_area.h \
+ F:\program\claudegraph\src\ui\draw_area.h \
  D:/Qt/6.8.2/mingw_64/include/QtWidgets/QGraphicsView \
  D:/Qt/6.8.2/mingw_64/include/QtWidgets/qgraphicsview.h \
  D:/Qt/6.8.2/mingw_64/include/QtGui/qpainter.h \
@@ -431,10 +431,28 @@ CMakeFiles/vector-graphics-editor.dir/src/ui/main_window.cpp.obj: \
  D:/Qt/6.8.2/mingw_64/include/QtGui/qbrush.h \
  D:/Qt/6.8.2/mingw_64/include/QtCore/QDataStream \
  D:/Qt/6.8.2/mingw_64/include/QtCore/qdatastream.h \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/QString \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/qstring.h \
+ F:/program/claudegraph/src/core/selection_manager.h \
+ D:/Qt/6.8.2/mingw_64/include/QtGui/QPainterPath \
+ D:/Qt/6.8.2/mingw_64/include/QtGui/qpainterpath.h \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/QList \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/qlist.h \
+ D:/Qt/6.8.2/mingw_64/include/QtWidgets/QGraphicsRectItem \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/QObject \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/qobject.h \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/QSet \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/qset.h \
+ F:/program/claudegraph/src/core/graphic_item.h \
+ D:/Qt/6.8.2/mingw_64/include/QtWidgets/QGraphicsSceneMouseEvent \
+ D:/Qt/6.8.2/mingw_64/include/QtWidgets/qgraphicssceneevent.h \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/qcoreevent.h \
+ D:/Qt/6.8.2/mingw_64/include/QtWidgets/QStyleOptionGraphicsItem \
+ D:/Qt/6.8.2/mingw_64/include/QtWidgets/qstyleoption.h \
+ F:/program/claudegraph/src/core/draw_strategy.h \
  F:/program/claudegraph/src/state/editor_state.h \
  D:/Qt/6.8.2/mingw_64/include/QtGui/QMouseEvent \
  D:/Qt/6.8.2/mingw_64/include/QtGui/qevent.h \
- D:/Qt/6.8.2/mingw_64/include/QtCore/qcoreevent.h \
  D:/Qt/6.8.2/mingw_64/include/QtGui/qeventpoint.h \
  D:/Qt/6.8.2/mingw_64/include/QtGui/qvector2d.h \
  D:/Qt/6.8.2/mingw_64/include/QtGui/qvectornd.h \
@@ -442,9 +460,7 @@ CMakeFiles/vector-graphics-editor.dir/src/ui/main_window.cpp.obj: \
  D:/Qt/6.8.2/mingw_64/include/QtGui/qinputdevice.h \
  D:/Qt/6.8.2/mingw_64/include/QtGui/qscreen.h \
  D:/Qt/6.8.2/mingw_64/include/QtCore/QList \
- D:/Qt/6.8.2/mingw_64/include/QtCore/qlist.h \
  D:/Qt/6.8.2/mingw_64/include/QtCore/QObject \
- D:/Qt/6.8.2/mingw_64/include/QtCore/qobject.h \
  D:/Qt/6.8.2/mingw_64/include/QtCore/QRect \
  D:/Qt/6.8.2/mingw_64/include/QtCore/qrect.h \
  D:/Qt/6.8.2/mingw_64/include/QtCore/QSize \
@@ -463,47 +479,38 @@ CMakeFiles/vector-graphics-editor.dir/src/ui/main_window.cpp.obj: \
  D:/Qt/6.8.2/mingw_64/include/QtGui/qinputmethod.h \
  D:/Qt/6.8.2/mingw_64/include/QtGui/qguiapplication_platform.h \
  D:/Qt/6.8.2/mingw_64/include/QtGui/QKeyEvent \
- F:/program/claudegraph/src/ui/image_resizer.h \
- D:/Qt/6.8.2/mingw_64/include/QtWidgets/QGraphicsObject \
- D:/Qt/6.8.2/mingw_64/include/QtWidgets/QGraphicsRectItem \
- D:/Qt/6.8.2/mingw_64/include/QtWidgets/QGraphicsLineItem \
- D:/Qt/6.8.2/mingw_64/include/QtWidgets/QGraphicsEllipseItem \
- D:/Qt/6.8.2/mingw_64/include/QtWidgets/QGraphicsSceneMouseEvent \
- D:/Qt/6.8.2/mingw_64/include/QtWidgets/qgraphicssceneevent.h \
- D:/Qt/6.8.2/mingw_64/include/QtWidgets/QGraphicsSceneEvent \
  D:/Qt/6.8.2/mingw_64/include/QtGui/QCursor \
  D:/Qt/6.8.2/mingw_64/include/QtGui/qcursor.h \
  D:/Qt/6.8.2/mingw_64/include/QtCore/QDebug \
  D:/Qt/6.8.2/mingw_64/include/QtCore/qdebug.h \
- D:/Qt/6.8.2/mingw_64/include/QtCore/QList \
+ D:/Qt/6.8.2/mingw_64/include/QtGui/QWheelEvent \
+ F:\program\claudegraph\src\ui\image_resizer.h \
+ D:/Qt/6.8.2/mingw_64/include/QtWidgets/QGraphicsObject \
+ D:/Qt/6.8.2/mingw_64/include/QtWidgets/QGraphicsLineItem \
+ D:/Qt/6.8.2/mingw_64/include/QtWidgets/QGraphicsEllipseItem \
+ D:/Qt/6.8.2/mingw_64/include/QtWidgets/QGraphicsSceneEvent \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/QTimer \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/qtimer.h \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/qbasictimer.h \
  F:/program/claudegraph/src/state/draw_state.h \
  F:/program/claudegraph/src/state/editor_state.h \
  F:/program/claudegraph/src/core/graphic.h \
  F:/program/claudegraph/src/core/draw_strategy.h \
- D:/Qt/6.8.2/mingw_64/include/QtGui/QPainterPath \
- D:/Qt/6.8.2/mingw_64/include/QtGui/qpainterpath.h \
  F:/program/claudegraph/src/core/graphics_item_factory.h \
  D:/Qt/6.8.2/mingw_64/include/QtGui/QColor \
  D:/Qt/6.8.2/mingw_64/include/QtGui/qcolor.h \
  D:/Qt/6.8.2/mingw_64/include/QtCore/QStack \
  D:/Qt/6.8.2/mingw_64/include/QtCore/qstack.h \
+ D:/Qt/6.8.2/mingw_64/include/QtWidgets/QScrollBar \
+ D:/Qt/6.8.2/mingw_64/include/QtWidgets/qscrollbar.h \
  F:/program/claudegraph/src/state/fill_state.h \
- D:/Qt/6.8.2/mingw_64/include/QtCore/QPoint \
- F:\program\claudegraph\src\ui\draw_area.h \
- D:/Qt/6.8.2/mingw_64/include/QtWidgets/QMenuBar \
- D:/Qt/6.8.2/mingw_64/include/QtWidgets/qmenubar.h \
- D:/Qt/6.8.2/mingw_64/include/QtWidgets/qmenu.h \
- D:/Qt/6.8.2/mingw_64/include/QtWidgets/QColorDialog \
- D:/Qt/6.8.2/mingw_64/include/QtWidgets/qcolordialog.h \
- D:/Qt/6.8.2/mingw_64/include/QtWidgets/qdialog.h \
- D:/Qt/6.8.2/mingw_64/include/QtWidgets/QFileDialog \
- D:/Qt/6.8.2/mingw_64/include/QtWidgets/qfiledialog.h \
- D:/Qt/6.8.2/mingw_64/include/QtCore/qdir.h \
- D:/Qt/6.8.2/mingw_64/include/QtCore/qdirlisting.h \
- D:/Qt/6.8.2/mingw_64/include/QtCore/qfiledevice.h \
+ F:/program/claudegraph/src/utils/logger.h \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/QDateTime \
  D:/Qt/6.8.2/mingw_64/include/QtCore/qdatetime.h \
  D:/Qt/6.8.2/mingw_64/include/QtCore/qcalendar.h \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/QFile \
  D:/Qt/6.8.2/mingw_64/include/QtCore/qfile.h \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/qfiledevice.h \
  C:/msys64/mingw64/include/c++/14.2.0/filesystem \
  C:/msys64/mingw64/include/c++/14.2.0/bits/fs_fwd.h \
  C:/msys64/mingw64/include/c++/14.2.0/bits/fs_path.h \
@@ -534,8 +541,42 @@ CMakeFiles/vector-graphics-editor.dir/src/ui/main_window.cpp.obj: \
  C:/msys64/mingw64/include/c++/14.2.0/codecvt \
  C:/msys64/mingw64/include/c++/14.2.0/bits/fs_dir.h \
  C:/msys64/mingw64/include/c++/14.2.0/bits/fs_ops.h \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/QTextStream \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/qtextstream.h \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/QMutex \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/qmutex.h \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/qtsan_impl.h \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/QDir \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/qdir.h \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/qdirlisting.h \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/qdatetime.h \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/qfile.h \
  D:/Qt/6.8.2/mingw_64/include/QtCore/qfileinfo.h \
  D:/Qt/6.8.2/mingw_64/include/QtCore/qtimezone.h \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/QCoreApplication \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/qcoreapplication.h \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/QPoint \
+ D:/Qt/6.8.2/mingw_64/include/QtGui/QImage \
+ D:/Qt/6.8.2/mingw_64/include/QtGui/qimage.h \
+ D:/Qt/6.8.2/mingw_64/include/QtGui/QPixmap \
+ D:/Qt/6.8.2/mingw_64/include/QtGui/qpixmap.h \
+ F:/program/claudegraph/src/state/edit_state.h \
+ F:/program/claudegraph/src/core/graphic_item.h \
+ F:/program/claudegraph/src/core/selection_manager.h \
+ F:/program/claudegraph/src/command/selection_command.h \
+ F:/program/claudegraph/src/command/command.h \
+ F:/program/claudegraph/src/command/style_change_command.h \
+ F:/program/claudegraph/src/command/command.h \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/QRectF \
+ D:/Qt/6.8.2/mingw_64/include/QtWidgets/QMenuBar \
+ D:/Qt/6.8.2/mingw_64/include/QtWidgets/qmenubar.h \
+ D:/Qt/6.8.2/mingw_64/include/QtWidgets/qmenu.h \
+ D:/Qt/6.8.2/mingw_64/include/QtWidgets/QColorDialog \
+ D:/Qt/6.8.2/mingw_64/include/QtWidgets/qcolordialog.h \
+ D:/Qt/6.8.2/mingw_64/include/QtWidgets/qdialog.h \
+ D:/Qt/6.8.2/mingw_64/include/QtWidgets/QFileDialog \
+ D:/Qt/6.8.2/mingw_64/include/QtWidgets/qfiledialog.h \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/qdir.h \
  D:/Qt/6.8.2/mingw_64/include/QtGui/QImageReader \
  D:/Qt/6.8.2/mingw_64/include/QtGui/qimagereader.h \
  D:/Qt/6.8.2/mingw_64/include/QtGui/qimageiohandler.h \
@@ -561,4 +602,9 @@ CMakeFiles/vector-graphics-editor.dir/src/ui/main_window.cpp.obj: \
  D:/Qt/6.8.2/mingw_64/include/QtWidgets/qgridlayout.h \
  D:/Qt/6.8.2/mingw_64/include/QtWidgets/QStatusBar \
  D:/Qt/6.8.2/mingw_64/include/QtWidgets/qstatusbar.h \
- F:/program/claudegraph/src/core/graphic.h
+ F:/program/claudegraph/src/core/graphic.h \
+ F:/program/claudegraph/src/command/command_manager.h \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/QReadWriteLock \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/qreadwritelock.h \
+ D:/Qt/6.8.2/mingw_64/include/QtWidgets/QApplication \
+ D:/Qt/6.8.2/mingw_64/include/QtWidgets/qapplication.h

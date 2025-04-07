@@ -40,6 +40,8 @@ void SelectionCommand::execute()
             }
             break;
             
+        // 裁剪功能已移至future/clip目录
+        /*
         case ClipSelection:
             // 保存原始图形项的状态
             m_originalItems = m_items;
@@ -58,6 +60,7 @@ void SelectionCommand::execute()
                 }
             }
             break;
+        */
     }
 }
 
@@ -80,6 +83,8 @@ void SelectionCommand::undo()
             restoreItemStates();
             break;
             
+        // 裁剪功能已移至future/clip目录
+        /*
         case ClipSelection:
             // 从场景中移除裁剪后的图形项
             for (QGraphicsItem* item : m_clippedItems) {
@@ -95,6 +100,40 @@ void SelectionCommand::undo()
                 }
             }
             break;
+        */
+    }
+}
+
+QString SelectionCommand::getDescription() const
+{
+    int itemCount = m_items.size();
+    
+    switch (m_type) {
+        case MoveSelection:
+            return QString("移动%1个图形项 (%2, %3)")
+                    .arg(itemCount)
+                    .arg(m_offset.x())
+                    .arg(m_offset.y());
+            
+        case DeleteSelection:
+            return QString("删除%1个图形项").arg(itemCount);
+            
+        default:
+            return QString("选择操作");
+    }
+}
+
+QString SelectionCommand::getType() const
+{
+    switch (m_type) {
+        case MoveSelection:
+            return QString("transform");
+            
+        case DeleteSelection:
+            return QString("delete");
+            
+        default:
+            return QString("selection");
     }
 }
 
@@ -109,12 +148,15 @@ void SelectionCommand::setDeleteInfo(const QList<QGraphicsItem*>& items)
     m_items = items;
 }
 
+// 裁剪功能已移至future/clip目录
+/*
 void SelectionCommand::setClipInfo(const QList<QGraphicsItem*>& originalItems, 
                                  const QList<QGraphicsItem*>& clippedItems)
 {
     m_originalItems = originalItems;
     m_clippedItems = clippedItems;
 }
+*/
 
 void SelectionCommand::saveItemStates()
 {

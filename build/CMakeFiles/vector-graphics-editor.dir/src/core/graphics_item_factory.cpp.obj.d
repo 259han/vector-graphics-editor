@@ -374,6 +374,8 @@ CMakeFiles/vector-graphics-editor.dir/src/core/graphics_item_factory.cpp.obj: \
  D:/Qt/6.8.2/mingw_64/include/QtGui/qbrush.h \
  D:/Qt/6.8.2/mingw_64/include/QtCore/QDataStream \
  D:/Qt/6.8.2/mingw_64/include/QtCore/qdatastream.h \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/QString \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/qstring.h \
  F:\program\claudegraph\src\core\circle_graphic_item.h \
  F:\program\claudegraph\src\core\graphic_item.h \
  D:/Qt/6.8.2/mingw_64/include/QtWidgets/QGraphicsSceneMouseEvent \

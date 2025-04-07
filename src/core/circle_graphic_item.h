@@ -17,7 +17,7 @@ public:
     // 圆形特有的方法
     QPointF getCenter() const;
     void setCenter(const QPointF& center);
-    double getRadius() const;
+    double getRadius() const { return m_radius; }
     void setRadius(double radius);
     
 protected:
@@ -25,8 +25,7 @@ protected:
     std::vector<QPointF> getDrawPoints() const override;
     
 private:
-    QPointF m_center; // 圆心（相对于图形项坐标系）
-    double m_radius;  // 半径
+    double m_radius; // 半径
 };
 
 #endif // CIRCLE_GRAPHIC_ITEM_H 

@@ -446,6 +446,18 @@
 			null
 		],
 		[
+			"F:/program/claudegraph/src/command/create_graphic_command.h",
+			"MU",
+			"YB4PXEL5CK/moc_create_graphic_command.cpp",
+			null
+		],
+		[
+			"F:/program/claudegraph/src/command/fill_command.h",
+			"MU",
+			"YB4PXEL5CK/moc_fill_command.cpp",
+			null
+		],
+		[
 			"F:/program/claudegraph/src/command/move_command.h",
 			"MU",
 			"YB4PXEL5CK/moc_move_command.cpp",
@@ -467,6 +479,12 @@
 			"F:/program/claudegraph/src/command/selection_command.h",
 			"MU",
 			"YB4PXEL5CK/moc_selection_command.cpp",
+			null
+		],
+		[
+			"F:/program/claudegraph/src/command/style_change_command.h",
+			"MU",
+			"YB4PXEL5CK/moc_style_change_command.cpp",
 			null
 		],
 		[
@@ -503,12 +521,6 @@
 			"F:/program/claudegraph/src/core/graphic_item.h",
 			"MU",
 			"PRMOGMWJPH/moc_graphic_item.cpp",
-			null
-		],
-		[
-			"F:/program/claudegraph/src/core/graphics_clipper.h",
-			"MU",
-			"PRMOGMWJPH/moc_graphics_clipper.cpp",
 			null
 		],
 		[
@@ -582,6 +594,18 @@
 			"MU",
 			"YPKJ5OE7LN/moc_main_window.cpp",
 			null
+		],
+		[
+			"F:/program/claudegraph/src/utils/graphics_utils.h",
+			"MU",
+			"VSCBVMNR7M/moc_graphics_utils.cpp",
+			null
+		],
+		[
+			"F:/program/claudegraph/src/utils/logger.h",
+			"MU",
+			"VSCBVMNR7M/moc_logger.cpp",
+			null
 		]
 	],
 	"HEADER_EXTENSIONS" : [ "h", "hh", "h++", "hm", "hpp", "hxx", "in", "txx" ],
@@ -592,7 +616,6 @@
 		"MINGW_HAS_SECURE_API=1",
 		"QT_CORE_LIB",
 		"QT_GUI_LIB",
-		"QT_NO_DEBUG",
 		"QT_WIDGETS_LIB",
 		"UNICODE",
 		"WIN32",
@@ -657,14 +680,24 @@
 	"SETTINGS_FILE" : "F:/program/claudegraph/build/CMakeFiles/vector-graphics-editor_autogen.dir/AutogenUsed.txt",
 	"SOURCES" : 
 	[
-		[ "F:/program/claudegraph/main.cpp", "MU", null ],
 		[ "F:/program/claudegraph/src/command/command.cpp", "MU", null ],
 		[ "F:/program/claudegraph/src/command/command_manager.cpp", "MU", null ],
+		[
+			"F:/program/claudegraph/src/command/create_graphic_command.cpp",
+			"MU",
+			null
+		],
+		[ "F:/program/claudegraph/src/command/fill_command.cpp", "MU", null ],
 		[ "F:/program/claudegraph/src/command/move_command.cpp", "MU", null ],
 		[ "F:/program/claudegraph/src/command/rotate_command.cpp", "MU", null ],
 		[ "F:/program/claudegraph/src/command/scale_command.cpp", "MU", null ],
 		[
 			"F:/program/claudegraph/src/command/selection_command.cpp",
+			"MU",
+			null
+		],
+		[
+			"F:/program/claudegraph/src/command/style_change_command.cpp",
 			"MU",
 			null
 		],
@@ -678,7 +711,6 @@
 		],
 		[ "F:/program/claudegraph/src/core/graphic.cpp", "MU", null ],
 		[ "F:/program/claudegraph/src/core/graphic_item.cpp", "MU", null ],
-		[ "F:/program/claudegraph/src/core/graphics_clipper.cpp", "MU", null ],
 		[
 			"F:/program/claudegraph/src/core/graphics_item_factory.cpp",
 			"MU",
@@ -692,13 +724,16 @@
 			null
 		],
 		[ "F:/program/claudegraph/src/core/selection_manager.cpp", "MU", null ],
+		[ "F:/program/claudegraph/src/main.cpp", "MU", null ],
 		[ "F:/program/claudegraph/src/state/draw_state.cpp", "MU", null ],
 		[ "F:/program/claudegraph/src/state/edit_state.cpp", "MU", null ],
 		[ "F:/program/claudegraph/src/state/editor_state.cpp", "MU", null ],
 		[ "F:/program/claudegraph/src/state/fill_state.cpp", "MU", null ],
 		[ "F:/program/claudegraph/src/ui/draw_area.cpp", "MU", null ],
 		[ "F:/program/claudegraph/src/ui/image_resizer.cpp", "MU", null ],
-		[ "F:/program/claudegraph/src/ui/main_window.cpp", "MU", null ]
+		[ "F:/program/claudegraph/src/ui/main_window.cpp", "MU", null ],
+		[ "F:/program/claudegraph/src/utils/graphics_utils.cpp", "MU", null ],
+		[ "F:/program/claudegraph/src/utils/logger.cpp", "MU", null ]
 	],
 	"UIC_OPTIONS" : [],
 	"UIC_SEARCH_PATHS" : [],

@@ -2,13 +2,20 @@
 #include "ui/draw_area.h"
 #include "core/graphic_item.h"
 #include "core/selection_manager.h"
-#include "core/graphics_clipper.h"
+// 裁剪功能已移至future/clip目录
+// #include "core/graphics_clipper.h"
 #include "command/selection_command.h"
 #include "command/command_manager.h"
+#include "command/style_change_command.h"
+#include "../utils/logger.h"
 #include <QDebug>
 #include <QGraphicsScene>
 #include <QPen>
 #include <QApplication>
+#include <QGraphicsSceneMouseEvent>
+#include <QTransform>
+#include <QGraphicsPathItem>
+#include <QtMath>
 
 EditState::EditState()
     : m_isAreaSelecting(false),
@@ -19,31 +26,149 @@ EditState::EditState()
       m_isRotating(false),
       m_isScaling(false),
       m_initialAngle(0.0),
-      m_transformOrigin(),
-      m_selectionManager(nullptr),
-      m_graphicsClipper(nullptr)
+      m_transformOrigin()
 {
-    qDebug() << "Edit State: Created";
+    Logger::info("EditState: 创建编辑状态");
     
-    // 创建选择区域管理器和图形裁剪器
-    m_selectionManager = new SelectionManager(nullptr);
-    m_graphicsClipper = new GraphicsClipper();
+    // 裁剪功能已移至future/clip目录
+    // m_graphicsClipper = std::make_unique<GraphicsClipper>();
 }
 
 EditState::~EditState()
 {
-    // 清理资源
-    delete m_selectionManager;
-    delete m_graphicsClipper;
+    // 智能指针会自动管理资源释放，不需要手动删除
+    Logger::info("EditState: 销毁编辑状态");
+}
+
+void EditState::onEnterState(DrawArea* drawArea)
+{
+    if (!drawArea) {
+        Logger::warning("EditState::onEnterState: 传入的DrawArea为空");
+        return;
+    }
+    
+    Logger::debug("EditState::onEnterState: 开始初始化编辑状态");
+    m_drawArea = drawArea;
+    
+    // 进入编辑状态时禁用画布的拖动功能
+    drawArea->setDragMode(QGraphicsView::NoDrag);
+    
+    // 确保场景上的所有项目可选择
+    QGraphicsScene* scene = drawArea->scene();
+    if (scene) {
+        QList<QGraphicsItem*> items = scene->items();
+        int count = 0;
+        
+        for (QGraphicsItem* item : items) {
+            if (item) {
+                item->setFlag(QGraphicsItem::ItemIsSelectable, true);
+                item->setFlag(QGraphicsItem::ItemIsMovable, true);
+                count++;
+            }
+        }
+        
+        Logger::debug(QString("EditState::onEnterState: 设置了 %1 个图形项为可选择状态").arg(count));
+        
+        // 确保场景更新
+        scene->update();
+    } else {
+        Logger::warning("EditState::onEnterState: 场景为空");
+    }
+    
+    // 重置状态变量
+    m_isAreaSelecting = false;
+    m_isDragging = false;
+    m_activeHandle = GraphicItem::None;
+    m_isRotating = false;
+    m_isScaling = false;
+    
+    // 确保选择管理器处于正确状态
+    SelectionManager* selectionManager = getSelectionManager(drawArea);
+    if (selectionManager) {
+        // 初始化为单选模式
+        selectionManager->setSelectionMode(SelectionManager::SingleSelection);
+        selectionManager->setDraggingSelection(false);
+        
+        // 应用选择状态到场景
+        selectionManager->applySelectionToScene();
+        
+        Logger::debug("EditState::onEnterState: 选择管理器已初始化");
+    } else {
+        Logger::warning("EditState::onEnterState: 获取选择管理器失败");
+    }
+    
+    // 更新状态信息
+    updateStatusMessage(drawArea, "编辑模式：可选择、移动和变换图形");
+    
+    // 重置鼠标光标
+    resetCursor(drawArea);
+    
+    // 确保视图更新
+    drawArea->viewport()->update();
+    QApplication::processEvents();
+    
+    Logger::info("EditState::onEnterState: 编辑状态初始化完成");
+}
+
+void EditState::onExitState(DrawArea* drawArea)
+{
+    if (m_drawArea == drawArea) {
+        m_drawArea = nullptr;
+    }
+    
+    // 清除选择
+    if (drawArea && drawArea->scene()) {
+        drawArea->scene()->clearSelection();
+    }
+    
+    // 更新状态信息
+    Logger::info("EditState: 退出编辑状态");
+}
+
+void EditState::handleMiddleMousePress(DrawArea* drawArea, QPointF scenePos)
+{
+    Logger::debug("EditState: 中键点击，位置: " + QString("(%1, %2)").arg(scenePos.x()).arg(scenePos.y()));
+    
+    // 中键点击可以用于开始平移视图
+    if (drawArea) {
+        drawArea->setDragMode(QGraphicsView::ScrollHandDrag);
+        setCursor(drawArea, Qt::ClosedHandCursor);
+    }
+}
+
+void EditState::wheelEvent(DrawArea* drawArea, QWheelEvent* event)
+{
+    // 使用基类的缩放和平移处理
+    if (handleZoomAndPan(drawArea, event)) {
+        return;
+    }
+    
+    // 如果基类没有处理，则传递给视图的默认处理
+    QGraphicsView::ViewportAnchor oldAnchor = drawArea->transformationAnchor();
+    drawArea->setTransformationAnchor(QGraphicsView::AnchorUnderMouse);
+    
+    // 缩放因子
+    double scaleFactor = 1.15;
+    
+    if (event->angleDelta().y() > 0) {
+        // 放大
+        drawArea->scale(scaleFactor, scaleFactor);
+    } else {
+        // 缩小
+        drawArea->scale(1.0 / scaleFactor, 1.0 / scaleFactor);
+    }
+    
+    drawArea->setTransformationAnchor(oldAnchor);
 }
 
 void EditState::handleLeftMousePress(DrawArea* drawArea, QPointF scenePos)
 {
     qDebug() << "Edit State: 左键点击，位置:" << scenePos;
     
-    // 确保选择管理器使用正确的绘图区域
-    if (m_selectionManager->getDrawArea() != drawArea) {
-        m_selectionManager->setDrawArea(drawArea);
+    // 获取选择管理器
+    SelectionManager* selectionManager = getSelectionManager(drawArea);
+    if (!selectionManager) {
+        return;
     }
     
     // 检查点击位置是否有图形项或选择区域
@@ -51,11 +176,11 @@ void EditState::handleLeftMousePress(DrawArea* drawArea, QPointF scenePos)
     QGraphicsItem* item = scene->itemAt(scenePos, drawArea->transform());
     
     // 检查点击是否在选择区域上
-    if (m_selectionManager->isSelectionValid() && 
-        (m_selectionManager->contains(scenePos) || m_selectionManager->handleAtPoint(scenePos) != GraphicItem::None)) {
+    if (selectionManager->isSelectionValid() && 
+        (selectionManager->contains(scenePos) || selectionManager->handleAtPoint(scenePos) != GraphicItem::None)) {
         
         // 获取选择区域上的控制点
-        m_activeHandle = m_selectionManager->handleAtPoint(scenePos);
+        m_activeHandle = selectionManager->handleAtPoint(scenePos);
         
         if (m_activeHandle != GraphicItem::None) {
             // 如果点击在控制点上，设置缩放状态
@@ -68,7 +193,7 @@ void EditState::handleLeftMousePress(DrawArea* drawArea, QPointF scenePos)
             // 点击在选择区域上，但不在控制点上，准备拖动
             m_dragStartPosition = QPoint(static_cast<int>(scenePos.x()), static_cast<int>(scenePos.y()));
             m_isDragging = true;
-            m_selectionManager->setDraggingSelection(true);
+            selectionManager->setDraggingSelection(true);
             qDebug() << "Edit State: Preparing to drag selection area";
             return;
         }
@@ -76,7 +201,8 @@ void EditState::handleLeftMousePress(DrawArea* drawArea, QPointF scenePos)
     
     // 如果点击了某个普通图形项
     if (item) {
-        if (GraphicItem* graphicItem = dynamic_cast<GraphicItem*>(item)) {
+        GraphicItem* graphicItem = dynamic_cast<GraphicItem*>(item);
+        if (graphicItem) {
             // 查看是否点击了图形项的控制点
             m_activeHandle = graphicItem->handleAtPoint(scenePos);
             
@@ -87,60 +213,50 @@ void EditState::handleLeftMousePress(DrawArea* drawArea, QPointF scenePos)
                     m_isRotating = true;
                     m_transformOrigin = graphicItem->pos();
                     m_initialAngle = atan2(scenePos.y() - m_transformOrigin.y(), 
-                                          scenePos.x() - m_transformOrigin.x());
+                                         scenePos.x() - m_transformOrigin.x());
                 } else {
                     // 缩放控制点
                     m_isScaling = true;
                     m_transformOrigin = graphicItem->pos();
                     m_initialDistance = sqrt(pow(scenePos.x() - m_transformOrigin.x(), 2) + 
-                                           pow(scenePos.y() - m_transformOrigin.y(), 2));
+                                          pow(scenePos.y() - m_transformOrigin.y(), 2));
                 }
                 
-                // 设置相应的光标
+                // 更新光标
                 updateCursor(m_activeHandle);
-            } else {
-                // 点击在图形项本身上，选中它
-                scene->clearSelection();
-                item->setSelected(true);
-                
-                // 准备拖动
-                m_isDragging = true;
-                m_dragStartPosition = QPoint(static_cast<int>(scenePos.x()), static_cast<int>(scenePos.y()));
-                
-                // 创建选择管理器选择
-                QList<QGraphicsItem*> selectedItems = scene->selectedItems();
-                if (!selectedItems.isEmpty()) {
-                    QRectF selectionRect;
-                    for (QGraphicsItem* selectedItem : selectedItems) {
-                        selectionRect = selectionRect.united(selectedItem->boundingRect().translated(selectedItem->pos()));
-                    }
-                    
-                    m_selectionManager->startSelection(selectionRect.topLeft());
-                    m_selectionManager->updateSelection(selectionRect.bottomRight());
-                    m_selectionManager->finishSelection();
-                    m_selectionManager->setDraggingSelection(true);
-                }
+                return;
             }
-        } else {
-            // 如果点击的不是GraphicItem，则考虑开始选区
-            scene->clearSelection();
-            m_selectionManager->clearSelection();
             
-            // 开始区域选择
-            m_isAreaSelecting = true;
-            m_selectionStart = QPoint(static_cast<int>(scenePos.x()), static_cast<int>(scenePos.y()));
-            m_selectionManager->startSelection(scenePos);
+            // 正常选择图形项
+            bool ctrlPressed = QApplication::keyboardModifiers() & Qt::ControlModifier;
+            if (ctrlPressed) {
+                // Ctrl+点击，切换图形选择状态
+                selectionManager->toggleSelection(item);
+                
+                // 使用多选模式
+                selectionManager->setSelectionMode(SelectionManager::MultiSelection);
+            } else {
+                // 单击，如果项没被选中，先清除当前选择再选中这一项
+                if (!selectionManager->isSelected(item)) {
+                    selectionManager->clearSelection();
+                    selectionManager->addToSelection(item);
+                }
+                
+                // 使用单选模式
+                selectionManager->setSelectionMode(SelectionManager::SingleSelection);
+            }
+            
+            // 记录起始拖动位置
+            m_dragStartPosition = QPoint(static_cast<int>(scenePos.x()), static_cast<int>(scenePos.y()));
+            m_isDragging = true;
+            return;
         }
-    } else {
-        // 点击空白区域，开始选区或清除选择
-        scene->clearSelection();
-        m_selectionManager->clearSelection();
-        
-        // 开始区域选择
-        m_isAreaSelecting = true;
-        m_selectionStart = QPoint(static_cast<int>(scenePos.x()), static_cast<int>(scenePos.y()));
-        m_selectionManager->startSelection(scenePos);
     }
+    
+    // 点击在空白处，开始区域选择
+    m_isAreaSelecting = true;
+    m_selectionStart = QPoint(static_cast<int>(scenePos.x()), static_cast<int>(scenePos.y()));
+    selectionManager->startSelection(scenePos);
 }
 
 void EditState::handleRightMousePress(DrawArea* drawArea, QPointF scenePos)
@@ -148,218 +264,168 @@ void EditState::handleRightMousePress(DrawArea* drawArea, QPointF scenePos)
     qDebug() << "Edit State: 右键点击，位置:" << scenePos;
     
     // 右键点击清除选择
-    m_selectionManager->clearSelection();
+    SelectionManager* selectionManager = getSelectionManager(drawArea);
+    if (selectionManager) {
+        selectionManager->clearSelection();
+    }
     drawArea->scene()->clearSelection();
 }
 
 void EditState::mousePressEvent(DrawArea* drawArea, QMouseEvent* event)
 {
-    // 获取场景坐标
-    QPointF scenePos = drawArea->mapToScene(event->pos());
-    
     if (event->button() == Qt::LeftButton) {
+        QPointF scenePos = getScenePos(drawArea, event);
         handleLeftMousePress(drawArea, scenePos);
+        event->accept();
     } else if (event->button() == Qt::RightButton) {
+        QPointF scenePos = getScenePos(drawArea, event);
         handleRightMousePress(drawArea, scenePos);
+        event->accept();
     }
-    
-    // 接受此事件
-    event->accept();
 }
 
 void EditState::mouseMoveEvent(DrawArea* drawArea, QMouseEvent* event)
 {
-    // 获取场景坐标
-    QPointF scenePos = drawArea->mapToScene(event->pos());
-    
-    // 如果正在进行区域选择
-    if (m_isAreaSelecting) {
-        // 更新选择区域
-        m_selectionManager->updateSelection(scenePos);
+    QPointF scenePos = getScenePos(drawArea, event);
+    SelectionManager* selectionManager = getSelectionManager(drawArea);
+    if (!selectionManager) {
         return;
     }
     
-    // 如果正在旋转图形项
-    if (m_isRotating) {
-        // 获取选中的图形项
-        QGraphicsItem* item = nullptr;
-        QList<QGraphicsItem*> selectedItems = drawArea->scene()->selectedItems();
-        if (!selectedItems.isEmpty()) {
-            item = selectedItems.first();
-            if (GraphicItem* graphicItem = dynamic_cast<GraphicItem*>(item)) {
+    // 根据当前状态处理鼠标移动
+    if (m_isAreaSelecting) {
+        // 更新选择区域
+        selectionManager->updateSelection(scenePos);
+    } else if (m_isDragging) {
+        // 移动选中的图形
+        QPoint newPos(static_cast<int>(scenePos.x()), static_cast<int>(scenePos.y()));
+        QPoint delta = newPos - m_dragStartPosition;
+        
+        // 只有当移动距离超过阈值时才真正移动对象
+        // 这可以防止在简单点击选择对象时意外的微小移动
+        if (QPointF(delta).manhattanLength() > 3.0) {
+            QPointF deltaF(delta.x(), delta.y());
+            
+            // 移动选中的图形
+            drawArea->moveSelectedGraphics(deltaF);
+            
+            // 更新拖动起始位置
+            m_dragStartPosition = newPos;
+        }
+    } else if (m_isRotating) {
+        // 处理旋转
+        if (!drawArea->getSelectedItems().isEmpty()) {
+            QGraphicsItem* item = drawArea->getSelectedItems().first();
+            GraphicItem* graphicItem = dynamic_cast<GraphicItem*>(item);
+            if (graphicItem) {
                 handleItemRotation(drawArea, scenePos, graphicItem);
             }
         }
-        return;
-    }
-    
-    // 如果正在缩放图形项
-    if (m_isScaling) {
-        // 获取选中的图形项
-        QGraphicsItem* item = nullptr;
-        QList<QGraphicsItem*> selectedItems = drawArea->scene()->selectedItems();
-        if (!selectedItems.isEmpty()) {
-            item = selectedItems.first();
-            if (GraphicItem* graphicItem = dynamic_cast<GraphicItem*>(item)) {
-                handleItemScaling(drawArea, scenePos, graphicItem);
-            }
-        } else if (m_selectionManager->isSelectionValid()) {
-            // 如果没有选中的图形项但有选择区域，则缩放选择区域
-            m_selectionManager->scaleSelection(m_activeHandle, scenePos);
+    } else if (m_isScaling) {
+        // 处理缩放
+        if (m_activeHandle != GraphicItem::None) {
+            selectionManager->scaleSelection(m_activeHandle, scenePos);
         }
-        return;
-    }
-    
-    // 如果正在拖动选择区域或图形项
-    if (m_isDragging) {
-        // 计算拖动的位移量
-        QPointF viewDelta = event->pos() - m_dragStartPosition;
-        QPointF sceneDelta = drawArea->mapToScene(event->pos()) - drawArea->mapToScene(m_dragStartPosition);
-        
-        if (m_selectionManager->isDraggingSelection()) {
-            // 移动选择区域
-            m_selectionManager->moveSelection(sceneDelta);
-        } else {
-            // 移动选中的图形项
-            QList<QGraphicsItem*> selectedItems = drawArea->scene()->selectedItems();
-            for (QGraphicsItem* item : selectedItems) {
-                item->moveBy(sceneDelta.x(), sceneDelta.y());
-            }
-        }
-        
-        // 更新拖动起始位置
-        m_dragStartPosition = event->pos();
-        return;
-    }
-    
-    // 如果没有执行任何拖动/选择操作，检查鼠标是否在控制点上以更新鼠标形状
-    QGraphicsScene* scene = drawArea->scene();
-    QGraphicsItem* item = scene->itemAt(scenePos, drawArea->transform());
-    
-    if (item) {
-        // 检查是否在选择区域的控制点上
-        if (m_selectionManager->isSelectionValid()) {
-            GraphicItem::ControlHandle handle = m_selectionManager->handleAtPoint(scenePos);
-            if (handle != GraphicItem::None) {
-                updateCursor(handle);
-                return;
-            }
+    } else {
+        // 未按下鼠标时，更新光标样式
+        // 先检查是否在选择区域的控制点上
+        GraphicItem::ControlHandle handle = selectionManager->handleAtPoint(scenePos);
+        if (handle != GraphicItem::None) {
+            updateCursor(handle);
+            return;
         }
         
         // 检查是否在图形项的控制点上
-        GraphicItem* graphicItem = dynamic_cast<GraphicItem*>(item);
-        if (graphicItem && graphicItem->isSelected()) {
-            QPointF itemPos = graphicItem->mapFromScene(scenePos);
-            GraphicItem::ControlHandle handle = graphicItem->handleAtPoint(itemPos);
+        QGraphicsItem* item = drawArea->scene()->itemAt(scenePos, drawArea->transform());
+        if (GraphicItem* graphicItem = dynamic_cast<GraphicItem*>(item)) {
+            handle = graphicItem->handleAtPoint(scenePos);
             if (handle != GraphicItem::None) {
                 updateCursor(handle);
                 return;
             }
         }
+        
+        // 不在控制点上时使用默认光标
+        resetCursor(drawArea);
     }
-    
-    // 如果不在任何控制点上，恢复默认光标
-    QApplication::restoreOverrideCursor();
 }
 
 void EditState::mouseReleaseEvent(DrawArea* drawArea, QMouseEvent* event)
 {
-    // 获取场景坐标
-    QPointF scenePos = drawArea->mapToScene(event->pos());
-    
-    // 如果正在进行区域选择
-    if (m_isAreaSelecting) {
-        // 完成选择区域
-        m_selectionManager->finishSelection();
-        m_isAreaSelecting = false;
+    SelectionManager* selectionManager = getSelectionManager(drawArea);
+    if (!selectionManager) {
         return;
     }
     
-    // 如果正在拖动选择区域或图形项
-    if (m_isDragging) {
-        // 如果是选择区域
-        if (m_selectionManager->isDraggingSelection()) {
-            // 创建移动命令并执行
-            SelectionCommand* moveCmd = createMoveCommand(drawArea, QPointF(0, 0)); // 最后的位移已经应用了
-            if (moveCmd) {
-                // 这里应该将命令添加到命令管理器中
-                // CommandManager::getInstance()->executeCommand(moveCmd);
-                delete moveCmd; // 暂时直接删除，实际应该由命令管理器管理
-            }
-            
-            m_selectionManager->setDraggingSelection(false);
-        } else {
-            // 创建移动命令并执行
-            QList<QGraphicsItem*> selectedItems = drawArea->scene()->selectedItems();
-            if (!selectedItems.isEmpty()) {
-                // 这里需要计算总的位移量，暂时省略
-                // SelectionCommand* moveCmd = createMoveCommand(drawArea, totalDelta);
-                // CommandManager::getInstance()->executeCommand(moveCmd);
+    // 根据当前状态处理鼠标释放
+    if (m_isAreaSelecting) {
+        // 完成区域选择
+        selectionManager->finishSelection();
+        m_isAreaSelecting = false;
+    } else if (m_isDragging) {
+        // 结束拖动
+        m_isDragging = false;
+        selectionManager->setDraggingSelection(false);
+        
+        // 创建移动命令，只有当移动距离足够大时才执行移动
+        QPointF scenePos = drawArea->mapToScene(event->pos());
+        QPointF delta = scenePos - QPointF(m_dragStartPosition);
+        
+        // 只有当移动距离足够大时才创建移动命令
+        if (delta.manhattanLength() > 3.0) {  // 设置一个小的阈值，避免意外的微小移动
+            SelectionCommand* moveCommand = createMoveCommand(drawArea, delta);
+            if (moveCommand) {
+                CommandManager::getInstance().executeCommand(moveCommand);
             }
         }
+    } else if (m_isRotating) {
+        // 结束旋转
+        m_isRotating = false;
         
-        m_isDragging = false;
-        return;
+        // 创建旋转命令
+        // TODO: 实现旋转命令
+    } else if (m_isScaling) {
+        // 结束缩放
+        m_isScaling = false;
+        
+        // 创建缩放命令
+        // TODO: 实现缩放命令
     }
     
-    // 如果正在旋转或缩放
-    if (m_isRotating || m_isScaling) {
-        // 这里可以添加旋转或缩放完成后的命令
-        // 暂时省略
-        
-        m_isRotating = false;
-        m_isScaling = false;
-        m_activeHandle = GraphicItem::None;
-        
-        // 恢复默认光标
-        QApplication::restoreOverrideCursor();
-        return;
-    }
+    // 重置操作标志和光标
+    m_activeHandle = GraphicItem::None;
+    resetCursor(drawArea);
 }
 
 void EditState::keyPressEvent(DrawArea* drawArea, QKeyEvent* event)
 {
-    // 处理Delete键 - 删除选中的图形项
     if (event->key() == Qt::Key_Delete) {
-        QList<QGraphicsItem*> selectedItems = drawArea->scene()->selectedItems();
-        if (!selectedItems.isEmpty()) {
-            // 创建删除命令并执行
-            SelectionCommand* deleteCmd = createDeleteCommand(drawArea);
-            if (deleteCmd) {
-                // CommandManager::getInstance()->executeCommand(deleteCmd);
-                delete deleteCmd; // 暂时直接删除，实际应该由命令管理器管理
-            }
+        // 删除选中的图形
+        SelectionCommand* command = createDeleteCommand(drawArea);
+        if (command) {
+            // 直接使用CommandManager的单例模式而不是从DrawArea获取
+            CommandManager::getInstance().executeCommand(command);
+            Logger::info("EditState: 执行删除命令");
         }
-        event->accept();
-    }
-    // 处理Escape键 - 清除选择
-    else if (event->key() == Qt::Key_Escape) {
-        m_selectionManager->clearSelection();
-        drawArea->scene()->clearSelection();
-        event->accept();
-    }
-    // 处理剪切、复制、粘贴
-    else if (event->key() == Qt::Key_C && event->modifiers() & Qt::ControlModifier) {
-        // Ctrl+C: 复制
+    } else if (event->key() == Qt::Key_C && event->modifiers() == Qt::ControlModifier) {
+        // 复制选中的图形
         drawArea->copySelectedItems();
-        event->accept();
-    }
-    else if (event->key() == Qt::Key_V && event->modifiers() & Qt::ControlModifier) {
-        // Ctrl+V: 粘贴
+        Logger::info("EditState: 复制选中的图形");
+    } else if (event->key() == Qt::Key_V && event->modifiers() == Qt::ControlModifier) {
+        // 粘贴图形
         drawArea->pasteItems();
-        event->accept();
-    }
-    else if (event->key() == Qt::Key_X && event->modifiers() & Qt::ControlModifier) {
-        // Ctrl+X: 剪切
+        Logger::info("EditState: 粘贴图形");
+    } else if (event->key() == Qt::Key_X && event->modifiers() == Qt::ControlModifier) {
+        // 剪切选中的图形
         drawArea->cutSelectedItems();
-        event->accept();
+        Logger::info("EditState: 剪切选中的图形");
     }
 }
 
 void EditState::paintEvent(DrawArea* drawArea, QPainter* painter)
 {
-    // 由选择管理器绘制选择区域和控制点
-    m_selectionManager->paintEvent(drawArea, painter);
+    // 在EditorState中不直接绘制，而是依赖DrawArea的drawForeground来绘制选择控制点
+    // 这个方法可以为空，或者用于绘制其他特殊的编辑状态视觉效果
 }
 
 // 更新鼠标样式
@@ -485,10 +551,15 @@ void EditState::handleItemScaling(DrawArea* drawArea, const QPointF& pos, Graphi
 // 创建移动命令
 SelectionCommand* EditState::createMoveCommand(DrawArea* drawArea, const QPointF& offset)
 {
+    // 如果偏移量太小，不创建命令
+    if (offset.manhattanLength() < 3.0) {
+        return nullptr;
+    }
+    
     QList<QGraphicsItem*> selectedItems;
     
-    if (m_selectionManager->isDraggingSelection()) {
-        selectedItems = m_selectionManager->getSelectedItems();
+    if (getSelectionManager(drawArea)->isDraggingSelection()) {
+        selectedItems = getSelectionManager(drawArea)->getSelectedItems();
     } else {
         selectedItems = drawArea->scene()->selectedItems();
     }
@@ -518,33 +589,111 @@ SelectionCommand* EditState::createDeleteCommand(DrawArea* drawArea)
     return deleteCmd;
 }
 
-// 创建裁剪命令
-SelectionCommand* EditState::createClipCommand(DrawArea* drawArea)
+// 创建样式变更命令
+StyleChangeCommand* EditState::createStyleChangeCommand(DrawArea* drawArea, 
+                                                     StyleChangeCommand::StylePropertyType propertyType)
 {
-    if (!m_selectionManager->isSelectionValid()) {
+    QList<QGraphicsItem*> selectedItems = drawArea->scene()->selectedItems();
+    
+    if (selectedItems.isEmpty()) {
+        Logger::debug("EditState: 没有选中的图形项，无法创建样式变更命令");
         return nullptr;
     }
     
-    QRectF selectionRect = m_selectionManager->getSelectionRect();
-    QList<QGraphicsItem*> originalItems = drawArea->scene()->items(selectionRect);
+    // 直接使用QList而不是转换为std::vector
+    StyleChangeCommand* styleCmd = new StyleChangeCommand(drawArea, selectedItems, propertyType);
     
-    // 过滤掉非图形项
-    QList<QGraphicsItem*> graphicItems;
-    for (QGraphicsItem* item : originalItems) {
-        if (dynamic_cast<GraphicItem*>(item)) {
-            graphicItems.append(item);
-        }
+    Logger::debug(QString("EditState: 创建样式变更命令 - 选中项数量: %1, 属性类型: %2")
+             .arg(selectedItems.size())
+             .arg(static_cast<int>(propertyType)));
+    
+    return styleCmd;
+}
+
+// 应用画笔颜色变更
+void EditState::applyPenColorChange(const QColor &color)
+{
+    if (!m_drawArea) {
+        Logger::warning("EditState::applyPenColorChange: DrawArea为空");
+        return;
     }
     
-    if (graphicItems.isEmpty()) {
+    QList<QGraphicsItem *> selectedItems = m_drawArea->scene()->selectedItems();
+    if (selectedItems.isEmpty()) {
+        Logger::warning("EditState::applyPenColorChange: 没有选中的图形项");
+        return;
+    }
+    
+    Logger::debug(QString("EditState::applyPenColorChange: 选中了 %1 个图形项").arg(selectedItems.size()));
+    
+    // 创建风格变更命令
+    auto command = new StyleChangeCommand(m_drawArea,
+                                         selectedItems,
+                                         StyleChangeCommand::PenColor);
+    command->setNewPenColor(color);
+    
+    CommandManager::getInstance().executeCommand(command);
+    Logger::info(QString("EditState::applyPenColorChange: 成功将颜色更改为 %1").arg(color.name()));
+}
+
+// 应用画笔宽度变更
+void EditState::applyPenWidthChange(qreal width)
+{
+    if (!m_drawArea) {
+        Logger::warning("EditState::applyPenWidthChange: DrawArea为空");
+        return;
+    }
+    
+    QList<QGraphicsItem *> selectedItems = m_drawArea->scene()->selectedItems();
+    if (selectedItems.isEmpty()) {
+        Logger::warning("EditState::applyPenWidthChange: 没有选中的图形项");
+        return;
+    }
+    
+    Logger::debug(QString("EditState::applyPenWidthChange: 选中了 %1 个图形项").arg(selectedItems.size()));
+    
+    // 创建风格变更命令
+    auto command = new StyleChangeCommand(m_drawArea,
+                                         selectedItems,
+                                         StyleChangeCommand::PenWidth);
+    command->setNewPenWidth(width);
+    
+    CommandManager::getInstance().executeCommand(command);
+    Logger::info(QString("EditState::applyPenWidthChange: 成功将线宽更改为 %1").arg(width));
+}
+
+// 应用画刷颜色变更
+void EditState::applyBrushColorChange(const QColor &color)
+{
+    if (!m_drawArea) {
+        Logger::warning("EditState::applyBrushColorChange: DrawArea为空");
+        return;
+    }
+    
+    auto drawArea = m_drawArea;
+    QList<QGraphicsItem *> selectedItems = drawArea->scene()->selectedItems();
+    if (selectedItems.isEmpty()) {
+        Logger::warning("EditState::applyBrushColorChange: 没有选中的图形项");
+        return;
+    }
+    
+    Logger::debug(QString("EditState::applyBrushColorChange: 选中了 %1 个图形项").arg(selectedItems.size()));
+    
+    StyleChangeCommand* command = new StyleChangeCommand(drawArea,
+                                       selectedItems,
+                                       StyleChangeCommand::BrushColor);
+    command->setNewBrushColor(color);
+    
+    CommandManager::getInstance().executeCommand(command);
+    Logger::info(QString("EditState::applyBrushColorChange: 成功将填充颜色更改为 %1").arg(color.name()));
+}
+
+// 添加新的辅助方法来获取SelectionManager
+SelectionManager* EditState::getSelectionManager(DrawArea* drawArea) const
+{
+    if (!drawArea) {
+        Logger::warning("EditState::getSelectionManager: 传入的DrawArea为空");
         return nullptr;
     }
-    
-    // 使用裁剪器执行裁剪
-    QList<QGraphicsItem*> clippedItems = m_graphicsClipper->clipItemsWithRect(drawArea, selectionRect);
-    
-    SelectionCommand* clipCmd = new SelectionCommand(drawArea, SelectionCommand::ClipSelection);
-    clipCmd->setClipInfo(graphicItems, clippedItems);
-    
-    return clipCmd;
+    return drawArea->getSelectionManager();
 } 

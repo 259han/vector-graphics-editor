@@ -1,0 +1,783 @@
+
+=== Log started at 2025-04-07 22:09:36 ===
+=== Log directory: F:/program/claudegraph/logs ===
+[2025-04-07 22:09:36.388] [INFO] 应用程序启动
+[2025-04-07 22:09:36.394] [DEBUG] DrawArea::setEditState: 开始切换到编辑状态
+[2025-04-07 22:09:36.397] [DEBUG] DrawArea::setEditState: 创建新的编辑状态
+[2025-04-07 22:09:36.397] [DEBUG] 创建新的编辑器状态
+[2025-04-07 22:09:36.397] [INFO] EditState: 创建编辑状态
+[2025-04-07 22:09:36.404] [DEBUG] DrawArea::setEditState: 编辑状态已创建
+[2025-04-07 22:09:36.405] [DEBUG] DrawArea::setEditState: 通知编辑状态已进入
+[2025-04-07 22:09:36.405] [DEBUG] EditState::onEnterState: 开始初始化编辑状态
+[2025-04-07 22:09:36.411] [DEBUG] EditState::onEnterState: 设置了 0 个图形项为可选择状态
+[2025-04-07 22:09:36.422] [DEBUG] EditState::onEnterState: 选择管理器已初始化
+[2025-04-07 22:09:36.427] [INFO] EditState::onEnterState: 编辑状态初始化完成
+[2025-04-07 22:09:36.430] [DEBUG] DrawArea::setEditState: 编辑状态初始化完成
+[2025-04-07 22:09:36.430] [DEBUG] DrawArea::setEditState: 设置场景中的图形项为可选择状态
+[2025-04-07 22:09:36.430] [DEBUG] DrawArea::setEditState: 已设置 0 个图形项为可选择状态
+[2025-04-07 22:09:36.439] [DEBUG] DrawArea::setEditState: 切换到编辑状态完成
+[2025-04-07 22:09:36.448] [INFO] CommandManager: 初始化
+[2025-04-07 22:09:36.548] [INFO] 主窗口显示完成
+[2025-04-07 22:09:38.402] [INFO] EditState: 退出编辑状态
+[2025-04-07 22:09:38.402] [INFO] EditState: 销毁编辑状态
+[2025-04-07 22:09:38.402] [DEBUG] 创建新的编辑器状态
+[2025-04-07 22:09:38.402] [INFO] DrawState: 创建绘制状态，图形类型: 1
+[2025-04-07 22:09:38.410] [INFO] DrawState: 进入绘制状态，当前图形类型: 1
+[2025-04-07 22:09:38.410] [DEBUG] DrawState: 设置线条颜色为 #0000ff, 线宽为 2
+[2025-04-07 22:09:38.653] [DEBUG] DrawState: 开始绘制 - 起点: (-531, -302)
+[2025-04-07 22:09:39.015] [DEBUG] DrawState::createFinalItem: 开始创建图形项
+[2025-04-07 22:09:39.021] [DEBUG] DrawState::createFinalItem: 起点: (-531, -302), 终点: (-459, -58)
+[2025-04-07 22:09:39.025] [DEBUG] DrawState::createFinalItem: 创建命令对象，图形类型: 1
+[2025-04-07 22:09:39.027] [DEBUG] CreateGraphicCommand: 创建图形命令 - 类型: 1, 点数: 2
+[2025-04-07 22:09:39.032] [DEBUG] DrawState::createFinalItem: 执行命令
+[2025-04-07 22:09:39.033] [DEBUG] CreateGraphicCommand::execute: 开始执行创建图形命令
+[2025-04-07 22:09:39.036] [DEBUG] CreateGraphicCommand::execute: 创建图形项 - 类型: 1, 点数: 2
+[2025-04-07 22:09:39.041] [DEBUG] CreateGraphicCommand::execute: 设置图形样式完成
+[2025-04-07 22:09:39.044] [DEBUG] CreateGraphicCommand::execute: 设置图形标志完成
+[2025-04-07 22:09:39.049] [DEBUG] CreateGraphicCommand::execute: 将图形项添加到场景, 指针: 1444294191552
+[2025-04-07 22:09:39.052] [INFO] CreateGraphicCommand::execute: 创建图形命令执行成功 - 类型: 1
+[2025-04-07 22:09:39.054] [DEBUG] DrawState::createFinalItem: 图形项创建成功 ID: 1444294191552
+[2025-04-07 22:09:39.752] [DEBUG] DrawState: 开始绘制 - 起点: (-181, -315)
+[2025-04-07 22:09:40.119] [DEBUG] DrawState::createFinalItem: 开始创建图形项
+[2025-04-07 22:09:40.119] [DEBUG] DrawState::createFinalItem: 起点: (-181, -315), 终点: (-182, 21)
+[2025-04-07 22:09:40.127] [DEBUG] DrawState::createFinalItem: 创建命令对象，图形类型: 1
+[2025-04-07 22:09:40.127] [DEBUG] CreateGraphicCommand: 创建图形命令 - 类型: 1, 点数: 2
+[2025-04-07 22:09:40.127] [DEBUG] DrawState::createFinalItem: 执行命令
+[2025-04-07 22:09:40.136] [DEBUG] CreateGraphicCommand::execute: 开始执行创建图形命令
+[2025-04-07 22:09:40.136] [DEBUG] CreateGraphicCommand::execute: 创建图形项 - 类型: 1, 点数: 2
+[2025-04-07 22:09:40.144] [DEBUG] CreateGraphicCommand::execute: 设置图形样式完成
+[2025-04-07 22:09:40.144] [DEBUG] CreateGraphicCommand::execute: 设置图形标志完成
+[2025-04-07 22:09:40.144] [DEBUG] CreateGraphicCommand::execute: 将图形项添加到场景, 指针: 1444294192992
+[2025-04-07 22:09:40.152] [INFO] CreateGraphicCommand::execute: 创建图形命令执行成功 - 类型: 1
+[2025-04-07 22:09:40.152] [DEBUG] DrawState::createFinalItem: 图形项创建成功 ID: 1444294192992
+[2025-04-07 22:09:40.366] [DEBUG] DrawState: 开始绘制 - 起点: (-313, -206)
+[2025-04-07 22:09:40.663] [DEBUG] DrawState::createFinalItem: 开始创建图形项
+[2025-04-07 22:09:40.663] [DEBUG] DrawState::createFinalItem: 起点: (-313, -206), 终点: (197, -61)
+[2025-04-07 22:09:40.668] [DEBUG] DrawState::createFinalItem: 创建命令对象，图形类型: 1
+[2025-04-07 22:09:40.668] [DEBUG] CreateGraphicCommand: 创建图形命令 - 类型: 1, 点数: 2
+[2025-04-07 22:09:40.668] [DEBUG] DrawState::createFinalItem: 执行命令
+[2025-04-07 22:09:40.677] [DEBUG] CreateGraphicCommand::execute: 开始执行创建图形命令
+[2025-04-07 22:09:40.677] [DEBUG] CreateGraphicCommand::execute: 创建图形项 - 类型: 1, 点数: 2
+[2025-04-07 22:09:40.685] [DEBUG] CreateGraphicCommand::execute: 设置图形样式完成
+[2025-04-07 22:09:40.688] [DEBUG] CreateGraphicCommand::execute: 设置图形标志完成
+[2025-04-07 22:09:40.688] [DEBUG] CreateGraphicCommand::execute: 将图形项添加到场景, 指针: 1444294195072
+[2025-04-07 22:09:40.693] [INFO] CreateGraphicCommand::execute: 创建图形命令执行成功 - 类型: 1
+[2025-04-07 22:09:40.693] [DEBUG] DrawState::createFinalItem: 图形项创建成功 ID: 1444294195072
+[2025-04-07 22:09:40.872] [DEBUG] DrawState: 开始绘制 - 起点: (222, -278)
+[2025-04-07 22:09:41.153] [DEBUG] DrawState::createFinalItem: 开始创建图形项
+[2025-04-07 22:09:41.153] [DEBUG] DrawState::createFinalItem: 起点: (222, -278), 终点: (-63, 137)
+[2025-04-07 22:09:41.161] [DEBUG] DrawState::createFinalItem: 创建命令对象，图形类型: 1
+[2025-04-07 22:09:41.161] [DEBUG] CreateGraphicCommand: 创建图形命令 - 类型: 1, 点数: 2
+[2025-04-07 22:09:41.161] [DEBUG] DrawState::createFinalItem: 执行命令
+[2025-04-07 22:09:41.169] [DEBUG] CreateGraphicCommand::execute: 开始执行创建图形命令
+[2025-04-07 22:09:41.169] [DEBUG] CreateGraphicCommand::execute: 创建图形项 - 类型: 1, 点数: 2
+[2025-04-07 22:09:41.169] [DEBUG] CreateGraphicCommand::execute: 设置图形样式完成
+[2025-04-07 22:09:41.178] [DEBUG] CreateGraphicCommand::execute: 设置图形标志完成
+[2025-04-07 22:09:41.178] [DEBUG] CreateGraphicCommand::execute: 将图形项添加到场景, 指针: 1444294195552
+[2025-04-07 22:09:41.178] [INFO] CreateGraphicCommand::execute: 创建图形命令执行成功 - 类型: 1
+[2025-04-07 22:09:41.186] [DEBUG] DrawState::createFinalItem: 图形项创建成功 ID: 1444294195552
+[2025-04-07 22:09:41.366] [DEBUG] DrawState: 开始绘制 - 起点: (-340, -53)
+[2025-04-07 22:09:41.648] [DEBUG] DrawState::createFinalItem: 开始创建图形项
+[2025-04-07 22:09:41.648] [DEBUG] DrawState::createFinalItem: 起点: (-340, -53), 终点: (222, 22)
+[2025-04-07 22:09:41.652] [DEBUG] DrawState::createFinalItem: 创建命令对象，图形类型: 1
+[2025-04-07 22:09:41.652] [DEBUG] CreateGraphicCommand: 创建图形命令 - 类型: 1, 点数: 2
+[2025-04-07 22:09:41.660] [DEBUG] DrawState::createFinalItem: 执行命令
+[2025-04-07 22:09:41.664] [DEBUG] CreateGraphicCommand::execute: 开始执行创建图形命令
+[2025-04-07 22:09:41.664] [DEBUG] CreateGraphicCommand::execute: 创建图形项 - 类型: 1, 点数: 2
+[2025-04-07 22:09:41.669] [DEBUG] CreateGraphicCommand::execute: 设置图形样式完成
+[2025-04-07 22:09:41.669] [DEBUG] CreateGraphicCommand::execute: 设置图形标志完成
+[2025-04-07 22:09:41.669] [DEBUG] CreateGraphicCommand::execute: 将图形项添加到场景, 指针: 1444294192512
+[2025-04-07 22:09:41.680] [INFO] CreateGraphicCommand::execute: 创建图形命令执行成功 - 类型: 1
+[2025-04-07 22:09:41.680] [DEBUG] DrawState::createFinalItem: 图形项创建成功 ID: 1444294192512
+[2025-04-07 22:09:41.873] [DEBUG] DrawState: 开始绘制 - 起点: (132, 208)
+[2025-04-07 22:09:42.177] [DEBUG] DrawState::createFinalItem: 开始创建图形项
+[2025-04-07 22:09:42.177] [DEBUG] DrawState::createFinalItem: 起点: (132, 208), 终点: (-19, -282)
+[2025-04-07 22:09:42.185] [DEBUG] DrawState::createFinalItem: 创建命令对象，图形类型: 1
+[2025-04-07 22:09:42.189] [DEBUG] CreateGraphicCommand: 创建图形命令 - 类型: 1, 点数: 2
+[2025-04-07 22:09:42.189] [DEBUG] DrawState::createFinalItem: 执行命令
+[2025-04-07 22:09:42.193] [DEBUG] CreateGraphicCommand::execute: 开始执行创建图形命令
+[2025-04-07 22:09:42.193] [DEBUG] CreateGraphicCommand::execute: 创建图形项 - 类型: 1, 点数: 2
+[2025-04-07 22:09:42.202] [DEBUG] CreateGraphicCommand::execute: 设置图形样式完成
+[2025-04-07 22:09:42.202] [DEBUG] CreateGraphicCommand::execute: 设置图形标志完成
+[2025-04-07 22:09:42.202] [DEBUG] CreateGraphicCommand::execute: 将图形项添加到场景, 指针: 1444294191712
+[2025-04-07 22:09:42.210] [INFO] CreateGraphicCommand::execute: 创建图形命令执行成功 - 类型: 1
+[2025-04-07 22:09:42.210] [DEBUG] DrawState::createFinalItem: 图形项创建成功 ID: 1444294191712
+[2025-04-07 22:09:42.390] [DEBUG] DrawState: 开始绘制 - 起点: (-337, -269)
+[2025-04-07 22:09:42.741] [DEBUG] DrawState::createFinalItem: 开始创建图形项
+[2025-04-07 22:09:42.741] [DEBUG] DrawState::createFinalItem: 起点: (-337, -269), 终点: (503, -175)
+[2025-04-07 22:09:42.741] [DEBUG] DrawState::createFinalItem: 创建命令对象，图形类型: 1
+[2025-04-07 22:09:42.749] [DEBUG] CreateGraphicCommand: 创建图形命令 - 类型: 1, 点数: 2
+[2025-04-07 22:09:42.749] [DEBUG] DrawState::createFinalItem: 执行命令
+[2025-04-07 22:09:42.749] [DEBUG] CreateGraphicCommand::execute: 开始执行创建图形命令
+[2025-04-07 22:09:42.758] [DEBUG] CreateGraphicCommand::execute: 创建图形项 - 类型: 1, 点数: 2
+[2025-04-07 22:09:42.758] [DEBUG] CreateGraphicCommand::execute: 设置图形样式完成
+[2025-04-07 22:09:42.758] [DEBUG] CreateGraphicCommand::execute: 设置图形标志完成
+[2025-04-07 22:09:42.766] [DEBUG] CreateGraphicCommand::execute: 将图形项添加到场景, 指针: 1444294190432
+[2025-04-07 22:09:42.766] [INFO] CreateGraphicCommand::execute: 创建图形命令执行成功 - 类型: 1
+[2025-04-07 22:09:42.775] [DEBUG] DrawState::createFinalItem: 图形项创建成功 ID: 1444294190432
+[2025-04-07 22:09:42.991] [DEBUG] DrawState: 开始绘制 - 起点: (88, -386)
+[2025-04-07 22:09:43.308] [DEBUG] DrawState::createFinalItem: 开始创建图形项
+[2025-04-07 22:09:43.312] [DEBUG] DrawState::createFinalItem: 起点: (88, -386), 终点: (-335, 334)
+[2025-04-07 22:09:43.312] [DEBUG] DrawState::createFinalItem: 创建命令对象，图形类型: 1
+[2025-04-07 22:09:43.312] [DEBUG] CreateGraphicCommand: 创建图形命令 - 类型: 1, 点数: 2
+[2025-04-07 22:09:43.320] [DEBUG] DrawState::createFinalItem: 执行命令
+[2025-04-07 22:09:43.320] [DEBUG] CreateGraphicCommand::execute: 开始执行创建图形命令
+[2025-04-07 22:09:43.320] [DEBUG] CreateGraphicCommand::execute: 创建图形项 - 类型: 1, 点数: 2
+[2025-04-07 22:09:43.330] [DEBUG] CreateGraphicCommand::execute: 设置图形样式完成
+[2025-04-07 22:09:43.330] [DEBUG] CreateGraphicCommand::execute: 设置图形标志完成
+[2025-04-07 22:09:43.333] [DEBUG] CreateGraphicCommand::execute: 将图形项添加到场景, 指针: 1444294194272
+[2025-04-07 22:09:43.336] [INFO] CreateGraphicCommand::execute: 创建图形命令执行成功 - 类型: 1
+[2025-04-07 22:09:43.336] [DEBUG] DrawState::createFinalItem: 图形项创建成功 ID: 1444294194272
+[2025-04-07 22:09:46.121] [INFO] CreateGraphicCommand: 撤销创建图形命令 - 类型: 1
+[2025-04-07 22:09:47.570] [INFO] CreateGraphicCommand: 撤销创建图形命令 - 类型: 1
+[2025-04-07 22:09:47.840] [INFO] CreateGraphicCommand: 撤销创建图形命令 - 类型: 1
+[2025-04-07 22:09:47.995] [INFO] CreateGraphicCommand: 撤销创建图形命令 - 类型: 1
+[2025-04-07 22:09:48.140] [INFO] CreateGraphicCommand: 撤销创建图形命令 - 类型: 1
+[2025-04-07 22:09:48.300] [INFO] CreateGraphicCommand: 撤销创建图形命令 - 类型: 1
+[2025-04-07 22:09:48.426] [INFO] CreateGraphicCommand: 撤销创建图形命令 - 类型: 1
+[2025-04-07 22:09:48.564] [INFO] CreateGraphicCommand: 撤销创建图形命令 - 类型: 1
+[2025-04-07 22:09:49.759] [INFO] DrawState::onExitState: 开始退出绘制状态
+[2025-04-07 22:09:49.762] [DEBUG] DrawState::onExitState: 重置鼠标光标
+[2025-04-07 22:09:49.762] [DEBUG] DrawState::onExitState: 更新场景
+[2025-04-07 22:09:49.767] [INFO] DrawState::onExitState: 绘制状态退出完成
+[2025-04-07 22:09:49.767] [DEBUG] 创建新的编辑器状态
+[2025-04-07 22:09:49.767] [INFO] DrawState: 创建绘制状态，图形类型: 3
+[2025-04-07 22:09:49.776] [INFO] DrawState: 进入绘制状态，当前图形类型: 3
+[2025-04-07 22:09:49.776] [DEBUG] DrawState: 设置线条颜色为 #0000ff, 线宽为 2
+[2025-04-07 22:09:50.081] [DEBUG] DrawState: 开始绘制 - 起点: (-533, -304)
+[2025-04-07 22:09:50.328] [DEBUG] DrawState::createFinalItem: 开始创建图形项
+[2025-04-07 22:09:50.335] [DEBUG] DrawState::createFinalItem: 起点: (-533, -304), 终点: (-328, -125)
+[2025-04-07 22:09:50.335] [DEBUG] DrawState::createFinalItem: 创建命令对象，图形类型: 3
+[2025-04-07 22:09:50.335] [DEBUG] CreateGraphicCommand: 创建图形命令 - 类型: 3, 点数: 2
+[2025-04-07 22:09:50.344] [DEBUG] DrawState::createFinalItem: 执行命令
+[2025-04-07 22:09:50.344] [DEBUG] CreateGraphicCommand::execute: 开始执行创建图形命令
+[2025-04-07 22:09:50.344] [DEBUG] CreateGraphicCommand::execute: 创建图形项 - 类型: 3, 点数: 2
+[2025-04-07 22:09:50.351] [DEBUG] CreateGraphicCommand::execute: 设置图形样式完成
+[2025-04-07 22:09:50.351] [DEBUG] CreateGraphicCommand::execute: 设置图形标志完成
+[2025-04-07 22:09:50.357] [DEBUG] CreateGraphicCommand::execute: 将图形项添加到场景, 指针: 1444294194592
+[2025-04-07 22:09:50.359] [INFO] CreateGraphicCommand::execute: 创建图形命令执行成功 - 类型: 3
+[2025-04-07 22:09:50.359] [DEBUG] CreateGraphicCommand: 销毁图形创建命令
+[2025-04-07 22:09:50.359] [DEBUG] CreateGraphicCommand: 销毁图形创建命令
+[2025-04-07 22:09:50.367] [DEBUG] CreateGraphicCommand: 销毁图形创建命令
+[2025-04-07 22:09:50.367] [DEBUG] CreateGraphicCommand: 销毁图形创建命令
+[2025-04-07 22:09:50.367] [DEBUG] CreateGraphicCommand: 销毁图形创建命令
+[2025-04-07 22:09:50.367] [DEBUG] CreateGraphicCommand: 销毁图形创建命令
+[2025-04-07 22:09:50.376] [DEBUG] CreateGraphicCommand: 销毁图形创建命令
+[2025-04-07 22:09:50.377] [DEBUG] CreateGraphicCommand: 销毁图形创建命令
+[2025-04-07 22:09:50.377] [DEBUG] DrawState::createFinalItem: 图形项创建成功 ID: 1444294194592
+[2025-04-07 22:09:50.996] [INFO] CreateGraphicCommand: 撤销创建图形命令 - 类型: 3
+[2025-04-07 22:09:51.896] [DEBUG] DrawState: 开始绘制 - 起点: (-148, -118)
+[2025-04-07 22:09:52.543] [DEBUG] DrawState::createFinalItem: 开始创建图形项
+[2025-04-07 22:09:52.546] [DEBUG] DrawState::createFinalItem: 起点: (-148, -118), 终点: (56, -8)
+[2025-04-07 22:09:52.548] [DEBUG] DrawState::createFinalItem: 创建命令对象，图形类型: 3
+[2025-04-07 22:09:52.551] [DEBUG] CreateGraphicCommand: 创建图形命令 - 类型: 3, 点数: 2
+[2025-04-07 22:09:52.551] [DEBUG] DrawState::createFinalItem: 执行命令
+[2025-04-07 22:09:52.551] [DEBUG] CreateGraphicCommand::execute: 开始执行创建图形命令
+[2025-04-07 22:09:52.560] [DEBUG] CreateGraphicCommand::execute: 创建图形项 - 类型: 3, 点数: 2
+[2025-04-07 22:09:52.560] [DEBUG] CreateGraphicCommand::execute: 设置图形样式完成
+[2025-04-07 22:09:52.568] [DEBUG] CreateGraphicCommand::execute: 设置图形标志完成
+[2025-04-07 22:09:52.568] [DEBUG] CreateGraphicCommand::execute: 将图形项添加到场景, 指针: 1444294194752
+[2025-04-07 22:09:52.568] [INFO] CreateGraphicCommand::execute: 创建图形命令执行成功 - 类型: 3
+[2025-04-07 22:09:52.576] [DEBUG] CreateGraphicCommand: 销毁图形创建命令
+[2025-04-07 22:09:52.576] [DEBUG] DrawState::createFinalItem: 图形项创建成功 ID: 1444294194752
+[2025-04-07 22:09:53.265] [INFO] DrawState::onExitState: 开始退出绘制状态
+[2025-04-07 22:09:53.268] [DEBUG] DrawState::onExitState: 重置鼠标光标
+[2025-04-07 22:09:53.271] [DEBUG] DrawState::onExitState: 更新场景
+[2025-04-07 22:09:53.271] [INFO] DrawState::onExitState: 绘制状态退出完成
+[2025-04-07 22:09:53.276] [DEBUG] 创建新的编辑器状态
+[2025-04-07 22:09:53.276] [INFO] DrawState: 创建绘制状态，图形类型: 2
+[2025-04-07 22:09:53.276] [INFO] DrawState: 进入绘制状态，当前图形类型: 2
+[2025-04-07 22:09:53.284] [DEBUG] DrawState: 设置线条颜色为 #0000ff, 线宽为 2
+[2025-04-07 22:09:54.632] [DEBUG] DrawState: 开始绘制 - 起点: (-241, -150)
+[2025-04-07 22:09:57.778] [DEBUG] DrawState::createFinalItem: 开始创建图形项
+[2025-04-07 22:09:57.778] [DEBUG] DrawState::createFinalItem: 起点: (-241, -150), 终点: (-17, -342)
+[2025-04-07 22:09:57.784] [DEBUG] DrawState::createFinalItem: 创建命令对象，图形类型: 2
+[2025-04-07 22:09:57.786] [DEBUG] CreateGraphicCommand: 创建图形命令 - 类型: 2, 点数: 2
+[2025-04-07 22:09:57.786] [DEBUG] DrawState::createFinalItem: 执行命令
+[2025-04-07 22:09:57.793] [DEBUG] CreateGraphicCommand::execute: 开始执行创建图形命令
+[2025-04-07 22:09:57.793] [DEBUG] CreateGraphicCommand::execute: 创建图形项 - 类型: 2, 点数: 2
+[2025-04-07 22:09:57.801] [DEBUG] CreateGraphicCommand::execute: 设置图形样式完成
+[2025-04-07 22:09:57.802] [DEBUG] CreateGraphicCommand::execute: 设置图形标志完成
+[2025-04-07 22:09:57.802] [DEBUG] CreateGraphicCommand::execute: 将图形项添加到场景, 指针: 1444294193792
+[2025-04-07 22:09:57.809] [INFO] CreateGraphicCommand::execute: 创建图形命令执行成功 - 类型: 2
+[2025-04-07 22:09:57.809] [DEBUG] DrawState::createFinalItem: 图形项创建成功 ID: 1444294193792
+[2025-04-07 22:10:00.284] [INFO] DrawState::onExitState: 开始退出绘制状态
+[2025-04-07 22:10:00.284] [DEBUG] DrawState::onExitState: 重置鼠标光标
+[2025-04-07 22:10:00.295] [DEBUG] DrawState::onExitState: 更新场景
+[2025-04-07 22:10:00.296] [INFO] DrawState::onExitState: 绘制状态退出完成
+[2025-04-07 22:10:00.296] [DEBUG] 创建新的编辑器状态
+[2025-04-07 22:10:00.301] [DEBUG] FillState: 创建填充状态，颜色: #ff00ff00
+[2025-04-07 22:10:00.301] [INFO] FillState: 进入填充状态
+[2025-04-07 22:10:04.391] [DEBUG] FillState: 设置填充颜色为 #ff4e13ff RGBA(78,19,255,255)
+[2025-04-07 22:10:05.015] [DEBUG] FillState: 开始填充 - 位置: (-133, -69)
+[2025-04-07 22:10:05.115] [DEBUG] FillCommand: 创建填充命令 - 位置: (-133, -69), 颜色: #ff4e13ff
+[2025-04-07 22:10:05.182] [DEBUG] FillCommand: 填充完成，填充了 53365 个像素
+[2025-04-07 22:10:05.182] [INFO] FillCommand: 执行填充命令 - 填充了 53365 个像素
+[2025-04-07 22:10:05.182] [INFO] FillState: 执行填充命令 - 位置: (-133, -69), 颜色: #4e13ff
+[2025-04-07 22:10:07.468] [INFO] FillCommand: 撤销填充命令
+[2025-04-07 22:10:11.572] [DEBUG] FillCommand: 填充完成，填充了 53365 个像素
+[2025-04-07 22:10:11.576] [INFO] FillCommand: 执行填充命令 - 填充了 53365 个像素
+[2025-04-07 22:10:16.996] [DEBUG] FillState: 开始填充 - 位置: (-341, 35)
+[2025-04-07 22:10:17.086] [DEBUG] FillCommand: 创建填充命令 - 位置: (-341, 35), 颜色: #ff4e13ff
+[2025-04-07 22:10:17.836] [DEBUG] FillCommand: 填充完成，填充了 3901311 个像素
+[2025-04-07 22:10:17.842] [INFO] FillCommand: 执行填充命令 - 填充了 3901311 个像素
+[2025-04-07 22:10:17.844] [INFO] FillState: 执行填充命令 - 位置: (-341, 35), 颜色: #4e13ff
+[2025-04-07 22:10:19.276] [INFO] FillCommand: 撤销填充命令
+[2025-04-07 22:10:21.440] [INFO] FillState: 退出填充状态
+[2025-04-07 22:10:21.440] [DEBUG] 创建新的编辑器状态
+[2025-04-07 22:10:21.447] [INFO] DrawState: 创建绘制状态，图形类型: 1
+[2025-04-07 22:10:21.447] [INFO] DrawState: 进入绘制状态，当前图形类型: 1
+[2025-04-07 22:10:21.447] [DEBUG] DrawState: 设置线条颜色为 #0000ff, 线宽为 2
+[2025-04-07 22:10:22.089] [DEBUG] DrawState: 开始绘制 - 起点: (-539, -227)
+[2025-04-07 22:10:22.557] [DEBUG] DrawState::createFinalItem: 开始创建图形项
+[2025-04-07 22:10:22.557] [DEBUG] DrawState::createFinalItem: 起点: (-539, -227), 终点: (-235, 169)
+[2025-04-07 22:10:22.563] [DEBUG] DrawState::createFinalItem: 创建命令对象，图形类型: 1
+[2025-04-07 22:10:22.563] [DEBUG] CreateGraphicCommand: 创建图形命令 - 类型: 1, 点数: 2
+[2025-04-07 22:10:22.563] [DEBUG] DrawState::createFinalItem: 执行命令
+[2025-04-07 22:10:22.571] [DEBUG] CreateGraphicCommand::execute: 开始执行创建图形命令
+[2025-04-07 22:10:22.571] [DEBUG] CreateGraphicCommand::execute: 创建图形项 - 类型: 1, 点数: 2
+[2025-04-07 22:10:22.579] [DEBUG] CreateGraphicCommand::execute: 设置图形样式完成
+[2025-04-07 22:10:22.580] [DEBUG] CreateGraphicCommand::execute: 设置图形标志完成
+[2025-04-07 22:10:22.580] [DEBUG] CreateGraphicCommand::execute: 将图形项添加到场景, 指针: 1444294196832
+[2025-04-07 22:10:22.580] [INFO] CreateGraphicCommand::execute: 创建图形命令执行成功 - 类型: 1
+[2025-04-07 22:10:22.589] [DEBUG] FillCommand: 销毁填充命令
+[2025-04-07 22:10:22.589] [DEBUG] DrawState::createFinalItem: 图形项创建成功 ID: 1444294196832
+[2025-04-07 22:10:29.729] [INFO] CreateGraphicCommand: 撤销创建图形命令 - 类型: 1
+[2025-04-07 22:10:30.164] [INFO] FillCommand: 撤销填充命令
+[2025-04-07 22:10:32.396] [DEBUG] FillCommand: 填充完成，填充了 53365 个像素
+[2025-04-07 22:10:32.407] [INFO] FillCommand: 执行填充命令 - 填充了 53365 个像素
+[2025-04-07 22:10:32.836] [DEBUG] CreateGraphicCommand::execute: 开始执行创建图形命令
+[2025-04-07 22:10:32.838] [DEBUG] CreateGraphicCommand::execute: 将图形项添加到场景, 指针: 1444294196832
+[2025-04-07 22:10:32.838] [INFO] CreateGraphicCommand::execute: 创建图形命令执行成功 - 类型: 1
+[2025-04-07 22:10:33.932] [INFO] CreateGraphicCommand: 撤销创建图形命令 - 类型: 1
+[2025-04-07 22:10:34.229] [INFO] FillCommand: 撤销填充命令
+[2025-04-07 22:10:34.688] [DEBUG] FillCommand: 填充完成，填充了 53365 个像素
+[2025-04-07 22:10:34.693] [INFO] FillCommand: 执行填充命令 - 填充了 53365 个像素
+[2025-04-07 22:10:34.948] [DEBUG] CreateGraphicCommand::execute: 开始执行创建图形命令
+[2025-04-07 22:10:34.948] [DEBUG] CreateGraphicCommand::execute: 将图形项添加到场景, 指针: 1444294196832
+[2025-04-07 22:10:34.956] [INFO] CreateGraphicCommand::execute: 创建图形命令执行成功 - 类型: 1
+[2025-04-07 22:10:35.440] [INFO] CreateGraphicCommand: 撤销创建图形命令 - 类型: 1
+[2025-04-07 22:10:35.732] [INFO] FillCommand: 撤销填充命令
+[2025-04-07 22:10:36.138] [DEBUG] FillCommand: 填充完成，填充了 53365 个像素
+[2025-04-07 22:10:36.138] [INFO] FillCommand: 执行填充命令 - 填充了 53365 个像素
+[2025-04-07 22:10:36.412] [DEBUG] CreateGraphicCommand::execute: 开始执行创建图形命令
+[2025-04-07 22:10:36.414] [DEBUG] CreateGraphicCommand::execute: 将图形项添加到场景, 指针: 1444294196832
+[2025-04-07 22:10:36.414] [INFO] CreateGraphicCommand::execute: 创建图形命令执行成功 - 类型: 1
+[2025-04-07 22:10:37.180] [INFO] CreateGraphicCommand: 撤销创建图形命令 - 类型: 1
+[2025-04-07 22:10:37.491] [INFO] FillCommand: 撤销填充命令
+[2025-04-07 22:10:37.853] [DEBUG] FillCommand: 填充完成，填充了 53365 个像素
+[2025-04-07 22:10:37.861] [INFO] FillCommand: 执行填充命令 - 填充了 53365 个像素
+[2025-04-07 22:10:38.060] [DEBUG] CreateGraphicCommand::execute: 开始执行创建图形命令
+[2025-04-07 22:10:38.063] [DEBUG] CreateGraphicCommand::execute: 将图形项添加到场景, 指针: 1444294196832
+[2025-04-07 22:10:38.063] [INFO] CreateGraphicCommand::execute: 创建图形命令执行成功 - 类型: 1
+[2025-04-07 22:10:49.477] [INFO] DrawArea::clearGraphics: 开始清空场景
+[2025-04-07 22:10:49.479] [DEBUG] DrawArea::clearGraphics: 清除选择状态
+[2025-04-07 22:10:49.488] [DEBUG] DrawArea::clearGraphics: 准备清除 4 个项目
+[2025-04-07 22:10:49.488] [DEBUG] DrawArea::clearGraphics: 删除项目 1444294196832
+[2025-04-07 22:10:49.488] [DEBUG] DrawArea::clearGraphics: 删除项目 1444294193792
+[2025-04-07 22:10:49.495] [DEBUG] DrawArea::clearGraphics: 删除项目 1444294194752
+[2025-04-07 22:10:49.495] [DEBUG] DrawArea::clearGraphics: 删除项目 1444294607936
+[2025-04-07 22:10:49.495] [DEBUG] DrawArea::clearGraphics: 所有项目已清除
+[2025-04-07 22:10:49.504] [INFO] DrawArea::clearGraphics: 场景清空完成
+[2025-04-07 22:10:49.950] [DEBUG] CreateGraphicCommand: 销毁图形创建命令
+[2025-04-07 22:10:49.953] [DEBUG] CreateGraphicCommand: 销毁图形创建命令
+[2025-04-07 22:10:49.955] [DEBUG] FillCommand: 销毁填充命令
+[2025-04-07 22:10:49.957] [DEBUG] CreateGraphicCommand: 销毁图形创建命令
+
+=== Log started at 2025-04-07 22:11:04 ===
+=== Log directory: F:/program/claudegraph/logs ===
+[2025-04-07 22:11:04.526] [INFO] 应用程序启动
+[2025-04-07 22:11:04.526] [DEBUG] DrawArea::setEditState: 开始切换到编辑状态
+[2025-04-07 22:11:04.534] [DEBUG] DrawArea::setEditState: 创建新的编辑状态
+[2025-04-07 22:11:04.534] [DEBUG] 创建新的编辑器状态
+[2025-04-07 22:11:04.542] [INFO] EditState: 创建编辑状态
+[2025-04-07 22:11:04.542] [DEBUG] DrawArea::setEditState: 编辑状态已创建
+[2025-04-07 22:11:04.542] [DEBUG] DrawArea::setEditState: 通知编辑状态已进入
+[2025-04-07 22:11:04.550] [DEBUG] EditState::onEnterState: 开始初始化编辑状态
+[2025-04-07 22:11:04.550] [DEBUG] EditState::onEnterState: 设置了 0 个图形项为可选择状态
+[2025-04-07 22:11:04.558] [DEBUG] EditState::onEnterState: 选择管理器已初始化
+[2025-04-07 22:11:04.574] [INFO] EditState::onEnterState: 编辑状态初始化完成
+[2025-04-07 22:11:04.574] [DEBUG] DrawArea::setEditState: 编辑状态初始化完成
+[2025-04-07 22:11:04.574] [DEBUG] DrawArea::setEditState: 设置场景中的图形项为可选择状态
+[2025-04-07 22:11:04.582] [DEBUG] DrawArea::setEditState: 已设置 0 个图形项为可选择状态
+[2025-04-07 22:11:04.582] [DEBUG] DrawArea::setEditState: 切换到编辑状态完成
+[2025-04-07 22:11:04.876] [INFO] CommandManager: 初始化
+[2025-04-07 22:11:05.332] [INFO] 主窗口显示完成
+[2025-04-07 22:11:06.491] [INFO] EditState: 退出编辑状态
+[2025-04-07 22:11:06.492] [INFO] EditState: 销毁编辑状态
+[2025-04-07 22:11:06.492] [DEBUG] 创建新的编辑器状态
+[2025-04-07 22:11:06.501] [INFO] DrawState: 创建绘制状态，图形类型: 3
+[2025-04-07 22:11:06.502] [INFO] DrawState: 进入绘制状态，当前图形类型: 3
+[2025-04-07 22:11:06.508] [DEBUG] DrawState: 设置线条颜色为 #0000ff, 线宽为 2
+[2025-04-07 22:11:07.789] [DEBUG] DrawState: 开始绘制 - 起点: (-287, -216)
+[2025-04-07 22:11:08.470] [DEBUG] DrawState::createFinalItem: 开始创建图形项
+[2025-04-07 22:11:08.470] [DEBUG] DrawState::createFinalItem: 起点: (-287, -216), 终点: (-80, -112)
+[2025-04-07 22:11:08.478] [DEBUG] DrawState::createFinalItem: 创建命令对象，图形类型: 3
+[2025-04-07 22:11:08.483] [DEBUG] CreateGraphicCommand: 创建图形命令 - 类型: 3, 点数: 2
+[2025-04-07 22:11:08.486] [DEBUG] DrawState::createFinalItem: 执行命令
+[2025-04-07 22:11:08.486] [DEBUG] CreateGraphicCommand::execute: 开始执行创建图形命令
+[2025-04-07 22:11:08.495] [DEBUG] CreateGraphicCommand::execute: 创建图形项 - 类型: 3, 点数: 2
+[2025-04-07 22:11:08.503] [DEBUG] CreateGraphicCommand::execute: 设置图形样式完成
+[2025-04-07 22:11:08.503] [DEBUG] CreateGraphicCommand::execute: 设置图形标志完成
+[2025-04-07 22:11:08.512] [DEBUG] CreateGraphicCommand::execute: 将图形项添加到场景, 指针: 15011296
+[2025-04-07 22:11:08.512] [INFO] CreateGraphicCommand::execute: 创建图形命令执行成功 - 类型: 3
+[2025-04-07 22:11:08.519] [DEBUG] DrawState::createFinalItem: 图形项创建成功 ID: 15011296
+[2025-04-07 22:11:09.390] [INFO] DrawState::onExitState: 开始退出绘制状态
+[2025-04-07 22:11:09.395] [DEBUG] DrawState::onExitState: 重置鼠标光标
+[2025-04-07 22:11:09.395] [DEBUG] DrawState::onExitState: 更新场景
+[2025-04-07 22:11:09.404] [INFO] DrawState::onExitState: 绘制状态退出完成
+[2025-04-07 22:11:09.404] [DEBUG] 创建新的编辑器状态
+[2025-04-07 22:11:09.404] [DEBUG] FillState: 创建填充状态，颜色: #ff00ff00
+[2025-04-07 22:11:09.415] [INFO] FillState: 进入填充状态
+[2025-04-07 22:11:09.701] [DEBUG] FillState: 开始填充 - 位置: (-502, -66)
+[2025-04-07 22:11:09.807] [DEBUG] FillCommand: 创建填充命令 - 位置: (-501, -66), 颜色: #ff00ff00
+[2025-04-07 22:11:10.568] [DEBUG] FillCommand: 填充完成，填充了 3931432 个像素
+[2025-04-07 22:11:10.696] [INFO] FillCommand: 执行填充命令 - 填充了 3931432 个像素
+[2025-04-07 22:11:10.702] [INFO] FillState: 执行填充命令 - 位置: (-501, -66), 颜色: #00ff00
+[2025-04-07 22:11:13.282] [INFO] FillCommand: 撤销填充命令
+[2025-04-07 22:11:14.444] [INFO] FillState: 退出填充状态
+[2025-04-07 22:11:14.446] [DEBUG] 创建新的编辑器状态
+[2025-04-07 22:11:14.446] [INFO] DrawState: 创建绘制状态，图形类型: 5
+[2025-04-07 22:11:14.446] [INFO] DrawState: 进入绘制状态，当前图形类型: 5
+[2025-04-07 22:11:14.454] [DEBUG] DrawState: 设置线条颜色为 #0000ff, 线宽为 2
+[2025-04-07 22:11:14.694] [DEBUG] DrawState: 开始绘制 - 起点: (-581, -142)
+[2025-04-07 22:11:14.699] [DEBUG] DrawState: 添加贝塞尔曲线控制点 - 点: (-581, -142)
+[2025-04-07 22:11:15.056] [DEBUG] DrawState: 添加贝塞尔曲线控制点 - 点: (-523, 77)
+[2025-04-07 22:11:16.268] [DEBUG] DrawState: 添加贝塞尔曲线控制点 - 点: (-630, -221)
+[2025-04-07 22:11:17.067] [DEBUG] DrawState: 添加贝塞尔曲线控制点 - 点: (-253, 92)
+[2025-04-07 22:11:17.689] [DEBUG] DrawState: 添加贝塞尔曲线控制点 - 点: (57, -200)
+[2025-04-07 22:11:18.325] [DEBUG] DrawState: 添加贝塞尔曲线控制点 - 点: (219, 27)
+[2025-04-07 22:11:19.168] [DEBUG] DrawState: 添加贝塞尔曲线控制点 - 点: (304, -323)
+[2025-04-07 22:11:21.892] [DEBUG] DrawState: 添加贝塞尔曲线控制点 - 点: (306, 92)
+[2025-04-07 22:11:26.485] [INFO] DrawArea::clearGraphics: 开始清空场景
+[2025-04-07 22:11:26.489] [DEBUG] DrawArea::clearGraphics: 清除选择状态
+[2025-04-07 22:11:26.497] [DEBUG] DrawArea::clearGraphics: 准备清除 2 个项目
+[2025-04-07 22:11:26.497] [DEBUG] DrawArea::clearGraphics: 删除项目 14859760
+[2025-04-07 22:11:26.497] [DEBUG] DrawArea::clearGraphics: 删除项目 15011296
+[2025-04-07 22:11:26.497] [DEBUG] DrawArea::clearGraphics: 所有项目已清除
+[2025-04-07 22:11:26.509] [INFO] DrawArea::clearGraphics: 场景清空完成
+
+=== Log started at 2025-04-07 22:13:16 ===
+=== Log directory: F:/program/claudegraph/logs ===
+[2025-04-07 22:13:16.521] [INFO] 应用程序启动
+[2025-04-07 22:13:16.523] [DEBUG] DrawArea::setEditState: 开始切换到编辑状态
+[2025-04-07 22:13:16.527] [DEBUG] DrawArea::setEditState: 创建新的编辑状态
+[2025-04-07 22:13:16.529] [DEBUG] 创建新的编辑器状态
+[2025-04-07 22:13:16.530] [INFO] EditState: 创建编辑状态
+[2025-04-07 22:13:16.532] [DEBUG] DrawArea::setEditState: 编辑状态已创建
+[2025-04-07 22:13:16.533] [DEBUG] DrawArea::setEditState: 通知编辑状态已进入
+[2025-04-07 22:13:16.533] [DEBUG] EditState::onEnterState: 开始初始化编辑状态
+[2025-04-07 22:13:16.539] [DEBUG] EditState::onEnterState: 设置了 0 个图形项为可选择状态
+[2025-04-07 22:13:16.541] [DEBUG] EditState::onEnterState: 选择管理器已初始化
+[2025-04-07 22:13:16.554] [INFO] EditState::onEnterState: 编辑状态初始化完成
+[2025-04-07 22:13:16.557] [DEBUG] DrawArea::setEditState: 编辑状态初始化完成
+[2025-04-07 22:13:16.559] [DEBUG] DrawArea::setEditState: 设置场景中的图形项为可选择状态
+[2025-04-07 22:13:16.561] [DEBUG] DrawArea::setEditState: 已设置 0 个图形项为可选择状态
+[2025-04-07 22:13:16.564] [DEBUG] DrawArea::setEditState: 切换到编辑状态完成
+[2025-04-07 22:13:16.852] [INFO] CommandManager: 初始化
+[2025-04-07 22:13:17.300] [INFO] 主窗口显示完成
+[2025-04-07 22:13:19.889] [INFO] EditState: 退出编辑状态
+[2025-04-07 22:13:19.892] [INFO] EditState: 销毁编辑状态
+[2025-04-07 22:13:19.892] [DEBUG] 创建新的编辑器状态
+[2025-04-07 22:13:19.892] [INFO] DrawState: 创建绘制状态，图形类型: 5
+[2025-04-07 22:13:19.897] [INFO] DrawState: 进入绘制状态，当前图形类型: 5
+[2025-04-07 22:13:19.897] [DEBUG] DrawState: 设置线条颜色为 #0000ff, 线宽为 2
+[2025-04-07 22:13:20.350] [DEBUG] DrawState: 开始绘制 - 起点: (-609, -202)
+[2025-04-07 22:13:20.350] [DEBUG] DrawState: 添加贝塞尔曲线控制点 - 点: (-609, -202)
+[2025-04-07 22:13:21.959] [DEBUG] DrawState: 添加贝塞尔曲线控制点 - 点: (-485, 42)
+[2025-04-07 22:13:24.213] [DEBUG] DrawState: 添加贝塞尔曲线控制点 - 点: (-245, -216)
+[2025-04-07 22:13:30.556] [DEBUG] DrawState: 添加贝塞尔曲线控制点 - 点: (-45, -13)
+[2025-04-07 22:13:32.421] [DEBUG] DrawState: 添加贝塞尔曲线控制点 - 点: (71, -261)
+[2025-04-07 22:13:46.736] [DEBUG] DrawState: 添加贝塞尔曲线控制点 - 点: (-211, 203)
+[2025-04-07 22:13:48.968] [DEBUG] DrawState: 添加贝塞尔曲线控制点 - 点: (263, -130)
+[2025-04-07 22:13:50.655] [DEBUG] DrawState: 添加贝塞尔曲线控制点 - 点: (46, 124)
+[2025-04-07 22:13:51.580] [DEBUG] DrawState: 添加贝塞尔曲线控制点 - 点: (374, -13)
+
+=== Log started at 2025-04-07 22:15:15 ===
+=== Log directory: F:/program/claudegraph/logs ===
+[2025-04-07 22:15:15.019] [INFO] 应用程序启动
+[2025-04-07 22:15:15.027] [DEBUG] DrawArea::setEditState: 开始切换到编辑状态
+[2025-04-07 22:15:15.027] [DEBUG] DrawArea::setEditState: 创建新的编辑状态
+[2025-04-07 22:15:15.027] [DEBUG] 创建新的编辑器状态
+[2025-04-07 22:15:15.036] [INFO] EditState: 创建编辑状态
+[2025-04-07 22:15:15.036] [DEBUG] DrawArea::setEditState: 编辑状态已创建
+[2025-04-07 22:15:15.036] [DEBUG] DrawArea::setEditState: 通知编辑状态已进入
+[2025-04-07 22:15:15.036] [DEBUG] EditState::onEnterState: 开始初始化编辑状态
+[2025-04-07 22:15:15.036] [DEBUG] EditState::onEnterState: 设置了 0 个图形项为可选择状态
+[2025-04-07 22:15:15.044] [DEBUG] EditState::onEnterState: 选择管理器已初始化
+[2025-04-07 22:15:15.044] [INFO] EditState::onEnterState: 编辑状态初始化完成
+[2025-04-07 22:15:15.052] [DEBUG] DrawArea::setEditState: 编辑状态初始化完成
+[2025-04-07 22:15:15.052] [DEBUG] DrawArea::setEditState: 设置场景中的图形项为可选择状态
+[2025-04-07 22:15:15.052] [DEBUG] DrawArea::setEditState: 已设置 0 个图形项为可选择状态
+[2025-04-07 22:15:15.060] [DEBUG] DrawArea::setEditState: 切换到编辑状态完成
+[2025-04-07 22:15:15.068] [INFO] CommandManager: 初始化
+[2025-04-07 22:15:15.166] [INFO] 主窗口显示完成
+[2025-04-07 22:15:17.285] [INFO] EditState: 退出编辑状态
+[2025-04-07 22:15:17.286] [INFO] EditState: 销毁编辑状态
+[2025-04-07 22:15:17.286] [DEBUG] 创建新的编辑器状态
+[2025-04-07 22:15:17.290] [INFO] DrawState: 创建绘制状态，图形类型: 5
+[2025-04-07 22:15:17.290] [INFO] DrawState: 进入绘制状态，当前图形类型: 5
+[2025-04-07 22:15:17.290] [DEBUG] DrawState: 设置线条颜色为 #0000ff, 线宽为 2
+[2025-04-07 22:15:17.566] [DEBUG] DrawState: 开始绘制 - 起点: (-600, -220)
+[2025-04-07 22:15:17.572] [DEBUG] DrawState: 添加贝塞尔曲线控制点 - 点: (-600, -220)
+[2025-04-07 22:15:20.724] [DEBUG] DrawState: 添加贝塞尔曲线控制点 - 点: (-368, -49)
+[2025-04-07 22:15:21.951] [DEBUG] DrawState: 添加贝塞尔曲线控制点 - 点: (-227, -253)
+[2025-04-07 22:15:23.048] [DEBUG] DrawState: 添加贝塞尔曲线控制点 - 点: (-213, -18)
+[2025-04-07 22:15:26.647] [DEBUG] DrawState: 添加贝塞尔曲线控制点 - 点: (-213, -18)
+[2025-04-07 22:15:27.747] [DEBUG] DrawState: 添加贝塞尔曲线控制点 - 点: (-43, -165)
+[2025-04-07 22:15:29.057] [DEBUG] DrawState: 添加贝塞尔曲线控制点 - 点: (153, -182)
+[2025-04-07 22:15:29.319] [DEBUG] DrawState: 添加贝塞尔曲线控制点 - 点: (195, -164)
+[2025-04-07 22:15:29.691] [DEBUG] DrawState: 添加贝塞尔曲线控制点 - 点: (125, -40)
+[2025-04-07 22:15:29.887] [DEBUG] DrawState: 添加贝塞尔曲线控制点 - 点: (20, 41)
+[2025-04-07 22:15:30.053] [DEBUG] DrawState: 添加贝塞尔曲线控制点 - 点: (-95, 86)
+[2025-04-07 22:15:30.226] [DEBUG] DrawState: 添加贝塞尔曲线控制点 - 点: (-197, 101)
+[2025-04-07 22:15:30.381] [DEBUG] DrawState: 添加贝塞尔曲线控制点 - 点: (-283, 108)
+[2025-04-07 22:15:30.555] [DEBUG] DrawState: 添加贝塞尔曲线控制点 - 点: (-396, 115)
+[2025-04-07 22:15:30.745] [DEBUG] DrawState: 添加贝塞尔曲线控制点 - 点: (-490, 84)
+[2025-04-07 22:15:30.950] [DEBUG] DrawState: 添加贝塞尔曲线控制点 - 点: (-523, 24)
+[2025-04-07 22:15:31.483] [DEBUG] DrawState: 添加贝塞尔曲线控制点 - 点: (-231, -266)
+[2025-04-07 22:15:32.695] [DEBUG] DrawState: 添加贝塞尔曲线控制点 - 点: (-118, -247)
+[2025-04-07 22:15:36.008] [DEBUG] DrawState: 添加贝塞尔曲线控制点 - 点: (-131, -281)
+[2025-04-07 22:15:36.943] [DEBUG] DrawState: 添加贝塞尔曲线控制点 - 点: (-411, -246)
+[2025-04-07 22:15:39.848] [DEBUG] DrawState: 添加贝塞尔曲线控制点 - 点: (-555, -310)
+[2025-04-07 22:15:40.880] [DEBUG] DrawState: 添加贝塞尔曲线控制点 - 点: (39, 143)
+[2025-04-07 22:15:41.056] [DEBUG] DrawState: 添加贝塞尔曲线控制点 - 点: (61, 142)
+[2025-04-07 22:15:41.305] [DEBUG] DrawState: 添加贝塞尔曲线控制点 - 点: (243, 24)
+[2025-04-07 22:15:41.494] [DEBUG] DrawState: 添加贝塞尔曲线控制点 - 点: (293, -74)
+[2025-04-07 22:15:41.651] [DEBUG] DrawState: 添加贝塞尔曲线控制点 - 点: (314, -158)
+[2025-04-07 22:15:41.804] [DEBUG] DrawState: 添加贝塞尔曲线控制点 - 点: (317, -182)
+[2025-04-07 22:15:41.969] [DEBUG] DrawState: 添加贝塞尔曲线控制点 - 点: (319, -224)
+[2025-04-07 22:15:42.156] [DEBUG] DrawState: 添加贝塞尔曲线控制点 - 点: (483, -264)
+[2025-04-07 22:15:42.321] [DEBUG] DrawState: 添加贝塞尔曲线控制点 - 点: (551, -228)
+[2025-04-07 22:15:42.487] [DEBUG] DrawState: 添加贝塞尔曲线控制点 - 点: (543, -127)
+[2025-04-07 22:15:42.655] [DEBUG] DrawState: 添加贝塞尔曲线控制点 - 点: (495, 4)
+[2025-04-07 22:15:42.838] [DEBUG] DrawState: 添加贝塞尔曲线控制点 - 点: (413, 80)
+[2025-04-07 22:15:42.998] [DEBUG] DrawState: 添加贝塞尔曲线控制点 - 点: (319, 135)
+[2025-04-07 22:15:43.163] [DEBUG] DrawState: 添加贝塞尔曲线控制点 - 点: (217, 192)
+[2025-04-07 22:15:43.321] [DEBUG] DrawState: 添加贝塞尔曲线控制点 - 点: (129, 223)
+[2025-04-07 22:15:43.454] [DEBUG] DrawState: 添加贝塞尔曲线控制点 - 点: (2, 250)
+[2025-04-07 22:15:43.603] [DEBUG] DrawState: 添加贝塞尔曲线控制点 - 点: (-166, 248)
+[2025-04-07 22:15:44.604] [DEBUG] DrawState: 添加贝塞尔曲线控制点 - 点: (-391, 210)
+[2025-04-07 22:15:48.788] [DEBUG] DrawState: 添加贝塞尔曲线控制点 - 点: (332, -320)
+[2025-04-07 22:15:50.373] [DEBUG] DrawState: 添加贝塞尔曲线控制点 - 点: (0, -316)
+[2025-04-07 22:15:53.832] [DEBUG] DrawState: 添加贝塞尔曲线控制点 - 点: (41, -277)
+[2025-04-07 22:15:54.155] [DEBUG] DrawState: 添加贝塞尔曲线控制点 - 点: (41, -277)
+[2025-04-07 22:16:00.462] [DEBUG] DrawState: 添加贝塞尔曲线控制点 - 点: (-54, -184)
+[2025-04-07 22:16:04.013] [DEBUG] DrawState: 添加贝塞尔曲线控制点 - 点: (-81, -170)
+
+=== Log started at 2025-04-07 22:18:43 ===
+=== Log directory: F:/program/claudegraph/logs ===
+[2025-04-07 22:18:43.179] [INFO] 应用程序启动
+[2025-04-07 22:18:43.181] [DEBUG] DrawArea::setEditState: 开始切换到编辑状态
+[2025-04-07 22:18:43.183] [DEBUG] DrawArea::setEditState: 创建新的编辑状态
+[2025-04-07 22:18:43.183] [DEBUG] 创建新的编辑器状态
+[2025-04-07 22:18:43.189] [INFO] EditState: 创建编辑状态
+[2025-04-07 22:18:43.191] [DEBUG] DrawArea::setEditState: 编辑状态已创建
+[2025-04-07 22:18:43.191] [DEBUG] DrawArea::setEditState: 通知编辑状态已进入
+[2025-04-07 22:18:43.195] [DEBUG] EditState::onEnterState: 开始初始化编辑状态
+[2025-04-07 22:18:43.198] [DEBUG] EditState::onEnterState: 设置了 0 个图形项为可选择状态
+[2025-04-07 22:18:43.201] [DEBUG] EditState::onEnterState: 选择管理器已初始化
+[2025-04-07 22:18:43.207] [INFO] EditState::onEnterState: 编辑状态初始化完成
+[2025-04-07 22:18:43.207] [DEBUG] DrawArea::setEditState: 编辑状态初始化完成
+[2025-04-07 22:18:43.207] [DEBUG] DrawArea::setEditState: 设置场景中的图形项为可选择状态
+[2025-04-07 22:18:43.214] [DEBUG] DrawArea::setEditState: 已设置 0 个图形项为可选择状态
+[2025-04-07 22:18:43.215] [DEBUG] DrawArea::setEditState: 切换到编辑状态完成
+[2025-04-07 22:18:43.231] [INFO] CommandManager: 初始化
+[2025-04-07 22:18:43.322] [INFO] 主窗口显示完成
+[2025-04-07 22:18:45.840] [INFO] EditState: 退出编辑状态
+[2025-04-07 22:18:45.840] [INFO] EditState: 销毁编辑状态
+[2025-04-07 22:18:45.840] [DEBUG] 创建新的编辑器状态
+[2025-04-07 22:18:45.840] [INFO] DrawState: 创建绘制状态，图形类型: 5
+[2025-04-07 22:18:45.848] [INFO] DrawState: 进入绘制状态，当前图形类型: 5
+[2025-04-07 22:18:45.848] [DEBUG] DrawState: 设置线条颜色为 #0000ff, 线宽为 2
+[2025-04-07 22:19:01.726] [INFO] DrawArea::clearGraphics: 开始清空场景
+[2025-04-07 22:19:01.726] [DEBUG] DrawArea::clearGraphics: 清除选择状态
+[2025-04-07 22:19:01.736] [DEBUG] DrawArea::clearGraphics: 准备清除 31 个项目
+[2025-04-07 22:19:01.742] [DEBUG] DrawArea::clearGraphics: 删除项目 1987954691360
+[2025-04-07 22:19:01.742] [DEBUG] DrawArea::clearGraphics: 删除项目 1987829433472
+[2025-04-07 22:19:01.742] [DEBUG] DrawArea::clearGraphics: 删除项目 1987829690848
+[2025-04-07 22:19:01.750] [DEBUG] DrawArea::clearGraphics: 删除项目 1987954691216
+[2025-04-07 22:19:01.750] [DEBUG] DrawArea::clearGraphics: 删除项目 1987829690528
+[2025-04-07 22:19:01.750] [DEBUG] DrawArea::clearGraphics: 删除项目 1987829456640
+[2025-04-07 22:19:01.759] [DEBUG] DrawArea::clearGraphics: 删除项目 1987829708272
+[2025-04-07 22:19:01.759] [DEBUG] DrawArea::clearGraphics: 删除项目 1987829457088
+[2025-04-07 22:19:01.759] [DEBUG] DrawArea::clearGraphics: 删除项目 1987829860448
+[2025-04-07 22:19:01.767] [DEBUG] DrawArea::clearGraphics: 删除项目 1987829841328
+[2025-04-07 22:19:01.767] [DEBUG] DrawArea::clearGraphics: 删除项目 1987829859616
+[2025-04-07 22:19:01.775] [DEBUG] DrawArea::clearGraphics: 删除项目 1987829857504
+[2025-04-07 22:19:01.775] [DEBUG] DrawArea::clearGraphics: 删除项目 1987954998128
+[2025-04-07 22:19:01.775] [DEBUG] DrawArea::clearGraphics: 删除项目 1987829858144
+[2025-04-07 22:19:01.775] [DEBUG] DrawArea::clearGraphics: 删除项目 1987829858304
+[2025-04-07 22:19:01.783] [DEBUG] DrawArea::clearGraphics: 删除项目 1987954997936
+[2025-04-07 22:19:01.787] [DEBUG] DrawArea::clearGraphics: 删除项目 1987829858272
+[2025-04-07 22:19:01.788] [DEBUG] DrawArea::clearGraphics: 删除项目 1987829828912
+[2025-04-07 22:19:01.792] [DEBUG] DrawArea::clearGraphics: 删除项目 1987954995248
+[2025-04-07 22:19:01.792] [DEBUG] DrawArea::clearGraphics: 删除项目 1987829827920
+[2025-04-07 22:19:01.796] [DEBUG] DrawArea::clearGraphics: 删除项目 1987829827664
+[2025-04-07 22:19:01.797] [DEBUG] DrawArea::clearGraphics: 删除项目 1987954993712
+[2025-04-07 22:19:01.801] [DEBUG] DrawArea::clearGraphics: 删除项目 1987829828592
+[2025-04-07 22:19:01.801] [DEBUG] DrawArea::clearGraphics: 删除项目 1987829828208
+[2025-04-07 22:19:01.801] [DEBUG] DrawArea::clearGraphics: 删除项目 1987955000240
+[2025-04-07 22:19:01.808] [DEBUG] DrawArea::clearGraphics: 删除项目 1987829828112
+[2025-04-07 22:19:01.808] [DEBUG] DrawArea::clearGraphics: 删除项目 1987829828368
+[2025-04-07 22:19:01.808] [DEBUG] DrawArea::clearGraphics: 删除项目 1987955000480
+[2025-04-07 22:19:01.808] [DEBUG] DrawArea::clearGraphics: 删除项目 1987829828848
+[2025-04-07 22:19:01.818] [DEBUG] DrawArea::clearGraphics: 删除项目 1987829732544
+[2025-04-07 22:19:01.818] [DEBUG] DrawArea::clearGraphics: 删除项目 1987829860896
+[2025-04-07 22:19:01.818] [DEBUG] DrawArea::clearGraphics: 所有项目已清除
+[2025-04-07 22:19:01.825] [INFO] DrawArea::clearGraphics: 场景清空完成
+
+=== Log started at 2025-04-07 22:19:08 ===
+=== Log directory: F:/program/claudegraph/logs ===
+[2025-04-07 22:19:08.884] [INFO] 应用程序启动
+[2025-04-07 22:19:08.884] [DEBUG] DrawArea::setEditState: 开始切换到编辑状态
+[2025-04-07 22:19:08.884] [DEBUG] DrawArea::setEditState: 创建新的编辑状态
+[2025-04-07 22:19:08.892] [DEBUG] 创建新的编辑器状态
+[2025-04-07 22:19:08.892] [INFO] EditState: 创建编辑状态
+[2025-04-07 22:19:08.892] [DEBUG] DrawArea::setEditState: 编辑状态已创建
+[2025-04-07 22:19:08.892] [DEBUG] DrawArea::setEditState: 通知编辑状态已进入
+[2025-04-07 22:19:08.900] [DEBUG] EditState::onEnterState: 开始初始化编辑状态
+[2025-04-07 22:19:08.900] [DEBUG] EditState::onEnterState: 设置了 0 个图形项为可选择状态
+[2025-04-07 22:19:08.900] [DEBUG] EditState::onEnterState: 选择管理器已初始化
+[2025-04-07 22:19:08.908] [INFO] EditState::onEnterState: 编辑状态初始化完成
+[2025-04-07 22:19:08.912] [DEBUG] DrawArea::setEditState: 编辑状态初始化完成
+[2025-04-07 22:19:08.912] [DEBUG] DrawArea::setEditState: 设置场景中的图形项为可选择状态
+[2025-04-07 22:19:08.917] [DEBUG] DrawArea::setEditState: 已设置 0 个图形项为可选择状态
+[2025-04-07 22:19:08.917] [DEBUG] DrawArea::setEditState: 切换到编辑状态完成
+[2025-04-07 22:19:08.933] [INFO] CommandManager: 初始化
+[2025-04-07 22:19:09.022] [INFO] 主窗口显示完成
+[2025-04-07 22:19:11.026] [INFO] EditState: 退出编辑状态
+[2025-04-07 22:19:11.026] [INFO] EditState: 销毁编辑状态
+[2025-04-07 22:19:11.026] [DEBUG] 创建新的编辑器状态
+[2025-04-07 22:19:11.026] [INFO] DrawState: 创建绘制状态，图形类型: 5
+[2025-04-07 22:19:11.034] [INFO] DrawState: 进入绘制状态，当前图形类型: 5
+[2025-04-07 22:19:11.034] [DEBUG] DrawState: 设置线条颜色为 #0000ff, 线宽为 2
+
+=== Log started at 2025-04-07 22:26:54 ===
+=== Log directory: F:/program/claudegraph/logs ===
+[2025-04-07 22:26:54.699] [INFO] 应用程序启动
+[2025-04-07 22:26:54.699] [DEBUG] DrawArea::setEditState: 开始切换到编辑状态
+[2025-04-07 22:26:54.708] [DEBUG] DrawArea::setEditState: 创建新的编辑状态
+[2025-04-07 22:26:54.708] [DEBUG] 创建新的编辑器状态
+[2025-04-07 22:26:54.708] [INFO] EditState: 创建编辑状态
+[2025-04-07 22:26:54.708] [DEBUG] DrawArea::setEditState: 编辑状态已创建
+[2025-04-07 22:26:54.717] [DEBUG] DrawArea::setEditState: 通知编辑状态已进入
+[2025-04-07 22:26:54.717] [DEBUG] EditState::onEnterState: 开始初始化编辑状态
+[2025-04-07 22:26:54.717] [DEBUG] EditState::onEnterState: 设置了 0 个图形项为可选择状态
+[2025-04-07 22:26:54.724] [DEBUG] EditState::onEnterState: 选择管理器已初始化
+[2025-04-07 22:26:54.724] [INFO] EditState::onEnterState: 编辑状态初始化完成
+[2025-04-07 22:26:54.732] [DEBUG] DrawArea::setEditState: 编辑状态初始化完成
+[2025-04-07 22:26:54.732] [DEBUG] DrawArea::setEditState: 设置场景中的图形项为可选择状态
+[2025-04-07 22:26:54.732] [DEBUG] DrawArea::setEditState: 已设置 0 个图形项为可选择状态
+[2025-04-07 22:26:54.740] [DEBUG] DrawArea::setEditState: 切换到编辑状态完成
+[2025-04-07 22:26:54.748] [INFO] CommandManager: 初始化
+[2025-04-07 22:26:54.846] [INFO] 主窗口显示完成
+[2025-04-07 22:26:56.655] [INFO] EditState: 退出编辑状态
+[2025-04-07 22:26:56.657] [INFO] EditState: 销毁编辑状态
+[2025-04-07 22:26:56.657] [DEBUG] 创建新的编辑器状态
+[2025-04-07 22:26:56.657] [INFO] DrawState: 创建绘制状态，图形类型: 5
+[2025-04-07 22:26:56.664] [INFO] DrawState: 进入绘制状态，当前图形类型: 5
+[2025-04-07 22:26:56.664] [DEBUG] DrawState: 设置线条颜色为 #0000ff, 线宽为 2
+[2025-04-07 22:27:03.057] [DEBUG] DrawState::createFinalItem: 开始创建图形项
+[2025-04-07 22:27:03.057] [DEBUG] DrawState::createFinalItem: 贝塞尔曲线控制点数量: 20
+[2025-04-07 22:27:03.065] [DEBUG] DrawState::createFinalItem: 创建命令对象，图形类型: 5
+[2025-04-07 22:27:03.065] [DEBUG] CreateGraphicCommand: 创建图形命令 - 类型: 5, 点数: 20
+[2025-04-07 22:27:03.065] [DEBUG] DrawState::createFinalItem: 执行命令
+[2025-04-07 22:27:03.074] [DEBUG] CreateGraphicCommand::execute: 开始执行创建图形命令
+[2025-04-07 22:27:03.075] [DEBUG] CreateGraphicCommand::execute: 创建图形项 - 类型: 5, 点数: 20
+[2025-04-07 22:27:03.075] [DEBUG] CreateGraphicCommand::execute: 设置图形样式完成
+[2025-04-07 22:27:03.082] [DEBUG] CreateGraphicCommand::execute: 设置图形标志完成
+[2025-04-07 22:27:03.082] [DEBUG] CreateGraphicCommand::execute: 将图形项添加到场景, 指针: 2632184304544
+[2025-04-07 22:27:03.082] [INFO] CreateGraphicCommand::execute: 创建图形命令执行成功 - 类型: 5
+[2025-04-07 22:27:03.090] [DEBUG] DrawState::createFinalItem: 图形项创建成功
+[2025-04-07 22:27:10.292] [INFO] DrawArea::clearGraphics: 开始清空场景
+[2025-04-07 22:27:10.293] [DEBUG] DrawArea::clearGraphics: 清除选择状态
+[2025-04-07 22:27:10.300] [DEBUG] DrawArea::clearGraphics: 准备清除 1 个项目
+[2025-04-07 22:27:10.300] [DEBUG] DrawArea::clearGraphics: 删除项目 2632184304544
+[2025-04-07 22:27:10.300] [DEBUG] DrawArea::clearGraphics: 所有项目已清除
+[2025-04-07 22:27:10.308] [INFO] DrawArea::clearGraphics: 场景清空完成
+[2025-04-07 22:27:20.130] [DEBUG] DrawState::createFinalItem: 开始创建图形项
+[2025-04-07 22:27:20.130] [DEBUG] DrawState::createFinalItem: 贝塞尔曲线控制点数量: 16
+[2025-04-07 22:27:20.137] [DEBUG] DrawState::createFinalItem: 创建命令对象，图形类型: 5
+[2025-04-07 22:27:20.137] [DEBUG] CreateGraphicCommand: 创建图形命令 - 类型: 5, 点数: 16
+[2025-04-07 22:27:20.137] [DEBUG] DrawState::createFinalItem: 执行命令
+[2025-04-07 22:27:20.145] [DEBUG] CreateGraphicCommand::execute: 开始执行创建图形命令
+[2025-04-07 22:27:20.148] [DEBUG] CreateGraphicCommand::execute: 创建图形项 - 类型: 5, 点数: 16
+[2025-04-07 22:27:20.149] [DEBUG] CreateGraphicCommand::execute: 设置图形样式完成
+[2025-04-07 22:27:20.154] [DEBUG] CreateGraphicCommand::execute: 设置图形标志完成
+[2025-04-07 22:27:20.156] [DEBUG] CreateGraphicCommand::execute: 将图形项添加到场景, 指针: 2632309756992
+[2025-04-07 22:27:20.156] [INFO] CreateGraphicCommand::execute: 创建图形命令执行成功 - 类型: 5
+[2025-04-07 22:27:20.162] [DEBUG] DrawState::createFinalItem: 图形项创建成功
+[2025-04-07 22:27:23.706] [DEBUG] CreateGraphicCommand: 销毁图形创建命令
+[2025-04-07 22:27:23.709] [DEBUG] CreateGraphicCommand: 销毁图形创建命令
+
+=== Log started at 2025-04-07 22:28:31 ===
+=== Log directory: F:/program/claudegraph/logs ===
+[2025-04-07 22:28:31.698] [INFO] 应用程序启动
+[2025-04-07 22:28:31.698] [DEBUG] DrawArea::setEditState: 开始切换到编辑状态
+[2025-04-07 22:28:31.701] [DEBUG] DrawArea::setEditState: 创建新的编辑状态
+[2025-04-07 22:28:31.701] [DEBUG] 创建新的编辑器状态
+[2025-04-07 22:28:31.707] [INFO] EditState: 创建编辑状态
+[2025-04-07 22:28:31.709] [DEBUG] DrawArea::setEditState: 编辑状态已创建
+[2025-04-07 22:28:31.710] [DEBUG] DrawArea::setEditState: 通知编辑状态已进入
+[2025-04-07 22:28:31.713] [DEBUG] EditState::onEnterState: 开始初始化编辑状态
+[2025-04-07 22:28:31.716] [DEBUG] EditState::onEnterState: 设置了 0 个图形项为可选择状态
+[2025-04-07 22:28:31.720] [DEBUG] EditState::onEnterState: 选择管理器已初始化
+[2025-04-07 22:28:31.725] [INFO] EditState::onEnterState: 编辑状态初始化完成
+[2025-04-07 22:28:31.728] [DEBUG] DrawArea::setEditState: 编辑状态初始化完成
+[2025-04-07 22:28:31.731] [DEBUG] DrawArea::setEditState: 设置场景中的图形项为可选择状态
+[2025-04-07 22:28:31.733] [DEBUG] DrawArea::setEditState: 已设置 0 个图形项为可选择状态
+[2025-04-07 22:28:31.733] [DEBUG] DrawArea::setEditState: 切换到编辑状态完成
+[2025-04-07 22:28:31.750] [INFO] CommandManager: 初始化
+[2025-04-07 22:28:31.848] [INFO] 主窗口显示完成
+[2025-04-07 22:28:34.368] [INFO] EditState: 退出编辑状态
+[2025-04-07 22:28:34.368] [INFO] EditState: 销毁编辑状态
+[2025-04-07 22:28:34.368] [DEBUG] 创建新的编辑器状态
+[2025-04-07 22:28:34.368] [INFO] DrawState: 创建绘制状态，图形类型: 5
+[2025-04-07 22:28:34.376] [INFO] DrawState: 进入绘制状态，当前图形类型: 5
+[2025-04-07 22:28:34.376] [DEBUG] DrawState: 设置线条颜色为 #0000ff, 线宽为 2
+[2025-04-07 22:28:37.845] [DEBUG] DrawState::createFinalItem: 开始创建图形项
+[2025-04-07 22:28:37.845] [DEBUG] DrawState::createFinalItem: 贝塞尔曲线控制点数量: 11
+[2025-04-07 22:28:37.852] [DEBUG] DrawState::createFinalItem: 创建命令对象，图形类型: 5
+[2025-04-07 22:28:37.854] [DEBUG] CreateGraphicCommand: 创建图形命令 - 类型: 5, 点数: 101
+[2025-04-07 22:28:37.854] [DEBUG] DrawState::createFinalItem: 执行命令
+[2025-04-07 22:28:37.861] [DEBUG] CreateGraphicCommand::execute: 开始执行创建图形命令
+[2025-04-07 22:28:37.861] [DEBUG] CreateGraphicCommand::execute: 创建图形项 - 类型: 5, 点数: 101
+[2025-04-07 22:28:37.869] [DEBUG] CreateGraphicCommand::execute: 设置图形样式完成
+[2025-04-07 22:28:37.869] [DEBUG] CreateGraphicCommand::execute: 设置图形标志完成
+[2025-04-07 22:28:37.869] [DEBUG] CreateGraphicCommand::execute: 将图形项添加到场景, 指针: 2266281519040
+[2025-04-07 22:28:37.869] [INFO] CreateGraphicCommand::execute: 创建图形命令执行成功 - 类型: 5
+[2025-04-07 22:28:37.879] [DEBUG] DrawState::createFinalItem: 图形项创建成功
+[2025-04-07 22:28:40.245] [INFO] DrawArea::clearGraphics: 开始清空场景
+[2025-04-07 22:28:40.245] [DEBUG] DrawArea::clearGraphics: 清除选择状态
+[2025-04-07 22:28:40.252] [DEBUG] DrawArea::clearGraphics: 准备清除 1 个项目
+[2025-04-07 22:28:40.252] [DEBUG] DrawArea::clearGraphics: 删除项目 2266281519040
+[2025-04-07 22:28:40.261] [DEBUG] DrawArea::clearGraphics: 所有项目已清除
+[2025-04-07 22:28:40.261] [INFO] DrawArea::clearGraphics: 场景清空完成
+[2025-04-07 22:28:48.812] [DEBUG] DrawState::createFinalItem: 开始创建图形项
+[2025-04-07 22:28:48.812] [DEBUG] DrawState::createFinalItem: 贝塞尔曲线控制点数量: 12
+[2025-04-07 22:28:48.816] [DEBUG] DrawState::createFinalItem: 创建命令对象，图形类型: 5
+[2025-04-07 22:28:48.816] [DEBUG] CreateGraphicCommand: 创建图形命令 - 类型: 5, 点数: 101
+[2025-04-07 22:28:48.824] [DEBUG] DrawState::createFinalItem: 执行命令
+[2025-04-07 22:28:48.824] [DEBUG] CreateGraphicCommand::execute: 开始执行创建图形命令
+[2025-04-07 22:28:48.824] [DEBUG] CreateGraphicCommand::execute: 创建图形项 - 类型: 5, 点数: 101
+[2025-04-07 22:28:48.832] [DEBUG] CreateGraphicCommand::execute: 设置图形样式完成
+[2025-04-07 22:28:48.832] [DEBUG] CreateGraphicCommand::execute: 设置图形标志完成
+[2025-04-07 22:28:48.832] [DEBUG] CreateGraphicCommand::execute: 将图形项添加到场景, 指针: 2266281520192
+[2025-04-07 22:28:48.841] [INFO] CreateGraphicCommand::execute: 创建图形命令执行成功 - 类型: 5
+[2025-04-07 22:28:48.844] [DEBUG] DrawState::createFinalItem: 图形项创建成功
+[2025-04-07 22:28:50.505] [INFO] DrawArea::clearGraphics: 开始清空场景
+[2025-04-07 22:28:50.507] [DEBUG] DrawArea::clearGraphics: 清除选择状态
+[2025-04-07 22:28:50.515] [DEBUG] DrawArea::clearGraphics: 准备清除 1 个项目
+[2025-04-07 22:28:50.515] [DEBUG] DrawArea::clearGraphics: 删除项目 2266281520192
+[2025-04-07 22:28:50.515] [DEBUG] DrawArea::clearGraphics: 所有项目已清除
+[2025-04-07 22:28:50.523] [INFO] DrawArea::clearGraphics: 场景清空完成
+[2025-04-07 22:28:51.281] [INFO] DrawState::onExitState: 开始退出绘制状态
+[2025-04-07 22:28:51.284] [DEBUG] DrawState::onExitState: 重置鼠标光标
+[2025-04-07 22:28:51.284] [DEBUG] DrawState::onExitState: 更新场景
+[2025-04-07 22:28:51.284] [INFO] DrawState::onExitState: 绘制状态退出完成
+[2025-04-07 22:28:51.292] [DEBUG] 创建新的编辑器状态
+[2025-04-07 22:28:51.292] [INFO] DrawState: 创建绘制状态，图形类型: 2
+[2025-04-07 22:28:51.292] [INFO] DrawState: 进入绘制状态，当前图形类型: 2
+[2025-04-07 22:28:51.300] [DEBUG] DrawState: 设置线条颜色为 #ff6bba, 线宽为 2
+[2025-04-07 22:28:52.033] [DEBUG] DrawState::createFinalItem: 开始创建图形项
+[2025-04-07 22:28:52.034] [DEBUG] DrawState::createFinalItem: 创建命令对象，图形类型: 2
+[2025-04-07 22:28:52.034] [DEBUG] CreateGraphicCommand: 创建图形命令 - 类型: 2, 点数: 2
+[2025-04-07 22:28:52.043] [DEBUG] DrawState::createFinalItem: 执行命令
+[2025-04-07 22:28:52.045] [DEBUG] CreateGraphicCommand::execute: 开始执行创建图形命令
+[2025-04-07 22:28:52.045] [DEBUG] CreateGraphicCommand::execute: 创建图形项 - 类型: 2, 点数: 2
+[2025-04-07 22:28:52.051] [DEBUG] CreateGraphicCommand::execute: 设置图形样式完成
+[2025-04-07 22:28:52.051] [DEBUG] CreateGraphicCommand::execute: 设置图形标志完成
+[2025-04-07 22:28:52.051] [DEBUG] CreateGraphicCommand::execute: 将图形项添加到场景, 指针: 2266281283552
+[2025-04-07 22:28:52.060] [INFO] CreateGraphicCommand::execute: 创建图形命令执行成功 - 类型: 2
+[2025-04-07 22:28:52.060] [DEBUG] DrawState::createFinalItem: 图形项创建成功
+[2025-04-07 22:28:53.334] [DEBUG] DrawState::createFinalItem: 开始创建图形项
+[2025-04-07 22:28:53.334] [DEBUG] DrawState::createFinalItem: 创建命令对象，图形类型: 2
+[2025-04-07 22:28:53.342] [DEBUG] CreateGraphicCommand: 创建图形命令 - 类型: 2, 点数: 2
+[2025-04-07 22:28:53.342] [DEBUG] DrawState::createFinalItem: 执行命令
+[2025-04-07 22:28:53.342] [DEBUG] CreateGraphicCommand::execute: 开始执行创建图形命令
+[2025-04-07 22:28:53.350] [DEBUG] CreateGraphicCommand::execute: 创建图形项 - 类型: 2, 点数: 2
+[2025-04-07 22:28:53.350] [DEBUG] CreateGraphicCommand::execute: 设置图形样式完成
+[2025-04-07 22:28:53.350] [DEBUG] CreateGraphicCommand::execute: 设置图形标志完成
+[2025-04-07 22:28:53.359] [DEBUG] CreateGraphicCommand::execute: 将图形项添加到场景, 指针: 2266281284352
+[2025-04-07 22:28:53.359] [INFO] CreateGraphicCommand::execute: 创建图形命令执行成功 - 类型: 2
+[2025-04-07 22:28:53.359] [DEBUG] DrawState::createFinalItem: 图形项创建成功
+[2025-04-07 22:28:54.192] [INFO] DrawState::onExitState: 开始退出绘制状态
+[2025-04-07 22:28:54.192] [DEBUG] DrawState::onExitState: 重置鼠标光标
+[2025-04-07 22:28:54.192] [DEBUG] DrawState::onExitState: 更新场景
+[2025-04-07 22:28:54.200] [INFO] DrawState::onExitState: 绘制状态退出完成
+[2025-04-07 22:28:54.203] [DEBUG] 创建新的编辑器状态
+[2025-04-07 22:28:54.203] [INFO] DrawState: 创建绘制状态，图形类型: 3
+[2025-04-07 22:28:54.209] [INFO] DrawState: 进入绘制状态，当前图形类型: 3
+[2025-04-07 22:28:54.209] [DEBUG] DrawState: 设置线条颜色为 #ff6bba, 线宽为 2
+[2025-04-07 22:28:55.170] [DEBUG] DrawState::createFinalItem: 开始创建图形项
+[2025-04-07 22:28:55.170] [DEBUG] DrawState::createFinalItem: 创建命令对象，图形类型: 3
+[2025-04-07 22:28:55.175] [DEBUG] CreateGraphicCommand: 创建图形命令 - 类型: 3, 点数: 2
+[2025-04-07 22:28:55.175] [DEBUG] DrawState::createFinalItem: 执行命令
+[2025-04-07 22:28:55.183] [DEBUG] CreateGraphicCommand::execute: 开始执行创建图形命令
+[2025-04-07 22:28:55.183] [DEBUG] CreateGraphicCommand::execute: 创建图形项 - 类型: 3, 点数: 2
+[2025-04-07 22:28:55.191] [DEBUG] CreateGraphicCommand::execute: 设置图形样式完成
+[2025-04-07 22:28:55.191] [DEBUG] CreateGraphicCommand::execute: 设置图形标志完成
+[2025-04-07 22:28:55.191] [DEBUG] CreateGraphicCommand::execute: 将图形项添加到场景, 指针: 2266281287392
+[2025-04-07 22:28:55.191] [INFO] CreateGraphicCommand::execute: 创建图形命令执行成功 - 类型: 3
+[2025-04-07 22:28:55.201] [DEBUG] DrawState::createFinalItem: 图形项创建成功
+[2025-04-07 22:28:56.373] [INFO] DrawState::onExitState: 开始退出绘制状态
+[2025-04-07 22:28:56.373] [DEBUG] DrawState::onExitState: 重置鼠标光标
+[2025-04-07 22:28:56.373] [DEBUG] DrawState::onExitState: 更新场景
+[2025-04-07 22:28:56.381] [INFO] DrawState::onExitState: 绘制状态退出完成
+[2025-04-07 22:28:56.381] [DEBUG] 创建新的编辑器状态
+[2025-04-07 22:28:56.381] [INFO] DrawState: 创建绘制状态，图形类型: 1
+[2025-04-07 22:28:56.389] [INFO] DrawState: 进入绘制状态，当前图形类型: 1
+[2025-04-07 22:28:56.389] [DEBUG] DrawState: 设置线条颜色为 #ff6bba, 线宽为 2
+[2025-04-07 22:28:57.111] [DEBUG] DrawState::createFinalItem: 开始创建图形项
+[2025-04-07 22:28:57.111] [DEBUG] DrawState::createFinalItem: 创建命令对象，图形类型: 1
+[2025-04-07 22:28:57.118] [DEBUG] CreateGraphicCommand: 创建图形命令 - 类型: 1, 点数: 2
+[2025-04-07 22:28:57.121] [DEBUG] DrawState::createFinalItem: 执行命令
+[2025-04-07 22:28:57.121] [DEBUG] CreateGraphicCommand::execute: 开始执行创建图形命令
+[2025-04-07 22:28:57.125] [DEBUG] CreateGraphicCommand::execute: 创建图形项 - 类型: 1, 点数: 2
+[2025-04-07 22:28:57.125] [DEBUG] CreateGraphicCommand::execute: 设置图形样式完成
+[2025-04-07 22:28:57.133] [DEBUG] CreateGraphicCommand::execute: 设置图形标志完成
+[2025-04-07 22:28:57.133] [DEBUG] CreateGraphicCommand::execute: 将图形项添加到场景, 指针: 2266281284992
+[2025-04-07 22:28:57.140] [INFO] CreateGraphicCommand::execute: 创建图形命令执行成功 - 类型: 1
+[2025-04-07 22:28:57.141] [DEBUG] DrawState::createFinalItem: 图形项创建成功
+[2025-04-07 22:28:58.732] [DEBUG] DrawState::createFinalItem: 开始创建图形项
+[2025-04-07 22:28:58.732] [DEBUG] DrawState::createFinalItem: 创建命令对象，图形类型: 1
+[2025-04-07 22:28:58.732] [DEBUG] CreateGraphicCommand: 创建图形命令 - 类型: 1, 点数: 2
+[2025-04-07 22:28:58.742] [DEBUG] DrawState::createFinalItem: 执行命令
+[2025-04-07 22:28:58.742] [DEBUG] CreateGraphicCommand::execute: 开始执行创建图形命令
+[2025-04-07 22:28:58.748] [DEBUG] CreateGraphicCommand::execute: 创建图形项 - 类型: 1, 点数: 2
+[2025-04-07 22:28:58.748] [DEBUG] CreateGraphicCommand::execute: 设置图形样式完成
+[2025-04-07 22:28:58.748] [DEBUG] CreateGraphicCommand::execute: 设置图形标志完成
+[2025-04-07 22:28:58.756] [DEBUG] CreateGraphicCommand::execute: 将图形项添加到场景, 指针: 2266281287232
+[2025-04-07 22:28:58.756] [INFO] CreateGraphicCommand::execute: 创建图形命令执行成功 - 类型: 1
+[2025-04-07 22:28:58.756] [DEBUG] DrawState::createFinalItem: 图形项创建成功
+[2025-04-07 22:29:00.696] [DEBUG] DrawState::createFinalItem: 开始创建图形项
+[2025-04-07 22:29:00.699] [DEBUG] DrawState::createFinalItem: 创建命令对象，图形类型: 1
+[2025-04-07 22:29:00.699] [DEBUG] CreateGraphicCommand: 创建图形命令 - 类型: 1, 点数: 2
+[2025-04-07 22:29:00.707] [DEBUG] DrawState::createFinalItem: 执行命令
+[2025-04-07 22:29:00.709] [DEBUG] CreateGraphicCommand::execute: 开始执行创建图形命令
+[2025-04-07 22:29:00.709] [DEBUG] CreateGraphicCommand::execute: 创建图形项 - 类型: 1, 点数: 2
+[2025-04-07 22:29:00.715] [DEBUG] CreateGraphicCommand::execute: 设置图形样式完成
+[2025-04-07 22:29:00.715] [DEBUG] CreateGraphicCommand::execute: 设置图形标志完成
+[2025-04-07 22:29:00.723] [DEBUG] CreateGraphicCommand::execute: 将图形项添加到场景, 指针: 2266281283712
+[2025-04-07 22:29:00.723] [INFO] CreateGraphicCommand::execute: 创建图形命令执行成功 - 类型: 1
+[2025-04-07 22:29:00.723] [DEBUG] DrawState::createFinalItem: 图形项创建成功
+[2025-04-07 22:29:02.310] [INFO] DrawArea::clearGraphics: 开始清空场景
+[2025-04-07 22:29:02.310] [DEBUG] DrawArea::clearGraphics: 清除选择状态
+[2025-04-07 22:29:02.321] [DEBUG] DrawArea::clearGraphics: 准备清除 6 个项目
+[2025-04-07 22:29:02.324] [DEBUG] DrawArea::clearGraphics: 删除项目 2266281283712
+[2025-04-07 22:29:02.324] [DEBUG] DrawArea::clearGraphics: 删除项目 2266281287232
+[2025-04-07 22:29:02.324] [DEBUG] DrawArea::clearGraphics: 删除项目 2266281284992
+[2025-04-07 22:29:02.332] [DEBUG] DrawArea::clearGraphics: 删除项目 2266281287392
+[2025-04-07 22:29:02.332] [DEBUG] DrawArea::clearGraphics: 删除项目 2266281284352
+[2025-04-07 22:29:02.332] [DEBUG] DrawArea::clearGraphics: 删除项目 2266281283552
+[2025-04-07 22:29:02.340] [DEBUG] DrawArea::clearGraphics: 所有项目已清除
+[2025-04-07 22:29:02.340] [INFO] DrawArea::clearGraphics: 场景清空完成
+[2025-04-07 22:29:03.028] [DEBUG] CreateGraphicCommand: 销毁图形创建命令
+[2025-04-07 22:29:03.031] [DEBUG] CreateGraphicCommand: 销毁图形创建命令
+[2025-04-07 22:29:03.034] [DEBUG] CreateGraphicCommand: 销毁图形创建命令
+[2025-04-07 22:29:03.035] [DEBUG] CreateGraphicCommand: 销毁图形创建命令
+[2025-04-07 22:29:03.035] [DEBUG] CreateGraphicCommand: 销毁图形创建命令
+[2025-04-07 22:29:03.035] [DEBUG] CreateGraphicCommand: 销毁图形创建命令
+[2025-04-07 22:29:03.043] [DEBUG] CreateGraphicCommand: 销毁图形创建命令
+[2025-04-07 22:29:03.043] [DEBUG] CreateGraphicCommand: 销毁图形创建命令

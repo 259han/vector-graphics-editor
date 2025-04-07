@@ -10,6 +10,8 @@ public:
     
     void execute() override;
     void undo() override;
+    QString getDescription() const override;
+    QString getType() const override;
 
 private:
     Graphic* m_graphic;

@@ -12,6 +12,7 @@
 #include <QPushButton>
 #include <QComboBox>
 #include "draw_area.h"
+#include <QTimer>
 
 class MainWindow : public QMainWindow {
     Q_OBJECT
@@ -28,10 +29,17 @@ private slots:
     void onFillColorTriggered();
     void onFillToolTriggered();
     void onSelectFillColor();
+    void onSelectLineColor();
+    void onLineWidthChanged(int width);
     
     void onGridToggled(bool enabled);
     void onGridSizeChanged(int size);
     void onSnapToGridToggled(bool enabled);
+    
+    // 撤销/重做操作
+    void undo();
+    void redo();
+    void updateUndoRedoActions();
 
 private:
     void createActions();
@@ -39,6 +47,7 @@ private:
     void createToolBars();
     void createFillSettingsDialog();
     void createToolOptions();
+    void setupConnections();
 
     DrawArea* m_drawArea;
 
@@ -47,6 +56,8 @@ private:
     QToolBar* m_transformToolBar;
     QToolBar* m_layerToolBar;
     QToolBar* m_fillToolBar;
+    QToolBar* m_styleToolBar;
+    QToolBar* m_editToolBar;
     
     // 绘图和选择工具
     QAction* m_selectAction;
@@ -76,11 +87,19 @@ private:
     QAction* m_copyAction;
     QAction* m_pasteAction;
     QAction* m_cutAction;
+    QAction* m_undoAction;  // 撤销操作
+    QAction* m_redoAction;  // 重做操作
     
     // 填充设置控件
     QWidget* m_fillSettingsWidget;
     QPushButton* m_colorButton;
     QColor m_currentFillColor;
+    
+    // 样式设置控件
+    QPushButton* m_lineColorButton;
+    QSpinBox* m_lineWidthSpinBox;
+    QColor m_currentLineColor = Qt::black;
+    int m_lineWidth = 2;
 
     // 工具组
     QActionGroup* toolsGroup;
@@ -98,6 +117,9 @@ private:
     QComboBox* m_gridSizeComboBox;
 
     QVector<QAction*> recentFileActions;
+
+    // 更新定时器
+    QTimer* m_updateTimer;
 };
 
 #endif // MAIN_WINDOW_H

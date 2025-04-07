@@ -4,8 +4,18 @@
 
 LineGraphicItem::LineGraphicItem(const QPointF& startPoint, const QPointF& endPoint)
 {
+    // 设置默认画笔
+    m_pen.setColor(Qt::black);
+    m_pen.setWidth(2);
+    
+    // 设置透明画刷（无填充）
+    m_brush = Qt::NoBrush;
+    
     // 设置绘制策略为LineDrawStrategy
     m_drawStrategy = std::make_shared<LineDrawStrategy>();
+    // 确保DrawStrategy使用正确的画笔属性
+    m_drawStrategy->setColor(m_pen.color());
+    m_drawStrategy->setLineWidth(m_pen.width());
     
     // 设置起点和终点（全局坐标）
     QPointF center = (startPoint + endPoint) / 2;
@@ -14,13 +24,6 @@ LineGraphicItem::LineGraphicItem(const QPointF& startPoint, const QPointF& endPo
     // 设置相对坐标（相对于中心点）
     m_startPoint = startPoint - center;
     m_endPoint = endPoint - center;
-    
-    // 设置默认画笔
-    m_pen.setColor(Qt::black);
-    m_pen.setWidth(2);
-    
-    // 设置透明画刷（无填充）
-    m_brush = Qt::NoBrush;
     
     // 确保线段至少有最小长度，防止点击时看不见
     if (QLineF(m_startPoint, m_endPoint).length() < 1.0) {
@@ -70,6 +73,12 @@ void LineGraphicItem::setStartPoint(const QPointF& startPoint)
         m_endPoint = m_startPoint + QPointF(1.0, 0);
     }
     
+    // 确保DrawStrategy使用当前的画笔设置
+    if (m_drawStrategy) {
+        m_drawStrategy->setColor(m_pen.color());
+        m_drawStrategy->setLineWidth(m_pen.width());
+    }
+    
     update();
 }
 
@@ -93,6 +102,12 @@ void LineGraphicItem::setEndPoint(const QPointF& endPoint)
     // 确保线段至少有最小长度
     if (QLineF(m_startPoint, m_endPoint).length() < 1.0) {
         m_endPoint = m_startPoint + QPointF(1.0, 0);
+    }
+    
+    // 确保DrawStrategy使用当前的画笔设置
+    if (m_drawStrategy) {
+        m_drawStrategy->setColor(m_pen.color());
+        m_drawStrategy->setLineWidth(m_pen.width());
     }
     
     update();

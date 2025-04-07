@@ -4,13 +4,16 @@
 #include "editor_state.h"
 #include "../core/graphic_item.h"
 #include "../core/selection_manager.h"
-#include "../core/graphics_clipper.h"
+// 裁剪功能已移至future/clip目录
+// #include "../core/graphics_clipper.h"
 #include "../command/selection_command.h"
+#include "../command/style_change_command.h"
 #include <QPointF>
 #include <QRectF>
 #include <vector>
 #include <QCursor>
 #include <QGraphicsRectItem>
+#include <memory>
 
 class DrawArea;
 
@@ -25,13 +28,25 @@ public:
     void mouseReleaseEvent(DrawArea* drawArea, QMouseEvent* event) override;
     void keyPressEvent(DrawArea* drawArea, QKeyEvent* event) override;
     void paintEvent(DrawArea* drawArea, QPainter* painter) override;
+    void wheelEvent(DrawArea* drawArea, QWheelEvent* event) override;
+    
+    // 状态切换通知
+    void onEnterState(DrawArea* drawArea) override;
+    void onExitState(DrawArea* drawArea) override;
     
     // 处理鼠标左右键点击
     void handleLeftMousePress(DrawArea* drawArea, QPointF scenePos) override;
     void handleRightMousePress(DrawArea* drawArea, QPointF scenePos) override;
+    void handleMiddleMousePress(DrawArea* drawArea, QPointF scenePos) override;
     
-    // 状态判断
-    bool isEditState() const override { return true; }
+    // 样式变更方法
+    void applyPenColorChange(const QColor& color);
+    void applyPenWidthChange(qreal width);
+    void applyBrushColorChange(const QColor& color);
+    
+    // 状态类型和名称
+    StateType getStateType() const override { return StateType::EditState; }
+    QString getStateName() const override { return "编辑模式"; }
 
 private:
     // 区域选择相关
@@ -52,11 +67,7 @@ private:
     double m_initialAngle = 0.0;
     double m_initialDistance = 0.0;
     
-    // 选择区域管理器
-    SelectionManager* m_selectionManager = nullptr;
-    
-    // 图形裁剪器
-    GraphicsClipper* m_graphicsClipper = nullptr;
+    DrawArea* m_drawArea = nullptr;
     
     // 更新鼠标样式
     void updateCursor(GraphicItem::ControlHandle handle);
@@ -68,7 +79,16 @@ private:
     // 创建变换命令
     SelectionCommand* createMoveCommand(DrawArea* drawArea, const QPointF& offset);
     SelectionCommand* createDeleteCommand(DrawArea* drawArea);
-    SelectionCommand* createClipCommand(DrawArea* drawArea);
+    
+    // 裁剪功能已移至future/clip目录
+    // SelectionCommand* createClipCommand(DrawArea* drawArea);
+    
+    // 创建样式变更命令
+    StyleChangeCommand* createStyleChangeCommand(DrawArea* drawArea, 
+                                              StyleChangeCommand::StylePropertyType propertyType);
+    
+    // 获取DrawArea的SelectionManager
+    SelectionManager* getSelectionManager(DrawArea* drawArea) const;
 };
 
 #endif // EDIT_STATE_H

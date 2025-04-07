@@ -212,8 +212,11 @@ F:/program/claudegraph/build/vector-graphics-editor_autogen/YPKJ5OE7LN/moc_main_
   D:/Qt/6.8.2/mingw_64/include/QtCore/QObject \
   D:/Qt/6.8.2/mingw_64/include/QtCore/QPointF \
   D:/Qt/6.8.2/mingw_64/include/QtCore/QRect \
+  D:/Qt/6.8.2/mingw_64/include/QtCore/QSet \
   D:/Qt/6.8.2/mingw_64/include/QtCore/QSize \
   D:/Qt/6.8.2/mingw_64/include/QtCore/QSizeF \
+  D:/Qt/6.8.2/mingw_64/include/QtCore/QString \
+  D:/Qt/6.8.2/mingw_64/include/QtCore/QTimer \
   D:/Qt/6.8.2/mingw_64/include/QtCore/q20functional.h \
   D:/Qt/6.8.2/mingw_64/include/QtCore/q20iterator.h \
   D:/Qt/6.8.2/mingw_64/include/QtCore/q20memory.h \
@@ -229,6 +232,7 @@ F:/program/claudegraph/build/vector-graphics-editor_autogen/YPKJ5OE7LN/moc_main_
   D:/Qt/6.8.2/mingw_64/include/QtCore/qatomic.h \
   D:/Qt/6.8.2/mingw_64/include/QtCore/qatomic_cxx11.h \
   D:/Qt/6.8.2/mingw_64/include/QtCore/qbasicatomic.h \
+  D:/Qt/6.8.2/mingw_64/include/QtCore/qbasictimer.h \
   D:/Qt/6.8.2/mingw_64/include/QtCore/qbindingstorage.h \
   D:/Qt/6.8.2/mingw_64/include/QtCore/qbytearray.h \
   D:/Qt/6.8.2/mingw_64/include/QtCore/qbytearrayalgorithms.h \
@@ -329,6 +333,7 @@ F:/program/claudegraph/build/vector-graphics-editor_autogen/YPKJ5OE7LN/moc_main_
   D:/Qt/6.8.2/mingw_64/include/QtCore/qtdeprecationmarkers.h \
   D:/Qt/6.8.2/mingw_64/include/QtCore/qtenvironmentvariables.h \
   D:/Qt/6.8.2/mingw_64/include/QtCore/qtextstream.h \
+  D:/Qt/6.8.2/mingw_64/include/QtCore/qtimer.h \
   D:/Qt/6.8.2/mingw_64/include/QtCore/qtmetamacros.h \
   D:/Qt/6.8.2/mingw_64/include/QtCore/qtnoop.h \
   D:/Qt/6.8.2/mingw_64/include/QtCore/qtpreprocessorsupport.h \
@@ -353,8 +358,10 @@ F:/program/claudegraph/build/vector-graphics-editor_autogen/YPKJ5OE7LN/moc_main_
   D:/Qt/6.8.2/mingw_64/include/QtGui/QKeyEvent \
   D:/Qt/6.8.2/mingw_64/include/QtGui/QMouseEvent \
   D:/Qt/6.8.2/mingw_64/include/QtGui/QPainter \
+  D:/Qt/6.8.2/mingw_64/include/QtGui/QPainterPath \
   D:/Qt/6.8.2/mingw_64/include/QtGui/QPen \
   D:/Qt/6.8.2/mingw_64/include/QtGui/QTransform \
+  D:/Qt/6.8.2/mingw_64/include/QtGui/QWheelEvent \
   D:/Qt/6.8.2/mingw_64/include/QtGui/qaction.h \
   D:/Qt/6.8.2/mingw_64/include/QtGui/qactiongroup.h \
   D:/Qt/6.8.2/mingw_64/include/QtGui/qbitmap.h \
@@ -415,6 +422,7 @@ F:/program/claudegraph/build/vector-graphics-editor_autogen/YPKJ5OE7LN/moc_main_
   D:/Qt/6.8.2/mingw_64/include/QtWidgets/QPushButton \
   D:/Qt/6.8.2/mingw_64/include/QtWidgets/QSlider \
   D:/Qt/6.8.2/mingw_64/include/QtWidgets/QSpinBox \
+  D:/Qt/6.8.2/mingw_64/include/QtWidgets/QStyleOptionGraphicsItem \
   D:/Qt/6.8.2/mingw_64/include/QtWidgets/QToolBar \
   D:/Qt/6.8.2/mingw_64/include/QtWidgets/qabstractbutton.h \
   D:/Qt/6.8.2/mingw_64/include/QtWidgets/qabstractitemdelegate.h \
@@ -445,8 +453,11 @@ F:/program/claudegraph/build/vector-graphics-editor_autogen/YPKJ5OE7LN/moc_main_
   D:/Qt/6.8.2/mingw_64/include/QtWidgets/qtwidgetsexports.h \
   D:/Qt/6.8.2/mingw_64/include/QtWidgets/qtwidgetsglobal.h \
   D:/Qt/6.8.2/mingw_64/include/QtWidgets/qwidget.h \
+  F:/program/claudegraph/src/core/draw_strategy.h \
   F:/program/claudegraph/src/core/graphic.h \
+  F:/program/claudegraph/src/core/graphic_item.h \
   F:/program/claudegraph/src/core/graphics_item_factory.h \
+  F:/program/claudegraph/src/core/selection_manager.h \
   F:/program/claudegraph/src/state/editor_state.h \
   F:/program/claudegraph/src/ui/draw_area.h \
   F:/program/claudegraph/src/ui/image_resizer.h

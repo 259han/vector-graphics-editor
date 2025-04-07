@@ -3,32 +3,33 @@ CMakeFiles/vector-graphics-editor.dir/vector-graphics-editor_autogen/mocs_compil
  F:\program\claudegraph\build\vector-graphics-editor_autogen\YB4PXEL5CK/moc_command_manager.cpp \
  F:/program/claudegraph/src/command/command_manager.h \
  F:/program/claudegraph/src/command/command.h \
- D:/Qt/6.8.2/mingw_64/include/QtCore/QStack \
- D:/Qt/6.8.2/mingw_64/include/QtCore/qstack.h \
- D:/Qt/6.8.2/mingw_64/include/QtCore/qlist.h \
- D:/Qt/6.8.2/mingw_64/include/QtCore/qarraydatapointer.h \
- D:/Qt/6.8.2/mingw_64/include/QtCore/qarraydataops.h \
- D:/Qt/6.8.2/mingw_64/include/QtCore/qarraydata.h \
- D:/Qt/6.8.2/mingw_64/include/QtCore/qpair.h \
- D:/Qt/6.8.2/mingw_64/include/QtCore/qcontainerfwd.h \
- D:/Qt/6.8.2/mingw_64/include/QtCore/qtconfigmacros.h \
- D:/Qt/6.8.2/mingw_64/include/QtCore/qtconfiginclude.h \
- C:/msys64/mingw64/include/c++/14.2.0/version \
- C:/msys64/mingw64/include/c++/14.2.0/bits/version.h \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/QString \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/qstring.h \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/qchar.h \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/qglobal.h \
+ C:/msys64/mingw64/include/c++/14.2.0/type_traits \
  C:/msys64/mingw64/include/c++/14.2.0/x86_64-w64-mingw32/bits/c++config.h \
  C:/msys64/mingw64/include/c++/14.2.0/x86_64-w64-mingw32/bits/os_defines.h \
  C:/msys64/mingw64/include/c++/14.2.0/x86_64-w64-mingw32/bits/cpu_defines.h \
  C:/msys64/mingw64/include/c++/14.2.0/pstl/pstl_config.h \
- D:/Qt/6.8.2/mingw_64/include/QtCore/qconfig.h \
- D:/Qt/6.8.2/mingw_64/include/QtCore/qtcore-config.h \
- D:/Qt/6.8.2/mingw_64/include/QtCore/qtdeprecationdefinitions.h \
- D:/Qt/6.8.2/mingw_64/include/QtCore/qtversionchecks.h \
- C:/msys64/mingw64/include/assert.h C:/msys64/mingw64/include/crtdefs.h \
+ C:/msys64/mingw64/include/c++/14.2.0/bits/version.h \
+ C:/msys64/mingw64/include/c++/14.2.0/cstddef \
+ C:/msys64/mingw64/lib/gcc/x86_64-w64-mingw32/14.2.0/include/stddef.h \
+ C:/msys64/mingw64/include/stddef.h C:/msys64/mingw64/include/crtdefs.h \
  C:/msys64/mingw64/include/corecrt.h C:/msys64/mingw64/include/_mingw.h \
  C:/msys64/mingw64/include/_mingw_mac.h \
  C:/msys64/mingw64/include/_mingw_secapi.h \
  C:/msys64/mingw64/include/vadefs.h \
  C:/msys64/mingw64/include/sdks/_mingw_ddk.h \
+ C:/msys64/mingw64/include/c++/14.2.0/utility \
+ C:/msys64/mingw64/include/c++/14.2.0/bits/stl_relops.h \
+ C:/msys64/mingw64/include/c++/14.2.0/bits/stl_pair.h \
+ C:/msys64/mingw64/include/c++/14.2.0/bits/move.h \
+ C:/msys64/mingw64/include/c++/14.2.0/bits/utility.h \
+ C:/msys64/mingw64/include/c++/14.2.0/initializer_list \
+ C:/msys64/mingw64/include/c++/14.2.0/cstdint \
+ C:/msys64/mingw64/lib/gcc/x86_64-w64-mingw32/14.2.0/include/stdint.h \
+ C:/msys64/mingw64/include/stdint.h C:/msys64/mingw64/include/assert.h \
  C:/msys64/mingw64/include/c++/14.2.0/stdlib.h \
  C:/msys64/mingw64/include/c++/14.2.0/cstdlib \
  C:/msys64/mingw64/include/stdlib.h \
@@ -41,34 +42,28 @@ CMakeFiles/vector-graphics-editor.dir/vector-graphics-editor_autogen/mocs_compil
  C:/msys64/mingw64/lib/gcc/x86_64-w64-mingw32/14.2.0/include/mm_malloc.h \
  C:/msys64/mingw64/include/errno.h \
  C:/msys64/mingw64/include/c++/14.2.0/bits/std_abs.h \
- D:/Qt/6.8.2/mingw_64/include/QtCore/qtypes.h \
+ C:/msys64/mingw64/lib/gcc/x86_64-w64-mingw32/14.2.0/include/stdbool.h \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/qtversionchecks.h \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/qtconfiginclude.h \
+ C:/msys64/mingw64/include/c++/14.2.0/version \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/qconfig.h \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/qtcore-config.h \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/qtconfigmacros.h \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/qtdeprecationdefinitions.h \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/qtcoreexports.h \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/qcompilerdetection.h \
  D:/Qt/6.8.2/mingw_64/include/QtCore/qprocessordetection.h \
  D:/Qt/6.8.2/mingw_64/include/QtCore/qsystemdetection.h \
- D:/Qt/6.8.2/mingw_64/include/QtCore/qassert.h \
- D:/Qt/6.8.2/mingw_64/include/QtCore/qcompilerdetection.h \
- C:/msys64/mingw64/include/c++/14.2.0/utility \
- C:/msys64/mingw64/include/c++/14.2.0/bits/stl_relops.h \
- C:/msys64/mingw64/include/c++/14.2.0/bits/stl_pair.h \
- C:/msys64/mingw64/include/c++/14.2.0/type_traits \
- C:/msys64/mingw64/include/c++/14.2.0/bits/move.h \
- C:/msys64/mingw64/include/c++/14.2.0/bits/utility.h \
- C:/msys64/mingw64/include/c++/14.2.0/initializer_list \
- D:/Qt/6.8.2/mingw_64/include/QtCore/qtcoreexports.h \
  D:/Qt/6.8.2/mingw_64/include/QtCore/qtdeprecationmarkers.h \
  D:/Qt/6.8.2/mingw_64/include/QtCore/qtclasshelpermacros.h \
- D:/Qt/6.8.2/mingw_64/include/QtCore/qtnoop.h \
- C:/msys64/mingw64/include/c++/14.2.0/cstddef \
- C:/msys64/mingw64/lib/gcc/x86_64-w64-mingw32/14.2.0/include/stddef.h \
- C:/msys64/mingw64/include/stddef.h \
- C:/msys64/mingw64/include/c++/14.2.0/cstdint \
- C:/msys64/mingw64/lib/gcc/x86_64-w64-mingw32/14.2.0/include/stdint.h \
- C:/msys64/mingw64/include/stdint.h \
- C:/msys64/mingw64/include/c++/14.2.0/limits \
- D:/Qt/6.8.2/mingw_64/include/QtCore/qglobal.h \
- C:/msys64/mingw64/lib/gcc/x86_64-w64-mingw32/14.2.0/include/stdbool.h \
  D:/Qt/6.8.2/mingw_64/include/QtCore/qtpreprocessorsupport.h \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/qassert.h \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/qtnoop.h \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/qtypes.h \
  D:/Qt/6.8.2/mingw_64/include/QtCore/qtversion.h \
  D:/Qt/6.8.2/mingw_64/include/QtCore/qtypeinfo.h \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/qcontainerfwd.h \
+ C:/msys64/mingw64/include/c++/14.2.0/limits \
  D:/Qt/6.8.2/mingw_64/include/QtCore/qsysinfo.h \
  D:/Qt/6.8.2/mingw_64/include/QtCore/qlogging.h \
  D:/Qt/6.8.2/mingw_64/include/QtCore/qflags.h \
@@ -147,17 +142,54 @@ CMakeFiles/vector-graphics-editor.dir/vector-graphics-editor_autogen/mocs_compil
  D:/Qt/6.8.2/mingw_64/include/QtCore/qtresource.h \
  D:/Qt/6.8.2/mingw_64/include/QtCore/qttranslation.h \
  D:/Qt/6.8.2/mingw_64/include/QtCore/qversiontagging.h \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/qcompare.h \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/qcomparehelpers.h \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/q20type_traits.h \
+ C:/msys64/mingw64/include/c++/14.2.0/functional \
+ C:/msys64/mingw64/include/c++/14.2.0/bits/stl_function.h \
+ C:/msys64/mingw64/include/c++/14.2.0/backward/binders.h \
+ C:/msys64/mingw64/include/c++/14.2.0/bits/refwrap.h \
+ C:/msys64/mingw64/include/c++/14.2.0/bits/std_function.h \
+ C:/msys64/mingw64/include/c++/14.2.0/unordered_map \
+ C:/msys64/mingw64/include/c++/14.2.0/bits/unordered_map.h \
+ C:/msys64/mingw64/include/c++/14.2.0/bits/hashtable.h \
+ C:/msys64/mingw64/include/c++/14.2.0/bits/hashtable_policy.h \
+ C:/msys64/mingw64/include/c++/14.2.0/ext/alloc_traits.h \
+ C:/msys64/mingw64/include/c++/14.2.0/bits/alloc_traits.h \
+ C:/msys64/mingw64/include/c++/14.2.0/bits/memoryfwd.h \
+ C:/msys64/mingw64/include/c++/14.2.0/bits/allocator.h \
+ C:/msys64/mingw64/include/c++/14.2.0/x86_64-w64-mingw32/bits/c++allocator.h \
+ C:/msys64/mingw64/include/c++/14.2.0/bits/new_allocator.h \
+ C:/msys64/mingw64/include/c++/14.2.0/bits/node_handle.h \
+ C:/msys64/mingw64/include/c++/14.2.0/bits/range_access.h \
+ C:/msys64/mingw64/include/c++/14.2.0/bits/erase_if.h \
+ C:/msys64/mingw64/include/c++/14.2.0/bits/memory_resource.h \
+ C:/msys64/mingw64/include/c++/14.2.0/bits/uses_allocator_args.h \
+ C:/msys64/mingw64/include/c++/14.2.0/vector \
+ C:/msys64/mingw64/include/c++/14.2.0/bits/stl_uninitialized.h \
+ C:/msys64/mingw64/include/c++/14.2.0/bits/stl_vector.h \
+ C:/msys64/mingw64/include/c++/14.2.0/bits/stl_bvector.h \
+ C:/msys64/mingw64/include/c++/14.2.0/bits/vector.tcc \
+ C:/msys64/mingw64/include/c++/14.2.0/array \
+ C:/msys64/mingw64/include/c++/14.2.0/compare \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/qstringview.h \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/qbytearray.h \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/qrefcount.h \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/qnamespace.h \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/qtmetamacros.h \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/qarraydata.h \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/qpair.h \
  C:/msys64/mingw64/include/string.h \
  C:/msys64/mingw64/include/sec_api/string_s.h \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/qarraydatapointer.h \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/qarraydataops.h \
  D:/Qt/6.8.2/mingw_64/include/QtCore/qcontainertools_impl.h \
  D:/Qt/6.8.2/mingw_64/include/QtCore/qxptype_traits.h \
- D:/Qt/6.8.2/mingw_64/include/QtCore/q20type_traits.h \
  C:/msys64/mingw64/include/c++/14.2.0/cstring \
  C:/msys64/mingw64/include/c++/14.2.0/iterator \
  C:/msys64/mingw64/include/c++/14.2.0/bits/stream_iterator.h \
  C:/msys64/mingw64/include/c++/14.2.0/iosfwd \
  C:/msys64/mingw64/include/c++/14.2.0/bits/stringfwd.h \
- C:/msys64/mingw64/include/c++/14.2.0/bits/memoryfwd.h \
  C:/msys64/mingw64/include/c++/14.2.0/bits/postypes.h \
  C:/msys64/mingw64/include/c++/14.2.0/cwchar \
  C:/msys64/mingw64/include/wchar.h \
@@ -195,18 +227,9 @@ CMakeFiles/vector-graphics-editor.dir/vector-graphics-editor_autogen/mocs_compil
  C:/msys64/mingw64/include/c++/14.2.0/bits/locale_classes.h \
  C:/msys64/mingw64/include/c++/14.2.0/string \
  C:/msys64/mingw64/include/c++/14.2.0/bits/char_traits.h \
- C:/msys64/mingw64/include/c++/14.2.0/bits/allocator.h \
- C:/msys64/mingw64/include/c++/14.2.0/x86_64-w64-mingw32/bits/c++allocator.h \
- C:/msys64/mingw64/include/c++/14.2.0/bits/new_allocator.h \
  C:/msys64/mingw64/include/c++/14.2.0/bits/ostream_insert.h \
  C:/msys64/mingw64/include/c++/14.2.0/bits/cxxabi_forced.h \
- C:/msys64/mingw64/include/c++/14.2.0/bits/stl_function.h \
- C:/msys64/mingw64/include/c++/14.2.0/backward/binders.h \
- C:/msys64/mingw64/include/c++/14.2.0/bits/refwrap.h \
- C:/msys64/mingw64/include/c++/14.2.0/bits/range_access.h \
  C:/msys64/mingw64/include/c++/14.2.0/bits/basic_string.h \
- C:/msys64/mingw64/include/c++/14.2.0/ext/alloc_traits.h \
- C:/msys64/mingw64/include/c++/14.2.0/bits/alloc_traits.h \
  C:/msys64/mingw64/include/c++/14.2.0/string_view \
  C:/msys64/mingw64/include/c++/14.2.0/bits/string_view.tcc \
  C:/msys64/mingw64/include/c++/14.2.0/ext/string_conversions.h \
@@ -214,8 +237,6 @@ CMakeFiles/vector-graphics-editor.dir/vector-graphics-editor_autogen/mocs_compil
  C:/msys64/mingw64/include/c++/14.2.0/cerrno \
  C:/msys64/mingw64/include/c++/14.2.0/bits/charconv.h \
  C:/msys64/mingw64/include/c++/14.2.0/bits/basic_string.tcc \
- C:/msys64/mingw64/include/c++/14.2.0/bits/memory_resource.h \
- C:/msys64/mingw64/include/c++/14.2.0/bits/uses_allocator_args.h \
  C:/msys64/mingw64/include/c++/14.2.0/bits/locale_classes.tcc \
  C:/msys64/mingw64/include/c++/14.2.0/system_error \
  C:/msys64/mingw64/include/c++/14.2.0/x86_64-w64-mingw32/bits/error_constants.h \
@@ -223,7 +244,6 @@ CMakeFiles/vector-graphics-editor.dir/vector-graphics-editor_autogen/mocs_compil
  C:/msys64/mingw64/include/c++/14.2.0/bits/streambuf.tcc \
  C:/msys64/mingw64/include/c++/14.2.0/memory \
  C:/msys64/mingw64/include/c++/14.2.0/bits/stl_tempbuf.h \
- C:/msys64/mingw64/include/c++/14.2.0/bits/stl_uninitialized.h \
  C:/msys64/mingw64/include/c++/14.2.0/bits/stl_raw_storage_iter.h \
  C:/msys64/mingw64/include/c++/14.2.0/bits/align.h \
  C:/msys64/mingw64/include/c++/14.2.0/bits/unique_ptr.h \
@@ -241,32 +261,8 @@ CMakeFiles/vector-graphics-editor.dir/vector-graphics-editor_autogen/mocs_compil
  C:/msys64/mingw64/include/c++/14.2.0/bits/stl_heap.h \
  C:/msys64/mingw64/include/c++/14.2.0/bits/uniform_int_dist.h \
  C:/msys64/mingw64/include/c++/14.2.0/pstl/glue_algorithm_defs.h \
- D:/Qt/6.8.2/mingw_64/include/QtCore/qnamespace.h \
- D:/Qt/6.8.2/mingw_64/include/QtCore/qcompare.h \
- D:/Qt/6.8.2/mingw_64/include/QtCore/qcomparehelpers.h \
- C:/msys64/mingw64/include/c++/14.2.0/functional \
- C:/msys64/mingw64/include/c++/14.2.0/bits/std_function.h \
- C:/msys64/mingw64/include/c++/14.2.0/unordered_map \
- C:/msys64/mingw64/include/c++/14.2.0/bits/unordered_map.h \
- C:/msys64/mingw64/include/c++/14.2.0/bits/hashtable.h \
- C:/msys64/mingw64/include/c++/14.2.0/bits/hashtable_policy.h \
- C:/msys64/mingw64/include/c++/14.2.0/bits/node_handle.h \
- C:/msys64/mingw64/include/c++/14.2.0/bits/erase_if.h \
- C:/msys64/mingw64/include/c++/14.2.0/vector \
- C:/msys64/mingw64/include/c++/14.2.0/bits/stl_vector.h \
- C:/msys64/mingw64/include/c++/14.2.0/bits/stl_bvector.h \
- C:/msys64/mingw64/include/c++/14.2.0/bits/vector.tcc \
- C:/msys64/mingw64/include/c++/14.2.0/array \
- C:/msys64/mingw64/include/c++/14.2.0/compare \
- D:/Qt/6.8.2/mingw_64/include/QtCore/qtmetamacros.h \
  D:/Qt/6.8.2/mingw_64/include/QtCore/q20functional.h \
  D:/Qt/6.8.2/mingw_64/include/QtCore/q20memory.h \
- D:/Qt/6.8.2/mingw_64/include/QtCore/qhashfunctions.h \
- D:/Qt/6.8.2/mingw_64/include/QtCore/qstring.h \
- D:/Qt/6.8.2/mingw_64/include/QtCore/qchar.h \
- D:/Qt/6.8.2/mingw_64/include/QtCore/qstringview.h \
- D:/Qt/6.8.2/mingw_64/include/QtCore/qbytearray.h \
- D:/Qt/6.8.2/mingw_64/include/QtCore/qrefcount.h \
  D:/Qt/6.8.2/mingw_64/include/QtCore/qbytearrayalgorithms.h \
  C:/msys64/mingw64/lib/gcc/x86_64-w64-mingw32/14.2.0/include/stdarg.h \
  C:/msys64/mingw64/include/stdarg.h \
@@ -280,8 +276,13 @@ CMakeFiles/vector-graphics-editor.dir/vector-graphics-editor_autogen/mocs_compil
  D:/Qt/6.8.2/mingw_64/include/QtCore/qutf8stringview.h \
  D:/Qt/6.8.2/mingw_64/include/QtCore/qstringtokenizer.h \
  D:/Qt/6.8.2/mingw_64/include/QtCore/qstringbuilder.h \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/qstring.h \
  D:/Qt/6.8.2/mingw_64/include/QtCore/qstringconverter.h \
  D:/Qt/6.8.2/mingw_64/include/QtCore/qstringconverter_base.h \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/QStack \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/qstack.h \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/qlist.h \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/qhashfunctions.h \
  C:/msys64/mingw64/include/c++/14.2.0/numeric \
  C:/msys64/mingw64/include/c++/14.2.0/bits/stl_numeric.h \
  C:/msys64/mingw64/include/c++/14.2.0/pstl/glue_numeric_defs.h \
@@ -319,6 +320,10 @@ CMakeFiles/vector-graphics-editor.dir/vector-graphics-editor_autogen/mocs_compil
  C:/msys64/mingw64/include/c++/14.2.0/bits/chrono.h \
  C:/msys64/mingw64/include/c++/14.2.0/ratio \
  C:/msys64/mingw64/include/c++/14.2.0/ctime \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/QReadWriteLock \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/qreadwritelock.h \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/qdeadlinetimer.h \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/qelapsedtimer.h \
  D:/Qt/6.8.2/mingw_64/include/QtCore/qtmochelpers.h \
  F:\program\claudegraph\build\vector-graphics-editor_autogen\PRMOGMWJPH/moc_image_manager.cpp \
  F:/program/claudegraph/src/core/image_manager.h \
@@ -346,8 +351,6 @@ CMakeFiles/vector-graphics-editor.dir/vector-graphics-editor_autogen/mocs_compil
  C:/msys64/mingw64/include/c++/14.2.0/cassert \
  D:/Qt/6.8.2/mingw_64/include/QtCore/q20iterator.h \
  D:/Qt/6.8.2/mingw_64/include/QtCore/qline.h \
- D:/Qt/6.8.2/mingw_64/include/QtCore/QString \
- D:/Qt/6.8.2/mingw_64/include/QtCore/qstring.h \
  D:/Qt/6.8.2/mingw_64/include/QtWidgets/QGraphicsScene \
  D:/Qt/6.8.2/mingw_64/include/QtWidgets/qgraphicsscene.h \
  D:/Qt/6.8.2/mingw_64/include/QtWidgets/qtwidgetsglobal.h \
@@ -376,14 +379,26 @@ CMakeFiles/vector-graphics-editor.dir/vector-graphics-editor_autogen/mocs_compil
  D:/Qt/6.8.2/mingw_64/include/QtCore/qhash.h \
  D:/Qt/6.8.2/mingw_64/include/QtCore/qvarlengtharray.h \
  D:/Qt/6.8.2/mingw_64/include/QtGui/qpainterpath.h \
- F:\program\claudegraph\build\vector-graphics-editor_autogen\YPKJ5OE7LN/moc_draw_area.cpp \
- F:/program/claudegraph/src/ui/draw_area.h \
- D:/Qt/6.8.2/mingw_64/include/QtWidgets/QGraphicsView \
- D:/Qt/6.8.2/mingw_64/include/QtWidgets/qgraphicsview.h \
+ F:\program\claudegraph\build\vector-graphics-editor_autogen\PRMOGMWJPH/moc_selection_manager.cpp \
+ F:/program/claudegraph/src/core/selection_manager.h \
+ D:/Qt/6.8.2/mingw_64/include/QtWidgets/QGraphicsItem \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/QPointF \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/qpoint.h \
+ D:/Qt/6.8.2/mingw_64/include/QtGui/QPainterPath \
+ D:/Qt/6.8.2/mingw_64/include/QtGui/qpainterpath.h \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/QList \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/qlist.h \
+ D:/Qt/6.8.2/mingw_64/include/QtWidgets/QGraphicsRectItem \
+ D:/Qt/6.8.2/mingw_64/include/QtGui/QPainter \
  D:/Qt/6.8.2/mingw_64/include/QtGui/qpainter.h \
  D:/Qt/6.8.2/mingw_64/include/QtGui/qtextoption.h \
  D:/Qt/6.8.2/mingw_64/include/QtGui/qfontinfo.h \
  D:/Qt/6.8.2/mingw_64/include/QtGui/qfontmetrics.h \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/QSet \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/qset.h \
+ D:/Qt/6.8.2/mingw_64/include/QtWidgets/QGraphicsView \
+ D:/Qt/6.8.2/mingw_64/include/QtWidgets/qgraphicsview.h \
+ D:/Qt/6.8.2/mingw_64/include/QtGui/qpainter.h \
  D:/Qt/6.8.2/mingw_64/include/QtWidgets/qscrollarea.h \
  D:/Qt/6.8.2/mingw_64/include/QtWidgets/qabstractscrollarea.h \
  D:/Qt/6.8.2/mingw_64/include/QtWidgets/qframe.h \
@@ -396,23 +411,38 @@ CMakeFiles/vector-graphics-editor.dir/vector-graphics-editor_autogen/mocs_compil
  D:/Qt/6.8.2/mingw_64/include/QtGui/qcursor.h \
  D:/Qt/6.8.2/mingw_64/include/QtGui/qbitmap.h \
  D:/Qt/6.8.2/mingw_64/include/QtWidgets/qgraphicsscene.h \
- D:/Qt/6.8.2/mingw_64/include/QtGui/QPainter \
- D:/Qt/6.8.2/mingw_64/include/QtGui/qpainter.h \
- F:/program/claudegraph/src/core/graphics_item_factory.h \
- D:/Qt/6.8.2/mingw_64/include/QtWidgets/QGraphicsItem \
+ F:/program/claudegraph/src/core/graphic_item.h \
+ D:/Qt/6.8.2/mingw_64/include/QtWidgets/QGraphicsSceneMouseEvent \
+ D:/Qt/6.8.2/mingw_64/include/QtWidgets/qgraphicssceneevent.h \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/qcoreevent.h \
+ D:/Qt/6.8.2/mingw_64/include/QtWidgets/QStyleOptionGraphicsItem \
+ D:/Qt/6.8.2/mingw_64/include/QtWidgets/qstyleoption.h \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/qlocale.h \
+ D:/Qt/6.8.2/mingw_64/include/QtWidgets/qabstractspinbox.h \
+ D:/Qt/6.8.2/mingw_64/include/QtGui/qvalidator.h \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/qregularexpression.h \
+ D:/Qt/6.8.2/mingw_64/include/QtWidgets/qslider.h \
+ D:/Qt/6.8.2/mingw_64/include/QtWidgets/qabstractslider.h \
+ D:/Qt/6.8.2/mingw_64/include/QtWidgets/qstyle.h \
+ D:/Qt/6.8.2/mingw_64/include/QtWidgets/qtabbar.h \
+ D:/Qt/6.8.2/mingw_64/include/QtWidgets/qtabwidget.h \
+ D:/Qt/6.8.2/mingw_64/include/QtWidgets/qrubberband.h \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/qabstractitemmodel.h \
  F:/program/claudegraph/src/core/graphic.h \
- D:/Qt/6.8.2/mingw_64/include/QtCore/QPointF \
- D:/Qt/6.8.2/mingw_64/include/QtCore/qpoint.h \
  D:/Qt/6.8.2/mingw_64/include/QtGui/QPen \
  D:/Qt/6.8.2/mingw_64/include/QtGui/qpen.h \
  D:/Qt/6.8.2/mingw_64/include/QtGui/QBrush \
  D:/Qt/6.8.2/mingw_64/include/QtGui/qbrush.h \
  D:/Qt/6.8.2/mingw_64/include/QtCore/QDataStream \
  D:/Qt/6.8.2/mingw_64/include/QtCore/qdatastream.h \
+ F:/program/claudegraph/src/core/draw_strategy.h \
+ F:\program\claudegraph\build\vector-graphics-editor_autogen\YPKJ5OE7LN/moc_draw_area.cpp \
+ F:/program/claudegraph/src/ui/draw_area.h \
+ F:/program/claudegraph/src/core/graphics_item_factory.h \
+ F:/program/claudegraph/src/core/selection_manager.h \
  F:/program/claudegraph/src/state/editor_state.h \
  D:/Qt/6.8.2/mingw_64/include/QtGui/QMouseEvent \
  D:/Qt/6.8.2/mingw_64/include/QtGui/qevent.h \
- D:/Qt/6.8.2/mingw_64/include/QtCore/qcoreevent.h \
  D:/Qt/6.8.2/mingw_64/include/QtCore/qiodevice.h \
  D:/Qt/6.8.2/mingw_64/include/QtCore/qurl.h \
  D:/Qt/6.8.2/mingw_64/include/QtGui/qeventpoint.h \
@@ -422,7 +452,6 @@ CMakeFiles/vector-graphics-editor.dir/vector-graphics-editor_autogen/mocs_compil
  D:/Qt/6.8.2/mingw_64/include/QtGui/qinputdevice.h \
  D:/Qt/6.8.2/mingw_64/include/QtGui/qscreen.h \
  D:/Qt/6.8.2/mingw_64/include/QtCore/QList \
- D:/Qt/6.8.2/mingw_64/include/QtCore/qlist.h \
  D:/Qt/6.8.2/mingw_64/include/QtCore/QObject \
  D:/Qt/6.8.2/mingw_64/include/QtCore/QRect \
  D:/Qt/6.8.2/mingw_64/include/QtCore/qrect.h \
@@ -435,34 +464,27 @@ CMakeFiles/vector-graphics-editor.dir/vector-graphics-editor_autogen/mocs_compil
  D:/Qt/6.8.2/mingw_64/include/QtGui/qscreen_platform.h \
  D:/Qt/6.8.2/mingw_64/include/QtGui/qguiapplication.h \
  D:/Qt/6.8.2/mingw_64/include/QtCore/qcoreapplication.h \
- D:/Qt/6.8.2/mingw_64/include/QtCore/qdeadlinetimer.h \
- D:/Qt/6.8.2/mingw_64/include/QtCore/qelapsedtimer.h \
  D:/Qt/6.8.2/mingw_64/include/QtCore/qeventloop.h \
  D:/Qt/6.8.2/mingw_64/include/QtCore/qcoreapplication_platform.h \
  D:/Qt/6.8.2/mingw_64/include/QtGui/qinputmethod.h \
- D:/Qt/6.8.2/mingw_64/include/QtCore/qlocale.h \
  D:/Qt/6.8.2/mingw_64/include/QtGui/qguiapplication_platform.h \
  D:/Qt/6.8.2/mingw_64/include/QtGui/QKeyEvent \
- F:/program/claudegraph/src/ui/image_resizer.h \
- D:/Qt/6.8.2/mingw_64/include/QtWidgets/QGraphicsObject \
- D:/Qt/6.8.2/mingw_64/include/QtWidgets/QGraphicsRectItem \
- D:/Qt/6.8.2/mingw_64/include/QtWidgets/QGraphicsLineItem \
- D:/Qt/6.8.2/mingw_64/include/QtWidgets/QGraphicsEllipseItem \
- D:/Qt/6.8.2/mingw_64/include/QtWidgets/QGraphicsSceneMouseEvent \
- D:/Qt/6.8.2/mingw_64/include/QtWidgets/qgraphicssceneevent.h \
- D:/Qt/6.8.2/mingw_64/include/QtWidgets/QGraphicsSceneEvent \
  D:/Qt/6.8.2/mingw_64/include/QtGui/QCursor \
  D:/Qt/6.8.2/mingw_64/include/QtGui/qcursor.h \
+ D:/Qt/6.8.2/mingw_64/include/QtWidgets/QMainWindow \
+ D:/Qt/6.8.2/mingw_64/include/QtWidgets/qmainwindow.h \
  D:/Qt/6.8.2/mingw_64/include/QtCore/QDebug \
  D:/Qt/6.8.2/mingw_64/include/QtCore/qdebug.h \
- D:/Qt/6.8.2/mingw_64/include/QtCore/QList \
+ D:/Qt/6.8.2/mingw_64/include/QtGui/QWheelEvent \
+ F:/program/claudegraph/src/ui/image_resizer.h \
+ D:/Qt/6.8.2/mingw_64/include/QtWidgets/QGraphicsObject \
+ D:/Qt/6.8.2/mingw_64/include/QtWidgets/QGraphicsLineItem \
+ D:/Qt/6.8.2/mingw_64/include/QtWidgets/QGraphicsEllipseItem \
+ D:/Qt/6.8.2/mingw_64/include/QtWidgets/QGraphicsSceneEvent \
  F:\program\claudegraph\build\vector-graphics-editor_autogen\YPKJ5OE7LN/moc_image_resizer.cpp \
  F:/program/claudegraph/src/ui/image_resizer.h \
  F:\program\claudegraph\build\vector-graphics-editor_autogen\YPKJ5OE7LN/moc_main_window.cpp \
  F:/program/claudegraph/src/ui/main_window.h \
- D:/Qt/6.8.2/mingw_64/include/QtWidgets/QMainWindow \
- D:/Qt/6.8.2/mingw_64/include/QtWidgets/qmainwindow.h \
- D:/Qt/6.8.2/mingw_64/include/QtWidgets/qtabwidget.h \
  D:/Qt/6.8.2/mingw_64/include/QtGui/QAction \
  D:/Qt/6.8.2/mingw_64/include/QtGui/qaction.h \
  D:/Qt/6.8.2/mingw_64/include/QtWidgets/QToolBar \
@@ -471,16 +493,12 @@ CMakeFiles/vector-graphics-editor.dir/vector-graphics-editor_autogen/mocs_compil
  D:/Qt/6.8.2/mingw_64/include/QtWidgets/qmenu.h \
  D:/Qt/6.8.2/mingw_64/include/QtWidgets/QSlider \
  D:/Qt/6.8.2/mingw_64/include/QtWidgets/qslider.h \
- D:/Qt/6.8.2/mingw_64/include/QtWidgets/qabstractslider.h \
  D:/Qt/6.8.2/mingw_64/include/QtWidgets/QLabel \
  D:/Qt/6.8.2/mingw_64/include/QtWidgets/qlabel.h \
  D:/Qt/6.8.2/mingw_64/include/QtGui/qpicture.h \
  D:/Qt/6.8.2/mingw_64/include/QtGui/qtextdocument.h \
  D:/Qt/6.8.2/mingw_64/include/QtWidgets/QSpinBox \
  D:/Qt/6.8.2/mingw_64/include/QtWidgets/qspinbox.h \
- D:/Qt/6.8.2/mingw_64/include/QtWidgets/qabstractspinbox.h \
- D:/Qt/6.8.2/mingw_64/include/QtGui/qvalidator.h \
- D:/Qt/6.8.2/mingw_64/include/QtCore/qregularexpression.h \
  D:/Qt/6.8.2/mingw_64/include/QtGui/QActionGroup \
  D:/Qt/6.8.2/mingw_64/include/QtGui/qactiongroup.h \
  D:/Qt/6.8.2/mingw_64/include/QtWidgets/QPushButton \
@@ -490,11 +508,9 @@ CMakeFiles/vector-graphics-editor.dir/vector-graphics-editor_autogen/mocs_compil
  D:/Qt/6.8.2/mingw_64/include/QtWidgets/qcombobox.h \
  D:/Qt/6.8.2/mingw_64/include/QtWidgets/qabstractitemdelegate.h \
  D:/Qt/6.8.2/mingw_64/include/QtWidgets/qstyleoption.h \
- D:/Qt/6.8.2/mingw_64/include/QtWidgets/qslider.h \
- D:/Qt/6.8.2/mingw_64/include/QtWidgets/qstyle.h \
- D:/Qt/6.8.2/mingw_64/include/QtWidgets/qtabbar.h \
- D:/Qt/6.8.2/mingw_64/include/QtWidgets/qrubberband.h \
- D:/Qt/6.8.2/mingw_64/include/QtCore/qabstractitemmodel.h \
  F:/program/claudegraph/src/ui/draw_area.h \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/QTimer \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/qtimer.h \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/qbasictimer.h \
  D:/Qt/6.8.2/mingw_64/include/QtGui/qtextcursor.h \
  D:/Qt/6.8.2/mingw_64/include/QtGui/qtextformat.h

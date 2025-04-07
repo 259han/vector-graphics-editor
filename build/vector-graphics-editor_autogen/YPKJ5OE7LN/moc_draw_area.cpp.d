@@ -212,13 +212,16 @@ F:/program/claudegraph/build/vector-graphics-editor_autogen/YPKJ5OE7LN/moc_draw_
   D:/Qt/6.8.2/mingw_64/include/QtCore/QObject \
   D:/Qt/6.8.2/mingw_64/include/QtCore/QPointF \
   D:/Qt/6.8.2/mingw_64/include/QtCore/QRect \
+  D:/Qt/6.8.2/mingw_64/include/QtCore/QSet \
   D:/Qt/6.8.2/mingw_64/include/QtCore/QSize \
   D:/Qt/6.8.2/mingw_64/include/QtCore/QSizeF \
+  D:/Qt/6.8.2/mingw_64/include/QtCore/QString \
   D:/Qt/6.8.2/mingw_64/include/QtCore/q20functional.h \
   D:/Qt/6.8.2/mingw_64/include/QtCore/q20iterator.h \
   D:/Qt/6.8.2/mingw_64/include/QtCore/q20memory.h \
   D:/Qt/6.8.2/mingw_64/include/QtCore/q20type_traits.h \
   D:/Qt/6.8.2/mingw_64/include/QtCore/q23utility.h \
+  D:/Qt/6.8.2/mingw_64/include/QtCore/qabstractitemmodel.h \
   D:/Qt/6.8.2/mingw_64/include/QtCore/qalgorithms.h \
   D:/Qt/6.8.2/mingw_64/include/QtCore/qanystringview.h \
   D:/Qt/6.8.2/mingw_64/include/QtCore/qarraydata.h \
@@ -294,6 +297,7 @@ F:/program/claudegraph/build/vector-graphics-editor_autogen/YPKJ5OE7LN/moc_draw_
   D:/Qt/6.8.2/mingw_64/include/QtCore/qprocessordetection.h \
   D:/Qt/6.8.2/mingw_64/include/QtCore/qrect.h \
   D:/Qt/6.8.2/mingw_64/include/QtCore/qrefcount.h \
+  D:/Qt/6.8.2/mingw_64/include/QtCore/qregularexpression.h \
   D:/Qt/6.8.2/mingw_64/include/QtCore/qscopedpointer.h \
   D:/Qt/6.8.2/mingw_64/include/QtCore/qscopeguard.h \
   D:/Qt/6.8.2/mingw_64/include/QtCore/qset.h \
@@ -349,8 +353,10 @@ F:/program/claudegraph/build/vector-graphics-editor_autogen/YPKJ5OE7LN/moc_draw_
   D:/Qt/6.8.2/mingw_64/include/QtGui/QKeyEvent \
   D:/Qt/6.8.2/mingw_64/include/QtGui/QMouseEvent \
   D:/Qt/6.8.2/mingw_64/include/QtGui/QPainter \
+  D:/Qt/6.8.2/mingw_64/include/QtGui/QPainterPath \
   D:/Qt/6.8.2/mingw_64/include/QtGui/QPen \
   D:/Qt/6.8.2/mingw_64/include/QtGui/QTransform \
+  D:/Qt/6.8.2/mingw_64/include/QtGui/QWheelEvent \
   D:/Qt/6.8.2/mingw_64/include/QtGui/qaction.h \
   D:/Qt/6.8.2/mingw_64/include/QtGui/qbitmap.h \
   D:/Qt/6.8.2/mingw_64/include/QtGui/qbrush.h \
@@ -387,6 +393,7 @@ F:/program/claudegraph/build/vector-graphics-editor_autogen/YPKJ5OE7LN/moc_draw_
   D:/Qt/6.8.2/mingw_64/include/QtGui/qtguiexports.h \
   D:/Qt/6.8.2/mingw_64/include/QtGui/qtguiglobal.h \
   D:/Qt/6.8.2/mingw_64/include/QtGui/qtransform.h \
+  D:/Qt/6.8.2/mingw_64/include/QtGui/qvalidator.h \
   D:/Qt/6.8.2/mingw_64/include/QtGui/qvector2d.h \
   D:/Qt/6.8.2/mingw_64/include/QtGui/qvectornd.h \
   D:/Qt/6.8.2/mingw_64/include/QtGui/qwindowdefs.h \
@@ -400,19 +407,33 @@ F:/program/claudegraph/build/vector-graphics-editor_autogen/YPKJ5OE7LN/moc_draw_
   D:/Qt/6.8.2/mingw_64/include/QtWidgets/QGraphicsSceneEvent \
   D:/Qt/6.8.2/mingw_64/include/QtWidgets/QGraphicsSceneMouseEvent \
   D:/Qt/6.8.2/mingw_64/include/QtWidgets/QGraphicsView \
+  D:/Qt/6.8.2/mingw_64/include/QtWidgets/QMainWindow \
+  D:/Qt/6.8.2/mingw_64/include/QtWidgets/QStyleOptionGraphicsItem \
   D:/Qt/6.8.2/mingw_64/include/QtWidgets/qabstractscrollarea.h \
+  D:/Qt/6.8.2/mingw_64/include/QtWidgets/qabstractslider.h \
+  D:/Qt/6.8.2/mingw_64/include/QtWidgets/qabstractspinbox.h \
   D:/Qt/6.8.2/mingw_64/include/QtWidgets/qframe.h \
   D:/Qt/6.8.2/mingw_64/include/QtWidgets/qgraphicsitem.h \
   D:/Qt/6.8.2/mingw_64/include/QtWidgets/qgraphicsscene.h \
   D:/Qt/6.8.2/mingw_64/include/QtWidgets/qgraphicssceneevent.h \
   D:/Qt/6.8.2/mingw_64/include/QtWidgets/qgraphicsview.h \
+  D:/Qt/6.8.2/mingw_64/include/QtWidgets/qmainwindow.h \
+  D:/Qt/6.8.2/mingw_64/include/QtWidgets/qrubberband.h \
   D:/Qt/6.8.2/mingw_64/include/QtWidgets/qscrollarea.h \
   D:/Qt/6.8.2/mingw_64/include/QtWidgets/qsizepolicy.h \
+  D:/Qt/6.8.2/mingw_64/include/QtWidgets/qslider.h \
+  D:/Qt/6.8.2/mingw_64/include/QtWidgets/qstyle.h \
+  D:/Qt/6.8.2/mingw_64/include/QtWidgets/qstyleoption.h \
+  D:/Qt/6.8.2/mingw_64/include/QtWidgets/qtabbar.h \
+  D:/Qt/6.8.2/mingw_64/include/QtWidgets/qtabwidget.h \
   D:/Qt/6.8.2/mingw_64/include/QtWidgets/qtwidgets-config.h \
   D:/Qt/6.8.2/mingw_64/include/QtWidgets/qtwidgetsexports.h \
   D:/Qt/6.8.2/mingw_64/include/QtWidgets/qtwidgetsglobal.h \
   D:/Qt/6.8.2/mingw_64/include/QtWidgets/qwidget.h \
+  F:/program/claudegraph/src/core/draw_strategy.h \
   F:/program/claudegraph/src/core/graphic.h \
+  F:/program/claudegraph/src/core/graphic_item.h \
   F:/program/claudegraph/src/core/graphics_item_factory.h \
+  F:/program/claudegraph/src/core/selection_manager.h \
   F:/program/claudegraph/src/state/editor_state.h \
   F:/program/claudegraph/src/ui/image_resizer.h

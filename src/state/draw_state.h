@@ -12,6 +12,8 @@
 #include <memory>
 #include <QGraphicsItem>
 #include <QGraphicsEllipseItem>
+#include <QScrollBar>
+#include <QMainWindow>
 
 class DrawState : public EditorState {
 public:
@@ -23,10 +25,16 @@ public:
     void mouseMoveEvent(DrawArea* drawArea, QMouseEvent* event) override;
     void paintEvent(DrawArea* drawArea, QPainter* painter) override;
     void keyPressEvent(DrawArea* drawArea, QKeyEvent* event) override;
+    void wheelEvent(DrawArea* drawArea, QWheelEvent* event) override;
+    
+    // 状态切换通知
+    void onEnterState(DrawArea* drawArea) override;
+    void onExitState(DrawArea* drawArea) override;
     
     // 鼠标事件处理函数
-    void handleLeftMousePress(DrawArea* drawArea, QPointF scenePos);
-    void handleRightMousePress(DrawArea* drawArea, QPointF scenePos);
+    void handleLeftMousePress(DrawArea* drawArea, QPointF scenePos) override;
+    void handleRightMousePress(DrawArea* drawArea, QPointF scenePos) override;
+    void handleMiddleMousePress(DrawArea* drawArea, QPointF scenePos) override;
     
     // 设置视觉样式
     void setLineColor(const QColor& color);
@@ -37,8 +45,19 @@ public:
     void setFillMode(bool enabled);
     void resetFillMode();
     
-    // 重写方法以实现接口
-    bool isEditState() const override { return false; }
+    // 状态类型和名称
+    StateType getStateType() const override { return StateType::DrawState; }
+    QString getStateName() const override { 
+        switch (m_graphicType) {
+            case Graphic::LINE: return "绘制直线";
+            case Graphic::RECTANGLE: return "绘制矩形";
+            case Graphic::ELLIPSE: return "绘制椭圆";
+            case Graphic::CIRCLE: return "绘制圆形";
+            case Graphic::BEZIER: return "绘制贝塞尔曲线";
+            case Graphic::TRIANGLE: return "绘制三角形";
+            default: return "绘制模式";
+        }
+    }
     
     // 调试方法 - 用于检查当前状态
     Graphic::GraphicType getCurrentGraphicType() const { return m_graphicType; }
@@ -59,6 +78,16 @@ private:
     
     // 清除控制点标记
     void clearControlPointMarkers(DrawArea* drawArea);
+    
+    // 贝塞尔曲线计算
+    QPointF calculateBezierPoint(double t, const std::vector<QPointF>& points);
+    
+    // 工具方法
+    QPointF getScenePos(DrawArea* drawArea, QMouseEvent* event);
+    void updateStatusMessage(DrawArea* drawArea, const QString& message);
+    void setCursor(DrawArea* drawArea, Qt::CursorShape shape);
+    void resetCursor(DrawArea* drawArea);
+    bool handleZoomAndPan(DrawArea* drawArea, QWheelEvent* event);
     
     // 状态数据
     Graphic::GraphicType m_graphicType;

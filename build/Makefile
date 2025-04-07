@@ -154,30 +154,6 @@ vector-graphics-editor_autogen/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\vector-graphics-editor_autogen.dir\build.make CMakeFiles/vector-graphics-editor_autogen.dir/build
 .PHONY : vector-graphics-editor_autogen/fast
 
-main.obj: main.cpp.obj
-.PHONY : main.obj
-
-# target to build an object file
-main.cpp.obj:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\vector-graphics-editor.dir\build.make CMakeFiles/vector-graphics-editor.dir/main.cpp.obj
-.PHONY : main.cpp.obj
-
-main.i: main.cpp.i
-.PHONY : main.i
-
-# target to preprocess a source file
-main.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\vector-graphics-editor.dir\build.make CMakeFiles/vector-graphics-editor.dir/main.cpp.i
-.PHONY : main.cpp.i
-
-main.s: main.cpp.s
-.PHONY : main.s
-
-# target to generate assembly for a file
-main.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\vector-graphics-editor.dir\build.make CMakeFiles/vector-graphics-editor.dir/main.cpp.s
-.PHONY : main.cpp.s
-
 src/command/command.obj: src/command/command.cpp.obj
 .PHONY : src/command/command.obj
 
@@ -225,6 +201,54 @@ src/command/command_manager.s: src/command/command_manager.cpp.s
 src/command/command_manager.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\vector-graphics-editor.dir\build.make CMakeFiles/vector-graphics-editor.dir/src/command/command_manager.cpp.s
 .PHONY : src/command/command_manager.cpp.s
+
+src/command/create_graphic_command.obj: src/command/create_graphic_command.cpp.obj
+.PHONY : src/command/create_graphic_command.obj
+
+# target to build an object file
+src/command/create_graphic_command.cpp.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\vector-graphics-editor.dir\build.make CMakeFiles/vector-graphics-editor.dir/src/command/create_graphic_command.cpp.obj
+.PHONY : src/command/create_graphic_command.cpp.obj
+
+src/command/create_graphic_command.i: src/command/create_graphic_command.cpp.i
+.PHONY : src/command/create_graphic_command.i
+
+# target to preprocess a source file
+src/command/create_graphic_command.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\vector-graphics-editor.dir\build.make CMakeFiles/vector-graphics-editor.dir/src/command/create_graphic_command.cpp.i
+.PHONY : src/command/create_graphic_command.cpp.i
+
+src/command/create_graphic_command.s: src/command/create_graphic_command.cpp.s
+.PHONY : src/command/create_graphic_command.s
+
+# target to generate assembly for a file
+src/command/create_graphic_command.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\vector-graphics-editor.dir\build.make CMakeFiles/vector-graphics-editor.dir/src/command/create_graphic_command.cpp.s
+.PHONY : src/command/create_graphic_command.cpp.s
+
+src/command/fill_command.obj: src/command/fill_command.cpp.obj
+.PHONY : src/command/fill_command.obj
+
+# target to build an object file
+src/command/fill_command.cpp.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\vector-graphics-editor.dir\build.make CMakeFiles/vector-graphics-editor.dir/src/command/fill_command.cpp.obj
+.PHONY : src/command/fill_command.cpp.obj
+
+src/command/fill_command.i: src/command/fill_command.cpp.i
+.PHONY : src/command/fill_command.i
+
+# target to preprocess a source file
+src/command/fill_command.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\vector-graphics-editor.dir\build.make CMakeFiles/vector-graphics-editor.dir/src/command/fill_command.cpp.i
+.PHONY : src/command/fill_command.cpp.i
+
+src/command/fill_command.s: src/command/fill_command.cpp.s
+.PHONY : src/command/fill_command.s
+
+# target to generate assembly for a file
+src/command/fill_command.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\vector-graphics-editor.dir\build.make CMakeFiles/vector-graphics-editor.dir/src/command/fill_command.cpp.s
+.PHONY : src/command/fill_command.cpp.s
 
 src/command/move_command.obj: src/command/move_command.cpp.obj
 .PHONY : src/command/move_command.obj
@@ -321,6 +345,30 @@ src/command/selection_command.s: src/command/selection_command.cpp.s
 src/command/selection_command.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\vector-graphics-editor.dir\build.make CMakeFiles/vector-graphics-editor.dir/src/command/selection_command.cpp.s
 .PHONY : src/command/selection_command.cpp.s
+
+src/command/style_change_command.obj: src/command/style_change_command.cpp.obj
+.PHONY : src/command/style_change_command.obj
+
+# target to build an object file
+src/command/style_change_command.cpp.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\vector-graphics-editor.dir\build.make CMakeFiles/vector-graphics-editor.dir/src/command/style_change_command.cpp.obj
+.PHONY : src/command/style_change_command.cpp.obj
+
+src/command/style_change_command.i: src/command/style_change_command.cpp.i
+.PHONY : src/command/style_change_command.i
+
+# target to preprocess a source file
+src/command/style_change_command.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\vector-graphics-editor.dir\build.make CMakeFiles/vector-graphics-editor.dir/src/command/style_change_command.cpp.i
+.PHONY : src/command/style_change_command.cpp.i
+
+src/command/style_change_command.s: src/command/style_change_command.cpp.s
+.PHONY : src/command/style_change_command.s
+
+# target to generate assembly for a file
+src/command/style_change_command.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\vector-graphics-editor.dir\build.make CMakeFiles/vector-graphics-editor.dir/src/command/style_change_command.cpp.s
+.PHONY : src/command/style_change_command.cpp.s
 
 src/core/bezier_graphic_item.obj: src/core/bezier_graphic_item.cpp.obj
 .PHONY : src/core/bezier_graphic_item.obj
@@ -466,30 +514,6 @@ src/core/graphic_item.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\vector-graphics-editor.dir\build.make CMakeFiles/vector-graphics-editor.dir/src/core/graphic_item.cpp.s
 .PHONY : src/core/graphic_item.cpp.s
 
-src/core/graphics_clipper.obj: src/core/graphics_clipper.cpp.obj
-.PHONY : src/core/graphics_clipper.obj
-
-# target to build an object file
-src/core/graphics_clipper.cpp.obj:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\vector-graphics-editor.dir\build.make CMakeFiles/vector-graphics-editor.dir/src/core/graphics_clipper.cpp.obj
-.PHONY : src/core/graphics_clipper.cpp.obj
-
-src/core/graphics_clipper.i: src/core/graphics_clipper.cpp.i
-.PHONY : src/core/graphics_clipper.i
-
-# target to preprocess a source file
-src/core/graphics_clipper.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\vector-graphics-editor.dir\build.make CMakeFiles/vector-graphics-editor.dir/src/core/graphics_clipper.cpp.i
-.PHONY : src/core/graphics_clipper.cpp.i
-
-src/core/graphics_clipper.s: src/core/graphics_clipper.cpp.s
-.PHONY : src/core/graphics_clipper.s
-
-# target to generate assembly for a file
-src/core/graphics_clipper.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\vector-graphics-editor.dir\build.make CMakeFiles/vector-graphics-editor.dir/src/core/graphics_clipper.cpp.s
-.PHONY : src/core/graphics_clipper.cpp.s
-
 src/core/graphics_item_factory.obj: src/core/graphics_item_factory.cpp.obj
 .PHONY : src/core/graphics_item_factory.obj
 
@@ -609,6 +633,30 @@ src/core/selection_manager.s: src/core/selection_manager.cpp.s
 src/core/selection_manager.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\vector-graphics-editor.dir\build.make CMakeFiles/vector-graphics-editor.dir/src/core/selection_manager.cpp.s
 .PHONY : src/core/selection_manager.cpp.s
+
+src/main.obj: src/main.cpp.obj
+.PHONY : src/main.obj
+
+# target to build an object file
+src/main.cpp.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\vector-graphics-editor.dir\build.make CMakeFiles/vector-graphics-editor.dir/src/main.cpp.obj
+.PHONY : src/main.cpp.obj
+
+src/main.i: src/main.cpp.i
+.PHONY : src/main.i
+
+# target to preprocess a source file
+src/main.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\vector-graphics-editor.dir\build.make CMakeFiles/vector-graphics-editor.dir/src/main.cpp.i
+.PHONY : src/main.cpp.i
+
+src/main.s: src/main.cpp.s
+.PHONY : src/main.s
+
+# target to generate assembly for a file
+src/main.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\vector-graphics-editor.dir\build.make CMakeFiles/vector-graphics-editor.dir/src/main.cpp.s
+.PHONY : src/main.cpp.s
 
 src/state/draw_state.obj: src/state/draw_state.cpp.obj
 .PHONY : src/state/draw_state.obj
@@ -778,6 +826,54 @@ src/ui/main_window.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\vector-graphics-editor.dir\build.make CMakeFiles/vector-graphics-editor.dir/src/ui/main_window.cpp.s
 .PHONY : src/ui/main_window.cpp.s
 
+src/utils/graphics_utils.obj: src/utils/graphics_utils.cpp.obj
+.PHONY : src/utils/graphics_utils.obj
+
+# target to build an object file
+src/utils/graphics_utils.cpp.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\vector-graphics-editor.dir\build.make CMakeFiles/vector-graphics-editor.dir/src/utils/graphics_utils.cpp.obj
+.PHONY : src/utils/graphics_utils.cpp.obj
+
+src/utils/graphics_utils.i: src/utils/graphics_utils.cpp.i
+.PHONY : src/utils/graphics_utils.i
+
+# target to preprocess a source file
+src/utils/graphics_utils.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\vector-graphics-editor.dir\build.make CMakeFiles/vector-graphics-editor.dir/src/utils/graphics_utils.cpp.i
+.PHONY : src/utils/graphics_utils.cpp.i
+
+src/utils/graphics_utils.s: src/utils/graphics_utils.cpp.s
+.PHONY : src/utils/graphics_utils.s
+
+# target to generate assembly for a file
+src/utils/graphics_utils.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\vector-graphics-editor.dir\build.make CMakeFiles/vector-graphics-editor.dir/src/utils/graphics_utils.cpp.s
+.PHONY : src/utils/graphics_utils.cpp.s
+
+src/utils/logger.obj: src/utils/logger.cpp.obj
+.PHONY : src/utils/logger.obj
+
+# target to build an object file
+src/utils/logger.cpp.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\vector-graphics-editor.dir\build.make CMakeFiles/vector-graphics-editor.dir/src/utils/logger.cpp.obj
+.PHONY : src/utils/logger.cpp.obj
+
+src/utils/logger.i: src/utils/logger.cpp.i
+.PHONY : src/utils/logger.i
+
+# target to preprocess a source file
+src/utils/logger.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\vector-graphics-editor.dir\build.make CMakeFiles/vector-graphics-editor.dir/src/utils/logger.cpp.i
+.PHONY : src/utils/logger.cpp.i
+
+src/utils/logger.s: src/utils/logger.cpp.s
+.PHONY : src/utils/logger.s
+
+# target to generate assembly for a file
+src/utils/logger.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\vector-graphics-editor.dir\build.make CMakeFiles/vector-graphics-editor.dir/src/utils/logger.cpp.s
+.PHONY : src/utils/logger.cpp.s
+
 vector-graphics-editor_autogen/mocs_compilation.obj: vector-graphics-editor_autogen/mocs_compilation.cpp.obj
 .PHONY : vector-graphics-editor_autogen/mocs_compilation.obj
 
@@ -813,15 +909,18 @@ help:
 	@echo ... vector-graphics-editor_autogen
 	@echo ... vector-graphics-editor_autogen_timestamp_deps
 	@echo ... vector-graphics-editor
-	@echo ... main.obj
-	@echo ... main.i
-	@echo ... main.s
 	@echo ... src/command/command.obj
 	@echo ... src/command/command.i
 	@echo ... src/command/command.s
 	@echo ... src/command/command_manager.obj
 	@echo ... src/command/command_manager.i
 	@echo ... src/command/command_manager.s
+	@echo ... src/command/create_graphic_command.obj
+	@echo ... src/command/create_graphic_command.i
+	@echo ... src/command/create_graphic_command.s
+	@echo ... src/command/fill_command.obj
+	@echo ... src/command/fill_command.i
+	@echo ... src/command/fill_command.s
 	@echo ... src/command/move_command.obj
 	@echo ... src/command/move_command.i
 	@echo ... src/command/move_command.s
@@ -834,6 +933,9 @@ help:
 	@echo ... src/command/selection_command.obj
 	@echo ... src/command/selection_command.i
 	@echo ... src/command/selection_command.s
+	@echo ... src/command/style_change_command.obj
+	@echo ... src/command/style_change_command.i
+	@echo ... src/command/style_change_command.s
 	@echo ... src/core/bezier_graphic_item.obj
 	@echo ... src/core/bezier_graphic_item.i
 	@echo ... src/core/bezier_graphic_item.s
@@ -852,9 +954,6 @@ help:
 	@echo ... src/core/graphic_item.obj
 	@echo ... src/core/graphic_item.i
 	@echo ... src/core/graphic_item.s
-	@echo ... src/core/graphics_clipper.obj
-	@echo ... src/core/graphics_clipper.i
-	@echo ... src/core/graphics_clipper.s
 	@echo ... src/core/graphics_item_factory.obj
 	@echo ... src/core/graphics_item_factory.i
 	@echo ... src/core/graphics_item_factory.s
@@ -870,6 +969,9 @@ help:
 	@echo ... src/core/selection_manager.obj
 	@echo ... src/core/selection_manager.i
 	@echo ... src/core/selection_manager.s
+	@echo ... src/main.obj
+	@echo ... src/main.i
+	@echo ... src/main.s
 	@echo ... src/state/draw_state.obj
 	@echo ... src/state/draw_state.i
 	@echo ... src/state/draw_state.s
@@ -891,6 +993,12 @@ help:
 	@echo ... src/ui/main_window.obj
 	@echo ... src/ui/main_window.i
 	@echo ... src/ui/main_window.s
+	@echo ... src/utils/graphics_utils.obj
+	@echo ... src/utils/graphics_utils.i
+	@echo ... src/utils/graphics_utils.s
+	@echo ... src/utils/logger.obj
+	@echo ... src/utils/logger.i
+	@echo ... src/utils/logger.s
 	@echo ... vector-graphics-editor_autogen/mocs_compilation.obj
 	@echo ... vector-graphics-editor_autogen/mocs_compilation.i
 	@echo ... vector-graphics-editor_autogen/mocs_compilation.s

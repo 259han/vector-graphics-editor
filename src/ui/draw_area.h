@@ -6,6 +6,7 @@
 #include <QPainter>
 #include <memory>
 #include "../core/graphics_item_factory.h"
+#include "../core/selection_manager.h"
 #include "../state/editor_state.h"
 #include "image_resizer.h"
 
@@ -27,7 +28,7 @@ public:
     DefaultGraphicsItemFactory* getGraphicFactory();
     
     // 状态管理
-    EditorState* getCurrentDrawState();
+    EditorState* getCurrentState() const { return m_currentState.get(); }
     void setDrawState(Graphic::GraphicType type);
     void setEditState();
     void setFillState();
@@ -36,6 +37,10 @@ public:
     // 填充相关
     void setFillColor(const QColor& color);
     QColor getFillColor() const { return m_fillColor; }
+    void setLineColor(const QColor& color);
+    QColor getLineColor() const { return m_lineColor; }
+    void setLineWidth(int width);
+    int getLineWidth() const { return m_lineWidth; }
 
     // 图像操作
     void setImage(const QImage& image);
@@ -46,8 +51,10 @@ public:
     // 视口交互功能
     void enableGrid(bool enable);
     void setGridSize(int size);
+    bool isGridEnabled() const { return m_gridEnabled; }
+    int getGridSize() const { return m_gridSize; }
     
-    // 选中图形操作
+    // 选中图形操作 - 重构为使用SelectionManager
     void moveSelectedGraphics(const QPointF& offset);
     void rotateSelectedGraphics(double angle);
     void scaleSelectedGraphics(double factor);
@@ -62,7 +69,7 @@ public:
     void bringForward(QGraphicsItem* item);
     void sendBackward(QGraphicsItem* item);
     
-    // 获取选中的图形项
+    // 获取选中的图形项 - 使用SelectionManager
     QList<QGraphicsItem*> getSelectedItems() const;
     
     // 复制、粘贴操作
@@ -72,6 +79,16 @@ public:
 
     // 添加图像调整器
     void addImageResizer(ImageResizer* resizer);
+    
+    // 获取选择管理器
+    SelectionManager* getSelectionManager() const { return m_selectionManager.get(); }
+    
+    // 设置选择模式
+    void setSelectionMode(SelectionManager::SelectionMode mode);
+    
+    // 设置选择过滤器
+    void setSelectionFilter(const SelectionManager::SelectionFilter& filter);
+    void clearSelectionFilter();
 
 protected:
     void mousePressEvent(QMouseEvent *event) override;
@@ -81,11 +98,13 @@ protected:
     void keyReleaseEvent(QKeyEvent *event) override;
     void wheelEvent(QWheelEvent *event) override;
     void drawBackground(QPainter *painter, const QRectF &rect) override;
+    void drawForeground(QPainter *painter, const QRectF &rect) override;
 
 private:
     QGraphicsScene* m_scene;
     std::unique_ptr<DefaultGraphicsItemFactory> m_graphicFactory;
     std::unique_ptr<EditorState> m_currentState;
+    std::unique_ptr<SelectionManager> m_selectionManager;
     
     // 平移和缩放属性
     bool m_spaceKeyPressed = false;
@@ -96,8 +115,10 @@ private:
     bool m_gridEnabled = false;
     int m_gridSize = 20;
     
-    // 填充属性
+    // 样式属性
     QColor m_fillColor = Qt::black;
+    QColor m_lineColor = Qt::black;
+    int m_lineWidth = 2;
     
     // 复制缓冲区
     QList<QGraphicsItem*> m_copyBuffer;
@@ -107,6 +128,9 @@ private:
 
     // 设置为DrawArea类的友元，以便可以访问私有成员
     friend class FillState;
+    
+    // 控制键状态
+    bool m_ctrlKeyPressed = false;
 };
 
 #endif // DRAW_AREA_H

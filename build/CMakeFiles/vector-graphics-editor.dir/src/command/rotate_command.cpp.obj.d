@@ -2,10 +2,9 @@ CMakeFiles/vector-graphics-editor.dir/src/command/rotate_command.cpp.obj: \
  F:\program\claudegraph\src\command\rotate_command.cpp \
  F:\program\claudegraph\src\command\rotate_command.h \
  F:\program\claudegraph\src\command\command.h \
- F:/program/claudegraph/src/core/graphic.h \
- D:/Qt/6.8.2/mingw_64/include/QtCore/QPointF \
- D:/Qt/6.8.2/mingw_64/include/QtCore/qpoint.h \
- D:/Qt/6.8.2/mingw_64/include/QtCore/qcompare.h \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/QString \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/qstring.h \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/qchar.h \
  D:/Qt/6.8.2/mingw_64/include/QtCore/qglobal.h \
  C:/msys64/mingw64/include/c++/14.2.0/type_traits \
  C:/msys64/mingw64/include/c++/14.2.0/x86_64-w64-mingw32/bits/c++config.h \
@@ -142,6 +141,7 @@ CMakeFiles/vector-graphics-editor.dir/src/command/rotate_command.cpp.obj: \
  D:/Qt/6.8.2/mingw_64/include/QtCore/qtresource.h \
  D:/Qt/6.8.2/mingw_64/include/QtCore/qttranslation.h \
  D:/Qt/6.8.2/mingw_64/include/QtCore/qversiontagging.h \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/qcompare.h \
  D:/Qt/6.8.2/mingw_64/include/QtCore/qcomparehelpers.h \
  D:/Qt/6.8.2/mingw_64/include/QtCore/q20type_traits.h \
  C:/msys64/mingw64/include/c++/14.2.0/functional \
@@ -171,21 +171,11 @@ CMakeFiles/vector-graphics-editor.dir/src/command/rotate_command.cpp.obj: \
  C:/msys64/mingw64/include/c++/14.2.0/bits/vector.tcc \
  C:/msys64/mingw64/include/c++/14.2.0/array \
  C:/msys64/mingw64/include/c++/14.2.0/compare \
- D:/Qt/6.8.2/mingw_64/include/QtCore/qnamespace.h \
- D:/Qt/6.8.2/mingw_64/include/QtCore/qtmetamacros.h \
- D:/Qt/6.8.2/mingw_64/include/QtCore/q23utility.h \
- D:/Qt/6.8.2/mingw_64/include/QtGui/QPainter \
- D:/Qt/6.8.2/mingw_64/include/QtGui/qpainter.h \
- D:/Qt/6.8.2/mingw_64/include/QtGui/qtguiglobal.h \
- D:/Qt/6.8.2/mingw_64/include/QtGui/qtgui-config.h \
- D:/Qt/6.8.2/mingw_64/include/QtGui/qtguiexports.h \
- D:/Qt/6.8.2/mingw_64/include/QtCore/qrect.h \
- D:/Qt/6.8.2/mingw_64/include/QtCore/qhashfunctions.h \
- D:/Qt/6.8.2/mingw_64/include/QtCore/qstring.h \
- D:/Qt/6.8.2/mingw_64/include/QtCore/qchar.h \
  D:/Qt/6.8.2/mingw_64/include/QtCore/qstringview.h \
  D:/Qt/6.8.2/mingw_64/include/QtCore/qbytearray.h \
  D:/Qt/6.8.2/mingw_64/include/QtCore/qrefcount.h \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/qnamespace.h \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/qtmetamacros.h \
  D:/Qt/6.8.2/mingw_64/include/QtCore/qarraydata.h \
  D:/Qt/6.8.2/mingw_64/include/QtCore/qpair.h \
  C:/msys64/mingw64/include/string.h \
@@ -285,8 +275,20 @@ CMakeFiles/vector-graphics-editor.dir/src/command/rotate_command.cpp.obj: \
  D:/Qt/6.8.2/mingw_64/include/QtCore/qutf8stringview.h \
  D:/Qt/6.8.2/mingw_64/include/QtCore/qstringtokenizer.h \
  D:/Qt/6.8.2/mingw_64/include/QtCore/qstringbuilder.h \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/qstring.h \
  D:/Qt/6.8.2/mingw_64/include/QtCore/qstringconverter.h \
  D:/Qt/6.8.2/mingw_64/include/QtCore/qstringconverter_base.h \
+ F:/program/claudegraph/src/core/graphic.h \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/QPointF \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/qpoint.h \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/q23utility.h \
+ D:/Qt/6.8.2/mingw_64/include/QtGui/QPainter \
+ D:/Qt/6.8.2/mingw_64/include/QtGui/qpainter.h \
+ D:/Qt/6.8.2/mingw_64/include/QtGui/qtguiglobal.h \
+ D:/Qt/6.8.2/mingw_64/include/QtGui/qtgui-config.h \
+ D:/Qt/6.8.2/mingw_64/include/QtGui/qtguiexports.h \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/qrect.h \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/qhashfunctions.h \
  C:/msys64/mingw64/include/c++/14.2.0/numeric \
  C:/msys64/mingw64/include/c++/14.2.0/bits/stl_numeric.h \
  C:/msys64/mingw64/include/c++/14.2.0/pstl/glue_numeric_defs.h \

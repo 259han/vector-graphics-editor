@@ -3,8 +3,16 @@
 
 RectangleGraphicItem::RectangleGraphicItem(const QPointF& topLeft, const QSizeF& size)
 {
-    // 设置绘制策略为RectangleDrawStrategy
+    // 设置默认画笔和画刷
+    m_pen.setColor(Qt::black);
+    m_pen.setWidth(2);
+    m_brush = Qt::NoBrush;
+    
+    // 设置绘制策略
     m_drawStrategy = std::make_shared<RectangleDrawStrategy>();
+    // 确保DrawStrategy使用正确的画笔设置
+    m_drawStrategy->setColor(m_pen.color());
+    m_drawStrategy->setLineWidth(m_pen.width());
     
     // 确保矩形至少有最小尺寸
     QSizeF validSize(std::max(1.0, size.width()), std::max(1.0, size.height()));
@@ -15,13 +23,6 @@ RectangleGraphicItem::RectangleGraphicItem(const QPointF& topLeft, const QSizeF&
     
     // 相对于坐标系原点的偏移
     m_topLeft = QPointF(-validSize.width()/2, -validSize.height()/2);
-    
-    // 设置默认画笔
-    m_pen.setColor(Qt::black);
-    m_pen.setWidth(1);
-    
-    // 设置透明画刷（无填充）
-    m_brush = Qt::NoBrush;
 }
 
 QRectF RectangleGraphicItem::boundingRect() const

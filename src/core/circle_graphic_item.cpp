@@ -1,14 +1,21 @@
 #include "circle_graphic_item.h"
 
 CircleGraphicItem::CircleGraphicItem(const QPointF& center, double radius)
-    : m_center(center), m_radius(radius)
 {
-    // 设置绘制策略为CircleDrawStrategy
-    m_drawStrategy = std::make_shared<CircleDrawStrategy>();
+    // 设置默认画笔和画刷
+    m_pen.setColor(Qt::black);
+    m_pen.setWidth(2);
+    m_brush = Qt::NoBrush;
     
-    // 设置位置
+    // 设置绘制策略
+    m_drawStrategy = std::make_shared<CircleDrawStrategy>();
+    // 确保DrawStrategy使用正确的画笔设置
+    m_drawStrategy->setColor(m_pen.color());
+    m_drawStrategy->setLineWidth(m_pen.width());
+    
+    // 设置中心和半径
     setPos(center);
-    m_center = QPointF(0, 0); // 相对于图形项坐标系，中心在原点
+    m_radius = std::max(1.0, radius); // 确保半径至少为1
 }
 
 QRectF CircleGraphicItem::boundingRect() const
@@ -21,7 +28,7 @@ std::vector<QPointF> CircleGraphicItem::getDrawPoints() const
 {
     // 提供给DrawStrategy的点集合
     // 对于圆形，需要一个中心点和一个确定半径的点
-    return {m_center, QPointF(m_center.x() + m_radius, m_center.y())};
+    return {QPointF(0, 0), QPointF(m_radius, 0)};
 }
 
 QPointF CircleGraphicItem::getCenter() const
@@ -36,13 +43,8 @@ void CircleGraphicItem::setCenter(const QPointF& center)
     setPos(center);
 }
 
-double CircleGraphicItem::getRadius() const
-{
-    return m_radius;
-}
-
 void CircleGraphicItem::setRadius(double radius)
 {
-    m_radius = radius;
+    m_radius = std::max(1.0, radius); // 确保半径至少为1
     update(); // 更新显示
 } 

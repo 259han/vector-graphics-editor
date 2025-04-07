@@ -14,3 +14,14 @@ void ScaleCommand::undo() {
         m_graphic->scale(1.0 / m_scaleFactor);
     }
 }
+
+QString ScaleCommand::getDescription() const {
+    if (!m_graphic) return "缩放图形";
+    
+    QString graphicType = Graphic::graphicTypeToString(m_graphic->getType());
+    return QString("缩放%1 (%2x)").arg(graphicType).arg(m_scaleFactor);
+}
+
+QString ScaleCommand::getType() const {
+    return "transform";
+}

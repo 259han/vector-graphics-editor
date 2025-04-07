@@ -71,7 +71,7 @@ vector-graphics-editor_autogen/timestamp: D:/Qt/6.8.2/mingw_64/bin/moc.exe
 vector-graphics-editor_autogen/timestamp: D:/Qt/6.8.2/mingw_64/bin/uic.exe
 vector-graphics-editor_autogen/timestamp: CMakeFiles/vector-graphics-editor_autogen.dir/compiler_depend.ts
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --blue --bold --progress-dir=F:\program\claudegraph\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Automatic MOC and UIC for target vector-graphics-editor"
-	D:\Qt\Tools\CMake_64\bin\cmake.exe -E cmake_autogen F:/program/claudegraph/build/CMakeFiles/vector-graphics-editor_autogen.dir/AutogenInfo.json ""
+	D:\Qt\Tools\CMake_64\bin\cmake.exe -E cmake_autogen F:/program/claudegraph/build/CMakeFiles/vector-graphics-editor_autogen.dir/AutogenInfo.json Debug
 	D:\Qt\Tools\CMake_64\bin\cmake.exe -E touch F:/program/claudegraph/build/vector-graphics-editor_autogen/timestamp
 
 vector-graphics-editor_autogen: CMakeFiles/vector-graphics-editor_autogen

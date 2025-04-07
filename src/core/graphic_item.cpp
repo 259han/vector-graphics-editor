@@ -21,26 +21,38 @@ QRectF GraphicItem::boundingRect() const
     return QRectF();
 }
 
-void GraphicItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
-{
+void GraphicItem::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget) {
     Q_UNUSED(option);
     Q_UNUSED(widget);
     
-    // 使用DrawStrategy进行绘制
-    if (m_drawStrategy) {
+    if (!m_drawStrategy) {
+        // 如果没有绘制策略，使用默认绘制方法
         painter->setPen(m_pen);
         painter->setBrush(m_brush);
         
-        // 获取绘制点集合
-        std::vector<QPointF> points = getDrawPoints();
+        // 默认简单绘制一个点
+        painter->drawPoint(0, 0);
+        return;
+    }
+    
+    // 应用当前画笔和画刷设置到绘制策略
+    m_drawStrategy->setColor(m_pen.color());
+    m_drawStrategy->setLineWidth(m_pen.width());
+    
+    // 使用绘制策略绘制图形
+    std::vector<QPointF> points = getDrawPoints();
+    if (!points.empty()) {
+        // 设置画笔和画刷
+        painter->setPen(m_pen);
+        painter->setBrush(m_brush);
         
-        // 使用策略模式绘制
-        m_drawStrategy->draw(*painter, points);
-        
-        // 如果选中，绘制选择框和控制点
-        if (isSelected()) {
-            drawSelectionHandles(painter);
-        }
+        // 使用策略绘制图形
+        m_drawStrategy->draw(painter, points);
+    }
+    
+    // 如果被选中，绘制选中指示器
+    if (isSelected()) {
+        drawSelectionHandles(painter);
     }
 }
 
@@ -257,13 +269,34 @@ void GraphicItem::removeConnectionPoint(const QPointF &point)
 void GraphicItem::setPen(const QPen &pen)
 {
     m_pen = pen;
+    
+    // 同步更新DrawStrategy
+    if (m_drawStrategy) {
+        m_drawStrategy->setColor(pen.color());
+        m_drawStrategy->setLineWidth(pen.width());
+    }
+    
+    // 触发重绘
     update();
 }
 
 void GraphicItem::setBrush(const QBrush &brush)
 {
-    m_brush = brush;
-    update();
+    if (m_brush != brush) {
+        // 保存旧值用于调试
+        QBrush oldBrush = m_brush;
+        
+        // 设置新的画刷
+        m_brush = brush;
+        
+        // 打印调试信息
+        qDebug() << "GraphicItem::setBrush - 颜色从" << oldBrush.color().name() << "更改为" << brush.color().name();
+        
+        // 强制更新图形
+        update();
+    } else {
+        qDebug() << "GraphicItem::setBrush - 忽略相同的画刷" << brush.color().name();
+    }
 }
 
 QPen GraphicItem::getPen() const

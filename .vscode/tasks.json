@@ -1,28 +1,49 @@
 {
+    "version": "2.0.0",
     "tasks": [
         {
-            "type": "cppbuild",
-            "label": "C/C++: g++.exe 生成活动文件",
-            "command": "C:\\msys64\\mingw64\\bin\\g++.exe",
+            "label": "Build Debug",
+            "type": "shell",
+            "command": "./bd.sh",
             "args": [
-                "-fdiagnostics-color=always",
-                "-g",
-                "${file}",
-                "-o",
-                "${fileDirname}\\${fileBasenameNoExtension}.exe"
+                "clean",
+                "debug"
             ],
-            "options": {
-                "cwd": "${fileDirname}"
-            },
-            "problemMatcher": [
-                "$gcc"
+            "group": "build",
+            "problemMatcher": "$gcc"
+        },
+        {
+            "label": "Build Debug (No Clean)",
+            "type": "shell",
+            "command": "./bd.sh",
+            "args": [
+                "debug"
             ],
-            "group": {
-                "kind": "build",
-                "isDefault": true
-            },
-            "detail": "调试器生成的任务。"
+            "group": "build",
+            "problemMatcher": "$gcc"
+        },
+        {
+            "label": "Build Release",
+            "type": "shell",
+            "command": "./bd.sh",
+            "args": [
+                "clean",
+                "release"
+            ],
+            "group": "build",
+            "problemMatcher": "$gcc"
+        },
+        {
+            "label": "Build and Run",
+            "type": "shell",
+            "command": "./bd.sh",
+            "args": [
+                "clean",
+                "debug",
+                "run"
+            ],
+            "group": "build",
+            "problemMatcher": "$gcc"
         }
-    ],
-    "version": "2.0.0"
+    ]
 }

@@ -29,6 +29,8 @@
 #include <QTimer>
 #include "ui/image_resizer.h"
 #include "core/image_manager.h"
+#include "core/selection_manager.h"
+#include "../utils/logger.h"
 
 DrawArea::DrawArea(QWidget *parent)
     : QGraphicsView(parent)
@@ -36,6 +38,7 @@ DrawArea::DrawArea(QWidget *parent)
     , m_currentState(nullptr)
     , m_imageManager(new ImageManager(this))
     , m_graphicFactory(std::make_unique<DefaultGraphicsItemFactory>())
+    , m_selectionManager(std::make_unique<SelectionManager>(m_scene))
 {
     // 创建场景
     setScene(m_scene);
@@ -61,6 +64,11 @@ DrawArea::DrawArea(QWidget *parent)
     
     // 设置图像管理器
     m_imageManager->setDrawArea(this);
+    
+    // 连接选择管理器的信号
+    connect(m_selectionManager.get(), &SelectionManager::selectionChanged, [this]() {
+        viewport()->update();
+    });
 }
 
 DrawArea::~DrawArea()
@@ -75,33 +83,87 @@ DrawArea::~DrawArea()
 
 void DrawArea::setDrawState(Graphic::GraphicType graphicType)
 {
+    // 先保存当前状态，以便于在切换状态时通知
+    auto oldState = m_currentState.get();
+    
+    // 在切换前通知当前状态即将退出
+    if (oldState) {
+        oldState->onExitState(this);
+    }
+    
     // 清理之前的状态
     m_currentState.reset();
     // 设置新的状态
     m_currentState = std::make_unique<DrawState>(graphicType);
-    qDebug() << "DrawArea: 切换到绘制状态，图形类型:" << static_cast<int>(graphicType) ;
+    qDebug() << "DrawArea: 切换到绘制状态，图形类型:" << static_cast<int>(graphicType);
     setCursor(Qt::CrossCursor);
+    
+    // 通知新状态已经进入
+    m_currentState->onEnterState(this);
 }
 
 void DrawArea::setEditState()
 {
+    // 先保存当前状态，以便于在切换状态时通知
+    Logger::debug("DrawArea::setEditState: 开始切换到编辑状态");
+    auto oldState = m_currentState.get();
+    
+    // 在切换前通知当前状态即将退出
+    if (oldState) {
+        Logger::debug("DrawArea::setEditState: 通知当前状态即将退出");
+        oldState->onExitState(this);
+        Logger::debug("DrawArea::setEditState: 当前状态已退出");
+    }
+    
+    // 确保UI能响应
+    QApplication::processEvents();
+    
     // 切换到编辑状态
+    Logger::debug("DrawArea::setEditState: 创建新的编辑状态");
     m_currentState = std::make_unique<EditState>();
-    qDebug() << "DrawArea: Switched to Edit State";
+    Logger::debug("DrawArea::setEditState: 编辑状态已创建");
+    
+    // 确保UI能响应
+    QApplication::processEvents();
+    
+    // 通知新状态已经进入
+    Logger::debug("DrawArea::setEditState: 通知编辑状态已进入");
+    m_currentState->onEnterState(this);
+    Logger::debug("DrawArea::setEditState: 编辑状态初始化完成");
     
     // 确保场景中所有图形项都能被选择
     if (m_scene) {
+        Logger::debug("DrawArea::setEditState: 设置场景中的图形项为可选择状态");
+        int count = 0;
         for (QGraphicsItem* item : m_scene->items()) {
             if (!item->flags().testFlag(QGraphicsItem::ItemIsSelectable)) {
                 item->setFlag(QGraphicsItem::ItemIsSelectable, true);
-                qDebug() << "DrawArea: Set ItemIsSelectable flag for item at position:" << item->pos();
+                count++;
             }
         }
+        Logger::debug(QString("DrawArea::setEditState: 已设置 %1 个图形项为可选择状态").arg(count));
     }
+    
+    // 确保UI更新
+    viewport()->update();
+    if (m_scene) {
+        m_scene->update();
+    }
+    QApplication::processEvents();
+    
+    Logger::debug("DrawArea::setEditState: 切换到编辑状态完成");
 }
 
 void DrawArea::setFillState()
 {
+    // 先保存当前状态，以便于在切换状态时通知
+    auto oldState = m_currentState.get();
+    
+    // 在切换前通知当前状态即将退出
+    if (oldState) {
+        oldState->onExitState(this);
+    }
+    
     // 清理选择状态
     scene()->clearSelection();
     
@@ -116,6 +178,9 @@ void DrawArea::setFillState()
     }
     
     qDebug() << "切换到填充状态，填充颜色:" << m_fillColor;
+    
+    // 通知新状态已经进入
+    m_currentState->onEnterState(this);
 }
 
 void DrawArea::setFillState(const QColor& color)
@@ -139,11 +204,6 @@ void DrawArea::setFillColor(const QColor& color)
 DefaultGraphicsItemFactory* DrawArea::getGraphicFactory()
 {
     return m_graphicFactory.get();
-}
-
-EditorState* DrawArea::getCurrentDrawState()
-{
-    return m_currentState.get();
 }
 
 void DrawArea::enableGrid(bool enable)
@@ -347,6 +407,14 @@ void DrawArea::keyPressEvent(QKeyEvent *event)
         return;
     }
     
+    // 处理Ctrl键
+    if (event->key() == Qt::Key_Control) {
+        m_ctrlKeyPressed = true;
+        if (m_selectionManager) {
+            m_selectionManager->setSelectionMode(SelectionManager::MultiSelection);
+        }
+    }
+    
     // 委托给当前状态处理
     if (m_currentState) {
         m_currentState->keyPressEvent(this, event);
@@ -365,13 +433,72 @@ void DrawArea::keyReleaseEvent(QKeyEvent *event)
         return;
     }
     
+    // 处理Ctrl键释放
+    if (event->key() == Qt::Key_Control) {
+        m_ctrlKeyPressed = false;
+        if (m_selectionManager) {
+            m_selectionManager->setSelectionMode(SelectionManager::SingleSelection);
+        }
+    }
+    
     QGraphicsView::keyReleaseEvent(event);
+    
+    // 调用当前状态的键盘事件处理
+    if (m_currentState && m_currentState->getStateType() == EditorState::EditState) {
+        m_currentState->keyReleaseEvent(this, event);
+    }
 }
 
 void DrawArea::clearGraphics()
 {
-    // 清空场景
-    m_scene->clear();
+    Logger::info("DrawArea::clearGraphics: 开始清空场景");
+    
+    // 首先清除所有选择状态，以避免删除时引用已删除的对象
+    if (m_selectionManager) {
+        Logger::debug("DrawArea::clearGraphics: 清除选择状态");
+        m_selectionManager->clearSelection();
+    }
+    
+    // 记录场景中项目的数量
+    int itemCount = (m_scene != nullptr) ? m_scene->items().count() : 0;
+    Logger::debug(QString("DrawArea::clearGraphics: 准备清除 %1 个项目").arg(itemCount));
+    
+    // 手动清除场景中的每个项目，而不是直接调用clear()
+    if (m_scene) {
+        // 先获取所有项目的副本
+        QList<QGraphicsItem*> itemsToRemove = m_scene->items();
+        
+        // 逐个删除项目
+        for (QGraphicsItem* item : itemsToRemove) {
+            if (item) {
+                Logger::debug(QString("DrawArea::clearGraphics: 删除项目 %1").arg(reinterpret_cast<quintptr>(item)));
+                m_scene->removeItem(item);
+                delete item;
+                
+                // 不在循环中处理事件，避免递归事件处理
+                // 如果真的需要处理事件，可以每删除许多项后处理一次
+                // 如果场景项特别多，可以考虑分批删除
+            }
+        }
+        
+        // 最后再调用clear确保清空
+        m_scene->clear();
+        
+        Logger::debug("DrawArea::clearGraphics: 所有项目已清除");
+    } else {
+        Logger::warning("DrawArea::clearGraphics: 场景为空，无需清除");
+    }
+    
+    // 更新视图
+    if (m_scene) {
+        m_scene->update();
+    }
+    viewport()->update();
+    
+    // 在完成所有清理后一次性处理事件，而不是在循环中多次处理
+    QApplication::processEvents();
+    
+    Logger::info("DrawArea::clearGraphics: 场景清空完成");
 }
 
 void DrawArea::setImage(const QImage &image)
@@ -406,50 +533,120 @@ void DrawArea::importImage()
 
 void DrawArea::moveSelectedGraphics(const QPointF& offset)
 {
-    // 移动选中的图形项
-    QList<QGraphicsItem*> selectedItems = m_scene->selectedItems();
-    for (QGraphicsItem* item : selectedItems) {
-        item->moveBy(offset.x(), offset.y());
+    if (m_selectionManager) {
+        m_selectionManager->moveSelection(offset);
     }
 }
 
 void DrawArea::rotateSelectedGraphics(double angle)
 {
-    // 旋转选中的图形项
-    QList<QGraphicsItem*> selectedItems = m_scene->selectedItems();
-    for (QGraphicsItem* item : selectedItems) {
-        item->setRotation(item->rotation() + angle);
+    if (!m_selectionManager || m_selectionManager->getSelectedItems().isEmpty()) {
+        return;
     }
+    
+    // 获取选择中心点作为旋转中心
+    QPointF center = m_selectionManager->selectionCenter();
+    
+    // 对每个选中的图形项应用旋转
+    for (QGraphicsItem* item : m_selectionManager->getSelectedItems()) {
+        GraphicItem* graphicItem = dynamic_cast<GraphicItem*>(item);
+        if (graphicItem) {
+            // 计算相对于中心点的旋转
+            QPointF itemPos = item->pos();
+            QPointF relativePos = itemPos - center;
+            
+            // 应用旋转变换
+            QTransform transform;
+            transform.translate(center.x(), center.y())
+                    .rotate(angle)
+                    .translate(-center.x(), -center.y());
+            
+            QPointF newPos = transform.map(itemPos);
+            item->setPos(newPos);
+            
+            // 旋转图形自身
+            graphicItem->rotateBy(angle);
+        }
+    }
+    
+    // 更新视图
+    viewport()->update();
 }
 
 void DrawArea::scaleSelectedGraphics(double factor)
 {
-    // 缩放选中的图形项
-    QList<QGraphicsItem*> selectedItems = m_scene->selectedItems();
-    for (QGraphicsItem* item : selectedItems) {
-        item->setScale(item->scale() * factor);
+    if (!m_selectionManager || m_selectionManager->getSelectedItems().isEmpty()) {
+        return;
     }
+    
+    // 获取选择中心点作为缩放中心
+    QPointF center = m_selectionManager->selectionCenter();
+    
+    // 对每个选中的图形项应用缩放
+    for (QGraphicsItem* item : m_selectionManager->getSelectedItems()) {
+        GraphicItem* graphicItem = dynamic_cast<GraphicItem*>(item);
+        if (graphicItem) {
+            // 计算相对于中心点的缩放
+            QPointF itemPos = item->pos();
+            QPointF relativePos = itemPos - center;
+            QPointF newRelativePos = relativePos * factor;
+            QPointF newPos = center + newRelativePos;
+            
+            // 设置新位置
+            item->setPos(newPos);
+            
+            // 缩放图形自身
+            graphicItem->scaleBy(factor);
+        }
+    }
+    
+    // 更新视图
+    viewport()->update();
 }
 
 void DrawArea::deleteSelectedGraphics()
 {
-    // 删除选中的图形项
-    QList<QGraphicsItem*> selectedItems = m_scene->selectedItems();
+    if (!m_selectionManager) {
+        return;
+    }
+    
+    // 获取选中的图形项
+    QList<QGraphicsItem*> selectedItems = m_selectionManager->getSelectedItems();
+    
+    // 从场景中移除图形项
     for (QGraphicsItem* item : selectedItems) {
         m_scene->removeItem(item);
         delete item;
     }
+    
+    // 清除选择
+    m_selectionManager->clearSelection();
+    
+    // 更新视图
+    viewport()->update();
 }
 
 void DrawArea::selectAllGraphics()
 {
-    // 先清除当前选择
-    m_scene->clearSelection();
-    
-    // 选中所有图形项
-    for (QGraphicsItem* item : m_scene->items()) {
-        item->setSelected(true);
+    if (!m_selectionManager || !m_scene) {
+        return;
     }
+    
+    // 清除当前选择
+    m_selectionManager->clearSelection();
+    
+    // 获取所有图形项
+    QList<QGraphicsItem*> allItems = m_scene->items();
+    
+    // 选择所有通过过滤器的图形项
+    for (QGraphicsItem* item : allItems) {
+        if (item && item->type() != QGraphicsRectItem::Type) {
+            m_selectionManager->addToSelection(item);
+        }
+    }
+    
+    // 更新视图
+    viewport()->update();
 }
 
 void DrawArea::bringToFront(QGraphicsItem* item)
@@ -545,11 +742,12 @@ void DrawArea::sendBackward(QGraphicsItem* item)
 }
 
 // 获取选中的图形项
-QList<QGraphicsItem*> DrawArea::getSelectedItems() const {
-    if (!m_scene) {
-        return QList<QGraphicsItem*>();
+QList<QGraphicsItem*> DrawArea::getSelectedItems() const
+{
+    if (m_selectionManager) {
+        return m_selectionManager->getSelectedItems();
     }
-    return m_scene->selectedItems();
+    return QList<QGraphicsItem*>();
 }
 
 // 复制选中的图形项
@@ -619,5 +817,73 @@ void DrawArea::addImageResizer(ImageResizer* resizer)
 {
     if (resizer) {
         m_imageResizers.append(resizer);
+    }
+}
+
+void DrawArea::setLineColor(const QColor& color)
+{
+    m_lineColor = color;
+    
+    // 如果当前是绘制状态，则设置绘制状态的线条颜色
+    DrawState* drawState = dynamic_cast<DrawState*>(m_currentState.get());
+    if (drawState) {
+        drawState->setLineColor(color);
+    }
+    
+    qDebug() << "DrawArea: 设置线条颜色为" << color;
+}
+
+void DrawArea::setLineWidth(int width)
+{
+    m_lineWidth = width;
+    
+    // 如果当前是绘制状态，则设置绘制状态的线条宽度
+    DrawState* drawState = dynamic_cast<DrawState*>(m_currentState.get());
+    if (drawState) {
+        drawState->setLineWidth(width);
+    }
+    
+    qDebug() << "DrawArea: 设置线条宽度为" << width;
+}
+
+void DrawArea::setSelectionMode(SelectionManager::SelectionMode mode)
+{
+    if (m_selectionManager) {
+        m_selectionManager->setSelectionMode(mode);
+    }
+}
+
+void DrawArea::setSelectionFilter(const SelectionManager::SelectionFilter& filter)
+{
+    if (m_selectionManager) {
+        m_selectionManager->setSelectionFilter(filter);
+    }
+}
+
+void DrawArea::clearSelectionFilter()
+{
+    if (m_selectionManager) {
+        m_selectionManager->clearSelectionFilter();
+    }
+}
+
+// 实现drawForeground用于绘制选择控制点
+void DrawArea::drawForeground(QPainter *painter, const QRectF &rect)
+{
+    QGraphicsView::drawForeground(painter, rect);
+    
+    // 使用SelectionManager绘制选择控制点
+    if (m_selectionManager && !m_selectionManager->getSelectedItems().isEmpty()) {
+        // 保存当前的转换矩阵
+        painter->save();
+        
+        // 应用视图到场景的转换矩阵的逆变换，确保在场景坐标系中绘制
+        painter->setTransform(viewportTransform().inverted(), true);
+        
+        // 现在可以安全地在场景坐标系统中绘制，传递this作为QGraphicsView*
+        m_selectionManager->paint(painter, this);
+        
+        // 恢复原始转换矩阵
+        painter->restore();
     }
 }

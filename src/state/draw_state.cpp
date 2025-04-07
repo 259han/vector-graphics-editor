@@ -2,6 +2,8 @@
 #include "../ui/draw_area.h"
 #include "../core/graphic_item.h"
 #include "../core/graphics_item_factory.h"
+#include "../command/create_graphic_command.h"
+#include "../command/command_manager.h"
 #include <QMouseEvent>
 #include <QGraphicsScene>
 #include <QApplication>
@@ -12,6 +14,16 @@
 #include <QImage>
 #include "../core/draw_strategy.h"
 #include <QDebug>
+#include <QGraphicsItem>
+#include <QBrush>
+#include <QPen>
+#include <QGraphicsEllipseItem>
+#include <QGraphicsRectItem>
+#include <QGraphicsLineItem>
+#include <QGraphicsPathItem>
+#include <QPainterPath>
+#include "../utils/logger.h"
+#include <QTimer>
 
 DrawState::DrawState(Graphic::GraphicType type)
     : m_graphicType(type)
@@ -44,74 +56,64 @@ DrawState::DrawState(Graphic::GraphicType type)
             break;
     }
     
+    // 确保绘制策略使用当前的颜色和线宽
     if (m_drawStrategy) {
         m_drawStrategy->setColor(m_lineColor);
         m_drawStrategy->setLineWidth(m_lineWidth);
     }
+    
+    Logger::info(QString("DrawState: 创建绘制状态，图形类型: %1").arg(static_cast<int>(type)));
 }
 
 void DrawState::mousePressEvent(DrawArea* drawArea, QMouseEvent* event)
 {
-    if (!drawArea) return;
-    
-    QPointF scenePos = drawArea->mapToScene(event->pos());
-    
-    // 处理鼠标点击
     if (event->button() == Qt::LeftButton) {
+        QPointF scenePos = getScenePos(drawArea, event);
         handleLeftMousePress(drawArea, scenePos);
+        event->accept();
     } else if (event->button() == Qt::RightButton) {
+        QPointF scenePos = getScenePos(drawArea, event);
         handleRightMousePress(drawArea, scenePos);
+        event->accept();
     }
-    
-    // 接受此事件
-    event->accept();
 }
 
 void DrawState::mouseMoveEvent(DrawArea* drawArea, QMouseEvent* event)
 {
-    QPointF scenePos = drawArea->mapToScene(event->pos());
-    
-    if (m_isDrawing) {
-        m_currentPoint = scenePos;
-        
-        // 更新预览图形
-        updatePreviewItem(drawArea);
+    if (!drawArea || !drawArea->scene()) {
+        return;
     }
+
+    QPointF newPos = drawArea->mapToScene(event->pos());
     
-    // 更新状态栏信息
-    QWidget* topLevelWidget = drawArea->window();
-    if (QMainWindow* mainWindow = qobject_cast<QMainWindow*>(topLevelWidget)) {
+    // 只有当位置发生显著变化时才更新
+    if (qAbs(newPos.x() - m_currentPoint.x()) > 1 || 
+        qAbs(newPos.y() - m_currentPoint.y()) > 1) {
+        m_currentPoint = newPos;
+        
+        // 更新鼠标移动时的提示信息
         QString statusMsg;
-        
-        if (m_graphicType == Graphic::BEZIER) {
-            int points = m_bezierControlPoints.size();
-            
-            if (points > 0) {
-                // 显示从最后一个控制点到当前点的距离
-                QPointF lastPoint = m_bezierControlPoints.back();
-                double distance = sqrt(pow(scenePos.x() - lastPoint.x(), 2) + 
-                                      pow(scenePos.y() - lastPoint.y(), 2));
-                
-                statusMsg = QString("Bezier曲线: %1个控制点 (距离上一点: %2像素) (左键添加点, 右键完成)")
-                           .arg(points)
-                           .arg(static_cast<int>(distance));
+        if (m_isDrawing) {
+            if (m_graphicType == Graphic::BEZIER) {
+                statusMsg = QString("贝塞尔曲线: 点击添加控制点，右键结束绘制");
             } else {
-                statusMsg = QString("Bezier曲线: %1个控制点 (左键添加点, 右键完成)").arg(points);
+                double width = qAbs(m_currentPoint.x() - m_startPoint.x());
+                double height = qAbs(m_currentPoint.y() - m_startPoint.y());
+                
+                if (m_graphicType == Graphic::LINE) {
+                    statusMsg = QString("正在绘制直线: 长度 %.1f").arg(
+                        QLineF(m_startPoint, m_currentPoint).length());
+                } else if (m_graphicType == Graphic::RECTANGLE) {
+                    statusMsg = QString("正在绘制矩形: %.1f x %.1f").arg(width).arg(height);
+                } else if (m_graphicType == Graphic::ELLIPSE) {
+                    statusMsg = QString("正在绘制椭圆: %.1f x %.1f").arg(width).arg(height);
+                }
             }
-        } else {
-            QString typeName;
-            switch (m_graphicType) {
-                case Graphic::LINE: typeName = "直线"; break;
-                case Graphic::RECTANGLE: typeName = "矩形"; break;
-                case Graphic::ELLIPSE: typeName = "椭圆"; break;
-                case Graphic::CIRCLE: typeName = "圆形"; break;
-                default: typeName = "形状"; break;
-            }
-            statusMsg = QString("绘制%1 (%2, %3)").arg(typeName)
-                        .arg(scenePos.x()).arg(scenePos.y());
+            updateStatusMessage(drawArea, statusMsg);
+            
+            // 只有在绘制状态下才更新预览
+            updatePreviewItem(drawArea);
         }
-        
-        mainWindow->statusBar()->showMessage(statusMsg);
     }
 }
 
@@ -127,14 +129,36 @@ void DrawState::mouseReleaseEvent(DrawArea* drawArea, QMouseEvent* event)
                 m_previewItem = nullptr;
             }
             
+            // 记录绘制完成时的信息
+            QPointF startPoint = m_startPoint;
+            QPointF endPoint = m_currentPoint;
+            Graphic::GraphicType type = m_graphicType;
+            
+            // 重置状态变量
+            m_isDrawing = false;
+            m_bezierControlPoints.clear();
+            
             // 创建最终图形
             QGraphicsItem* finalItem = createFinalItem(drawArea);
-            if (finalItem) {
-                drawArea->scene()->addItem(finalItem);
+            
+            // 立即更新场景和视图，确保图形显示
+            if (drawArea && drawArea->scene()) {
+                drawArea->scene()->update();
+                drawArea->viewport()->update();
             }
             
-            // 重置状态
-            m_isDrawing = false;
+            // 更新状态栏消息
+            QString statusMsg;
+            if (m_graphicType == Graphic::LINE) {
+                statusMsg = "直线工具: 按住左键并拖动鼠标绘制直线";
+            } else if (m_graphicType == Graphic::RECTANGLE) {
+                statusMsg = "矩形工具: 按住左键并拖动鼠标绘制矩形";
+            } else if (m_graphicType == Graphic::ELLIPSE) {
+                statusMsg = "椭圆工具: 按住左键并拖动鼠标绘制椭圆";
+            } else if (m_graphicType == Graphic::BEZIER) {
+                statusMsg = "贝塞尔曲线工具: 点击添加控制点, 右键点击完成曲线";
+            }
+            updateStatusMessage(drawArea, statusMsg);
         }
     }
 }
@@ -151,6 +175,9 @@ void DrawState::keyPressEvent(DrawArea* drawArea, QKeyEvent* event)
     if (event->key() == Qt::Key_Escape) {
         // 取消当前绘制
         if (m_isDrawing) {
+            Logger::debug("DrawState::keyPressEvent: 按ESC取消绘制");
+            
+            // 重置状态
             m_isDrawing = false;
             
             // 移除临时预览项
@@ -158,6 +185,7 @@ void DrawState::keyPressEvent(DrawArea* drawArea, QKeyEvent* event)
                 drawArea->scene()->removeItem(m_previewItem);
                 delete m_previewItem;
                 m_previewItem = nullptr;
+                Logger::debug("DrawState::keyPressEvent: 移除预览项完成");
             }
             
             // 清除控制点标记
@@ -165,6 +193,19 @@ void DrawState::keyPressEvent(DrawArea* drawArea, QKeyEvent* event)
             
             // 清空控制点
             m_bezierControlPoints.clear();
+            
+            // 使用计时器延迟切换状态，确保当前事件处理完成
+            Logger::debug("DrawState::keyPressEvent: 使用计时器延迟切换到编辑状态");
+            QTimer::singleShot(0, drawArea, [drawArea, this]() {
+                Logger::debug("DrawState::延迟函数(ESC键): 开始切换到编辑状态");
+                // 手动调用onExitState确保资源清理
+                onExitState(drawArea);
+                // 切换到编辑状态
+                drawArea->setEditState();
+                Logger::debug("DrawState::延迟函数(ESC键): 编辑状态切换完成");
+            });
+            
+            Logger::debug("DrawState::keyPressEvent: 取消绘制完成，等待状态切换");
         }
     }
 }
@@ -207,29 +248,66 @@ QGraphicsItem* DrawState::createFinalItem(DrawArea* drawArea)
 {
     QGraphicsItem* item = nullptr;
     
+    Logger::debug("DrawState::createFinalItem: 开始创建图形项");
+    
+    // 准备画笔和画刷
+    QPen pen(m_lineColor, m_lineWidth);
+    QBrush brush = m_fillMode ? QBrush(m_fillColor) : QBrush(Qt::transparent);
+    
+    // 创建命令
+    std::vector<QPointF> points;
+    
     if (m_graphicType == Graphic::BEZIER) {
-        // 为Bezier曲线使用特定的创建方法
-        if (m_bezierControlPoints.size() >= 2) {
-            item = drawArea->getGraphicFactory()->createCustomItem(m_graphicType, m_bezierControlPoints);
+        // 为Bezier曲线使用所有控制点
+        points = m_bezierControlPoints;
+        Logger::debug(QString("DrawState::createFinalItem: 贝塞尔曲线控制点数量: %1").arg(points.size()));
+        
+        // 使用与预览相同的算法计算曲线上的点
+        if (points.size() > 2) {
+            std::vector<QPointF> curvePoints;
+            curvePoints.push_back(points[0]);
+            
+            const int steps = 100; // 与预览使用相同的步数
+            for (int i = 1; i <= steps; ++i) {
+                double t = static_cast<double>(i) / steps;
+                QPointF point = calculateBezierPoint(t, points);
+                curvePoints.push_back(point);
+            }
+            
+            points = curvePoints;
         }
     } else {
-        // 其他图形使用标准创建方法
-        std::vector<QPointF> points;
+        // 其他图形使用起点和终点
         points.push_back(m_startPoint);
         points.push_back(m_currentPoint);
-        
-        item = drawArea->getGraphicFactory()->createCustomItem(m_graphicType, points);
     }
     
-    // 设置图形项的样式
-    if (GraphicItem* graphicItem = dynamic_cast<GraphicItem*>(item)) {
-        // 设置画笔和画刷
-        QPen pen(m_lineColor, m_lineWidth);
-        graphicItem->setPen(pen);
-        
-        if (m_fillMode) {
-            graphicItem->setBrush(QBrush(m_fillColor));
-        }
+    // 确保点数据合法
+    if (points.size() < 2) {
+        Logger::warning("DrawState::createFinalItem: 点数据不足，无法创建图形");
+        return nullptr;
+    }
+    
+    // 检查DrawArea和场景是否有效
+    if (!drawArea || !drawArea->scene()) {
+        Logger::error("DrawState::createFinalItem: DrawArea或场景无效");
+        return nullptr;
+    }
+    
+    // 创建命令对象并执行命令
+    Logger::debug(QString("DrawState::createFinalItem: 创建命令对象，图形类型: %1").arg(static_cast<int>(m_graphicType)));
+    CreateGraphicCommand* command = new CreateGraphicCommand(
+        drawArea, m_graphicType, points, pen, brush);
+    
+    Logger::debug("DrawState::createFinalItem: 执行命令");
+    CommandManager::getInstance().executeCommand(command);
+    
+    // 获取创建的图形项
+    item = command->getCreatedItem();
+    if (item) {
+        Logger::debug("DrawState::createFinalItem: 图形项创建成功");
+    } else {
+        Logger::warning("DrawState::createFinalItem: 图形项创建失败");
     }
     
     return item;
@@ -237,94 +315,92 @@ QGraphicsItem* DrawState::createFinalItem(DrawArea* drawArea)
 
 void DrawState::updatePreviewItem(DrawArea* drawArea)
 {
-    // 如果已有预览项，则移除它
-    if (m_previewItem) {
+    if (!drawArea || !drawArea->scene()) {
+        return;
+    }
+
+    // 创建新的预览项
+    if (m_graphicType == Graphic::BEZIER && m_bezierControlPoints.size() >= 2) {
+        QPainterPath path;
+        path.moveTo(m_bezierControlPoints[0]);
+        
+        // 使用n次贝塞尔曲线
+        if (m_bezierControlPoints.size() > 2) {
+            // 计算贝塞尔曲线上的点
+            const int steps = 100; // 曲线精度
+            for (int i = 1; i <= steps; ++i) {
+                double t = static_cast<double>(i) / steps;
+                QPointF point = calculateBezierPoint(t, m_bezierControlPoints);
+                path.lineTo(point);
+            }
+        } else {
+            // 只有两个点时，直接画直线
+            path.lineTo(m_bezierControlPoints[1]);
+        }
+
+        // 如果预览项不存在，创建新的
+        if (!m_previewItem) {
+            m_previewItem = new QGraphicsPathItem(path);
+            QPen pen(m_lineColor, m_lineWidth);
+            pen.setStyle(Qt::DashLine); // 使用虚线作为预览
+            static_cast<QGraphicsPathItem*>(m_previewItem)->setPen(pen);
+            drawArea->scene()->addItem(m_previewItem);
+        } else {
+            // 如果预览项已存在，直接更新路径
+            static_cast<QGraphicsPathItem*>(m_previewItem)->setPath(path);
+        }
+    } else if (m_previewItem) {
+        // 如果不是贝塞尔曲线模式且有预览项，则移除它
         drawArea->scene()->removeItem(m_previewItem);
         delete m_previewItem;
         m_previewItem = nullptr;
     }
-    
-    // 创建新的预览项
-    if (m_graphicType == Graphic::BEZIER) {
-        // 为Bezier曲线创建预览
-        if (m_bezierControlPoints.size() >= 1) {
-            // 复制当前控制点列表，并添加当前鼠标位置作为临时点
-            std::vector<QPointF> previewPoints = m_bezierControlPoints;
-            previewPoints.push_back(m_currentPoint);
-            
-            m_previewItem = drawArea->getGraphicFactory()->createCustomItem(m_graphicType, previewPoints);
-        }
-    } else {
-        // 其他图形使用标准创建方法
-        std::vector<QPointF> points;
-        points.push_back(m_startPoint);
-        points.push_back(m_currentPoint);
-        
-        m_previewItem = drawArea->getGraphicFactory()->createCustomItem(m_graphicType, points);
+}
+
+// 计算贝塞尔曲线上的点
+QPointF DrawState::calculateBezierPoint(double t, const std::vector<QPointF>& points)
+{
+    if (points.empty()) {
+        return QPointF();
     }
     
-    // 设置预览项的样式
-    if (m_previewItem) {
-        // 添加到场景，确保在控制点标记下方
-        m_previewItem->setZValue(0); // 低Z值确保在控制点标记下方
-        drawArea->scene()->addItem(m_previewItem);
-        
-        // 设置半透明效果
-        m_previewItem->setOpacity(0.6);
-        
-        // 设置画笔和画刷
-        if (GraphicItem* graphicItem = dynamic_cast<GraphicItem*>(m_previewItem)) {
-            QPen pen(m_lineColor, m_lineWidth);
-            pen.setStyle(Qt::DashLine); // 使用虚线作为预览
-            graphicItem->setPen(pen);
-            
-            if (m_fillMode) {
-                QBrush brush(m_fillColor);
-                brush.setStyle(Qt::DiagCrossPattern); // 使用交叉线填充作为预览
-                graphicItem->setBrush(brush);
-            }
-        }
-        
-        // 如果是贝塞尔曲线模式，确保控制点标记在最上方
-        if (m_graphicType == Graphic::BEZIER) {
-            // 将所有控制点标记移到最前面
-            for (QGraphicsEllipseItem* marker : m_controlPointMarkers) {
-                marker->setZValue(1000);
-            }
+    std::vector<QPointF> temp = points;
+    int n = temp.size() - 1;
+    
+    // 使用德卡斯特里奥算法计算贝塞尔曲线上的点
+    for (int r = 1; r <= n; ++r) {
+        for (int i = 0; i <= n - r; ++i) {
+            temp[i] = (1 - t) * temp[i] + t * temp[i + 1];
         }
     }
+    
+    return temp[0];
 }
 
 void DrawState::handleRightMousePress(DrawArea* drawArea, QPointF scenePos)
 {
-    // 处理右键点击
-    if (m_graphicType == Graphic::BEZIER && m_isDrawing) {
-        qDebug() << "贝塞尔曲线: 接收到右键点击，完成贝塞尔曲线绘制，共" << m_bezierControlPoints.size() << "个控制点";
-        
-        // 创建最终的贝塞尔曲线
+    if (m_isDrawing && m_graphicType == Graphic::BEZIER) {
+        // 完成贝塞尔曲线绘制
         if (m_bezierControlPoints.size() >= 2) {
-            // 删除预览项
+            // 移除预览项
             if (m_previewItem) {
                 drawArea->scene()->removeItem(m_previewItem);
                 delete m_previewItem;
                 m_previewItem = nullptr;
             }
             
-            // 清除控制点标记
-            clearControlPointMarkers(drawArea);
+            // 创建最终图形项
+            createFinalItem(drawArea);
             
-            // 创建最终的贝塞尔曲线
-            QGraphicsItem* bezierItem = createFinalItem(drawArea);
-            if (bezierItem) {
-                drawArea->scene()->addItem(bezierItem);
-                qDebug() << "贝塞尔曲线: 成功创建并添加到场景";
-            }
-            
-            // 重置绘制状态
+            // 重置状态
             m_isDrawing = false;
             m_bezierControlPoints.clear();
-        } else {
-            qDebug() << "贝塞尔曲线: 控制点不足，需要至少2个点";
+            clearControlPointMarkers(drawArea);
+            
+            // 更新场景
+            if (drawArea && drawArea->scene()) {
+                drawArea->scene()->update();
+            }
         }
     }
 }
@@ -332,41 +408,27 @@ void DrawState::handleRightMousePress(DrawArea* drawArea, QPointF scenePos)
 void DrawState::handleLeftMousePress(DrawArea* drawArea, QPointF scenePos)
 {
     if (!m_isDrawing) {
-        // 开始绘制操作
-        m_isDrawing = true;
+        // 开始绘制
         m_startPoint = scenePos;
         m_currentPoint = scenePos;
+        m_isDrawing = true;
         
-        // 用于Bezier曲线：初始化控制点集合
         if (m_graphicType == Graphic::BEZIER) {
-            m_bezierControlPoints.clear();
             m_bezierControlPoints.push_back(scenePos);
-            qDebug() << "贝塞尔曲线: 开始绘制, 添加第一个控制点" << scenePos;
-            
-            // 绘制控制点标记
+            // 绘制第一个控制点
             drawControlPoints(drawArea);
         }
-        
-        // 创建预览图形
-        updatePreviewItem(drawArea);
-    } else if (m_graphicType == Graphic::BEZIER) {
-        // 对于Bezier曲线，每次点击添加一个控制点
-        m_bezierControlPoints.push_back(scenePos);
-        qDebug() << "贝塞尔曲线: 添加控制点 #" << m_bezierControlPoints.size() << "位置:" << scenePos;
-        
-        // 更新预览
-        if (m_previewItem) {
-            drawArea->scene()->removeItem(m_previewItem);
-            delete m_previewItem;
-            m_previewItem = nullptr;
-        }
-        
-        // 更新控制点标记
-        drawControlPoints(drawArea);
-        
-        // 更新当前点
+    } else {
+        // 继续绘制
         m_currentPoint = scenePos;
-        updatePreviewItem(drawArea);
+        
+        if (m_graphicType == Graphic::BEZIER) {
+            m_bezierControlPoints.push_back(scenePos);
+            // 更新控制点显示
+            drawControlPoints(drawArea);
+            // 更新预览曲线
+            updatePreviewItem(drawArea);
+        }
     }
 }
 
@@ -427,4 +489,180 @@ void DrawState::clearControlPointMarkers(DrawArea* drawArea)
     
     // 清空标记列表
     m_controlPointMarkers.clear();
+}
+
+void DrawState::wheelEvent(DrawArea* drawArea, QWheelEvent* event)
+{
+    // 使用基类的缩放和平移处理
+    if (handleZoomAndPan(drawArea, event)) {
+        return;
+    }
+    
+    // 如果基类没有处理，则传递给父类的默认处理
+    event->ignore();
+}
+
+void DrawState::onEnterState(DrawArea* drawArea)
+{
+    if (!drawArea) {
+        Logger::warning("DrawState::onEnterState: 传入的DrawArea为空");
+        return;
+    }
+    
+    // 从DrawArea获取当前的线条颜色和宽度
+    m_lineColor = drawArea->getLineColor();
+    m_lineWidth = drawArea->getLineWidth();
+    m_fillColor = drawArea->getFillColor();
+    
+    // 更新绘制策略的颜色和线宽
+    if (m_drawStrategy) {
+        m_drawStrategy->setColor(m_lineColor);
+        m_drawStrategy->setLineWidth(m_lineWidth);
+    }
+    
+    // 更新状态信息
+    Logger::info(QString("DrawState: 进入绘制状态，当前图形类型: %1").arg(static_cast<int>(m_graphicType)));
+    
+    // 基于状态类型更新状态栏消息
+    QString statusMsg;
+    switch (m_graphicType) {
+        case Graphic::LINE:
+            statusMsg = "直线工具: 按住左键并拖动鼠标绘制直线";
+            break;
+        case Graphic::RECTANGLE:
+            statusMsg = "矩形工具: 按住左键并拖动鼠标绘制矩形";
+            break;
+        case Graphic::ELLIPSE:
+            statusMsg = "椭圆工具: 按住左键并拖动鼠标绘制椭圆";
+            break;
+        case Graphic::BEZIER:
+            statusMsg = "贝塞尔曲线工具: 点击添加控制点, 右键点击完成曲线";
+            break;
+        default:
+            statusMsg = "绘制工具: 选择绘制工具并开始绘制";
+            break;
+    }
+    
+    updateStatusMessage(drawArea, statusMsg);
+    
+    // 记录日志信息
+    Logger::debug(QString("DrawState: 设置线条颜色为 %1, 线宽为 %2")
+        .arg(m_lineColor.name())
+        .arg(m_lineWidth));
+}
+
+void DrawState::onExitState(DrawArea* drawArea)
+{
+    Logger::info("DrawState::onExitState: 开始退出绘制状态");
+    
+    // 重置绘制状态
+    m_isDrawing = false;
+    
+    // 清除任何临时预览项
+    if (m_previewItem) {
+        Logger::debug("DrawState::onExitState: 移除预览项");
+        if (drawArea && drawArea->scene()) {
+            drawArea->scene()->removeItem(m_previewItem);
+        }
+        delete m_previewItem;
+        m_previewItem = nullptr;
+    }
+    
+    // 清除贝塞尔曲线的控制点标记
+    if (!m_controlPointMarkers.empty()) {
+        Logger::debug(QString("DrawState::onExitState: 清除 %1 个控制点标记").arg(m_controlPointMarkers.size()));
+        clearControlPointMarkers(drawArea);
+    }
+    
+    // 清空控制点
+    if (!m_bezierControlPoints.empty()) {
+        Logger::debug(QString("DrawState::onExitState: 清除 %1 个贝塞尔控制点").arg(m_bezierControlPoints.size()));
+        m_bezierControlPoints.clear();
+    }
+    
+    // 重置鼠标光标
+    Logger::debug("DrawState::onExitState: 重置鼠标光标");
+    resetCursor(drawArea);
+    
+    // 确保场景更新
+    if (drawArea && drawArea->scene()) {
+        Logger::debug("DrawState::onExitState: 更新场景");
+        drawArea->scene()->update();
+        drawArea->viewport()->update();
+    }
+    
+    Logger::info("DrawState::onExitState: 绘制状态退出完成");
+}
+
+void DrawState::handleMiddleMousePress(DrawArea* drawArea, QPointF scenePos)
+{
+    Logger::debug("DrawState: 中键点击");
+    
+    // 中键点击用于在绘图过程中临时切换到视图平移模式
+    if (drawArea) {
+        drawArea->setDragMode(QGraphicsView::ScrollHandDrag);
+        setCursor(drawArea, Qt::ClosedHandCursor);
+    }
+}
+
+// 工具方法实现
+QPointF DrawState::getScenePos(DrawArea* drawArea, QMouseEvent* event)
+{
+    if (!drawArea) {
+        return QPointF();
+    }
+    return drawArea->mapToScene(event->pos());
+}
+
+void DrawState::updateStatusMessage(DrawArea* drawArea, const QString& message)
+{
+    if (drawArea) {
+        QMainWindow* mainWindow = qobject_cast<QMainWindow*>(drawArea->window());
+        if (mainWindow) {
+            mainWindow->statusBar()->showMessage(message);
+        }
+    }
+}
+
+void DrawState::setCursor(DrawArea* drawArea, Qt::CursorShape shape)
+{
+    if (drawArea) {
+        drawArea->setCursor(shape);
+    }
+}
+
+void DrawState::resetCursor(DrawArea* drawArea)
+{
+    if (drawArea) {
+        drawArea->setCursor(Qt::ArrowCursor);
+    }
+}
+
+bool DrawState::handleZoomAndPan(DrawArea* drawArea, QWheelEvent* event)
+{
+    if (!drawArea) {
+        return false;
+    }
+
+    // 检查是否按住Ctrl键
+    if (event->modifiers() & Qt::ControlModifier) {
+        // 缩放
+        double scaleFactor = 1.15;
+        if (event->angleDelta().y() < 0) {
+            scaleFactor = 1.0 / scaleFactor;
+        }
+        
+        drawArea->scale(scaleFactor, scaleFactor);
+        return true;
+    } else if (event->modifiers() & Qt::ShiftModifier) {
+        // 水平滚动
+        QScrollBar* hBar = drawArea->horizontalScrollBar();
+        hBar->setValue(hBar->value() - event->angleDelta().y());
+        return true;
+    } else {
+        // 垂直滚动
+        QScrollBar* vBar = drawArea->verticalScrollBar();
+        vBar->setValue(vBar->value() - event->angleDelta().y());
+        return true;
+    }
 }

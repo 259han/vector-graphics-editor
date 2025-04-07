@@ -3,11 +3,16 @@
 #include "core/graphic_item.h"
 #include <QGraphicsScene>
 #include <QPainter>
+#include <QWidget>
+#include <QDebug>
 
-SelectionManager::SelectionManager(DrawArea* drawArea)
-    : m_drawArea(drawArea)
+SelectionManager::SelectionManager(QGraphicsScene* scene)
+    : QObject(nullptr)
+    , m_scene(scene)
     , m_selectionRect(nullptr)
     , m_isDraggingSelection(false)
+    , m_selectionMode(SingleSelection)
+    , m_filter(nullptr)
 {
     // 创建选择区域矩形，但不添加到场景中
     m_selectionRect = new QGraphicsRectItem();
@@ -18,13 +23,33 @@ SelectionManager::SelectionManager(DrawArea* drawArea)
 SelectionManager::~SelectionManager()
 {
     clearSelection();
+    if (m_selectionRect && m_selectionRect->scene()) {
+        m_selectionRect->scene()->removeItem(m_selectionRect);
+    }
     delete m_selectionRect;
 }
 
-void SelectionManager::startSelection(const QPointF& startPoint)
+void SelectionManager::setScene(QGraphicsScene* scene)
+{
+    // 如果选择矩形在旧场景中，移除它
+    if (m_selectionRect && m_selectionRect->scene()) {
+        m_selectionRect->scene()->removeItem(m_selectionRect);
+    }
+    
+    m_scene = scene;
+    
+    // 清除当前选择
+    m_selectedItems.clear();
+    
+    // 发出选择改变信号
+    emit selectionChanged();
+}
+
+void SelectionManager::startSelection(const QPointF& startPoint, SelectionMode mode)
 {
     m_startPoint = startPoint;
     m_currentPoint = startPoint;
+    m_selectionMode = mode;
     
     // 确保选择矩形已从场景中移除
     if (m_selectionRect->scene()) {
@@ -35,9 +60,20 @@ void SelectionManager::startSelection(const QPointF& startPoint)
     m_selectionRect->setRect(QRectF(m_startPoint, QSizeF(0, 0)));
     
     // 添加到场景
-    if (m_drawArea->scene()) {
-        m_drawArea->scene()->addItem(m_selectionRect);
+    if (m_scene) {
+        m_scene->addItem(m_selectionRect);
     }
+    
+    // 在多选模式下，保存之前的选择
+    if (m_selectionMode == MultiSelection) {
+        m_previousSelection = m_selectedItems;
+    } else if (m_selectionMode == SingleSelection) {
+        // 在单选模式下，清除之前的选择
+        m_selectedItems.clear();
+    }
+    
+    // 发出选择开始信号
+    emit selectionStarted();
 }
 
 void SelectionManager::updateSelection(const QPointF& currentPoint)
@@ -58,39 +94,105 @@ void SelectionManager::finishSelection()
 {
     // 如果选择区域有效
     if (isSelectionValid()) {
-        // 选择区域内的所有图形项
-        QList<QGraphicsItem*> items = m_drawArea->scene()->items(getSelectionRect());
-        
-        // 清除之前的选择状态
-        for (QGraphicsItem* item : m_drawArea->scene()->items()) {
-            item->setSelected(false);
-        }
-        
-        // 设置选择状态
-        for (QGraphicsItem* item : items) {
-            GraphicItem* graphicItem = dynamic_cast<GraphicItem*>(item);
-            if (graphicItem && item != m_selectionRect) {
-                graphicItem->setSelected(true);
-            }
-        }
+        // 根据选择区域更新选择的项
+        updateSelectionFromRect();
     }
-}
-
-void SelectionManager::clearSelection()
-{
+    
     // 如果选择矩形在场景中，移除它
     if (m_selectionRect && m_selectionRect->scene()) {
         m_selectionRect->scene()->removeItem(m_selectionRect);
     }
     
-    // 清除所有项的选择状态
-    if (m_drawArea && m_drawArea->scene()) {
-        for (QGraphicsItem* item : m_drawArea->scene()->items()) {
-            item->setSelected(false);
-        }
+    // 应用选择到场景
+    applySelectionToScene();
+    
+    // 发出选择完成信号
+    emit selectionFinished();
+    emit selectionChanged();
+}
+
+void SelectionManager::updateSelectionFromRect()
+{
+    // 如果没有场景或选择矩形无效，返回
+    if (!m_scene || !isSelectionValid()) {
+        return;
     }
     
-    m_isDraggingSelection = false;
+    // 获取选择区域内的所有图形项
+    QList<QGraphicsItem*> itemsInRect = m_scene->items(getSelectionRect());
+    
+    // 如果是单选模式，清除之前的选择
+    if (m_selectionMode == SingleSelection) {
+        m_selectedItems.clear();
+    }
+    
+    // 处理每个选择区域内的项
+    for (QGraphicsItem* item : itemsInRect) {
+        // 跳过选择矩形自身
+        if (item == m_selectionRect) {
+            continue;
+        }
+        
+        // 应用过滤器
+        if (!applyFilter(item)) {
+            continue;
+        }
+        
+        // 在多选模式下，如果项已经在之前的选择中，保持其选中状态
+        if (m_selectionMode == MultiSelection && m_previousSelection.contains(item)) {
+            continue;
+        }
+        
+        // 添加到选择集合
+        m_selectedItems.insert(item);
+    }
+}
+
+bool SelectionManager::applyFilter(QGraphicsItem* item) const
+{
+    // 如果没有设置过滤器，则接受所有项
+    if (!m_filter) {
+        return true;
+    }
+    
+    // 应用过滤器
+    return m_filter(item);
+}
+
+void SelectionManager::clearSelection()
+{
+    try {
+        qDebug() << "SelectionManager::clearSelection: 开始清除选择";
+        
+        // 如果选择矩形在场景中，移除它
+        if (m_selectionRect && m_selectionRect->scene()) {
+            qDebug() << "SelectionManager::clearSelection: 移除选择矩形";
+            m_selectionRect->scene()->removeItem(m_selectionRect);
+        }
+        
+        // 记录被清除的项目数量
+        int itemCount = m_selectedItems.size();
+        qDebug() << "SelectionManager::clearSelection: 清除" << itemCount << "个选中项";
+        
+        // 清除当前选择
+        m_selectedItems.clear();
+        
+        // 应用选择到场景
+        applySelectionToScene();
+        
+        // 发出选择改变信号
+        emit selectionChanged();
+        
+        m_isDraggingSelection = false;
+        
+        qDebug() << "SelectionManager::clearSelection: 选择已清除";
+    }
+    catch (const std::exception& e) {
+        qCritical() << "SelectionManager::clearSelection: 异常:" << e.what();
+    }
+    catch (...) {
+        qCritical() << "SelectionManager::clearSelection: 未知异常";
+    }
 }
 
 QRectF SelectionManager::getSelectionRect() const
@@ -147,38 +249,24 @@ bool SelectionManager::contains(const QPointF& point) const
 
 void SelectionManager::moveSelection(const QPointF& offset)
 {
-    if (m_selectionRect) {
-        // 移动选择矩形
-        m_selectionRect->moveBy(offset.x(), offset.y());
-        
-        // 移动所有选中的图形项
-        QList<QGraphicsItem*> selectedItems = getSelectedItems();
-        for (QGraphicsItem* item : selectedItems) {
-            item->moveBy(offset.x(), offset.y());
-        }
+    // 移动所有选中的图形项
+    for (QGraphicsItem* item : m_selectedItems) {
+        item->moveBy(offset.x(), offset.y());
     }
+    
+    // 发出选择改变信号
+    emit selectionChanged();
 }
 
 QList<QGraphicsItem*> SelectionManager::getSelectedItems() const
 {
-    QList<QGraphicsItem*> selectedItems;
-    
-    if (m_drawArea && m_drawArea->scene()) {
-        for (QGraphicsItem* item : m_drawArea->scene()->items()) {
-            if (item->isSelected() && item != m_selectionRect) {
-                selectedItems.append(item);
-            }
-        }
-    }
-    
-    return selectedItems;
+    // 将QSet转换为QList，使用QList构造函数而不是toList方法
+    return QList<QGraphicsItem*>(m_selectedItems.begin(), m_selectedItems.end());
 }
-
-// 新增方法实现
 
 GraphicItem::ControlHandle SelectionManager::handleAtPoint(const QPointF& point) const
 {
-    if (!m_selectionRect || !isSelectionValid()) {
+    if (!m_selectionRect || !isSelectionValid() || m_selectedItems.isEmpty()) {
         return GraphicItem::None;
     }
     
@@ -230,105 +318,383 @@ GraphicItem::ControlHandle SelectionManager::handleAtPoint(const QPointF& point)
 
 void SelectionManager::scaleSelection(GraphicItem::ControlHandle handle, const QPointF& point)
 {
-    if (!m_selectionRect || !isSelectionValid()) {
+    // 如果没有选中项，返回
+    if (m_selectedItems.isEmpty()) {
         return;
     }
     
-    QRectF rect = m_selectionRect->rect();
-    QPointF topLeft = rect.topLeft();
-    QPointF bottomRight = rect.bottomRight();
-    
-    // 根据操作手柄调整矩形的尺寸
-    switch (handle) {
-        case GraphicItem::TopLeft:
-            rect.setTopLeft(point);
-            break;
-        case GraphicItem::TopRight:
-            rect.setTopRight(point);
-            break;
-        case GraphicItem::BottomLeft:
-            rect.setBottomLeft(point);
-            break;
-        case GraphicItem::BottomRight:
-            rect.setBottomRight(point);
-            break;
-        case GraphicItem::TopCenter:
-            rect.setTop(point.y());
-            break;
-        case GraphicItem::BottomCenter:
-            rect.setBottom(point.y());
-            break;
-        case GraphicItem::MiddleLeft:
-            rect.setLeft(point.x());
-            break;
-        case GraphicItem::MiddleRight:
-            rect.setRight(point.x());
-            break;
-        default:
-            break;
+    // 获取选中项的边界矩形
+    QRectF boundingRect;
+    bool first = true;
+    for (QGraphicsItem* item : m_selectedItems) {
+        if (!item) continue;
+        
+        // 使用sceneBoundingRect确保获取图形项在场景中的精确边界
+        QRectF itemRect = item->sceneBoundingRect();
+        
+        if (first) {
+            boundingRect = itemRect;
+            first = false;
+        } else {
+            boundingRect = boundingRect.united(itemRect);
+        }
     }
     
-    // 归一化矩形，确保宽高为正
-    rect = rect.normalized();
+    // 计算缩放因子
+    qreal scaleX = 1.0;
+    qreal scaleY = 1.0;
+    QPointF center = boundingRect.center();
+    
+    switch (handle) {
+        case GraphicItem::TopLeft:
+            scaleX = (boundingRect.right() - point.x()) / boundingRect.width();
+            scaleY = (boundingRect.bottom() - point.y()) / boundingRect.height();
+            break;
+        case GraphicItem::TopRight:
+            scaleX = (point.x() - boundingRect.left()) / boundingRect.width();
+            scaleY = (boundingRect.bottom() - point.y()) / boundingRect.height();
+            break;
+        case GraphicItem::BottomLeft:
+            scaleX = (boundingRect.right() - point.x()) / boundingRect.width();
+            scaleY = (point.y() - boundingRect.top()) / boundingRect.height();
+            break;
+        case GraphicItem::BottomRight:
+            scaleX = (point.x() - boundingRect.left()) / boundingRect.width();
+            scaleY = (point.y() - boundingRect.top()) / boundingRect.height();
+            break;
+        case GraphicItem::TopCenter:
+            scaleY = (boundingRect.bottom() - point.y()) / boundingRect.height();
+            break;
+        case GraphicItem::BottomCenter:
+            scaleY = (point.y() - boundingRect.top()) / boundingRect.height();
+            break;
+        case GraphicItem::MiddleLeft:
+            scaleX = (boundingRect.right() - point.x()) / boundingRect.width();
+            break;
+        case GraphicItem::MiddleRight:
+            scaleX = (point.x() - boundingRect.left()) / boundingRect.width();
+            break;
+        default:
+            return;
+    }
+    
+    // 应用缩放到所有选中项
+    for (QGraphicsItem* item : m_selectedItems) {
+        GraphicItem* graphicItem = dynamic_cast<GraphicItem*>(item);
+        if (graphicItem) {
+            // 获取当前缩放
+            QPointF currentScale = graphicItem->getScale();
+            // 应用新缩放
+            graphicItem->setScale(QPointF(currentScale.x() * scaleX, currentScale.y() * scaleY));
+        }
+    }
     
     // 更新选择矩形
-    m_selectionRect->setRect(rect);
+    if (m_selectionRect && m_selectionRect->scene()) {
+        // 重新计算选中项的边界矩形
+        QRectF newBoundingRect;
+        bool first = true;
+        for (QGraphicsItem* item : m_selectedItems) {
+            if (!item) continue;
+            
+            // 使用精确的边界矩形计算
+            QRectF itemRect = item->sceneBoundingRect();
+            
+            if (first) {
+                newBoundingRect = itemRect;
+                first = false;
+            } else {
+                newBoundingRect = newBoundingRect.united(itemRect);
+            }
+        }
+        m_selectionRect->setRect(newBoundingRect);
+    }
     
-    // 如果有选中的图形项，也需要相应调整它们的大小
-    // 这部分比较复杂，需要根据项目的具体实现来调整
-    // 暂时省略
+    // 发出选择改变信号
+    emit selectionChanged();
 }
 
-void SelectionManager::paintEvent(DrawArea* drawArea, QPainter* painter)
+void SelectionManager::paint(QPainter* painter, const QGraphicsView* view)
 {
-    // 如果存在选择区域，绘制其控制点
-    if (m_selectionRect && isSelectionValid() && m_selectionRect->scene()) {
-        painter->save();
+    // 如果没有选中项，返回
+    if (m_selectedItems.isEmpty()) {
+        return;
+    }
+    
+    painter->save();
+    
+    // 计算选中项的边界矩形
+    QRectF boundingRect;
+    bool first = true;
+    for (QGraphicsItem* item : m_selectedItems) {
+        if (!item) continue;
         
-        // 转换到视图坐标
-        QRectF sceneRect = m_selectionRect->rect();
-        QRect viewRect = drawArea->mapFromScene(sceneRect).boundingRect();
+        // 使用sceneBoundingRect确保获取图形项在场景中的精确边界
+        // 这对椭圆等特殊图形尤为重要
+        QRectF itemRect = item->sceneBoundingRect();
         
-        // 设置控制点样式
-        painter->setPen(QPen(Qt::blue, 1));
-        painter->setBrush(QBrush(Qt::white));
-        
-        // 控制点大小
-        const int handleSize = 8;
+        if (first) {
+            boundingRect = itemRect;
+            first = false;
+        } else {
+            boundingRect = boundingRect.united(itemRect);
+        }
+    }
+    
+    // 设置控制点样式
+    painter->setPen(QPen(Qt::blue, 1));
+    painter->setBrush(QBrush(Qt::white));
+    
+    // 控制点大小
+    const int handleSize = 8;
+    
+    // 现在我们可以使用QGraphicsView的mapFromScene方法
+    if (view) {
+        // 将场景坐标的矩形转换为视图坐标的多个点
+        QPointF topLeft = view->mapFromScene(boundingRect.topLeft());
+        QPointF topRight = view->mapFromScene(boundingRect.topRight());
+        QPointF bottomLeft = view->mapFromScene(boundingRect.bottomLeft());
+        QPointF bottomRight = view->mapFromScene(boundingRect.bottomRight());
+        QPointF center = view->mapFromScene(boundingRect.center());
         
         // 绘制8个控制点
         // 左上
-        painter->drawRect(QRect(viewRect.left() - handleSize/2, viewRect.top() - handleSize/2, 
+        painter->drawRect(QRectF(topLeft.x() - handleSize/2, topLeft.y() - handleSize/2, 
                          handleSize, handleSize));
         
         // 上中
-        painter->drawRect(QRect(viewRect.center().x() - handleSize/2, viewRect.top() - handleSize/2,
+        painter->drawRect(QRectF(center.x() - handleSize/2, topLeft.y() - handleSize/2,
                          handleSize, handleSize));
         
         // 右上
-        painter->drawRect(QRect(viewRect.right() - handleSize/2, viewRect.top() - handleSize/2,
+        painter->drawRect(QRectF(topRight.x() - handleSize/2, topRight.y() - handleSize/2,
                          handleSize, handleSize));
         
         // 中左
-        painter->drawRect(QRect(viewRect.left() - handleSize/2, viewRect.center().y() - handleSize/2,
+        painter->drawRect(QRectF(topLeft.x() - handleSize/2, center.y() - handleSize/2,
                          handleSize, handleSize));
         
         // 中右
-        painter->drawRect(QRect(viewRect.right() - handleSize/2, viewRect.center().y() - handleSize/2,
+        painter->drawRect(QRectF(topRight.x() - handleSize/2, center.y() - handleSize/2,
                          handleSize, handleSize));
         
         // 左下
-        painter->drawRect(QRect(viewRect.left() - handleSize/2, viewRect.bottom() - handleSize/2,
+        painter->drawRect(QRectF(bottomLeft.x() - handleSize/2, bottomLeft.y() - handleSize/2,
                          handleSize, handleSize));
         
         // 下中
-        painter->drawRect(QRect(viewRect.center().x() - handleSize/2, viewRect.bottom() - handleSize/2,
+        painter->drawRect(QRectF(center.x() - handleSize/2, bottomLeft.y() - handleSize/2,
                          handleSize, handleSize));
         
         // 右下
-        painter->drawRect(QRect(viewRect.right() - handleSize/2, viewRect.bottom() - handleSize/2,
+        painter->drawRect(QRectF(bottomRight.x() - handleSize/2, bottomRight.y() - handleSize/2,
                          handleSize, handleSize));
         
-        painter->restore();
+        // 绘制选择边框
+        painter->setPen(QPen(QColor(0, 120, 215), 1, Qt::DashLine));
+        painter->setBrush(Qt::transparent);
+        painter->drawPolygon(QPolygonF() << topLeft << topRight << bottomRight << bottomLeft);
+    } else {
+        // 如果view为空，直接在场景坐标中绘制
+        QRectF rect = boundingRect;
+        
+        // 直接绘制控制点（在场景坐标系中）
+        // 左上
+        painter->drawRect(QRectF(rect.left() - handleSize/2, rect.top() - handleSize/2, 
+                         handleSize, handleSize));
+        
+        // 上中
+        painter->drawRect(QRectF(rect.center().x() - handleSize/2, rect.top() - handleSize/2,
+                         handleSize, handleSize));
+        
+        // 右上
+        painter->drawRect(QRectF(rect.right() - handleSize/2, rect.top() - handleSize/2,
+                         handleSize, handleSize));
+        
+        // 中左
+        painter->drawRect(QRectF(rect.left() - handleSize/2, rect.center().y() - handleSize/2,
+                         handleSize, handleSize));
+        
+        // 中右
+        painter->drawRect(QRectF(rect.right() - handleSize/2, rect.center().y() - handleSize/2,
+                         handleSize, handleSize));
+        
+        // 左下
+        painter->drawRect(QRectF(rect.left() - handleSize/2, rect.bottom() - handleSize/2,
+                         handleSize, handleSize));
+        
+        // 下中
+        painter->drawRect(QRectF(rect.center().x() - handleSize/2, rect.bottom() - handleSize/2,
+                         handleSize, handleSize));
+        
+        // 右下
+        painter->drawRect(QRectF(rect.right() - handleSize/2, rect.bottom() - handleSize/2,
+                         handleSize, handleSize));
+        
+        // 绘制选择边框
+        painter->setPen(QPen(QColor(0, 120, 215), 1, Qt::DashLine));
+        painter->setBrush(Qt::transparent);
+        painter->drawRect(rect);
+    }
+    
+    painter->restore();
+}
+
+void SelectionManager::addToSelection(QGraphicsItem* item)
+{
+    // 如果项有效且通过过滤器
+    if (item && applyFilter(item)) {
+        m_selectedItems.insert(item);
+        applySelectionToScene();
+        emit selectionChanged();
+    }
+}
+
+void SelectionManager::removeFromSelection(QGraphicsItem* item)
+{
+    // 如果项在选择中
+    if (m_selectedItems.contains(item)) {
+        m_selectedItems.remove(item);
+        applySelectionToScene();
+        emit selectionChanged();
+    }
+}
+
+void SelectionManager::toggleSelection(QGraphicsItem* item)
+{
+    // 如果项已选中，取消选择；否则，添加到选择
+    if (m_selectedItems.contains(item)) {
+        m_selectedItems.remove(item);
+    } else if (applyFilter(item)) {
+        m_selectedItems.insert(item);
+    }
+    
+    applySelectionToScene();
+    emit selectionChanged();
+}
+
+bool SelectionManager::isSelected(QGraphicsItem* item) const
+{
+    return m_selectedItems.contains(item);
+}
+
+QPointF SelectionManager::selectionCenter() const
+{
+    // 计算选中项的中心点
+    if (m_selectedItems.isEmpty()) {
+        return QPointF();
+    }
+    
+    QRectF boundingRect;
+    bool first = true;
+    for (QGraphicsItem* item : m_selectedItems) {
+        if (!item) continue;
+        
+        // 使用精确的边界矩形计算
+        QRectF itemRect = item->sceneBoundingRect();
+        
+        if (first) {
+            boundingRect = itemRect;
+            first = false;
+        } else {
+            boundingRect = boundingRect.united(itemRect);
+        }
+    }
+    
+    return boundingRect.center();
+}
+
+void SelectionManager::applySelectionToScene()
+{
+    // 如果没有场景，返回
+    if (!m_scene) {
+        qWarning() << "SelectionManager::applySelectionToScene: 场景为空";
+        return;
+    }
+    
+    try {
+        // 先清除所有项的选择状态
+        QList<QGraphicsItem*> items = m_scene->items();
+        for (QGraphicsItem* item : items) {
+            if (item) {
+                item->setSelected(false);
+            }
+        }
+        
+        // 设置选中项的选择状态，检查项是否仍然有效
+        QSet<QGraphicsItem*> invalidItems;
+        for (QGraphicsItem* item : m_selectedItems) {
+            if (!item) {
+                qWarning() << "SelectionManager::applySelectionToScene: 尝试选择空项";
+                invalidItems.insert(item);
+                continue;
+            }
+            
+            // 检查项是否仍在场景中
+            if (item->scene() != m_scene) {
+                qWarning() << "SelectionManager::applySelectionToScene: 项不在当前场景中";
+                invalidItems.insert(item);
+                continue;
+            }
+            
+            item->setSelected(true);
+        }
+        
+        // 从选择集合中移除无效项
+        for (QGraphicsItem* item : invalidItems) {
+            m_selectedItems.remove(item);
+        }
+    }
+    catch (const std::exception& e) {
+        qCritical() << "SelectionManager::applySelectionToScene: 异常:" << e.what();
+    }
+    catch (...) {
+        qCritical() << "SelectionManager::applySelectionToScene: 未知异常";
+    }
+}
+
+void SelectionManager::syncSelectionFromScene()
+{
+    try {
+        qDebug() << "SelectionManager::syncSelectionFromScene: 开始从场景同步选择";
+        
+        // 如果没有场景，返回
+        if (!m_scene) {
+            qWarning() << "SelectionManager::syncSelectionFromScene: 场景为空";
+            return;
+        }
+        
+        // 清除当前选择
+        int oldCount = m_selectedItems.size();
+        m_selectedItems.clear();
+        
+        // 将场景中所有选中的项添加到选择中
+        QList<QGraphicsItem*> sceneSelectedItems = m_scene->selectedItems();
+        int newCount = 0;
+        
+        for (QGraphicsItem* item : sceneSelectedItems) {
+            if (!item) {
+                qWarning() << "SelectionManager::syncSelectionFromScene: 遇到空项";
+                continue;
+            }
+            
+            if (applyFilter(item)) {
+                m_selectedItems.insert(item);
+                newCount++;
+            }
+        }
+        
+        qDebug() << "SelectionManager::syncSelectionFromScene: 从" << oldCount << "项更新为" << newCount << "项";
+        
+        // 发出选择改变信号
+        emit selectionChanged();
+        
+        qDebug() << "SelectionManager::syncSelectionFromScene: 完成同步";
+    }
+    catch (const std::exception& e) {
+        qCritical() << "SelectionManager::syncSelectionFromScene: 异常:" << e.what();
+    }
+    catch (...) {
+        qCritical() << "SelectionManager::syncSelectionFromScene: 未知异常";
     }
 } 

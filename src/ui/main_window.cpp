@@ -1,6 +1,7 @@
-#include "ui/main_window.h"
+#include "main_window.h"
 #include "../state/draw_state.h"
 #include "../state/fill_state.h"
+#include "../state/edit_state.h"
 #include "draw_area.h"
 #include <QAction>
 #include <QMenuBar>
@@ -16,12 +17,18 @@
 #include <QStatusBar>
 #include <QDebug>
 #include "../core/graphic.h"
+#include "../command/command_manager.h"
+#include <QApplication>
+#include <QTimer>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , m_drawArea(new DrawArea(this))
     , toolsGroup(new QActionGroup(this))
-    , m_currentFillColor(Qt::red) // 初始化填充颜色为红色，避免黑色不明显
+    , m_currentFillColor(Qt::green) // 初始化填充颜色为绿色
+    , m_currentLineColor(Qt::blue) // 初始化线条颜色为蓝色
+    , m_lineWidth(2)
+    , m_updateTimer(nullptr)
 {
     // 创建中心部件
     setCentralWidget(m_drawArea);
@@ -36,6 +43,26 @@ MainWindow::MainWindow(QWidget *parent)
     // 设置窗口标题和大小
     setWindowTitle(tr("矢量图形编辑器"));
     resize(800, 600);
+    
+    // 确保绘图区域使用了正确的初始颜色设置
+    m_drawArea->setLineColor(m_currentLineColor);
+    m_drawArea->setFillColor(m_currentFillColor);
+    
+    // 最后添加连接设置
+    setupConnections();
+    
+    // 初始化撤销/重做按钮状态
+    updateUndoRedoActions();
+
+    // 创建更新定时器
+    m_updateTimer = new QTimer(this);
+    m_updateTimer->setSingleShot(true);
+    m_updateTimer->setInterval(100); // 100ms延迟
+    connect(m_updateTimer, &QTimer::timeout, [this]() {
+        CommandManager& manager = CommandManager::getInstance();
+        m_undoAction->setEnabled(manager.canUndo());
+        m_redoAction->setEnabled(manager.canRedo());
+    });
 }
 
 void MainWindow::createActions() {
@@ -87,6 +114,17 @@ void MainWindow::createActions() {
     m_pasteAction = new QAction(QIcon(":/icons/paste.png"), tr("粘贴"), this);
     m_cutAction = new QAction(QIcon(":/icons/cut.png"), tr("剪切"), this);
 
+    // 创建撤销/重做操作
+    m_undoAction = new QAction(QIcon(":/icons/undo.png"), tr("撤销"), this);
+    m_undoAction->setShortcut(QKeySequence::Undo); // Ctrl+Z
+    m_undoAction->setStatusTip(tr("撤销上一步操作"));
+    m_undoAction->setEnabled(false); // 初始状态下禁用
+    
+    m_redoAction = new QAction(QIcon(":/icons/redo.png"), tr("重做"), this);
+    m_redoAction->setShortcut(QKeySequence::Redo); // Ctrl+Y
+    m_redoAction->setStatusTip(tr("重做上一步撤销的操作"));
+    m_redoAction->setEnabled(false); // 初始状态下禁用
+
     // 创建工具组
     toolsGroup->setExclusive(true);
 
@@ -118,10 +156,30 @@ void MainWindow::createActions() {
     connect(m_copyAction, &QAction::triggered, this, [this]() { onEditActionTriggered(m_copyAction); });
     connect(m_pasteAction, &QAction::triggered, this, [this]() { onEditActionTriggered(m_pasteAction); });
     connect(m_cutAction, &QAction::triggered, this, [this]() { onEditActionTriggered(m_cutAction); });
+
+    // 连接撤销/重做信号槽
+    connect(m_undoAction, &QAction::triggered, this, &MainWindow::undo);
+    connect(m_redoAction, &QAction::triggered, this, &MainWindow::redo);
+    
+    // 连接CommandManager信号到更新UI状态的槽
+    connect(&CommandManager::getInstance(), &CommandManager::commandExecuted, 
+            this, &MainWindow::updateUndoRedoActions);
+    connect(&CommandManager::getInstance(), &CommandManager::commandUndone, 
+            this, &MainWindow::updateUndoRedoActions);
+    connect(&CommandManager::getInstance(), &CommandManager::commandRedone, 
+            this, &MainWindow::updateUndoRedoActions);
+    connect(&CommandManager::getInstance(), &CommandManager::stackCleared, 
+            this, &MainWindow::updateUndoRedoActions);
 }
 
 void MainWindow::createMenus() {
     QMenu* editMenu = menuBar()->addMenu(tr("编辑"));
+    
+    // 添加撤销/重做到编辑菜单最前面
+    editMenu->addAction(m_undoAction);
+    editMenu->addAction(m_redoAction);
+    editMenu->addSeparator();
+    
     editMenu->addAction(m_copyAction);
     editMenu->addAction(m_pasteAction);
     editMenu->addAction(m_cutAction);
@@ -161,6 +219,40 @@ void MainWindow::createToolBars() {
 
     // 创建填充设置工具栏
     createFillSettingsDialog();
+
+    // 样式设置工具栏
+    m_styleToolBar = addToolBar(tr("样式设置"));
+    
+    // 添加线条颜色选择按钮
+    QLabel* lineColorLabel = new QLabel(tr("线条颜色:"), this);
+    m_lineColorButton = new QPushButton(this);
+    m_lineColorButton->setFixedSize(24, 24);
+    m_lineColorButton->setStyleSheet(QString("background-color: %1").arg(m_currentLineColor.name(QColor::HexArgb)));
+    connect(m_lineColorButton, &QPushButton::clicked, this, &MainWindow::onSelectLineColor);
+    
+    // 添加线条宽度选择
+    QLabel* lineWidthLabel = new QLabel(tr("线条宽度:"), this);
+    m_lineWidthSpinBox = new QSpinBox(this);
+    m_lineWidthSpinBox->setRange(1, 20);
+    m_lineWidthSpinBox->setValue(m_lineWidth); // 使用成员变量
+    connect(m_lineWidthSpinBox, QOverload<int>::of(&QSpinBox::valueChanged), 
+            this, &MainWindow::onLineWidthChanged);
+    
+    // 添加到工具栏
+    m_styleToolBar->addWidget(lineColorLabel);
+    m_styleToolBar->addWidget(m_lineColorButton);
+    m_styleToolBar->addSeparator();
+    m_styleToolBar->addWidget(lineWidthLabel);
+    m_styleToolBar->addWidget(m_lineWidthSpinBox);
+
+    // 创建编辑工具栏
+    m_editToolBar = addToolBar(tr("编辑工具"));
+    m_editToolBar->addAction(m_undoAction);
+    m_editToolBar->addAction(m_redoAction);
+    m_editToolBar->addSeparator();
+    m_editToolBar->addAction(m_copyAction);
+    m_editToolBar->addAction(m_pasteAction);
+    m_editToolBar->addAction(m_cutAction);
 }
 
 void MainWindow::createFillSettingsDialog() {
@@ -189,8 +281,9 @@ void MainWindow::createFillSettingsDialog() {
 }
 
 void MainWindow::onDrawActionTriggered(QAction* action) {
-    // 隐藏填充工具设置栏
-    m_fillToolBar->setVisible(false);
+    // 隐藏/显示工具栏
+    m_fillToolBar->setVisible(action == m_fillToolAction);
+    m_styleToolBar->setVisible(action == m_selectAction);
     
     if (action == m_selectAction) {
         // 取消其他工具按钮的选中状态
@@ -284,17 +377,6 @@ void MainWindow::onEditActionTriggered(QAction* action) {
     }
 }
 
-void MainWindow::onFillColorTriggered() {
-    // 选择填充颜色
-    QColor color = QColorDialog::getColor(m_drawArea->getFillColor(), this, tr("选择填充颜色"));
-    if (color.isValid()) {
-        m_drawArea->setFillColor(color);
-    }
-    
-    // 如果是从选择颜色按钮点击的，恢复之前的工具状态
-    m_fillToolAction->setChecked(false);
-}
-
 void MainWindow::onFillToolTriggered() {
     // 关闭其他工具的选中状态
     if (m_selectAction->isChecked()) m_selectAction->setChecked(false);
@@ -314,38 +396,38 @@ void MainWindow::onFillToolTriggered() {
     
     // 更新状态栏
     statusBar()->showMessage(tr("填充工具: 点击要填充的区域"));
-    
-    qDebug() << "填充工具已激活 - 颜色:" << m_currentFillColor;
 }
 
 void MainWindow::onSelectFillColor() {
-    // 打开颜色选择对话框
-    QColor newColor = QColorDialog::getColor(m_currentFillColor, this, tr("选择填充颜色"), 
-                                           QColorDialog::ShowAlphaChannel);
-    if (newColor.isValid()) {
+    // 使用颜色对话框获取颜色
+    QColor currentColor = m_currentFillColor;
+    QColor newColor = QColorDialog::getColor(currentColor, this, tr("选择填充颜色"), 
+                                       QColorDialog::ShowAlphaChannel);
+    
+    if (newColor.isValid() && newColor != currentColor) {
+        // 保存新选择的填充颜色
         m_currentFillColor = newColor;
-        qDebug() << "新选择的填充颜色:" << m_currentFillColor;
         
-        // 更新所有显示填充颜色的按钮样式表
+        // 更新按钮颜色
         QString styleSheet = QString("background-color: %1").arg(newColor.name(QColor::HexArgb));
         m_colorButton->setStyleSheet(styleSheet);
         
-        // 如果fillToolBar中有颜色按钮，找到并更新它
-        for (QObject* child : m_fillSettingsWidget->children()) {
-            if (QPushButton* button = qobject_cast<QPushButton*>(child)) {
-                if (button != m_colorButton) {
-                    button->setStyleSheet(styleSheet);
-                }
+        // 检查当前是否为编辑模式，如果是则应用到选中图形
+        if (m_selectAction->isChecked() && m_drawArea) {
+            // 如果是编辑状态，则应用到选中的图形
+            EditState* editState = dynamic_cast<EditState*>(m_drawArea->getCurrentState());
+            if (editState) {
+                editState->applyBrushColorChange(newColor);
+                statusBar()->showMessage(tr("已更改填充颜色为 %1").arg(newColor.name(QColor::HexArgb)));
             }
-        }
-        
-        // 更新绘图区域的填充颜色
-        m_drawArea->setFillColor(m_currentFillColor);
-        
-        // 如果当前正在使用填充工具，更新状态栏
-        if (m_fillToolAction->isChecked()) {
-            statusBar()->showMessage(tr("填充工具: 点击要填充的区域 (颜色已更新为 %1)").arg(m_currentFillColor.name(QColor::HexArgb)));
-            qDebug() << "填充颜色已更新为:" << m_currentFillColor;
+        } else {
+            // 更新绘图区域的填充颜色
+            m_drawArea->setFillColor(m_currentFillColor);
+            
+            // 如果当前正在使用填充工具，更新状态栏
+            if (m_fillToolAction->isChecked()) {
+                statusBar()->showMessage(tr("填充工具: 点击要填充的区域 (颜色已更新为 %1)").arg(m_currentFillColor.name(QColor::HexArgb)));
+            }
         }
     }
 }
@@ -360,8 +442,6 @@ void MainWindow::onGridToggled(bool enabled) {
     } else {
         statusBar()->showMessage(tr("网格已禁用"));
     }
-    
-    qDebug() << "Grid toggled:" << enabled;
 }
 
 void MainWindow::onGridSizeChanged(int size) {
@@ -370,20 +450,15 @@ void MainWindow::onGridSizeChanged(int size) {
     
     // Update the status bar
     statusBar()->showMessage(tr("网格大小已设置为: %1").arg(size));
-    
-    qDebug() << "Grid size changed:" << size;
 }
 
 void MainWindow::onSnapToGridToggled(bool enabled) {
     // This would enable or disable snap-to-grid functionality
-    // Since we don't have the implementation yet, just show a message
     if (enabled) {
         statusBar()->showMessage(tr("吸附到网格已启用"));
     } else {
         statusBar()->showMessage(tr("吸附到网格已禁用"));
     }
-    
-    qDebug() << "Snap to grid toggled:" << enabled;
 }
 
 void MainWindow::createToolOptions() {
@@ -401,11 +476,35 @@ void MainWindow::createToolOptions() {
     QHBoxLayout* optionsLayout = new QHBoxLayout(optionsWidget);
     optionsLayout->setContentsMargins(5, 5, 5, 5);
     
+    // 创建线条颜色和宽度控制
+    QLabel* lineColorLabel = new QLabel(tr("线条颜色:"), optionsWidget);
+    QPushButton* styleLineColorButton = new QPushButton(optionsWidget);
+    styleLineColorButton->setFixedSize(24, 24);
+    styleLineColorButton->setStyleSheet(QString("background-color: %1").arg(m_currentLineColor.name(QColor::HexArgb)));
+    styleLineColorButton->setProperty("type", "lineColorButton");
+    connect(styleLineColorButton, &QPushButton::clicked, this, &MainWindow::onSelectLineColor);
+    
+    QLabel* lineWidthLabel = new QLabel(tr("线条宽度:"), optionsWidget);
+    QSpinBox* styleLineWidthSpinBox = new QSpinBox(optionsWidget);
+    styleLineWidthSpinBox->setRange(1, 20);
+    styleLineWidthSpinBox->setValue(m_lineWidth);
+    styleLineWidthSpinBox->setProperty("type", "lineWidthSpinBox");
+    connect(styleLineWidthSpinBox, QOverload<int>::of(&QSpinBox::valueChanged), 
+            this, &MainWindow::onLineWidthChanged);
+    
+    // 添加到布局
+    optionsLayout->addWidget(lineColorLabel);
+    optionsLayout->addWidget(styleLineColorButton);
+    optionsLayout->addSpacing(5);
+    optionsLayout->addWidget(lineWidthLabel);
+    optionsLayout->addWidget(styleLineWidthSpinBox);
+    optionsLayout->addSpacing(15);
+    
     // 创建填充颜色选择按钮
     QLabel* fillColorLabel = new QLabel(tr("填充颜色:"), optionsWidget);
     m_colorButton = new QPushButton(optionsWidget);
     m_colorButton->setFixedSize(24, 24);
-    m_colorButton->setStyleSheet("background-color: black"); // 初始黑色
+    m_colorButton->setStyleSheet(QString("background-color: %1").arg(m_currentFillColor.name(QColor::HexArgb)));
     connect(m_colorButton, &QPushButton::clicked, this, &MainWindow::onSelectFillColor);
     
     // 添加填充工具状态提示
@@ -442,4 +541,130 @@ void MainWindow::createToolOptions() {
     
     // 设置容器为中央部件
     setCentralWidget(container);
+}
+
+// 添加线条颜色选择处理函数
+void MainWindow::onSelectLineColor() {
+    // 使用存储的颜色，而不是尝试从按钮获取
+    QColor currentColor = m_currentLineColor;
+    QColor newColor = QColorDialog::getColor(currentColor, this, tr("选择线条颜色"), 
+                                        QColorDialog::ShowAlphaChannel);
+    
+    if (newColor.isValid() && newColor != currentColor) {
+        // 保存当前颜色
+        m_currentLineColor = newColor;
+        
+        // 更新按钮颜色
+        QString styleSheet = QString("background-color: %1").arg(newColor.name(QColor::HexArgb));
+        m_lineColorButton->setStyleSheet(styleSheet);
+        
+        // 如果在工具选项区域也有相应按钮，同步更新
+        for (QObject* child : findChildren<QPushButton*>()) {
+            QPushButton* button = qobject_cast<QPushButton*>(child);
+            if (button && button != m_lineColorButton && 
+                button->property("type").toString() == "lineColorButton") {
+                button->setStyleSheet(styleSheet);
+            }
+        }
+        
+        // 应用样式变更 - 使用命令模式
+        if (m_selectAction->isChecked() && m_drawArea) {
+            // 如果是编辑状态，则应用到选中的图形
+            EditState* editState = dynamic_cast<EditState*>(m_drawArea->getCurrentState());
+            if (editState) {
+                editState->applyPenColorChange(newColor);
+                statusBar()->showMessage(tr("已更改线条颜色为 %1").arg(newColor.name()));
+            }
+        } else {
+            // 如果是绘制状态，则设置为绘制默认颜色
+            m_drawArea->setLineColor(newColor);
+            statusBar()->showMessage(tr("已设置线条颜色为 %1，将应用于新绘制的图形").arg(newColor.name()));
+        }
+    }
+}
+
+// 添加线条宽度变更处理函数
+void MainWindow::onLineWidthChanged(int width) {
+    // 保存当前宽度
+    m_lineWidth = width;
+    
+    // 同步更新所有线宽控件
+    QList<QSpinBox*> spinBoxes = findChildren<QSpinBox*>();
+    for (QSpinBox* spinBox : spinBoxes) {
+        if (spinBox != sender() && spinBox->property("type").toString() == "lineWidthSpinBox") {
+            spinBox->blockSignals(true);
+            spinBox->setValue(width);
+            spinBox->blockSignals(false);
+        }
+    }
+    
+    // 应用样式变更 - 使用命令模式
+    if (m_selectAction->isChecked() && m_drawArea) {
+        // 如果是编辑状态，则应用到选中的图形
+        EditState* editState = dynamic_cast<EditState*>(m_drawArea->getCurrentState());
+        if (editState) {
+            editState->applyPenWidthChange(static_cast<qreal>(width));
+            statusBar()->showMessage(tr("已更改线条宽度: %1").arg(width));
+        }
+    } else {
+        // 如果是绘制状态，则设置为绘制默认宽度
+        m_drawArea->setLineWidth(width);
+        statusBar()->showMessage(tr("已设置线条宽度: %1，将应用于新绘制的图形").arg(width));
+    }
+}
+
+// 添加setupConnections函数
+void MainWindow::setupConnections() {
+    // 只保留CommandManager相关的连接
+    // 撤销/重做按钮的连接已在createActions中设置
+    
+    // 连接CommandManager信号到更新UI状态的槽
+    connect(&CommandManager::getInstance(), &CommandManager::commandExecuted, 
+            this, &MainWindow::updateUndoRedoActions);
+    connect(&CommandManager::getInstance(), &CommandManager::commandUndone, 
+            this, &MainWindow::updateUndoRedoActions);
+    connect(&CommandManager::getInstance(), &CommandManager::commandRedone, 
+            this, &MainWindow::updateUndoRedoActions);
+    connect(&CommandManager::getInstance(), &CommandManager::stackCleared, 
+            this, &MainWindow::updateUndoRedoActions);
+}
+
+// 实现撤销/重做槽函数
+void MainWindow::undo() {
+    CommandManager::getInstance().undo();
+    // updateUndoRedoActions会通过信号自动调用
+    
+    // 确保DrawArea更新
+    if (m_drawArea) {
+        m_drawArea->update();
+        QApplication::processEvents();
+    }
+}
+
+void MainWindow::redo() {
+    CommandManager::getInstance().redo();
+    // updateUndoRedoActions会通过信号自动调用
+    
+    // 确保DrawArea更新
+    if (m_drawArea) {
+        m_drawArea->update();
+        QApplication::processEvents();
+    }
+}
+
+void MainWindow::updateUndoRedoActions() {
+    // 使用定时器延迟更新
+    if (m_updateTimer) {
+        m_updateTimer->start();
+    }
+}
+
+void MainWindow::onFillColorTriggered()
+{
+    QColor color = QColorDialog::getColor(m_currentFillColor, this, tr("选择填充颜色"));
+    if (color.isValid()) {
+        m_currentFillColor = color;
+        m_colorButton->setStyleSheet(QString("background-color: %1").arg(color.name(QColor::HexArgb)));
+        m_drawArea->setFillColor(color);
+    }
 }

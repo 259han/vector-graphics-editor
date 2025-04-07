@@ -363,23 +363,27 @@ CMakeFiles/vector-graphics-editor.dir/src/core/selection_manager.cpp.obj: \
  D:/Qt/6.8.2/mingw_64/include/QtCore/QList \
  D:/Qt/6.8.2/mingw_64/include/QtCore/qlist.h \
  D:/Qt/6.8.2/mingw_64/include/QtWidgets/QGraphicsRectItem \
- F:/program/claudegraph/src/core/graphic_item.h \
+ D:/Qt/6.8.2/mingw_64/include/QtWidgets/QGraphicsScene \
+ D:/Qt/6.8.2/mingw_64/include/QtWidgets/qgraphicsscene.h \
+ D:/Qt/6.8.2/mingw_64/include/QtGui/qbrush.h \
+ D:/Qt/6.8.2/mingw_64/include/QtGui/qfont.h \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/qendian.h \
+ D:/Qt/6.8.2/mingw_64/include/QtGui/qpen.h \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/QObject \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/qobject.h \
  D:/Qt/6.8.2/mingw_64/include/QtGui/QPainter \
  D:/Qt/6.8.2/mingw_64/include/QtGui/qpainter.h \
  D:/Qt/6.8.2/mingw_64/include/QtGui/qtextoption.h \
- D:/Qt/6.8.2/mingw_64/include/QtGui/qpen.h \
- D:/Qt/6.8.2/mingw_64/include/QtGui/qbrush.h \
  D:/Qt/6.8.2/mingw_64/include/QtGui/qfontinfo.h \
- D:/Qt/6.8.2/mingw_64/include/QtGui/qfont.h \
- D:/Qt/6.8.2/mingw_64/include/QtCore/qendian.h \
  D:/Qt/6.8.2/mingw_64/include/QtGui/qfontmetrics.h \
- D:/Qt/6.8.2/mingw_64/include/QtWidgets/QGraphicsSceneMouseEvent \
- D:/Qt/6.8.2/mingw_64/include/QtWidgets/qgraphicssceneevent.h \
- D:/Qt/6.8.2/mingw_64/include/QtCore/qcoreevent.h \
- D:/Qt/6.8.2/mingw_64/include/QtWidgets/QStyleOptionGraphicsItem \
- D:/Qt/6.8.2/mingw_64/include/QtWidgets/qstyleoption.h \
- D:/Qt/6.8.2/mingw_64/include/QtCore/qlocale.h \
- D:/Qt/6.8.2/mingw_64/include/QtWidgets/qabstractspinbox.h \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/QSet \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/qset.h \
+ D:/Qt/6.8.2/mingw_64/include/QtWidgets/QGraphicsView \
+ D:/Qt/6.8.2/mingw_64/include/QtWidgets/qgraphicsview.h \
+ D:/Qt/6.8.2/mingw_64/include/QtGui/qpainter.h \
+ D:/Qt/6.8.2/mingw_64/include/QtWidgets/qscrollarea.h \
+ D:/Qt/6.8.2/mingw_64/include/QtWidgets/qabstractscrollarea.h \
+ D:/Qt/6.8.2/mingw_64/include/QtWidgets/qframe.h \
  D:/Qt/6.8.2/mingw_64/include/QtWidgets/qwidget.h \
  D:/Qt/6.8.2/mingw_64/include/QtGui/qaction.h \
  D:/Qt/6.8.2/mingw_64/include/QtGui/qkeysequence.h \
@@ -388,6 +392,15 @@ CMakeFiles/vector-graphics-editor.dir/src/core/selection_manager.cpp.obj: \
  D:/Qt/6.8.2/mingw_64/include/QtWidgets/qsizepolicy.h \
  D:/Qt/6.8.2/mingw_64/include/QtGui/qcursor.h \
  D:/Qt/6.8.2/mingw_64/include/QtGui/qbitmap.h \
+ D:/Qt/6.8.2/mingw_64/include/QtWidgets/qgraphicsscene.h \
+ F:/program/claudegraph/src/core/graphic_item.h \
+ D:/Qt/6.8.2/mingw_64/include/QtWidgets/QGraphicsSceneMouseEvent \
+ D:/Qt/6.8.2/mingw_64/include/QtWidgets/qgraphicssceneevent.h \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/qcoreevent.h \
+ D:/Qt/6.8.2/mingw_64/include/QtWidgets/QStyleOptionGraphicsItem \
+ D:/Qt/6.8.2/mingw_64/include/QtWidgets/qstyleoption.h \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/qlocale.h \
+ D:/Qt/6.8.2/mingw_64/include/QtWidgets/qabstractspinbox.h \
  D:/Qt/6.8.2/mingw_64/include/QtGui/qvalidator.h \
  D:/Qt/6.8.2/mingw_64/include/QtCore/qregularexpression.h \
  D:/Qt/6.8.2/mingw_64/include/QtWidgets/qslider.h \
@@ -396,7 +409,6 @@ CMakeFiles/vector-graphics-editor.dir/src/core/selection_manager.cpp.obj: \
  D:/Qt/6.8.2/mingw_64/include/QtWidgets/qtabbar.h \
  D:/Qt/6.8.2/mingw_64/include/QtWidgets/qtabwidget.h \
  D:/Qt/6.8.2/mingw_64/include/QtWidgets/qrubberband.h \
- D:/Qt/6.8.2/mingw_64/include/QtWidgets/qframe.h \
  D:/Qt/6.8.2/mingw_64/include/QtCore/qabstractitemmodel.h \
  F:/program/claudegraph/src/core/graphic.h \
  D:/Qt/6.8.2/mingw_64/include/QtGui/QPen \
@@ -405,17 +417,12 @@ CMakeFiles/vector-graphics-editor.dir/src/core/selection_manager.cpp.obj: \
  D:/Qt/6.8.2/mingw_64/include/QtGui/qbrush.h \
  D:/Qt/6.8.2/mingw_64/include/QtCore/QDataStream \
  D:/Qt/6.8.2/mingw_64/include/QtCore/qdatastream.h \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/QString \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/qstring.h \
  F:/program/claudegraph/src/core/draw_strategy.h \
  F:/program/claudegraph/src/ui/draw_area.h \
- D:/Qt/6.8.2/mingw_64/include/QtWidgets/QGraphicsView \
- D:/Qt/6.8.2/mingw_64/include/QtWidgets/qgraphicsview.h \
- D:/Qt/6.8.2/mingw_64/include/QtGui/qpainter.h \
- D:/Qt/6.8.2/mingw_64/include/QtWidgets/qscrollarea.h \
- D:/Qt/6.8.2/mingw_64/include/QtWidgets/qabstractscrollarea.h \
- D:/Qt/6.8.2/mingw_64/include/QtWidgets/qgraphicsscene.h \
- D:/Qt/6.8.2/mingw_64/include/QtWidgets/QGraphicsScene \
- D:/Qt/6.8.2/mingw_64/include/QtWidgets/qgraphicsscene.h \
  F:/program/claudegraph/src/core/graphics_item_factory.h \
+ F:/program/claudegraph/src/core/selection_manager.h \
  F:/program/claudegraph/src/state/editor_state.h \
  D:/Qt/6.8.2/mingw_64/include/QtGui/QMouseEvent \
  D:/Qt/6.8.2/mingw_64/include/QtGui/qevent.h \
@@ -429,7 +436,6 @@ CMakeFiles/vector-graphics-editor.dir/src/core/selection_manager.cpp.obj: \
  D:/Qt/6.8.2/mingw_64/include/QtGui/qscreen.h \
  D:/Qt/6.8.2/mingw_64/include/QtCore/QList \
  D:/Qt/6.8.2/mingw_64/include/QtCore/QObject \
- D:/Qt/6.8.2/mingw_64/include/QtCore/qobject.h \
  D:/Qt/6.8.2/mingw_64/include/QtCore/QRect \
  D:/Qt/6.8.2/mingw_64/include/QtCore/qrect.h \
  D:/Qt/6.8.2/mingw_64/include/QtCore/QSize \
@@ -448,13 +454,18 @@ CMakeFiles/vector-graphics-editor.dir/src/core/selection_manager.cpp.obj: \
  D:/Qt/6.8.2/mingw_64/include/QtGui/qinputmethod.h \
  D:/Qt/6.8.2/mingw_64/include/QtGui/qguiapplication_platform.h \
  D:/Qt/6.8.2/mingw_64/include/QtGui/QKeyEvent \
+ D:/Qt/6.8.2/mingw_64/include/QtGui/QCursor \
+ D:/Qt/6.8.2/mingw_64/include/QtGui/qcursor.h \
+ D:/Qt/6.8.2/mingw_64/include/QtWidgets/QMainWindow \
+ D:/Qt/6.8.2/mingw_64/include/QtWidgets/qmainwindow.h \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/QDebug \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/qdebug.h \
+ D:/Qt/6.8.2/mingw_64/include/QtGui/QWheelEvent \
  F:/program/claudegraph/src/ui/image_resizer.h \
  D:/Qt/6.8.2/mingw_64/include/QtWidgets/QGraphicsObject \
  D:/Qt/6.8.2/mingw_64/include/QtWidgets/QGraphicsLineItem \
  D:/Qt/6.8.2/mingw_64/include/QtWidgets/QGraphicsEllipseItem \
  D:/Qt/6.8.2/mingw_64/include/QtWidgets/QGraphicsSceneEvent \
- D:/Qt/6.8.2/mingw_64/include/QtGui/QCursor \
- D:/Qt/6.8.2/mingw_64/include/QtGui/qcursor.h \
- D:/Qt/6.8.2/mingw_64/include/QtCore/QDebug \
- D:/Qt/6.8.2/mingw_64/include/QtCore/qdebug.h \
- F:/program/claudegraph/src/core/graphic_item.h
+ F:/program/claudegraph/src/core/graphic_item.h \
+ D:/Qt/6.8.2/mingw_64/include/QtWidgets/QWidget \
+ D:/Qt/6.8.2/mingw_64/include/QtWidgets/qwidget.h

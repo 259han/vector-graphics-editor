@@ -13,15 +13,15 @@ set(CMAKE_AUTOUIC ON)
 # 查找 Qt6 组件
 find_package(Qt6 REQUIRED COMPONENTS Widgets)
 
-# 添加源文件
+# 添加源文件 - 排除根目录的 main.cpp，只使用 src/main.cpp
 file(GLOB_RECURSE SOURCES 
     "src/*.cpp"
     "src/*.h"
 )
 
-# 添加可执行文件
-add_executable(${PROJECT_NAME} 
-    main.cpp 
+# 添加可执行文件，使用 WIN32 选项来隐藏控制台窗口
+add_executable(${PROJECT_NAME}
+    src/main.cpp 
     ${SOURCES}
 )
 

@@ -8,6 +8,7 @@
 #include <memory>
 #include <vector>
 #include <QDataStream>
+#include <QString>
 
 class DrawStrategy;
 
@@ -25,6 +26,22 @@ public:
         // 后续添加更多图形...
         CONNECTION = 8  // 连接线
     };
+
+    // 将图形类型转换为可读字符串
+    static QString graphicTypeToString(GraphicType type) {
+        switch (type) {
+            case NONE: return "未指定";
+            case LINE: return "直线";
+            case RECTANGLE: return "矩形";
+            case ELLIPSE: return "椭圆";
+            case CIRCLE: return "圆形";
+            case BEZIER: return "贝塞尔曲线";
+            case TRIANGLE: return "三角形";
+            case FILL: return "填充";
+            case CONNECTION: return "连接线";
+            default: return "未知类型";
+        }
+    }
 
     Graphic();
     virtual ~Graphic() = default;
