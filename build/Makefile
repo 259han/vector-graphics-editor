@@ -154,318 +154,6 @@ vector-graphics-editor_autogen/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\vector-graphics-editor_autogen.dir\build.make CMakeFiles/vector-graphics-editor_autogen.dir/build
 .PHONY : vector-graphics-editor_autogen/fast
 
-include/command/command.obj: include/command/command.cpp.obj
-.PHONY : include/command/command.obj
-
-# target to build an object file
-include/command/command.cpp.obj:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\vector-graphics-editor.dir\build.make CMakeFiles/vector-graphics-editor.dir/include/command/command.cpp.obj
-.PHONY : include/command/command.cpp.obj
-
-include/command/command.i: include/command/command.cpp.i
-.PHONY : include/command/command.i
-
-# target to preprocess a source file
-include/command/command.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\vector-graphics-editor.dir\build.make CMakeFiles/vector-graphics-editor.dir/include/command/command.cpp.i
-.PHONY : include/command/command.cpp.i
-
-include/command/command.s: include/command/command.cpp.s
-.PHONY : include/command/command.s
-
-# target to generate assembly for a file
-include/command/command.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\vector-graphics-editor.dir\build.make CMakeFiles/vector-graphics-editor.dir/include/command/command.cpp.s
-.PHONY : include/command/command.cpp.s
-
-include/command/move_command.obj: include/command/move_command.cpp.obj
-.PHONY : include/command/move_command.obj
-
-# target to build an object file
-include/command/move_command.cpp.obj:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\vector-graphics-editor.dir\build.make CMakeFiles/vector-graphics-editor.dir/include/command/move_command.cpp.obj
-.PHONY : include/command/move_command.cpp.obj
-
-include/command/move_command.i: include/command/move_command.cpp.i
-.PHONY : include/command/move_command.i
-
-# target to preprocess a source file
-include/command/move_command.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\vector-graphics-editor.dir\build.make CMakeFiles/vector-graphics-editor.dir/include/command/move_command.cpp.i
-.PHONY : include/command/move_command.cpp.i
-
-include/command/move_command.s: include/command/move_command.cpp.s
-.PHONY : include/command/move_command.s
-
-# target to generate assembly for a file
-include/command/move_command.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\vector-graphics-editor.dir\build.make CMakeFiles/vector-graphics-editor.dir/include/command/move_command.cpp.s
-.PHONY : include/command/move_command.cpp.s
-
-include/command/rotate_command.obj: include/command/rotate_command.cpp.obj
-.PHONY : include/command/rotate_command.obj
-
-# target to build an object file
-include/command/rotate_command.cpp.obj:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\vector-graphics-editor.dir\build.make CMakeFiles/vector-graphics-editor.dir/include/command/rotate_command.cpp.obj
-.PHONY : include/command/rotate_command.cpp.obj
-
-include/command/rotate_command.i: include/command/rotate_command.cpp.i
-.PHONY : include/command/rotate_command.i
-
-# target to preprocess a source file
-include/command/rotate_command.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\vector-graphics-editor.dir\build.make CMakeFiles/vector-graphics-editor.dir/include/command/rotate_command.cpp.i
-.PHONY : include/command/rotate_command.cpp.i
-
-include/command/rotate_command.s: include/command/rotate_command.cpp.s
-.PHONY : include/command/rotate_command.s
-
-# target to generate assembly for a file
-include/command/rotate_command.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\vector-graphics-editor.dir\build.make CMakeFiles/vector-graphics-editor.dir/include/command/rotate_command.cpp.s
-.PHONY : include/command/rotate_command.cpp.s
-
-include/command/scale_command.obj: include/command/scale_command.cpp.obj
-.PHONY : include/command/scale_command.obj
-
-# target to build an object file
-include/command/scale_command.cpp.obj:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\vector-graphics-editor.dir\build.make CMakeFiles/vector-graphics-editor.dir/include/command/scale_command.cpp.obj
-.PHONY : include/command/scale_command.cpp.obj
-
-include/command/scale_command.i: include/command/scale_command.cpp.i
-.PHONY : include/command/scale_command.i
-
-# target to preprocess a source file
-include/command/scale_command.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\vector-graphics-editor.dir\build.make CMakeFiles/vector-graphics-editor.dir/include/command/scale_command.cpp.i
-.PHONY : include/command/scale_command.cpp.i
-
-include/command/scale_command.s: include/command/scale_command.cpp.s
-.PHONY : include/command/scale_command.s
-
-# target to generate assembly for a file
-include/command/scale_command.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\vector-graphics-editor.dir\build.make CMakeFiles/vector-graphics-editor.dir/include/command/scale_command.cpp.s
-.PHONY : include/command/scale_command.cpp.s
-
-include/core/draw_strategy.obj: include/core/draw_strategy.cpp.obj
-.PHONY : include/core/draw_strategy.obj
-
-# target to build an object file
-include/core/draw_strategy.cpp.obj:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\vector-graphics-editor.dir\build.make CMakeFiles/vector-graphics-editor.dir/include/core/draw_strategy.cpp.obj
-.PHONY : include/core/draw_strategy.cpp.obj
-
-include/core/draw_strategy.i: include/core/draw_strategy.cpp.i
-.PHONY : include/core/draw_strategy.i
-
-# target to preprocess a source file
-include/core/draw_strategy.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\vector-graphics-editor.dir\build.make CMakeFiles/vector-graphics-editor.dir/include/core/draw_strategy.cpp.i
-.PHONY : include/core/draw_strategy.cpp.i
-
-include/core/draw_strategy.s: include/core/draw_strategy.cpp.s
-.PHONY : include/core/draw_strategy.s
-
-# target to generate assembly for a file
-include/core/draw_strategy.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\vector-graphics-editor.dir\build.make CMakeFiles/vector-graphics-editor.dir/include/core/draw_strategy.cpp.s
-.PHONY : include/core/draw_strategy.cpp.s
-
-include/core/graphic.obj: include/core/graphic.cpp.obj
-.PHONY : include/core/graphic.obj
-
-# target to build an object file
-include/core/graphic.cpp.obj:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\vector-graphics-editor.dir\build.make CMakeFiles/vector-graphics-editor.dir/include/core/graphic.cpp.obj
-.PHONY : include/core/graphic.cpp.obj
-
-include/core/graphic.i: include/core/graphic.cpp.i
-.PHONY : include/core/graphic.i
-
-# target to preprocess a source file
-include/core/graphic.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\vector-graphics-editor.dir\build.make CMakeFiles/vector-graphics-editor.dir/include/core/graphic.cpp.i
-.PHONY : include/core/graphic.cpp.i
-
-include/core/graphic.s: include/core/graphic.cpp.s
-.PHONY : include/core/graphic.s
-
-# target to generate assembly for a file
-include/core/graphic.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\vector-graphics-editor.dir\build.make CMakeFiles/vector-graphics-editor.dir/include/core/graphic.cpp.s
-.PHONY : include/core/graphic.cpp.s
-
-include/core/graphic_factory.obj: include/core/graphic_factory.cpp.obj
-.PHONY : include/core/graphic_factory.obj
-
-# target to build an object file
-include/core/graphic_factory.cpp.obj:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\vector-graphics-editor.dir\build.make CMakeFiles/vector-graphics-editor.dir/include/core/graphic_factory.cpp.obj
-.PHONY : include/core/graphic_factory.cpp.obj
-
-include/core/graphic_factory.i: include/core/graphic_factory.cpp.i
-.PHONY : include/core/graphic_factory.i
-
-# target to preprocess a source file
-include/core/graphic_factory.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\vector-graphics-editor.dir\build.make CMakeFiles/vector-graphics-editor.dir/include/core/graphic_factory.cpp.i
-.PHONY : include/core/graphic_factory.cpp.i
-
-include/core/graphic_factory.s: include/core/graphic_factory.cpp.s
-.PHONY : include/core/graphic_factory.s
-
-# target to generate assembly for a file
-include/core/graphic_factory.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\vector-graphics-editor.dir\build.make CMakeFiles/vector-graphics-editor.dir/include/core/graphic_factory.cpp.s
-.PHONY : include/core/graphic_factory.cpp.s
-
-include/core/graphic_manager.obj: include/core/graphic_manager.cpp.obj
-.PHONY : include/core/graphic_manager.obj
-
-# target to build an object file
-include/core/graphic_manager.cpp.obj:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\vector-graphics-editor.dir\build.make CMakeFiles/vector-graphics-editor.dir/include/core/graphic_manager.cpp.obj
-.PHONY : include/core/graphic_manager.cpp.obj
-
-include/core/graphic_manager.i: include/core/graphic_manager.cpp.i
-.PHONY : include/core/graphic_manager.i
-
-# target to preprocess a source file
-include/core/graphic_manager.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\vector-graphics-editor.dir\build.make CMakeFiles/vector-graphics-editor.dir/include/core/graphic_manager.cpp.i
-.PHONY : include/core/graphic_manager.cpp.i
-
-include/core/graphic_manager.s: include/core/graphic_manager.cpp.s
-.PHONY : include/core/graphic_manager.s
-
-# target to generate assembly for a file
-include/core/graphic_manager.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\vector-graphics-editor.dir\build.make CMakeFiles/vector-graphics-editor.dir/include/core/graphic_manager.cpp.s
-.PHONY : include/core/graphic_manager.cpp.s
-
-include/state/draw_state.obj: include/state/draw_state.cpp.obj
-.PHONY : include/state/draw_state.obj
-
-# target to build an object file
-include/state/draw_state.cpp.obj:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\vector-graphics-editor.dir\build.make CMakeFiles/vector-graphics-editor.dir/include/state/draw_state.cpp.obj
-.PHONY : include/state/draw_state.cpp.obj
-
-include/state/draw_state.i: include/state/draw_state.cpp.i
-.PHONY : include/state/draw_state.i
-
-# target to preprocess a source file
-include/state/draw_state.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\vector-graphics-editor.dir\build.make CMakeFiles/vector-graphics-editor.dir/include/state/draw_state.cpp.i
-.PHONY : include/state/draw_state.cpp.i
-
-include/state/draw_state.s: include/state/draw_state.cpp.s
-.PHONY : include/state/draw_state.s
-
-# target to generate assembly for a file
-include/state/draw_state.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\vector-graphics-editor.dir\build.make CMakeFiles/vector-graphics-editor.dir/include/state/draw_state.cpp.s
-.PHONY : include/state/draw_state.cpp.s
-
-include/state/edit_state.obj: include/state/edit_state.cpp.obj
-.PHONY : include/state/edit_state.obj
-
-# target to build an object file
-include/state/edit_state.cpp.obj:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\vector-graphics-editor.dir\build.make CMakeFiles/vector-graphics-editor.dir/include/state/edit_state.cpp.obj
-.PHONY : include/state/edit_state.cpp.obj
-
-include/state/edit_state.i: include/state/edit_state.cpp.i
-.PHONY : include/state/edit_state.i
-
-# target to preprocess a source file
-include/state/edit_state.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\vector-graphics-editor.dir\build.make CMakeFiles/vector-graphics-editor.dir/include/state/edit_state.cpp.i
-.PHONY : include/state/edit_state.cpp.i
-
-include/state/edit_state.s: include/state/edit_state.cpp.s
-.PHONY : include/state/edit_state.s
-
-# target to generate assembly for a file
-include/state/edit_state.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\vector-graphics-editor.dir\build.make CMakeFiles/vector-graphics-editor.dir/include/state/edit_state.cpp.s
-.PHONY : include/state/edit_state.cpp.s
-
-include/state/editor_state.obj: include/state/editor_state.cpp.obj
-.PHONY : include/state/editor_state.obj
-
-# target to build an object file
-include/state/editor_state.cpp.obj:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\vector-graphics-editor.dir\build.make CMakeFiles/vector-graphics-editor.dir/include/state/editor_state.cpp.obj
-.PHONY : include/state/editor_state.cpp.obj
-
-include/state/editor_state.i: include/state/editor_state.cpp.i
-.PHONY : include/state/editor_state.i
-
-# target to preprocess a source file
-include/state/editor_state.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\vector-graphics-editor.dir\build.make CMakeFiles/vector-graphics-editor.dir/include/state/editor_state.cpp.i
-.PHONY : include/state/editor_state.cpp.i
-
-include/state/editor_state.s: include/state/editor_state.cpp.s
-.PHONY : include/state/editor_state.s
-
-# target to generate assembly for a file
-include/state/editor_state.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\vector-graphics-editor.dir\build.make CMakeFiles/vector-graphics-editor.dir/include/state/editor_state.cpp.s
-.PHONY : include/state/editor_state.cpp.s
-
-include/ui/draw_area.obj: include/ui/draw_area.cpp.obj
-.PHONY : include/ui/draw_area.obj
-
-# target to build an object file
-include/ui/draw_area.cpp.obj:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\vector-graphics-editor.dir\build.make CMakeFiles/vector-graphics-editor.dir/include/ui/draw_area.cpp.obj
-.PHONY : include/ui/draw_area.cpp.obj
-
-include/ui/draw_area.i: include/ui/draw_area.cpp.i
-.PHONY : include/ui/draw_area.i
-
-# target to preprocess a source file
-include/ui/draw_area.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\vector-graphics-editor.dir\build.make CMakeFiles/vector-graphics-editor.dir/include/ui/draw_area.cpp.i
-.PHONY : include/ui/draw_area.cpp.i
-
-include/ui/draw_area.s: include/ui/draw_area.cpp.s
-.PHONY : include/ui/draw_area.s
-
-# target to generate assembly for a file
-include/ui/draw_area.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\vector-graphics-editor.dir\build.make CMakeFiles/vector-graphics-editor.dir/include/ui/draw_area.cpp.s
-.PHONY : include/ui/draw_area.cpp.s
-
-include/ui/main_window.obj: include/ui/main_window.cpp.obj
-.PHONY : include/ui/main_window.obj
-
-# target to build an object file
-include/ui/main_window.cpp.obj:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\vector-graphics-editor.dir\build.make CMakeFiles/vector-graphics-editor.dir/include/ui/main_window.cpp.obj
-.PHONY : include/ui/main_window.cpp.obj
-
-include/ui/main_window.i: include/ui/main_window.cpp.i
-.PHONY : include/ui/main_window.i
-
-# target to preprocess a source file
-include/ui/main_window.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\vector-graphics-editor.dir\build.make CMakeFiles/vector-graphics-editor.dir/include/ui/main_window.cpp.i
-.PHONY : include/ui/main_window.cpp.i
-
-include/ui/main_window.s: include/ui/main_window.cpp.s
-.PHONY : include/ui/main_window.s
-
-# target to generate assembly for a file
-include/ui/main_window.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\vector-graphics-editor.dir\build.make CMakeFiles/vector-graphics-editor.dir/include/ui/main_window.cpp.s
-.PHONY : include/ui/main_window.cpp.s
-
 main.obj: main.cpp.obj
 .PHONY : main.obj
 
@@ -489,6 +177,606 @@ main.s: main.cpp.s
 main.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\vector-graphics-editor.dir\build.make CMakeFiles/vector-graphics-editor.dir/main.cpp.s
 .PHONY : main.cpp.s
+
+src/command/command.obj: src/command/command.cpp.obj
+.PHONY : src/command/command.obj
+
+# target to build an object file
+src/command/command.cpp.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\vector-graphics-editor.dir\build.make CMakeFiles/vector-graphics-editor.dir/src/command/command.cpp.obj
+.PHONY : src/command/command.cpp.obj
+
+src/command/command.i: src/command/command.cpp.i
+.PHONY : src/command/command.i
+
+# target to preprocess a source file
+src/command/command.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\vector-graphics-editor.dir\build.make CMakeFiles/vector-graphics-editor.dir/src/command/command.cpp.i
+.PHONY : src/command/command.cpp.i
+
+src/command/command.s: src/command/command.cpp.s
+.PHONY : src/command/command.s
+
+# target to generate assembly for a file
+src/command/command.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\vector-graphics-editor.dir\build.make CMakeFiles/vector-graphics-editor.dir/src/command/command.cpp.s
+.PHONY : src/command/command.cpp.s
+
+src/command/command_manager.obj: src/command/command_manager.cpp.obj
+.PHONY : src/command/command_manager.obj
+
+# target to build an object file
+src/command/command_manager.cpp.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\vector-graphics-editor.dir\build.make CMakeFiles/vector-graphics-editor.dir/src/command/command_manager.cpp.obj
+.PHONY : src/command/command_manager.cpp.obj
+
+src/command/command_manager.i: src/command/command_manager.cpp.i
+.PHONY : src/command/command_manager.i
+
+# target to preprocess a source file
+src/command/command_manager.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\vector-graphics-editor.dir\build.make CMakeFiles/vector-graphics-editor.dir/src/command/command_manager.cpp.i
+.PHONY : src/command/command_manager.cpp.i
+
+src/command/command_manager.s: src/command/command_manager.cpp.s
+.PHONY : src/command/command_manager.s
+
+# target to generate assembly for a file
+src/command/command_manager.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\vector-graphics-editor.dir\build.make CMakeFiles/vector-graphics-editor.dir/src/command/command_manager.cpp.s
+.PHONY : src/command/command_manager.cpp.s
+
+src/command/move_command.obj: src/command/move_command.cpp.obj
+.PHONY : src/command/move_command.obj
+
+# target to build an object file
+src/command/move_command.cpp.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\vector-graphics-editor.dir\build.make CMakeFiles/vector-graphics-editor.dir/src/command/move_command.cpp.obj
+.PHONY : src/command/move_command.cpp.obj
+
+src/command/move_command.i: src/command/move_command.cpp.i
+.PHONY : src/command/move_command.i
+
+# target to preprocess a source file
+src/command/move_command.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\vector-graphics-editor.dir\build.make CMakeFiles/vector-graphics-editor.dir/src/command/move_command.cpp.i
+.PHONY : src/command/move_command.cpp.i
+
+src/command/move_command.s: src/command/move_command.cpp.s
+.PHONY : src/command/move_command.s
+
+# target to generate assembly for a file
+src/command/move_command.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\vector-graphics-editor.dir\build.make CMakeFiles/vector-graphics-editor.dir/src/command/move_command.cpp.s
+.PHONY : src/command/move_command.cpp.s
+
+src/command/rotate_command.obj: src/command/rotate_command.cpp.obj
+.PHONY : src/command/rotate_command.obj
+
+# target to build an object file
+src/command/rotate_command.cpp.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\vector-graphics-editor.dir\build.make CMakeFiles/vector-graphics-editor.dir/src/command/rotate_command.cpp.obj
+.PHONY : src/command/rotate_command.cpp.obj
+
+src/command/rotate_command.i: src/command/rotate_command.cpp.i
+.PHONY : src/command/rotate_command.i
+
+# target to preprocess a source file
+src/command/rotate_command.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\vector-graphics-editor.dir\build.make CMakeFiles/vector-graphics-editor.dir/src/command/rotate_command.cpp.i
+.PHONY : src/command/rotate_command.cpp.i
+
+src/command/rotate_command.s: src/command/rotate_command.cpp.s
+.PHONY : src/command/rotate_command.s
+
+# target to generate assembly for a file
+src/command/rotate_command.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\vector-graphics-editor.dir\build.make CMakeFiles/vector-graphics-editor.dir/src/command/rotate_command.cpp.s
+.PHONY : src/command/rotate_command.cpp.s
+
+src/command/scale_command.obj: src/command/scale_command.cpp.obj
+.PHONY : src/command/scale_command.obj
+
+# target to build an object file
+src/command/scale_command.cpp.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\vector-graphics-editor.dir\build.make CMakeFiles/vector-graphics-editor.dir/src/command/scale_command.cpp.obj
+.PHONY : src/command/scale_command.cpp.obj
+
+src/command/scale_command.i: src/command/scale_command.cpp.i
+.PHONY : src/command/scale_command.i
+
+# target to preprocess a source file
+src/command/scale_command.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\vector-graphics-editor.dir\build.make CMakeFiles/vector-graphics-editor.dir/src/command/scale_command.cpp.i
+.PHONY : src/command/scale_command.cpp.i
+
+src/command/scale_command.s: src/command/scale_command.cpp.s
+.PHONY : src/command/scale_command.s
+
+# target to generate assembly for a file
+src/command/scale_command.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\vector-graphics-editor.dir\build.make CMakeFiles/vector-graphics-editor.dir/src/command/scale_command.cpp.s
+.PHONY : src/command/scale_command.cpp.s
+
+src/command/selection_command.obj: src/command/selection_command.cpp.obj
+.PHONY : src/command/selection_command.obj
+
+# target to build an object file
+src/command/selection_command.cpp.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\vector-graphics-editor.dir\build.make CMakeFiles/vector-graphics-editor.dir/src/command/selection_command.cpp.obj
+.PHONY : src/command/selection_command.cpp.obj
+
+src/command/selection_command.i: src/command/selection_command.cpp.i
+.PHONY : src/command/selection_command.i
+
+# target to preprocess a source file
+src/command/selection_command.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\vector-graphics-editor.dir\build.make CMakeFiles/vector-graphics-editor.dir/src/command/selection_command.cpp.i
+.PHONY : src/command/selection_command.cpp.i
+
+src/command/selection_command.s: src/command/selection_command.cpp.s
+.PHONY : src/command/selection_command.s
+
+# target to generate assembly for a file
+src/command/selection_command.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\vector-graphics-editor.dir\build.make CMakeFiles/vector-graphics-editor.dir/src/command/selection_command.cpp.s
+.PHONY : src/command/selection_command.cpp.s
+
+src/core/bezier_graphic_item.obj: src/core/bezier_graphic_item.cpp.obj
+.PHONY : src/core/bezier_graphic_item.obj
+
+# target to build an object file
+src/core/bezier_graphic_item.cpp.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\vector-graphics-editor.dir\build.make CMakeFiles/vector-graphics-editor.dir/src/core/bezier_graphic_item.cpp.obj
+.PHONY : src/core/bezier_graphic_item.cpp.obj
+
+src/core/bezier_graphic_item.i: src/core/bezier_graphic_item.cpp.i
+.PHONY : src/core/bezier_graphic_item.i
+
+# target to preprocess a source file
+src/core/bezier_graphic_item.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\vector-graphics-editor.dir\build.make CMakeFiles/vector-graphics-editor.dir/src/core/bezier_graphic_item.cpp.i
+.PHONY : src/core/bezier_graphic_item.cpp.i
+
+src/core/bezier_graphic_item.s: src/core/bezier_graphic_item.cpp.s
+.PHONY : src/core/bezier_graphic_item.s
+
+# target to generate assembly for a file
+src/core/bezier_graphic_item.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\vector-graphics-editor.dir\build.make CMakeFiles/vector-graphics-editor.dir/src/core/bezier_graphic_item.cpp.s
+.PHONY : src/core/bezier_graphic_item.cpp.s
+
+src/core/circle_graphic_item.obj: src/core/circle_graphic_item.cpp.obj
+.PHONY : src/core/circle_graphic_item.obj
+
+# target to build an object file
+src/core/circle_graphic_item.cpp.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\vector-graphics-editor.dir\build.make CMakeFiles/vector-graphics-editor.dir/src/core/circle_graphic_item.cpp.obj
+.PHONY : src/core/circle_graphic_item.cpp.obj
+
+src/core/circle_graphic_item.i: src/core/circle_graphic_item.cpp.i
+.PHONY : src/core/circle_graphic_item.i
+
+# target to preprocess a source file
+src/core/circle_graphic_item.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\vector-graphics-editor.dir\build.make CMakeFiles/vector-graphics-editor.dir/src/core/circle_graphic_item.cpp.i
+.PHONY : src/core/circle_graphic_item.cpp.i
+
+src/core/circle_graphic_item.s: src/core/circle_graphic_item.cpp.s
+.PHONY : src/core/circle_graphic_item.s
+
+# target to generate assembly for a file
+src/core/circle_graphic_item.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\vector-graphics-editor.dir\build.make CMakeFiles/vector-graphics-editor.dir/src/core/circle_graphic_item.cpp.s
+.PHONY : src/core/circle_graphic_item.cpp.s
+
+src/core/draw_strategy.obj: src/core/draw_strategy.cpp.obj
+.PHONY : src/core/draw_strategy.obj
+
+# target to build an object file
+src/core/draw_strategy.cpp.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\vector-graphics-editor.dir\build.make CMakeFiles/vector-graphics-editor.dir/src/core/draw_strategy.cpp.obj
+.PHONY : src/core/draw_strategy.cpp.obj
+
+src/core/draw_strategy.i: src/core/draw_strategy.cpp.i
+.PHONY : src/core/draw_strategy.i
+
+# target to preprocess a source file
+src/core/draw_strategy.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\vector-graphics-editor.dir\build.make CMakeFiles/vector-graphics-editor.dir/src/core/draw_strategy.cpp.i
+.PHONY : src/core/draw_strategy.cpp.i
+
+src/core/draw_strategy.s: src/core/draw_strategy.cpp.s
+.PHONY : src/core/draw_strategy.s
+
+# target to generate assembly for a file
+src/core/draw_strategy.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\vector-graphics-editor.dir\build.make CMakeFiles/vector-graphics-editor.dir/src/core/draw_strategy.cpp.s
+.PHONY : src/core/draw_strategy.cpp.s
+
+src/core/ellipse_graphic_item.obj: src/core/ellipse_graphic_item.cpp.obj
+.PHONY : src/core/ellipse_graphic_item.obj
+
+# target to build an object file
+src/core/ellipse_graphic_item.cpp.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\vector-graphics-editor.dir\build.make CMakeFiles/vector-graphics-editor.dir/src/core/ellipse_graphic_item.cpp.obj
+.PHONY : src/core/ellipse_graphic_item.cpp.obj
+
+src/core/ellipse_graphic_item.i: src/core/ellipse_graphic_item.cpp.i
+.PHONY : src/core/ellipse_graphic_item.i
+
+# target to preprocess a source file
+src/core/ellipse_graphic_item.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\vector-graphics-editor.dir\build.make CMakeFiles/vector-graphics-editor.dir/src/core/ellipse_graphic_item.cpp.i
+.PHONY : src/core/ellipse_graphic_item.cpp.i
+
+src/core/ellipse_graphic_item.s: src/core/ellipse_graphic_item.cpp.s
+.PHONY : src/core/ellipse_graphic_item.s
+
+# target to generate assembly for a file
+src/core/ellipse_graphic_item.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\vector-graphics-editor.dir\build.make CMakeFiles/vector-graphics-editor.dir/src/core/ellipse_graphic_item.cpp.s
+.PHONY : src/core/ellipse_graphic_item.cpp.s
+
+src/core/graphic.obj: src/core/graphic.cpp.obj
+.PHONY : src/core/graphic.obj
+
+# target to build an object file
+src/core/graphic.cpp.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\vector-graphics-editor.dir\build.make CMakeFiles/vector-graphics-editor.dir/src/core/graphic.cpp.obj
+.PHONY : src/core/graphic.cpp.obj
+
+src/core/graphic.i: src/core/graphic.cpp.i
+.PHONY : src/core/graphic.i
+
+# target to preprocess a source file
+src/core/graphic.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\vector-graphics-editor.dir\build.make CMakeFiles/vector-graphics-editor.dir/src/core/graphic.cpp.i
+.PHONY : src/core/graphic.cpp.i
+
+src/core/graphic.s: src/core/graphic.cpp.s
+.PHONY : src/core/graphic.s
+
+# target to generate assembly for a file
+src/core/graphic.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\vector-graphics-editor.dir\build.make CMakeFiles/vector-graphics-editor.dir/src/core/graphic.cpp.s
+.PHONY : src/core/graphic.cpp.s
+
+src/core/graphic_item.obj: src/core/graphic_item.cpp.obj
+.PHONY : src/core/graphic_item.obj
+
+# target to build an object file
+src/core/graphic_item.cpp.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\vector-graphics-editor.dir\build.make CMakeFiles/vector-graphics-editor.dir/src/core/graphic_item.cpp.obj
+.PHONY : src/core/graphic_item.cpp.obj
+
+src/core/graphic_item.i: src/core/graphic_item.cpp.i
+.PHONY : src/core/graphic_item.i
+
+# target to preprocess a source file
+src/core/graphic_item.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\vector-graphics-editor.dir\build.make CMakeFiles/vector-graphics-editor.dir/src/core/graphic_item.cpp.i
+.PHONY : src/core/graphic_item.cpp.i
+
+src/core/graphic_item.s: src/core/graphic_item.cpp.s
+.PHONY : src/core/graphic_item.s
+
+# target to generate assembly for a file
+src/core/graphic_item.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\vector-graphics-editor.dir\build.make CMakeFiles/vector-graphics-editor.dir/src/core/graphic_item.cpp.s
+.PHONY : src/core/graphic_item.cpp.s
+
+src/core/graphics_clipper.obj: src/core/graphics_clipper.cpp.obj
+.PHONY : src/core/graphics_clipper.obj
+
+# target to build an object file
+src/core/graphics_clipper.cpp.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\vector-graphics-editor.dir\build.make CMakeFiles/vector-graphics-editor.dir/src/core/graphics_clipper.cpp.obj
+.PHONY : src/core/graphics_clipper.cpp.obj
+
+src/core/graphics_clipper.i: src/core/graphics_clipper.cpp.i
+.PHONY : src/core/graphics_clipper.i
+
+# target to preprocess a source file
+src/core/graphics_clipper.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\vector-graphics-editor.dir\build.make CMakeFiles/vector-graphics-editor.dir/src/core/graphics_clipper.cpp.i
+.PHONY : src/core/graphics_clipper.cpp.i
+
+src/core/graphics_clipper.s: src/core/graphics_clipper.cpp.s
+.PHONY : src/core/graphics_clipper.s
+
+# target to generate assembly for a file
+src/core/graphics_clipper.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\vector-graphics-editor.dir\build.make CMakeFiles/vector-graphics-editor.dir/src/core/graphics_clipper.cpp.s
+.PHONY : src/core/graphics_clipper.cpp.s
+
+src/core/graphics_item_factory.obj: src/core/graphics_item_factory.cpp.obj
+.PHONY : src/core/graphics_item_factory.obj
+
+# target to build an object file
+src/core/graphics_item_factory.cpp.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\vector-graphics-editor.dir\build.make CMakeFiles/vector-graphics-editor.dir/src/core/graphics_item_factory.cpp.obj
+.PHONY : src/core/graphics_item_factory.cpp.obj
+
+src/core/graphics_item_factory.i: src/core/graphics_item_factory.cpp.i
+.PHONY : src/core/graphics_item_factory.i
+
+# target to preprocess a source file
+src/core/graphics_item_factory.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\vector-graphics-editor.dir\build.make CMakeFiles/vector-graphics-editor.dir/src/core/graphics_item_factory.cpp.i
+.PHONY : src/core/graphics_item_factory.cpp.i
+
+src/core/graphics_item_factory.s: src/core/graphics_item_factory.cpp.s
+.PHONY : src/core/graphics_item_factory.s
+
+# target to generate assembly for a file
+src/core/graphics_item_factory.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\vector-graphics-editor.dir\build.make CMakeFiles/vector-graphics-editor.dir/src/core/graphics_item_factory.cpp.s
+.PHONY : src/core/graphics_item_factory.cpp.s
+
+src/core/image_manager.obj: src/core/image_manager.cpp.obj
+.PHONY : src/core/image_manager.obj
+
+# target to build an object file
+src/core/image_manager.cpp.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\vector-graphics-editor.dir\build.make CMakeFiles/vector-graphics-editor.dir/src/core/image_manager.cpp.obj
+.PHONY : src/core/image_manager.cpp.obj
+
+src/core/image_manager.i: src/core/image_manager.cpp.i
+.PHONY : src/core/image_manager.i
+
+# target to preprocess a source file
+src/core/image_manager.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\vector-graphics-editor.dir\build.make CMakeFiles/vector-graphics-editor.dir/src/core/image_manager.cpp.i
+.PHONY : src/core/image_manager.cpp.i
+
+src/core/image_manager.s: src/core/image_manager.cpp.s
+.PHONY : src/core/image_manager.s
+
+# target to generate assembly for a file
+src/core/image_manager.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\vector-graphics-editor.dir\build.make CMakeFiles/vector-graphics-editor.dir/src/core/image_manager.cpp.s
+.PHONY : src/core/image_manager.cpp.s
+
+src/core/line_graphic_item.obj: src/core/line_graphic_item.cpp.obj
+.PHONY : src/core/line_graphic_item.obj
+
+# target to build an object file
+src/core/line_graphic_item.cpp.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\vector-graphics-editor.dir\build.make CMakeFiles/vector-graphics-editor.dir/src/core/line_graphic_item.cpp.obj
+.PHONY : src/core/line_graphic_item.cpp.obj
+
+src/core/line_graphic_item.i: src/core/line_graphic_item.cpp.i
+.PHONY : src/core/line_graphic_item.i
+
+# target to preprocess a source file
+src/core/line_graphic_item.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\vector-graphics-editor.dir\build.make CMakeFiles/vector-graphics-editor.dir/src/core/line_graphic_item.cpp.i
+.PHONY : src/core/line_graphic_item.cpp.i
+
+src/core/line_graphic_item.s: src/core/line_graphic_item.cpp.s
+.PHONY : src/core/line_graphic_item.s
+
+# target to generate assembly for a file
+src/core/line_graphic_item.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\vector-graphics-editor.dir\build.make CMakeFiles/vector-graphics-editor.dir/src/core/line_graphic_item.cpp.s
+.PHONY : src/core/line_graphic_item.cpp.s
+
+src/core/rectangle_graphic_item.obj: src/core/rectangle_graphic_item.cpp.obj
+.PHONY : src/core/rectangle_graphic_item.obj
+
+# target to build an object file
+src/core/rectangle_graphic_item.cpp.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\vector-graphics-editor.dir\build.make CMakeFiles/vector-graphics-editor.dir/src/core/rectangle_graphic_item.cpp.obj
+.PHONY : src/core/rectangle_graphic_item.cpp.obj
+
+src/core/rectangle_graphic_item.i: src/core/rectangle_graphic_item.cpp.i
+.PHONY : src/core/rectangle_graphic_item.i
+
+# target to preprocess a source file
+src/core/rectangle_graphic_item.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\vector-graphics-editor.dir\build.make CMakeFiles/vector-graphics-editor.dir/src/core/rectangle_graphic_item.cpp.i
+.PHONY : src/core/rectangle_graphic_item.cpp.i
+
+src/core/rectangle_graphic_item.s: src/core/rectangle_graphic_item.cpp.s
+.PHONY : src/core/rectangle_graphic_item.s
+
+# target to generate assembly for a file
+src/core/rectangle_graphic_item.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\vector-graphics-editor.dir\build.make CMakeFiles/vector-graphics-editor.dir/src/core/rectangle_graphic_item.cpp.s
+.PHONY : src/core/rectangle_graphic_item.cpp.s
+
+src/core/selection_manager.obj: src/core/selection_manager.cpp.obj
+.PHONY : src/core/selection_manager.obj
+
+# target to build an object file
+src/core/selection_manager.cpp.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\vector-graphics-editor.dir\build.make CMakeFiles/vector-graphics-editor.dir/src/core/selection_manager.cpp.obj
+.PHONY : src/core/selection_manager.cpp.obj
+
+src/core/selection_manager.i: src/core/selection_manager.cpp.i
+.PHONY : src/core/selection_manager.i
+
+# target to preprocess a source file
+src/core/selection_manager.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\vector-graphics-editor.dir\build.make CMakeFiles/vector-graphics-editor.dir/src/core/selection_manager.cpp.i
+.PHONY : src/core/selection_manager.cpp.i
+
+src/core/selection_manager.s: src/core/selection_manager.cpp.s
+.PHONY : src/core/selection_manager.s
+
+# target to generate assembly for a file
+src/core/selection_manager.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\vector-graphics-editor.dir\build.make CMakeFiles/vector-graphics-editor.dir/src/core/selection_manager.cpp.s
+.PHONY : src/core/selection_manager.cpp.s
+
+src/state/draw_state.obj: src/state/draw_state.cpp.obj
+.PHONY : src/state/draw_state.obj
+
+# target to build an object file
+src/state/draw_state.cpp.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\vector-graphics-editor.dir\build.make CMakeFiles/vector-graphics-editor.dir/src/state/draw_state.cpp.obj
+.PHONY : src/state/draw_state.cpp.obj
+
+src/state/draw_state.i: src/state/draw_state.cpp.i
+.PHONY : src/state/draw_state.i
+
+# target to preprocess a source file
+src/state/draw_state.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\vector-graphics-editor.dir\build.make CMakeFiles/vector-graphics-editor.dir/src/state/draw_state.cpp.i
+.PHONY : src/state/draw_state.cpp.i
+
+src/state/draw_state.s: src/state/draw_state.cpp.s
+.PHONY : src/state/draw_state.s
+
+# target to generate assembly for a file
+src/state/draw_state.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\vector-graphics-editor.dir\build.make CMakeFiles/vector-graphics-editor.dir/src/state/draw_state.cpp.s
+.PHONY : src/state/draw_state.cpp.s
+
+src/state/edit_state.obj: src/state/edit_state.cpp.obj
+.PHONY : src/state/edit_state.obj
+
+# target to build an object file
+src/state/edit_state.cpp.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\vector-graphics-editor.dir\build.make CMakeFiles/vector-graphics-editor.dir/src/state/edit_state.cpp.obj
+.PHONY : src/state/edit_state.cpp.obj
+
+src/state/edit_state.i: src/state/edit_state.cpp.i
+.PHONY : src/state/edit_state.i
+
+# target to preprocess a source file
+src/state/edit_state.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\vector-graphics-editor.dir\build.make CMakeFiles/vector-graphics-editor.dir/src/state/edit_state.cpp.i
+.PHONY : src/state/edit_state.cpp.i
+
+src/state/edit_state.s: src/state/edit_state.cpp.s
+.PHONY : src/state/edit_state.s
+
+# target to generate assembly for a file
+src/state/edit_state.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\vector-graphics-editor.dir\build.make CMakeFiles/vector-graphics-editor.dir/src/state/edit_state.cpp.s
+.PHONY : src/state/edit_state.cpp.s
+
+src/state/editor_state.obj: src/state/editor_state.cpp.obj
+.PHONY : src/state/editor_state.obj
+
+# target to build an object file
+src/state/editor_state.cpp.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\vector-graphics-editor.dir\build.make CMakeFiles/vector-graphics-editor.dir/src/state/editor_state.cpp.obj
+.PHONY : src/state/editor_state.cpp.obj
+
+src/state/editor_state.i: src/state/editor_state.cpp.i
+.PHONY : src/state/editor_state.i
+
+# target to preprocess a source file
+src/state/editor_state.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\vector-graphics-editor.dir\build.make CMakeFiles/vector-graphics-editor.dir/src/state/editor_state.cpp.i
+.PHONY : src/state/editor_state.cpp.i
+
+src/state/editor_state.s: src/state/editor_state.cpp.s
+.PHONY : src/state/editor_state.s
+
+# target to generate assembly for a file
+src/state/editor_state.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\vector-graphics-editor.dir\build.make CMakeFiles/vector-graphics-editor.dir/src/state/editor_state.cpp.s
+.PHONY : src/state/editor_state.cpp.s
+
+src/state/fill_state.obj: src/state/fill_state.cpp.obj
+.PHONY : src/state/fill_state.obj
+
+# target to build an object file
+src/state/fill_state.cpp.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\vector-graphics-editor.dir\build.make CMakeFiles/vector-graphics-editor.dir/src/state/fill_state.cpp.obj
+.PHONY : src/state/fill_state.cpp.obj
+
+src/state/fill_state.i: src/state/fill_state.cpp.i
+.PHONY : src/state/fill_state.i
+
+# target to preprocess a source file
+src/state/fill_state.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\vector-graphics-editor.dir\build.make CMakeFiles/vector-graphics-editor.dir/src/state/fill_state.cpp.i
+.PHONY : src/state/fill_state.cpp.i
+
+src/state/fill_state.s: src/state/fill_state.cpp.s
+.PHONY : src/state/fill_state.s
+
+# target to generate assembly for a file
+src/state/fill_state.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\vector-graphics-editor.dir\build.make CMakeFiles/vector-graphics-editor.dir/src/state/fill_state.cpp.s
+.PHONY : src/state/fill_state.cpp.s
+
+src/ui/draw_area.obj: src/ui/draw_area.cpp.obj
+.PHONY : src/ui/draw_area.obj
+
+# target to build an object file
+src/ui/draw_area.cpp.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\vector-graphics-editor.dir\build.make CMakeFiles/vector-graphics-editor.dir/src/ui/draw_area.cpp.obj
+.PHONY : src/ui/draw_area.cpp.obj
+
+src/ui/draw_area.i: src/ui/draw_area.cpp.i
+.PHONY : src/ui/draw_area.i
+
+# target to preprocess a source file
+src/ui/draw_area.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\vector-graphics-editor.dir\build.make CMakeFiles/vector-graphics-editor.dir/src/ui/draw_area.cpp.i
+.PHONY : src/ui/draw_area.cpp.i
+
+src/ui/draw_area.s: src/ui/draw_area.cpp.s
+.PHONY : src/ui/draw_area.s
+
+# target to generate assembly for a file
+src/ui/draw_area.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\vector-graphics-editor.dir\build.make CMakeFiles/vector-graphics-editor.dir/src/ui/draw_area.cpp.s
+.PHONY : src/ui/draw_area.cpp.s
+
+src/ui/image_resizer.obj: src/ui/image_resizer.cpp.obj
+.PHONY : src/ui/image_resizer.obj
+
+# target to build an object file
+src/ui/image_resizer.cpp.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\vector-graphics-editor.dir\build.make CMakeFiles/vector-graphics-editor.dir/src/ui/image_resizer.cpp.obj
+.PHONY : src/ui/image_resizer.cpp.obj
+
+src/ui/image_resizer.i: src/ui/image_resizer.cpp.i
+.PHONY : src/ui/image_resizer.i
+
+# target to preprocess a source file
+src/ui/image_resizer.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\vector-graphics-editor.dir\build.make CMakeFiles/vector-graphics-editor.dir/src/ui/image_resizer.cpp.i
+.PHONY : src/ui/image_resizer.cpp.i
+
+src/ui/image_resizer.s: src/ui/image_resizer.cpp.s
+.PHONY : src/ui/image_resizer.s
+
+# target to generate assembly for a file
+src/ui/image_resizer.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\vector-graphics-editor.dir\build.make CMakeFiles/vector-graphics-editor.dir/src/ui/image_resizer.cpp.s
+.PHONY : src/ui/image_resizer.cpp.s
+
+src/ui/main_window.obj: src/ui/main_window.cpp.obj
+.PHONY : src/ui/main_window.obj
+
+# target to build an object file
+src/ui/main_window.cpp.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\vector-graphics-editor.dir\build.make CMakeFiles/vector-graphics-editor.dir/src/ui/main_window.cpp.obj
+.PHONY : src/ui/main_window.cpp.obj
+
+src/ui/main_window.i: src/ui/main_window.cpp.i
+.PHONY : src/ui/main_window.i
+
+# target to preprocess a source file
+src/ui/main_window.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\vector-graphics-editor.dir\build.make CMakeFiles/vector-graphics-editor.dir/src/ui/main_window.cpp.i
+.PHONY : src/ui/main_window.cpp.i
+
+src/ui/main_window.s: src/ui/main_window.cpp.s
+.PHONY : src/ui/main_window.s
+
+# target to generate assembly for a file
+src/ui/main_window.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\vector-graphics-editor.dir\build.make CMakeFiles/vector-graphics-editor.dir/src/ui/main_window.cpp.s
+.PHONY : src/ui/main_window.cpp.s
 
 vector-graphics-editor_autogen/mocs_compilation.obj: vector-graphics-editor_autogen/mocs_compilation.cpp.obj
 .PHONY : vector-graphics-editor_autogen/mocs_compilation.obj
@@ -525,48 +813,84 @@ help:
 	@echo ... vector-graphics-editor_autogen
 	@echo ... vector-graphics-editor_autogen_timestamp_deps
 	@echo ... vector-graphics-editor
-	@echo ... include/command/command.obj
-	@echo ... include/command/command.i
-	@echo ... include/command/command.s
-	@echo ... include/command/move_command.obj
-	@echo ... include/command/move_command.i
-	@echo ... include/command/move_command.s
-	@echo ... include/command/rotate_command.obj
-	@echo ... include/command/rotate_command.i
-	@echo ... include/command/rotate_command.s
-	@echo ... include/command/scale_command.obj
-	@echo ... include/command/scale_command.i
-	@echo ... include/command/scale_command.s
-	@echo ... include/core/draw_strategy.obj
-	@echo ... include/core/draw_strategy.i
-	@echo ... include/core/draw_strategy.s
-	@echo ... include/core/graphic.obj
-	@echo ... include/core/graphic.i
-	@echo ... include/core/graphic.s
-	@echo ... include/core/graphic_factory.obj
-	@echo ... include/core/graphic_factory.i
-	@echo ... include/core/graphic_factory.s
-	@echo ... include/core/graphic_manager.obj
-	@echo ... include/core/graphic_manager.i
-	@echo ... include/core/graphic_manager.s
-	@echo ... include/state/draw_state.obj
-	@echo ... include/state/draw_state.i
-	@echo ... include/state/draw_state.s
-	@echo ... include/state/edit_state.obj
-	@echo ... include/state/edit_state.i
-	@echo ... include/state/edit_state.s
-	@echo ... include/state/editor_state.obj
-	@echo ... include/state/editor_state.i
-	@echo ... include/state/editor_state.s
-	@echo ... include/ui/draw_area.obj
-	@echo ... include/ui/draw_area.i
-	@echo ... include/ui/draw_area.s
-	@echo ... include/ui/main_window.obj
-	@echo ... include/ui/main_window.i
-	@echo ... include/ui/main_window.s
 	@echo ... main.obj
 	@echo ... main.i
 	@echo ... main.s
+	@echo ... src/command/command.obj
+	@echo ... src/command/command.i
+	@echo ... src/command/command.s
+	@echo ... src/command/command_manager.obj
+	@echo ... src/command/command_manager.i
+	@echo ... src/command/command_manager.s
+	@echo ... src/command/move_command.obj
+	@echo ... src/command/move_command.i
+	@echo ... src/command/move_command.s
+	@echo ... src/command/rotate_command.obj
+	@echo ... src/command/rotate_command.i
+	@echo ... src/command/rotate_command.s
+	@echo ... src/command/scale_command.obj
+	@echo ... src/command/scale_command.i
+	@echo ... src/command/scale_command.s
+	@echo ... src/command/selection_command.obj
+	@echo ... src/command/selection_command.i
+	@echo ... src/command/selection_command.s
+	@echo ... src/core/bezier_graphic_item.obj
+	@echo ... src/core/bezier_graphic_item.i
+	@echo ... src/core/bezier_graphic_item.s
+	@echo ... src/core/circle_graphic_item.obj
+	@echo ... src/core/circle_graphic_item.i
+	@echo ... src/core/circle_graphic_item.s
+	@echo ... src/core/draw_strategy.obj
+	@echo ... src/core/draw_strategy.i
+	@echo ... src/core/draw_strategy.s
+	@echo ... src/core/ellipse_graphic_item.obj
+	@echo ... src/core/ellipse_graphic_item.i
+	@echo ... src/core/ellipse_graphic_item.s
+	@echo ... src/core/graphic.obj
+	@echo ... src/core/graphic.i
+	@echo ... src/core/graphic.s
+	@echo ... src/core/graphic_item.obj
+	@echo ... src/core/graphic_item.i
+	@echo ... src/core/graphic_item.s
+	@echo ... src/core/graphics_clipper.obj
+	@echo ... src/core/graphics_clipper.i
+	@echo ... src/core/graphics_clipper.s
+	@echo ... src/core/graphics_item_factory.obj
+	@echo ... src/core/graphics_item_factory.i
+	@echo ... src/core/graphics_item_factory.s
+	@echo ... src/core/image_manager.obj
+	@echo ... src/core/image_manager.i
+	@echo ... src/core/image_manager.s
+	@echo ... src/core/line_graphic_item.obj
+	@echo ... src/core/line_graphic_item.i
+	@echo ... src/core/line_graphic_item.s
+	@echo ... src/core/rectangle_graphic_item.obj
+	@echo ... src/core/rectangle_graphic_item.i
+	@echo ... src/core/rectangle_graphic_item.s
+	@echo ... src/core/selection_manager.obj
+	@echo ... src/core/selection_manager.i
+	@echo ... src/core/selection_manager.s
+	@echo ... src/state/draw_state.obj
+	@echo ... src/state/draw_state.i
+	@echo ... src/state/draw_state.s
+	@echo ... src/state/edit_state.obj
+	@echo ... src/state/edit_state.i
+	@echo ... src/state/edit_state.s
+	@echo ... src/state/editor_state.obj
+	@echo ... src/state/editor_state.i
+	@echo ... src/state/editor_state.s
+	@echo ... src/state/fill_state.obj
+	@echo ... src/state/fill_state.i
+	@echo ... src/state/fill_state.s
+	@echo ... src/ui/draw_area.obj
+	@echo ... src/ui/draw_area.i
+	@echo ... src/ui/draw_area.s
+	@echo ... src/ui/image_resizer.obj
+	@echo ... src/ui/image_resizer.i
+	@echo ... src/ui/image_resizer.s
+	@echo ... src/ui/main_window.obj
+	@echo ... src/ui/main_window.i
+	@echo ... src/ui/main_window.s
 	@echo ... vector-graphics-editor_autogen/mocs_compilation.obj
 	@echo ... vector-graphics-editor_autogen/mocs_compilation.i
 	@echo ... vector-graphics-editor_autogen/mocs_compilation.s

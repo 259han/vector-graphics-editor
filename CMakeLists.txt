@@ -15,8 +15,8 @@ find_package(Qt6 REQUIRED COMPONENTS Widgets)
 
 # 添加源文件
 file(GLOB_RECURSE SOURCES 
-    "include/*.cpp"
-    "include/*.h"
+    "src/*.cpp"
+    "src/*.h"
 )
 
 # 添加可执行文件
@@ -26,7 +26,7 @@ add_executable(${PROJECT_NAME}
 )
 
 # 设置目标包含目录
-target_include_directories(${PROJECT_NAME} PRIVATE include)
+target_include_directories(${PROJECT_NAME} PRIVATE include src)
 
 # 链接 Qt6::Widgets 库
 target_link_libraries(${PROJECT_NAME} 
@@ -37,5 +37,8 @@ target_link_libraries(${PROJECT_NAME}
 # 设置编译器选项
 if(MSVC)
     # 为 MSVC 添加 /utf-8 和 /Zc:__cplusplus 选项
-    add_compile_options("/utf-8" "/Zc:__cplusplus")
+    target_compile_options(${PROJECT_NAME} PRIVATE "/utf-8" "/Zc:__cplusplus")
+else()
+    # 为其他编译器添加 -fPIC 选项（如果是 GCC 或 Clang）
+    target_compile_options(${PROJECT_NAME} PRIVATE "-fPIC")
 endif()
