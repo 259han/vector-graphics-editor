@@ -8,6 +8,7 @@
 #include "../core/graphics_item_factory.h"
 #include "../core/selection_manager.h"
 #include "../state/editor_state.h"
+#include "../utils/performance_monitor.h"
 #include "image_resizer.h"
 
 class GraphicItem;
@@ -23,6 +24,17 @@ public:
 
     // 场景访问方法
     QGraphicsScene* scene() const { return m_scene; }
+    
+    // 性能优化相关方法
+    void setHighQualityRendering(bool enable);
+    bool isHighQualityRendering() const { return m_highQualityRendering; }
+    
+    // 性能监控相关方法
+    void enablePerformanceMonitor(bool enable);
+    bool isPerformanceMonitorEnabled() const;
+    void showPerformanceOverlay(bool show);
+    bool isPerformanceOverlayShown() const;
+    QString getPerformanceReport() const;
     
     // 工厂访问
     DefaultGraphicsItemFactory* getGraphicFactory();
@@ -110,12 +122,20 @@ protected:
     void drawBackground(QPainter *painter, const QRectF &rect) override;
     void drawForeground(QPainter *painter, const QRectF &rect) override;
     void contextMenuEvent(QContextMenuEvent *event) override;
+    void paintEvent(QPaintEvent *event) override;
 
 private:
     QGraphicsScene* m_scene;
     std::unique_ptr<DefaultGraphicsItemFactory> m_graphicFactory;
     std::unique_ptr<EditorState> m_currentState;
     std::unique_ptr<SelectionManager> m_selectionManager;
+    
+    // 更新控制
+    bool m_updatePending = false;
+    void scheduleUpdate();
+    
+    // 渲染质量控制
+    bool m_highQualityRendering = true;
     
     // 平移和缩放属性
     bool m_spaceKeyPressed = false;

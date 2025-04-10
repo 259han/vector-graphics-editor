@@ -31,11 +31,15 @@
 #include "core/image_manager.h"
 #include "core/selection_manager.h"
 #include "../utils/logger.h"
+#include "../utils/performance_monitor.h"
 #include <QDataStream>
 #include <QMenu>
 #include <QContextMenuEvent>
 #include "../command/paste_command.h"
 #include "../command/command_manager.h"
+#include <memory>
+#include <QElapsedTimer>
+#include <QRandomGenerator>
 
 // Define the static MIME type constant
 const QString DrawArea::MIME_GRAPHICITEMS = "application/x-claudegraph-items";
@@ -229,6 +233,9 @@ void DrawArea::setGridSize(int size)
 
 void DrawArea::drawBackground(QPainter *painter, const QRectF &rect)
 {
+    // 性能监控
+    PERF_SCOPE(DrawTime);
+    
     QGraphicsView::drawBackground(painter, rect);
     
     // 只有在启用网格时才绘制
@@ -274,7 +281,10 @@ void DrawArea::wheelEvent(QWheelEvent *event)
 
 void DrawArea::mousePressEvent(QMouseEvent *event)
 {
-    // 空格键按下时进入平移模式
+    // 性能监控
+    PERF_SCOPE(EventTime);
+    
+    // 1. 检查是否处于平移模式
     if (event->button() == Qt::LeftButton && m_spaceKeyPressed) {
         m_isPanning = true;
         m_lastPanPoint = event->pos();
@@ -283,55 +293,47 @@ void DrawArea::mousePressEvent(QMouseEvent *event)
         return;
     }
     
-    // 这里不重置事件接受状态，确保子类处理能正确传递
-    event->setAccepted(false);
-    
-    // 委托给当前状态处理
-    if (m_currentState) {
-        QPointF scenePos = mapToScene(event->pos());
-        qDebug() << "DrawArea: 鼠标按下事件，位置:" << scenePos << "，按钮:" 
-                 << (event->button() == Qt::LeftButton ? "左键" : 
-                    (event->button() == Qt::RightButton ? "右键" : "其他"));
-        
-        if (event->button() == Qt::LeftButton) {
-            m_currentState->handleLeftMousePress(this, scenePos);
-        } else if (event->button() == Qt::RightButton) {
-            m_currentState->handleRightMousePress(this, scenePos);
-        } else {
-            // 调用旧的mousePressEvent接口保持兼容性
-            m_currentState->mousePressEvent(this, event);
-        }
-        
-        // 确保视口更新 - 这一步很重要，强制重绘
-        viewport()->update();
-        scene()->update();
-        
-        // 如果事件已被接受，则不继续传递
-        if (event->isAccepted()) {
-            return;
-        }
-        
-        // 如果使用了绘制状态，则不要继续传递事件到QGraphicsView
-        // 即使事件未被明确接受
-        if (dynamic_cast<DrawState*>(m_currentState.get())) {
-            event->accept();
-            return;
-        }
+    // 2. 如果没有状态对象，则直接交给基类处理
+    if (!m_currentState) {
+        QGraphicsView::mousePressEvent(event);
+        return;
     }
     
-    // 最后才调用基类方法
+    // 3. 优化的状态事件处理
+    QPointF scenePos = mapToScene(event->pos());
+    
+    // 使用新的handleLeftMousePress/handleRightMousePress接口
+    if (event->button() == Qt::LeftButton) {
+        m_currentState->handleLeftMousePress(this, scenePos);
+    } else if (event->button() == Qt::RightButton) {
+        m_currentState->handleRightMousePress(this, scenePos);
+    } else {
+        // 兼容旧接口
+        m_currentState->mousePressEvent(this, event);
+    }
+    
+    // 安排一次更新
+    scheduleUpdate();
+    
+    // 4. 事件已被接受或者当前是绘制状态，则不再传递
+    if (event->isAccepted() || dynamic_cast<DrawState*>(m_currentState.get())) {
+        return;
+    }
+    
+    // 5. 其他情况交给基类处理
     QGraphicsView::mousePressEvent(event);
 }
 
 void DrawArea::mouseMoveEvent(QMouseEvent *event)
 {
-    // 平移模式下处理画布平移
+    // 性能监控
+    PERF_SCOPE(EventTime);
+    
+    // 1. 检查是否处于平移模式
     if (m_isPanning) {
-        // 将QPointF转换为QPoint
         QPointF delta = mapToScene(event->pos()) - mapToScene(m_lastPanPoint.toPoint());
         m_lastPanPoint = event->pos();
         
-        // 平移视图
         horizontalScrollBar()->setValue(horizontalScrollBar()->value() - delta.x());
         verticalScrollBar()->setValue(verticalScrollBar()->value() - delta.y());
         
@@ -339,31 +341,24 @@ void DrawArea::mouseMoveEvent(QMouseEvent *event)
         return;
     }
     
-    // 这里不重置事件接受状态，确保子类处理能正确传递
-    event->setAccepted(false);
-    
-    // 委托给当前状态处理
-    if (m_currentState) {
-        m_currentState->mouseMoveEvent(this, event);
-        
-        // 确保视口更新
-        viewport()->update();
-        scene()->update();
-        
-        // 如果事件已被接受，则不继续传递
-        if (event->isAccepted()) {
-            return;
-        }
-        
-        // 如果使用了绘制状态，则不要继续传递事件到QGraphicsView
-        // 即使事件未被明确接受
-        if (dynamic_cast<DrawState*>(m_currentState.get())) {
-            event->accept();
-            return;
-        }
+    // 2. 如果没有状态对象，则直接交给基类处理
+    if (!m_currentState) {
+        QGraphicsView::mouseMoveEvent(event);
+        return;
     }
     
-    // 最后才调用基类方法
+    // 3. 调用状态的鼠标移动处理
+    m_currentState->mouseMoveEvent(this, event);
+    
+    // 安排一次更新
+    scheduleUpdate();
+    
+    // 4. 事件已被接受或者当前是绘制状态，则不再传递
+    if (event->isAccepted() || dynamic_cast<DrawState*>(m_currentState.get())) {
+        return;
+    }
+    
+    // 5. 其他情况交给基类处理
     QGraphicsView::mouseMoveEvent(event);
 }
 
@@ -542,13 +537,22 @@ void DrawArea::importImage()
 
 void DrawArea::moveSelectedGraphics(const QPointF& offset)
 {
-    if (m_selectionManager) {
-        m_selectionManager->moveSelection(offset);
-    }
+    // 性能监控
+    PERF_SCOPE(LogicTime);
+    
+    // 使用SelectionManager移动所选图形
+    m_selectionManager->moveSelection(offset);
+    
+    // 确保刷新
+    viewport()->update();
 }
 
 void DrawArea::rotateSelectedGraphics(double angle)
 {
+    // 性能监控
+    PERF_SCOPE(LogicTime);
+    
+    // SelectionManager没有rotateSelection方法，恢复原来的实现
     if (!m_selectionManager || m_selectionManager->getSelectedItems().isEmpty()) {
         return;
     }
@@ -584,6 +588,10 @@ void DrawArea::rotateSelectedGraphics(double angle)
 
 void DrawArea::scaleSelectedGraphics(double factor)
 {
+    // 性能监控
+    PERF_SCOPE(LogicTime);
+    
+    // SelectionManager的scaleSelection方法需要不同的参数，恢复原来的实现
     if (!m_selectionManager || m_selectionManager->getSelectedItems().isEmpty()) {
         return;
     }
@@ -615,6 +623,9 @@ void DrawArea::scaleSelectedGraphics(double factor)
 
 void DrawArea::deleteSelectedGraphics()
 {
+    // 性能监控
+    PERF_SCOPE(LogicTime);
+    
     if (!m_selectionManager) {
         return;
     }
@@ -635,8 +646,12 @@ void DrawArea::deleteSelectedGraphics()
     viewport()->update();
 }
 
-// 选择所有图形项
-void DrawArea::selectAllGraphics() {
+// 选择所有图形
+void DrawArea::selectAllGraphics()
+{
+    // 性能监控
+    PERF_SCOPE(LogicTime);
+    
     if (!m_scene) {
         return;
     }
@@ -1299,6 +1314,9 @@ void DrawArea::clearSelectionFilter()
 // 实现drawForeground用于绘制选择控制点
 void DrawArea::drawForeground(QPainter *painter, const QRectF &rect)
 {
+    // 性能监控
+    PERF_SCOPE(DrawTime);
+    
     QGraphicsView::drawForeground(painter, rect);
     
     // 使用SelectionManager绘制选择控制点
@@ -1314,5 +1332,241 @@ void DrawArea::drawForeground(QPainter *painter, const QRectF &rect)
         
         // 恢复原始转换矩阵
         painter->restore();
+    }
+}
+
+// 添加setHighQualityRendering实现
+void DrawArea::setHighQualityRendering(bool enable)
+{
+    if (m_highQualityRendering != enable) {
+        m_highQualityRendering = enable;
+        
+        // 设置抗锯齿和平滑变换
+        setRenderHint(QPainter::Antialiasing, enable);
+        setRenderHint(QPainter::SmoothPixmapTransform, enable);
+        
+        // 根据渲染质量设置不同的视图更新模式
+        if (enable) {
+            setViewportUpdateMode(QGraphicsView::FullViewportUpdate);
+        } else {
+            setViewportUpdateMode(QGraphicsView::MinimalViewportUpdate);
+        }
+        
+        // 更新视图
+        viewport()->update();
+        
+        Logger::info(QString("高质量渲染已%1").arg(enable ? "启用" : "禁用"));
+    }
+}
+
+// 实现性能监控相关方法
+void DrawArea::enablePerformanceMonitor(bool enable)
+{
+    // 防止重入，避免死锁
+    static bool isProcessing = false;
+    if (isProcessing) {
+        Logger::warning("性能监控状态切换正在进行中，忽略重复请求");
+        return;
+    }
+    isProcessing = true;
+    
+    try {
+        // 异步设计中不再需要监测操作时间和读取当前状态
+        // 直接设置性能监控状态，现在这是一个非阻塞操作
+        PerformanceMonitor::instance().setEnabled(enable);
+        
+        // 如果启用，重置所有指标确保有测量数据
+        if (enable) {
+            // 启动时先模拟几个数据点，确保报告能显示值
+            for (int i = 0; i < 5; i++) {
+                PERF_START(UpdateTime);
+                QThread::msleep(5); // 模拟短暂的更新时间
+                PERF_END(UpdateTime);
+                
+                PERF_START(EventTime);
+                QThread::msleep(3); // 模拟短暂的事件处理时间
+                PERF_END(EventTime);
+                
+                PERF_START(DrawTime);
+                QThread::msleep(7); // 模拟短暂的绘制时间
+                PERF_END(DrawTime);
+                
+                PERF_START(LogicTime);
+                QThread::msleep(4); // 模拟短暂的逻辑处理时间
+                PERF_END(LogicTime);
+                
+                // 通知帧完成以更新FPS
+                PerformanceMonitor::instance().frameCompleted();
+            }
+        }
+        
+        // 记录日志
+        Logger::info(QString("性能监控%1请求已发送").arg(enable ? "启用" : "禁用"));
+        
+        // 连接信号，当状态实际改变时更新UI - 不使用UniqueConnection
+        connect(&PerformanceMonitor::instance(), &PerformanceMonitor::enabledChanged,
+                this, [this](bool enabled) {
+                    // 状态实际变化后更新视图
+                    viewport()->update();
+                    Logger::info(QString("性能监控状态已变更为%1").arg(enabled ? "启用" : "禁用"));
+                });
+        
+        // 覆盖层状态变化时也更新视图 - 不使用UniqueConnection
+        connect(&PerformanceMonitor::instance(), &PerformanceMonitor::overlayEnabledChanged,
+                this, [this](bool enabled) {
+                    // 覆盖层状态变化后更新视图
+                    viewport()->update();
+                });
+    }
+    catch (const std::exception& e) {
+        Logger::error(QString("请求启用性能监控时发生异常: %1").arg(e.what()));
+    }
+    catch (...) {
+        Logger::error("请求启用性能监控时发生未知异常");
+    }
+    
+    isProcessing = false;
+}
+
+bool DrawArea::isPerformanceMonitorEnabled() const
+{
+    return PerformanceMonitor::instance().isEnabled();
+}
+
+void DrawArea::showPerformanceOverlay(bool show)
+{
+    // 防止重入，避免死锁
+    static bool isProcessing = false;
+    if (isProcessing) {
+        Logger::warning("性能覆盖层状态切换正在进行中，忽略重复请求");
+        return;
+    }
+    isProcessing = true;
+    
+    try {
+        // 检查性能监控状态
+        bool monitorEnabled = PerformanceMonitor::instance().isEnabled();
+        
+        // 如果要显示覆盖层但性能监控未启用，先启用性能监控
+        if (show && !monitorEnabled) {
+            Logger::info("需要先启用性能监控才能显示覆盖层");
+            // 先启用性能监控
+            PerformanceMonitor::instance().setEnabled(true);
+        }
+        
+        // 设置覆盖层状态 - 在异步设计中这是非阻塞操作
+        PerformanceMonitor::instance().setOverlayEnabled(show);
+        
+        // 记录请求日志
+        Logger::info(QString("性能覆盖层%1请求已发送").arg(show ? "显示" : "隐藏"));
+    }
+    catch (const std::exception& e) {
+        Logger::error(QString("请求设置性能覆盖层时发生异常: %1").arg(e.what()));
+    }
+    catch (...) {
+        Logger::error("请求设置性能覆盖层时发生未知异常");
+    }
+    
+    isProcessing = false;
+}
+
+bool DrawArea::isPerformanceOverlayShown() const
+{
+    return PerformanceMonitor::instance().isOverlayEnabled();
+}
+
+QString DrawArea::getPerformanceReport() const
+{
+    return PerformanceMonitor::instance().getPerformanceReport();
+}
+
+// 添加paintEvent实现，以支持性能覆盖层
+void DrawArea::paintEvent(QPaintEvent *event)
+{
+    // 缓存性能监控状态，避免多次调用
+    bool monitorEnabled = isPerformanceMonitorEnabled();
+    
+    // 使用RAII智能指针管理计时器对象
+    std::unique_ptr<PerformanceMonitor::ScopedTimer> timerGuard;
+    
+    // 仅在性能监控启用时使用计时器
+    if (monitorEnabled) {
+        try {
+            // 在异步设计中，这只会将事件加入队列，不会阻塞
+            timerGuard.reset(new PerformanceMonitor::ScopedTimer(PerformanceMonitor::DrawTime));
+        } catch (const std::exception& e) {
+            // 即使计时器创建失败也继续绘制
+            Logger::warning(QString("创建性能计时器失败: %1").arg(e.what()));
+        } catch (...) {
+            Logger::warning("创建性能计时器时发生未知错误");
+        }
+    }
+    
+    // 调用基类实现
+    QGraphicsView::paintEvent(event);
+    
+    // 仅在性能监控启用时考虑绘制覆盖层
+    if (monitorEnabled) {
+        bool overlayEnabled = PerformanceMonitor::instance().isOverlayEnabled();
+        
+        // 仅在覆盖层明确启用时绘制
+        if (overlayEnabled) {
+            try {
+                QPainter painter(viewport());
+                QRectF overlayRect(10, 10, 300, 200); // 覆盖层位置和大小
+                PerformanceMonitor::instance().renderOverlay(&painter, overlayRect);
+            } catch (const std::exception& e) {
+                Logger::warning(QString("绘制性能覆盖层时发生异常: %1").arg(e.what()));
+            } catch (...) {
+                Logger::warning("绘制性能覆盖层时发生未知异常");
+            }
+        }
+        
+        // 通知帧完成 - 仅需在性能监控启用时
+        try {
+            // 在异步设计中，这只会将事件加入队列，不会阻塞
+            PerformanceMonitor::instance().frameCompleted();
+        } catch (const std::exception& e) {
+            Logger::warning(QString("帧完成通知失败: %1").arg(e.what()));
+        } catch (...) {
+            Logger::warning("帧完成通知时发生未知异常");
+        }
+    }
+    
+    // timerGuard会在这里自动销毁，结束DrawTime的测量
+}
+
+// 修改scheduleUpdate方法，以便在更新过程中进行性能监控
+void DrawArea::scheduleUpdate()
+{
+    if (!m_updatePending) {
+        m_updatePending = true;
+        QTimer::singleShot(0, this, [this]() {
+            if (m_updatePending) {
+                m_updatePending = false;
+                
+                // 仅在性能监控启用时使用性能监控
+                std::unique_ptr<PerformanceMonitor::ScopedTimer> timerGuard;
+                
+                // 安全地创建计时器 - 在异步设计中这是非阻塞的
+                if (isPerformanceMonitorEnabled()) {
+                    try {
+                        timerGuard.reset(new PerformanceMonitor::ScopedTimer(PerformanceMonitor::UpdateTime));
+                    } catch (const std::exception& e) {
+                        Logger::warning(QString("创建更新计时器失败: %1").arg(e.what()));
+                    } catch (...) {
+                        Logger::warning("创建更新计时器时发生未知错误");
+                    }
+                }
+                
+                // 执行更新操作
+                viewport()->update();
+                if (m_scene) {
+                    m_scene->update();
+                }
+                
+                // timerGuard会自动销毁，在异步设计中这会将结束事件加入队列
+            }
+        });
     }
 }

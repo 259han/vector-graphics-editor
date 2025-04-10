@@ -522,6 +522,33 @@ CMakeFiles/vector-graphics-editor.dir/src/state/fill_state.cpp.obj: \
  D:/Qt/6.8.2/mingw_64/include/QtCore/qabstractitemmodel.h \
  F:/program/claudegraph/src/core/draw_strategy.h \
  F:/program/claudegraph/src/state/editor_state.h \
+ F:/program/claudegraph/src/utils/performance_monitor.h \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/QElapsedTimer \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/qelapsedtimer.h \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/QMap \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/qmap.h \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/QVector \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/qvector.h \
+ D:/Qt/6.8.2/mingw_64/include/QtGui/QFont \
+ D:/Qt/6.8.2/mingw_64/include/QtGui/qfont.h \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/QThread \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/qthread.h \
+ C:/msys64/mingw64/include/c++/14.2.0/future \
+ C:/msys64/mingw64/include/c++/14.2.0/mutex \
+ C:/msys64/mingw64/include/c++/14.2.0/bits/std_mutex.h \
+ C:/msys64/mingw64/include/c++/14.2.0/bits/unique_lock.h \
+ C:/msys64/mingw64/include/c++/14.2.0/condition_variable \
+ C:/msys64/mingw64/include/c++/14.2.0/bits/atomic_futex.h \
+ C:/msys64/mingw64/include/c++/14.2.0/bits/std_thread.h \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/QQueue \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/qqueue.h \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/QTimer \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/qtimer.h \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/qbasictimer.h \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/QWaitCondition \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/qwaitcondition.h \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/QDeadlineTimer \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/qdeadlinetimer.h \
  F:/program/claudegraph/src/ui/image_resizer.h \
  D:/Qt/6.8.2/mingw_64/include/QtWidgets/QGraphicsObject \
  D:/Qt/6.8.2/mingw_64/include/QtWidgets/QGraphicsLineItem \
@@ -529,8 +556,6 @@ CMakeFiles/vector-graphics-editor.dir/src/state/fill_state.cpp.obj: \
  D:/Qt/6.8.2/mingw_64/include/QtWidgets/QGraphicsSceneEvent \
  F:/program/claudegraph/src/utils/graphics_utils.h \
  D:/Qt/6.8.2/mingw_64/include/QtCore/QRectF \
- D:/Qt/6.8.2/mingw_64/include/QtCore/QVector \
- D:/Qt/6.8.2/mingw_64/include/QtCore/qvector.h \
  F:/program/claudegraph/src/command/fill_command.h \
  F:/program/claudegraph/src/command/command.h \
  D:/Qt/6.8.2/mingw_64/include/QtWidgets/QGraphicsPixmapItem \
@@ -538,8 +563,6 @@ CMakeFiles/vector-graphics-editor.dir/src/state/fill_state.cpp.obj: \
  F:/program/claudegraph/src/command/composite_command.h \
  D:/Qt/6.8.2/mingw_64/include/QtCore/QReadWriteLock \
  D:/Qt/6.8.2/mingw_64/include/QtCore/qreadwritelock.h \
- D:/Qt/6.8.2/mingw_64/include/QtCore/QElapsedTimer \
- D:/Qt/6.8.2/mingw_64/include/QtCore/qelapsedtimer.h \
  D:/Qt/6.8.2/mingw_64/include/QtWidgets/QApplication \
  D:/Qt/6.8.2/mingw_64/include/QtWidgets/qapplication.h \
  D:/Qt/6.8.2/mingw_64/include/QtWidgets/QStatusBar \

@@ -5,3 +5,4 @@
 #include "YPKJ5OE7LN/moc_draw_area.cpp"
 #include "YPKJ5OE7LN/moc_image_resizer.cpp"
 #include "YPKJ5OE7LN/moc_main_window.cpp"
+#include "VSCBVMNR7M/moc_performance_monitor.cpp"

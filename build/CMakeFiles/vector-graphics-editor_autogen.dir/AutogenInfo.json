@@ -618,6 +618,12 @@
 			"MU",
 			"VSCBVMNR7M/moc_logger.cpp",
 			null
+		],
+		[
+			"F:/program/claudegraph/src/utils/performance_monitor.h",
+			"MU",
+			"VSCBVMNR7M/moc_performance_monitor.cpp",
+			null
 		]
 	],
 	"HEADER_EXTENSIONS" : [ "h", "hh", "h++", "hm", "hpp", "hxx", "in", "txx" ],
@@ -751,7 +757,12 @@
 		[ "F:/program/claudegraph/src/ui/image_resizer.cpp", "MU", null ],
 		[ "F:/program/claudegraph/src/ui/main_window.cpp", "MU", null ],
 		[ "F:/program/claudegraph/src/utils/graphics_utils.cpp", "MU", null ],
-		[ "F:/program/claudegraph/src/utils/logger.cpp", "MU", null ]
+		[ "F:/program/claudegraph/src/utils/logger.cpp", "MU", null ],
+		[
+			"F:/program/claudegraph/src/utils/performance_monitor.cpp",
+			"MU",
+			null
+		]
 	],
 	"UIC_OPTIONS" : [],
 	"UIC_SEARCH_PATHS" : [],

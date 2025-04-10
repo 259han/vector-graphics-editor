@@ -21,6 +21,8 @@
 #include <QApplication>
 #include <QTimer>
 #include <QClipboard>
+#include <QElapsedTimer>
+#include "../utils/performance_monitor.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -171,6 +173,38 @@ void MainWindow::createActions() {
             this, &MainWindow::updateUndoRedoActions);
     connect(&CommandManager::getInstance(), &CommandManager::stackCleared, 
             this, &MainWindow::updateUndoRedoActions);
+
+    // 添加性能监控相关的动作
+    m_performanceMonitorAction = new QAction("启用性能监控", this);
+    m_performanceMonitorAction->setCheckable(true);
+    m_performanceMonitorAction->setChecked(false);
+    connect(m_performanceMonitorAction, &QAction::toggled, this, &MainWindow::onTogglePerformanceMonitor);
+    
+    m_performanceOverlayAction = new QAction("显示性能覆盖层", this);
+    m_performanceOverlayAction->setCheckable(true);
+    m_performanceOverlayAction->setChecked(false);
+    m_performanceOverlayAction->setEnabled(false); // 初始禁用，直到启用性能监控
+    connect(m_performanceOverlayAction, &QAction::toggled, this, &MainWindow::onTogglePerformanceOverlay);
+    
+    m_showPerformanceReportAction = new QAction("显示性能报告", this);
+    m_showPerformanceReportAction->setEnabled(false); // 初始禁用，直到启用性能监控
+    connect(m_showPerformanceReportAction, &QAction::triggered, this, &MainWindow::onShowPerformanceReport);
+    
+    m_highQualityRenderingAction = new QAction("高质量渲染", this);
+    m_highQualityRenderingAction->setCheckable(true);
+    m_highQualityRenderingAction->setChecked(true);
+    connect(m_highQualityRenderingAction, &QAction::toggled, this, &MainWindow::onHighQualityRendering);
+    
+    // 初始化网格和对齐相关动作
+    m_gridAction = new QAction("显示网格", this);
+    m_gridAction->setCheckable(true);
+    m_gridAction->setChecked(false);
+    connect(m_gridAction, &QAction::toggled, this, &MainWindow::onGridToggled);
+    
+    m_snapAction = new QAction("对齐到网格", this);
+    m_snapAction->setCheckable(true);
+    m_snapAction->setChecked(false);
+    connect(m_snapAction, &QAction::toggled, this, &MainWindow::onSnapToGridToggled);
 }
 
 void MainWindow::createMenus() {
@@ -186,6 +220,21 @@ void MainWindow::createMenus() {
     editMenu->addAction(m_cutAction);
     editMenu->addSeparator();
     editMenu->addAction(m_deleteAction);
+
+    // 添加视图菜单，包含性能监控选项
+    QMenu* viewMenu = menuBar()->addMenu("视图");
+    
+    // 添加网格相关选项
+    viewMenu->addAction(m_gridAction);
+    viewMenu->addAction(m_snapAction);
+    
+    // 添加性能监控相关选项
+    viewMenu->addSeparator();
+    viewMenu->addAction(m_highQualityRenderingAction);
+    viewMenu->addSeparator();
+    viewMenu->addAction(m_performanceMonitorAction);
+    viewMenu->addAction(m_performanceOverlayAction);
+    viewMenu->addAction(m_showPerformanceReportAction);
 }
 
 void MainWindow::createToolBars() {
@@ -717,4 +766,72 @@ void MainWindow::onFillColorTriggered()
         m_colorButton->setStyleSheet(QString("background-color: %1").arg(color.name(QColor::HexArgb)));
         m_drawArea->setFillColor(color);
     }
+}
+
+// 性能监控相关槽函数实现
+void MainWindow::onTogglePerformanceMonitor(bool checked)
+{
+    // 立即更新UI状态，无论性能监控启用是否成功
+    m_performanceOverlayAction->setEnabled(checked);
+    m_showPerformanceReportAction->setEnabled(checked);
+    
+    // 如果禁用监控，立即取消勾选覆盖层
+    if (!checked) {
+        m_performanceOverlayAction->setChecked(false);
+    }
+    
+    // 立即给用户反馈
+    statusBar()->showMessage(checked ? "正在启用性能监控..." : "正在禁用性能监控...");
+    
+    try {
+        // 连接到性能监控系统的状态改变信号 - 移除UniqueConnection标志
+        connect(&PerformanceMonitor::instance(), &PerformanceMonitor::enabledChanged,
+                this, [this](bool enabled) {
+                    // 更新状态栏消息
+                    statusBar()->showMessage(enabled ? "性能监控已启用" : "性能监控已禁用", 3000);
+                });
+        
+        // 调用异步的enablePerformanceMonitor方法，不会阻塞UI
+        m_drawArea->enablePerformanceMonitor(checked);
+    }
+    catch (const std::exception& e) {
+        // 出现异常时恢复UI状态
+        m_performanceMonitorAction->setChecked(!checked);
+        m_performanceOverlayAction->setEnabled(!checked);
+        m_showPerformanceReportAction->setEnabled(!checked);
+        
+        QString errorMsg = QString("启用性能监控时发生错误: %1").arg(e.what());
+        statusBar()->showMessage(errorMsg, 5000);
+        Logger::error(errorMsg);
+        
+        QMessageBox::critical(this, "错误", errorMsg);
+    }
+    catch (...) {
+        // 处理未知异常
+        m_performanceMonitorAction->setChecked(!checked);
+        m_performanceOverlayAction->setEnabled(!checked);
+        m_showPerformanceReportAction->setEnabled(!checked);
+        
+        QString errorMsg = "启用性能监控时发生未知错误";
+        statusBar()->showMessage(errorMsg, 5000);
+        Logger::error(errorMsg);
+        
+        QMessageBox::critical(this, "错误", errorMsg);
+    }
+}
+
+void MainWindow::onTogglePerformanceOverlay(bool checked)
+{
+    m_drawArea->showPerformanceOverlay(checked);
+}
+
+void MainWindow::onShowPerformanceReport()
+{
+    QString report = m_drawArea->getPerformanceReport();
+    QMessageBox::information(this, "性能报告", report);
+}
+
+void MainWindow::onHighQualityRendering(bool checked)
+{
+    m_drawArea->setHighQualityRendering(checked);
 }

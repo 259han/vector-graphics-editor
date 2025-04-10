@@ -461,6 +461,41 @@ CMakeFiles/vector-graphics-editor.dir/src/core/selection_manager.cpp.obj: \
  D:/Qt/6.8.2/mingw_64/include/QtCore/QDebug \
  D:/Qt/6.8.2/mingw_64/include/QtCore/qdebug.h \
  D:/Qt/6.8.2/mingw_64/include/QtGui/QWheelEvent \
+ F:/program/claudegraph/src/utils/performance_monitor.h \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/QElapsedTimer \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/qelapsedtimer.h \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/QMap \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/qmap.h \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/QVector \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/qvector.h \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/QMutex \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/qmutex.h \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/qtsan_impl.h \
+ D:/Qt/6.8.2/mingw_64/include/QtGui/QColor \
+ D:/Qt/6.8.2/mingw_64/include/QtGui/qcolor.h \
+ D:/Qt/6.8.2/mingw_64/include/QtGui/QFont \
+ D:/Qt/6.8.2/mingw_64/include/QtGui/qfont.h \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/QThread \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/qthread.h \
+ C:/msys64/mingw64/include/c++/14.2.0/future \
+ C:/msys64/mingw64/include/c++/14.2.0/mutex \
+ C:/msys64/mingw64/include/c++/14.2.0/bits/std_mutex.h \
+ C:/msys64/mingw64/include/c++/14.2.0/bits/unique_lock.h \
+ C:/msys64/mingw64/include/c++/14.2.0/condition_variable \
+ C:/msys64/mingw64/include/c++/14.2.0/bits/atomic_futex.h \
+ C:/msys64/mingw64/include/c++/14.2.0/bits/std_thread.h \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/QQueue \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/qqueue.h \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/QTimer \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/qtimer.h \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/qbasictimer.h \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/QWaitCondition \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/qwaitcondition.h \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/QDeadlineTimer \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/qdeadlinetimer.h \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/QDateTime \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/qdatetime.h \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/qcalendar.h \
  F:/program/claudegraph/src/ui/image_resizer.h \
  D:/Qt/6.8.2/mingw_64/include/QtWidgets/QGraphicsObject \
  D:/Qt/6.8.2/mingw_64/include/QtWidgets/QGraphicsLineItem \

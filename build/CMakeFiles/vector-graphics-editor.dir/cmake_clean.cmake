@@ -63,6 +63,8 @@ file(REMOVE_RECURSE
   "CMakeFiles/vector-graphics-editor.dir/src/utils/graphics_utils.cpp.obj.d"
   "CMakeFiles/vector-graphics-editor.dir/src/utils/logger.cpp.obj"
   "CMakeFiles/vector-graphics-editor.dir/src/utils/logger.cpp.obj.d"
+  "CMakeFiles/vector-graphics-editor.dir/src/utils/performance_monitor.cpp.obj"
+  "CMakeFiles/vector-graphics-editor.dir/src/utils/performance_monitor.cpp.obj.d"
   "CMakeFiles/vector-graphics-editor.dir/vector-graphics-editor_autogen/mocs_compilation.cpp.obj"
   "CMakeFiles/vector-graphics-editor.dir/vector-graphics-editor_autogen/mocs_compilation.cpp.obj.d"
   "CMakeFiles/vector-graphics-editor_autogen.dir/AutogenUsed.txt"

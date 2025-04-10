@@ -922,6 +922,30 @@ src/utils/logger.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\vector-graphics-editor.dir\build.make CMakeFiles/vector-graphics-editor.dir/src/utils/logger.cpp.s
 .PHONY : src/utils/logger.cpp.s
 
+src/utils/performance_monitor.obj: src/utils/performance_monitor.cpp.obj
+.PHONY : src/utils/performance_monitor.obj
+
+# target to build an object file
+src/utils/performance_monitor.cpp.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\vector-graphics-editor.dir\build.make CMakeFiles/vector-graphics-editor.dir/src/utils/performance_monitor.cpp.obj
+.PHONY : src/utils/performance_monitor.cpp.obj
+
+src/utils/performance_monitor.i: src/utils/performance_monitor.cpp.i
+.PHONY : src/utils/performance_monitor.i
+
+# target to preprocess a source file
+src/utils/performance_monitor.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\vector-graphics-editor.dir\build.make CMakeFiles/vector-graphics-editor.dir/src/utils/performance_monitor.cpp.i
+.PHONY : src/utils/performance_monitor.cpp.i
+
+src/utils/performance_monitor.s: src/utils/performance_monitor.cpp.s
+.PHONY : src/utils/performance_monitor.s
+
+# target to generate assembly for a file
+src/utils/performance_monitor.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\vector-graphics-editor.dir\build.make CMakeFiles/vector-graphics-editor.dir/src/utils/performance_monitor.cpp.s
+.PHONY : src/utils/performance_monitor.cpp.s
+
 vector-graphics-editor_autogen/mocs_compilation.obj: vector-graphics-editor_autogen/mocs_compilation.cpp.obj
 .PHONY : vector-graphics-editor_autogen/mocs_compilation.obj
 
@@ -1053,6 +1077,9 @@ help:
 	@echo ... src/utils/logger.obj
 	@echo ... src/utils/logger.i
 	@echo ... src/utils/logger.s
+	@echo ... src/utils/performance_monitor.obj
+	@echo ... src/utils/performance_monitor.i
+	@echo ... src/utils/performance_monitor.s
 	@echo ... vector-graphics-editor_autogen/mocs_compilation.obj
 	@echo ... vector-graphics-editor_autogen/mocs_compilation.i
 	@echo ... vector-graphics-editor_autogen/mocs_compilation.s

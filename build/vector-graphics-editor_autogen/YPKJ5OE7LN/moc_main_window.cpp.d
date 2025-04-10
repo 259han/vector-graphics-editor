@@ -19,6 +19,7 @@ F:/program/claudegraph/build/vector-graphics-editor_autogen/YPKJ5OE7LN/moc_main_
   C:/msys64/mingw64/include/c++/14.2.0/bits/allocated_ptr.h \
   C:/msys64/mingw64/include/c++/14.2.0/bits/allocator.h \
   C:/msys64/mingw64/include/c++/14.2.0/bits/atomic_base.h \
+  C:/msys64/mingw64/include/c++/14.2.0/bits/atomic_futex.h \
   C:/msys64/mingw64/include/c++/14.2.0/bits/atomic_lockfree_defines.h \
   C:/msys64/mingw64/include/c++/14.2.0/bits/basic_string.h \
   C:/msys64/mingw64/include/c++/14.2.0/bits/basic_string.tcc \
@@ -65,6 +66,8 @@ F:/program/claudegraph/build/vector-graphics-editor_autogen/YPKJ5OE7LN/moc_main_
   C:/msys64/mingw64/include/c++/14.2.0/bits/specfun.h \
   C:/msys64/mingw64/include/c++/14.2.0/bits/std_abs.h \
   C:/msys64/mingw64/include/c++/14.2.0/bits/std_function.h \
+  C:/msys64/mingw64/include/c++/14.2.0/bits/std_mutex.h \
+  C:/msys64/mingw64/include/c++/14.2.0/bits/std_thread.h \
   C:/msys64/mingw64/include/c++/14.2.0/bits/stl_algo.h \
   C:/msys64/mingw64/include/c++/14.2.0/bits/stl_algobase.h \
   C:/msys64/mingw64/include/c++/14.2.0/bits/stl_bvector.h \
@@ -91,6 +94,7 @@ F:/program/claudegraph/build/vector-graphics-editor_autogen/YPKJ5OE7LN/moc_main_
   C:/msys64/mingw64/include/c++/14.2.0/bits/string_view.tcc \
   C:/msys64/mingw64/include/c++/14.2.0/bits/stringfwd.h \
   C:/msys64/mingw64/include/c++/14.2.0/bits/uniform_int_dist.h \
+  C:/msys64/mingw64/include/c++/14.2.0/bits/unique_lock.h \
   C:/msys64/mingw64/include/c++/14.2.0/bits/unique_ptr.h \
   C:/msys64/mingw64/include/c++/14.2.0/bits/unordered_map.h \
   C:/msys64/mingw64/include/c++/14.2.0/bits/uses_allocator.h \
@@ -107,6 +111,7 @@ F:/program/claudegraph/build/vector-graphics-editor_autogen/YPKJ5OE7LN/moc_main_
   C:/msys64/mingw64/include/c++/14.2.0/cmath \
   C:/msys64/mingw64/include/c++/14.2.0/compare \
   C:/msys64/mingw64/include/c++/14.2.0/concepts \
+  C:/msys64/mingw64/include/c++/14.2.0/condition_variable \
   C:/msys64/mingw64/include/c++/14.2.0/cstddef \
   C:/msys64/mingw64/include/c++/14.2.0/cstdint \
   C:/msys64/mingw64/include/c++/14.2.0/cstdio \
@@ -125,6 +130,7 @@ F:/program/claudegraph/build/vector-graphics-editor_autogen/YPKJ5OE7LN/moc_main_
   C:/msys64/mingw64/include/c++/14.2.0/ext/string_conversions.h \
   C:/msys64/mingw64/include/c++/14.2.0/ext/type_traits.h \
   C:/msys64/mingw64/include/c++/14.2.0/functional \
+  C:/msys64/mingw64/include/c++/14.2.0/future \
   C:/msys64/mingw64/include/c++/14.2.0/initializer_list \
   C:/msys64/mingw64/include/c++/14.2.0/iosfwd \
   C:/msys64/mingw64/include/c++/14.2.0/iterator \
@@ -132,6 +138,7 @@ F:/program/claudegraph/build/vector-graphics-editor_autogen/YPKJ5OE7LN/moc_main_
   C:/msys64/mingw64/include/c++/14.2.0/list \
   C:/msys64/mingw64/include/c++/14.2.0/map \
   C:/msys64/mingw64/include/c++/14.2.0/memory \
+  C:/msys64/mingw64/include/c++/14.2.0/mutex \
   C:/msys64/mingw64/include/c++/14.2.0/new \
   C:/msys64/mingw64/include/c++/14.2.0/numeric \
   C:/msys64/mingw64/include/c++/14.2.0/optional \
@@ -207,16 +214,25 @@ F:/program/claudegraph/build/vector-graphics-editor_autogen/YPKJ5OE7LN/moc_main_
   C:/msys64/mingw64/lib/gcc/x86_64-w64-mingw32/14.2.0/include/stdint.h \
   C:/msys64/mingw64/lib/gcc/x86_64-w64-mingw32/14.2.0/include/syslimits.h \
   D:/Qt/6.8.2/mingw_64/include/QtCore/QDataStream \
+  D:/Qt/6.8.2/mingw_64/include/QtCore/QDateTime \
+  D:/Qt/6.8.2/mingw_64/include/QtCore/QDeadlineTimer \
   D:/Qt/6.8.2/mingw_64/include/QtCore/QDebug \
+  D:/Qt/6.8.2/mingw_64/include/QtCore/QElapsedTimer \
   D:/Qt/6.8.2/mingw_64/include/QtCore/QList \
+  D:/Qt/6.8.2/mingw_64/include/QtCore/QMap \
+  D:/Qt/6.8.2/mingw_64/include/QtCore/QMutex \
   D:/Qt/6.8.2/mingw_64/include/QtCore/QObject \
   D:/Qt/6.8.2/mingw_64/include/QtCore/QPointF \
+  D:/Qt/6.8.2/mingw_64/include/QtCore/QQueue \
   D:/Qt/6.8.2/mingw_64/include/QtCore/QRect \
   D:/Qt/6.8.2/mingw_64/include/QtCore/QSet \
   D:/Qt/6.8.2/mingw_64/include/QtCore/QSize \
   D:/Qt/6.8.2/mingw_64/include/QtCore/QSizeF \
   D:/Qt/6.8.2/mingw_64/include/QtCore/QString \
+  D:/Qt/6.8.2/mingw_64/include/QtCore/QThread \
   D:/Qt/6.8.2/mingw_64/include/QtCore/QTimer \
+  D:/Qt/6.8.2/mingw_64/include/QtCore/QVector \
+  D:/Qt/6.8.2/mingw_64/include/QtCore/QWaitCondition \
   D:/Qt/6.8.2/mingw_64/include/QtCore/q20functional.h \
   D:/Qt/6.8.2/mingw_64/include/QtCore/q20iterator.h \
   D:/Qt/6.8.2/mingw_64/include/QtCore/q20memory.h \
@@ -238,6 +254,7 @@ F:/program/claudegraph/build/vector-graphics-editor_autogen/YPKJ5OE7LN/moc_main_
   D:/Qt/6.8.2/mingw_64/include/QtCore/qbytearrayalgorithms.h \
   D:/Qt/6.8.2/mingw_64/include/QtCore/qbytearraylist.h \
   D:/Qt/6.8.2/mingw_64/include/QtCore/qbytearrayview.h \
+  D:/Qt/6.8.2/mingw_64/include/QtCore/qcalendar.h \
   D:/Qt/6.8.2/mingw_64/include/QtCore/qchar.h \
   D:/Qt/6.8.2/mingw_64/include/QtCore/qcompare.h \
   D:/Qt/6.8.2/mingw_64/include/QtCore/qcompare_impl.h \
@@ -254,6 +271,7 @@ F:/program/claudegraph/build/vector-graphics-editor_autogen/YPKJ5OE7LN/moc_main_
   D:/Qt/6.8.2/mingw_64/include/QtCore/qcoreevent.h \
   D:/Qt/6.8.2/mingw_64/include/QtCore/qdarwinhelpers.h \
   D:/Qt/6.8.2/mingw_64/include/QtCore/qdatastream.h \
+  D:/Qt/6.8.2/mingw_64/include/QtCore/qdatetime.h \
   D:/Qt/6.8.2/mingw_64/include/QtCore/qdeadlinetimer.h \
   D:/Qt/6.8.2/mingw_64/include/QtCore/qdebug.h \
   D:/Qt/6.8.2/mingw_64/include/QtCore/qelapsedtimer.h \
@@ -286,6 +304,7 @@ F:/program/claudegraph/build/vector-graphics-editor_autogen/YPKJ5OE7LN/moc_main_
   D:/Qt/6.8.2/mingw_64/include/QtCore/qmetacontainer.h \
   D:/Qt/6.8.2/mingw_64/include/QtCore/qmetatype.h \
   D:/Qt/6.8.2/mingw_64/include/QtCore/qminmax.h \
+  D:/Qt/6.8.2/mingw_64/include/QtCore/qmutex.h \
   D:/Qt/6.8.2/mingw_64/include/QtCore/qnamespace.h \
   D:/Qt/6.8.2/mingw_64/include/QtCore/qnativeinterface.h \
   D:/Qt/6.8.2/mingw_64/include/QtCore/qnumeric.h \
@@ -297,6 +316,7 @@ F:/program/claudegraph/build/vector-graphics-editor_autogen/YPKJ5OE7LN/moc_main_
   D:/Qt/6.8.2/mingw_64/include/QtCore/qpair.h \
   D:/Qt/6.8.2/mingw_64/include/QtCore/qpoint.h \
   D:/Qt/6.8.2/mingw_64/include/QtCore/qprocessordetection.h \
+  D:/Qt/6.8.2/mingw_64/include/QtCore/qqueue.h \
   D:/Qt/6.8.2/mingw_64/include/QtCore/qrect.h \
   D:/Qt/6.8.2/mingw_64/include/QtCore/qrefcount.h \
   D:/Qt/6.8.2/mingw_64/include/QtCore/qregularexpression.h \
@@ -333,11 +353,13 @@ F:/program/claudegraph/build/vector-graphics-editor_autogen/YPKJ5OE7LN/moc_main_
   D:/Qt/6.8.2/mingw_64/include/QtCore/qtdeprecationmarkers.h \
   D:/Qt/6.8.2/mingw_64/include/QtCore/qtenvironmentvariables.h \
   D:/Qt/6.8.2/mingw_64/include/QtCore/qtextstream.h \
+  D:/Qt/6.8.2/mingw_64/include/QtCore/qthread.h \
   D:/Qt/6.8.2/mingw_64/include/QtCore/qtimer.h \
   D:/Qt/6.8.2/mingw_64/include/QtCore/qtmetamacros.h \
   D:/Qt/6.8.2/mingw_64/include/QtCore/qtnoop.h \
   D:/Qt/6.8.2/mingw_64/include/QtCore/qtpreprocessorsupport.h \
   D:/Qt/6.8.2/mingw_64/include/QtCore/qtresource.h \
+  D:/Qt/6.8.2/mingw_64/include/QtCore/qtsan_impl.h \
   D:/Qt/6.8.2/mingw_64/include/QtCore/qttranslation.h \
   D:/Qt/6.8.2/mingw_64/include/QtCore/qttypetraits.h \
   D:/Qt/6.8.2/mingw_64/include/QtCore/qtversion.h \
@@ -348,13 +370,17 @@ F:/program/claudegraph/build/vector-graphics-editor_autogen/YPKJ5OE7LN/moc_main_
   D:/Qt/6.8.2/mingw_64/include/QtCore/qutf8stringview.h \
   D:/Qt/6.8.2/mingw_64/include/QtCore/qvariant.h \
   D:/Qt/6.8.2/mingw_64/include/QtCore/qvarlengtharray.h \
+  D:/Qt/6.8.2/mingw_64/include/QtCore/qvector.h \
   D:/Qt/6.8.2/mingw_64/include/QtCore/qversiontagging.h \
+  D:/Qt/6.8.2/mingw_64/include/QtCore/qwaitcondition.h \
   D:/Qt/6.8.2/mingw_64/include/QtCore/qxptype_traits.h \
   D:/Qt/6.8.2/mingw_64/include/QtCore/qyieldcpu.h \
   D:/Qt/6.8.2/mingw_64/include/QtGui/QAction \
   D:/Qt/6.8.2/mingw_64/include/QtGui/QActionGroup \
   D:/Qt/6.8.2/mingw_64/include/QtGui/QBrush \
+  D:/Qt/6.8.2/mingw_64/include/QtGui/QColor \
   D:/Qt/6.8.2/mingw_64/include/QtGui/QCursor \
+  D:/Qt/6.8.2/mingw_64/include/QtGui/QFont \
   D:/Qt/6.8.2/mingw_64/include/QtGui/QKeyEvent \
   D:/Qt/6.8.2/mingw_64/include/QtGui/QMouseEvent \
   D:/Qt/6.8.2/mingw_64/include/QtGui/QPainter \
@@ -460,4 +486,5 @@ F:/program/claudegraph/build/vector-graphics-editor_autogen/YPKJ5OE7LN/moc_main_
   F:/program/claudegraph/src/core/selection_manager.h \
   F:/program/claudegraph/src/state/editor_state.h \
   F:/program/claudegraph/src/ui/draw_area.h \
-  F:/program/claudegraph/src/ui/image_resizer.h
+  F:/program/claudegraph/src/ui/image_resizer.h \
+  F:/program/claudegraph/src/utils/performance_monitor.h

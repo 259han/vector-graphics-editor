@@ -41,6 +41,7 @@ set(CMAKE_DEPENDS_DEPENDENCY_FILES
   "F:/program/claudegraph/src/ui/main_window.cpp" "CMakeFiles/vector-graphics-editor.dir/src/ui/main_window.cpp.obj" "gcc" "CMakeFiles/vector-graphics-editor.dir/src/ui/main_window.cpp.obj.d"
   "F:/program/claudegraph/src/utils/graphics_utils.cpp" "CMakeFiles/vector-graphics-editor.dir/src/utils/graphics_utils.cpp.obj" "gcc" "CMakeFiles/vector-graphics-editor.dir/src/utils/graphics_utils.cpp.obj.d"
   "F:/program/claudegraph/src/utils/logger.cpp" "CMakeFiles/vector-graphics-editor.dir/src/utils/logger.cpp.obj" "gcc" "CMakeFiles/vector-graphics-editor.dir/src/utils/logger.cpp.obj.d"
+  "F:/program/claudegraph/src/utils/performance_monitor.cpp" "CMakeFiles/vector-graphics-editor.dir/src/utils/performance_monitor.cpp.obj" "gcc" "CMakeFiles/vector-graphics-editor.dir/src/utils/performance_monitor.cpp.obj.d"
   "F:/program/claudegraph/build/vector-graphics-editor_autogen/mocs_compilation.cpp" "CMakeFiles/vector-graphics-editor.dir/vector-graphics-editor_autogen/mocs_compilation.cpp.obj" "gcc" "CMakeFiles/vector-graphics-editor.dir/vector-graphics-editor_autogen/mocs_compilation.cpp.obj.d"
   )
 

@@ -460,6 +460,41 @@ CMakeFiles/vector-graphics-editor.dir/src/ui/draw_area.cpp.obj: \
  D:/Qt/6.8.2/mingw_64/include/QtCore/QDebug \
  D:/Qt/6.8.2/mingw_64/include/QtCore/qdebug.h \
  D:/Qt/6.8.2/mingw_64/include/QtGui/QWheelEvent \
+ F:/program/claudegraph/src/utils/performance_monitor.h \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/QElapsedTimer \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/qelapsedtimer.h \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/QMap \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/qmap.h \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/QVector \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/qvector.h \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/QMutex \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/qmutex.h \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/qtsan_impl.h \
+ D:/Qt/6.8.2/mingw_64/include/QtGui/QColor \
+ D:/Qt/6.8.2/mingw_64/include/QtGui/qcolor.h \
+ D:/Qt/6.8.2/mingw_64/include/QtGui/QFont \
+ D:/Qt/6.8.2/mingw_64/include/QtGui/qfont.h \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/QThread \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/qthread.h \
+ C:/msys64/mingw64/include/c++/14.2.0/future \
+ C:/msys64/mingw64/include/c++/14.2.0/mutex \
+ C:/msys64/mingw64/include/c++/14.2.0/bits/std_mutex.h \
+ C:/msys64/mingw64/include/c++/14.2.0/bits/unique_lock.h \
+ C:/msys64/mingw64/include/c++/14.2.0/condition_variable \
+ C:/msys64/mingw64/include/c++/14.2.0/bits/atomic_futex.h \
+ C:/msys64/mingw64/include/c++/14.2.0/bits/std_thread.h \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/QQueue \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/qqueue.h \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/QTimer \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/qtimer.h \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/qbasictimer.h \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/QWaitCondition \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/qwaitcondition.h \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/QDeadlineTimer \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/qdeadlinetimer.h \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/QDateTime \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/qdatetime.h \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/qcalendar.h \
  F:\program\claudegraph\src\ui\image_resizer.h \
  D:/Qt/6.8.2/mingw_64/include/QtWidgets/QGraphicsObject \
  D:/Qt/6.8.2/mingw_64/include/QtWidgets/QGraphicsLineItem \
@@ -470,8 +505,6 @@ CMakeFiles/vector-graphics-editor.dir/src/ui/draw_area.cpp.obj: \
  F:/program/claudegraph/src/core/graphic.h \
  F:/program/claudegraph/src/core/draw_strategy.h \
  F:/program/claudegraph/src/core/graphics_item_factory.h \
- D:/Qt/6.8.2/mingw_64/include/QtGui/QColor \
- D:/Qt/6.8.2/mingw_64/include/QtGui/qcolor.h \
  D:/Qt/6.8.2/mingw_64/include/QtCore/QStack \
  D:/Qt/6.8.2/mingw_64/include/QtCore/qstack.h \
  D:/Qt/6.8.2/mingw_64/include/QtWidgets/QScrollBar \
@@ -486,9 +519,6 @@ CMakeFiles/vector-graphics-editor.dir/src/ui/draw_area.cpp.obj: \
  D:/Qt/6.8.2/mingw_64/include/QtCore/QRectF \
  F:/program/claudegraph/src/state/fill_state.h \
  F:/program/claudegraph/src/utils/logger.h \
- D:/Qt/6.8.2/mingw_64/include/QtCore/QDateTime \
- D:/Qt/6.8.2/mingw_64/include/QtCore/qdatetime.h \
- D:/Qt/6.8.2/mingw_64/include/QtCore/qcalendar.h \
  D:/Qt/6.8.2/mingw_64/include/QtCore/QFile \
  D:/Qt/6.8.2/mingw_64/include/QtCore/qfile.h \
  D:/Qt/6.8.2/mingw_64/include/QtCore/qfiledevice.h \
@@ -524,9 +554,6 @@ CMakeFiles/vector-graphics-editor.dir/src/ui/draw_area.cpp.obj: \
  C:/msys64/mingw64/include/c++/14.2.0/bits/fs_ops.h \
  D:/Qt/6.8.2/mingw_64/include/QtCore/QTextStream \
  D:/Qt/6.8.2/mingw_64/include/QtCore/qtextstream.h \
- D:/Qt/6.8.2/mingw_64/include/QtCore/QMutex \
- D:/Qt/6.8.2/mingw_64/include/QtCore/qmutex.h \
- D:/Qt/6.8.2/mingw_64/include/QtCore/qtsan_impl.h \
  D:/Qt/6.8.2/mingw_64/include/QtCore/QDir \
  D:/Qt/6.8.2/mingw_64/include/QtCore/qdir.h \
  D:/Qt/6.8.2/mingw_64/include/QtCore/qdirlisting.h \
@@ -589,9 +616,6 @@ CMakeFiles/vector-graphics-editor.dir/src/ui/draw_area.cpp.obj: \
  D:/Qt/6.8.2/mingw_64/include/QtWidgets/qlayoutitem.h \
  D:/Qt/6.8.2/mingw_64/include/QtWidgets/qboxlayout.h \
  D:/Qt/6.8.2/mingw_64/include/QtWidgets/qgridlayout.h \
- D:/Qt/6.8.2/mingw_64/include/QtCore/QTimer \
- D:/Qt/6.8.2/mingw_64/include/QtCore/qtimer.h \
- D:/Qt/6.8.2/mingw_64/include/QtCore/qbasictimer.h \
  F:/program/claudegraph/src/ui/image_resizer.h \
  F:/program/claudegraph/src/core/image_manager.h \
  D:/Qt/6.8.2/mingw_64/include/QtWidgets/QGraphicsPixmapItem \
@@ -606,5 +630,14 @@ CMakeFiles/vector-graphics-editor.dir/src/ui/draw_area.cpp.obj: \
  F:/program/claudegraph/src/command/composite_command.h \
  D:/Qt/6.8.2/mingw_64/include/QtCore/QReadWriteLock \
  D:/Qt/6.8.2/mingw_64/include/QtCore/qreadwritelock.h \
- D:/Qt/6.8.2/mingw_64/include/QtCore/QElapsedTimer \
- D:/Qt/6.8.2/mingw_64/include/QtCore/qelapsedtimer.h
+ D:/Qt/6.8.2/mingw_64/include/QtCore/QRandomGenerator \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/qrandom.h \
+ C:/msys64/mingw64/include/c++/14.2.0/random \
+ C:/msys64/mingw64/include/c++/14.2.0/bits/random.h \
+ C:/msys64/mingw64/include/c++/14.2.0/x86_64-w64-mingw32/bits/opt_random.h \
+ C:/msys64/mingw64/lib/gcc/x86_64-w64-mingw32/14.2.0/include/pmmintrin.h \
+ C:/msys64/mingw64/lib/gcc/x86_64-w64-mingw32/14.2.0/include/emmintrin.h \
+ C:/msys64/mingw64/lib/gcc/x86_64-w64-mingw32/14.2.0/include/xmmintrin.h \
+ C:/msys64/mingw64/lib/gcc/x86_64-w64-mingw32/14.2.0/include/mmintrin.h \
+ C:/msys64/mingw64/lib/gcc/x86_64-w64-mingw32/14.2.0/include/mwaitintrin.h \
+ C:/msys64/mingw64/include/c++/14.2.0/bits/random.tcc

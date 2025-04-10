@@ -44,6 +44,12 @@ private slots:
     // UI状态管理
     void updateActionStates();
     void updateClipboardActions();
+    
+    // 性能监控相关
+    void onTogglePerformanceMonitor(bool checked);
+    void onTogglePerformanceOverlay(bool checked);
+    void onShowPerformanceReport();
+    void onHighQualityRendering(bool checked);
 
 private:
     void createActions();
@@ -117,6 +123,12 @@ private:
     
     QAction* m_gridAction;
     QAction* m_snapAction;
+    
+    // 性能监控相关
+    QAction* m_performanceMonitorAction;
+    QAction* m_performanceOverlayAction;
+    QAction* m_showPerformanceReportAction;
+    QAction* m_highQualityRenderingAction;
     
     QComboBox* m_gridSizeComboBox;
 

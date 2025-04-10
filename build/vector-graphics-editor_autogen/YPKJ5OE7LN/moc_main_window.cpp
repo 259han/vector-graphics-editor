@@ -61,7 +61,12 @@ static constexpr auto qt_meta_stringdata_ZN10MainWindowE = QtMocHelpers::stringD
     "redo",
     "updateUndoRedoActions",
     "updateActionStates",
-    "updateClipboardActions"
+    "updateClipboardActions",
+    "onTogglePerformanceMonitor",
+    "checked",
+    "onTogglePerformanceOverlay",
+    "onShowPerformanceReport",
+    "onHighQualityRendering"
 );
 #else  // !QT_MOC_HAS_STRINGDATA
 #error "qtmochelpers.h not found or too old."
@@ -73,7 +78,7 @@ Q_CONSTINIT static const uint qt_meta_data_ZN10MainWindowE[] = {
       12,       // revision
        0,       // classname
        0,    0, // classinfo
-      17,   14, // methods
+      21,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
@@ -81,23 +86,27 @@ Q_CONSTINIT static const uint qt_meta_data_ZN10MainWindowE[] = {
        0,       // signalCount
 
  // slots: name, argc, parameters, tag, flags, initial metatype offsets
-       1,    1,  116,    2, 0x08,    1 /* Private */,
-       5,    1,  119,    2, 0x08,    3 /* Private */,
-       6,    1,  122,    2, 0x08,    5 /* Private */,
-       7,    1,  125,    2, 0x08,    7 /* Private */,
-       8,    0,  128,    2, 0x08,    9 /* Private */,
-       9,    0,  129,    2, 0x08,   10 /* Private */,
-      10,    0,  130,    2, 0x08,   11 /* Private */,
-      11,    0,  131,    2, 0x08,   12 /* Private */,
-      12,    1,  132,    2, 0x08,   13 /* Private */,
-      14,    1,  135,    2, 0x08,   15 /* Private */,
-      16,    1,  138,    2, 0x08,   17 /* Private */,
-      18,    1,  141,    2, 0x08,   19 /* Private */,
-      19,    0,  144,    2, 0x08,   21 /* Private */,
-      20,    0,  145,    2, 0x08,   22 /* Private */,
-      21,    0,  146,    2, 0x08,   23 /* Private */,
-      22,    0,  147,    2, 0x08,   24 /* Private */,
-      23,    0,  148,    2, 0x08,   25 /* Private */,
+       1,    1,  140,    2, 0x08,    1 /* Private */,
+       5,    1,  143,    2, 0x08,    3 /* Private */,
+       6,    1,  146,    2, 0x08,    5 /* Private */,
+       7,    1,  149,    2, 0x08,    7 /* Private */,
+       8,    0,  152,    2, 0x08,    9 /* Private */,
+       9,    0,  153,    2, 0x08,   10 /* Private */,
+      10,    0,  154,    2, 0x08,   11 /* Private */,
+      11,    0,  155,    2, 0x08,   12 /* Private */,
+      12,    1,  156,    2, 0x08,   13 /* Private */,
+      14,    1,  159,    2, 0x08,   15 /* Private */,
+      16,    1,  162,    2, 0x08,   17 /* Private */,
+      18,    1,  165,    2, 0x08,   19 /* Private */,
+      19,    0,  168,    2, 0x08,   21 /* Private */,
+      20,    0,  169,    2, 0x08,   22 /* Private */,
+      21,    0,  170,    2, 0x08,   23 /* Private */,
+      22,    0,  171,    2, 0x08,   24 /* Private */,
+      23,    0,  172,    2, 0x08,   25 /* Private */,
+      24,    1,  173,    2, 0x08,   26 /* Private */,
+      26,    1,  176,    2, 0x08,   28 /* Private */,
+      27,    0,  179,    2, 0x08,   30 /* Private */,
+      28,    1,  180,    2, 0x08,   31 /* Private */,
 
  // slots: parameters
     QMetaType::Void, 0x80000000 | 3,    4,
@@ -117,6 +126,10 @@ Q_CONSTINIT static const uint qt_meta_data_ZN10MainWindowE[] = {
     QMetaType::Void,
     QMetaType::Void,
     QMetaType::Void,
+    QMetaType::Void, QMetaType::Bool,   25,
+    QMetaType::Void, QMetaType::Bool,   25,
+    QMetaType::Void,
+    QMetaType::Void, QMetaType::Bool,   25,
 
        0        // eod
 };
@@ -171,7 +184,18 @@ Q_CONSTINIT const QMetaObject MainWindow::staticMetaObject = { {
         // method 'updateActionStates'
         QtPrivate::TypeAndForceComplete<void, std::false_type>,
         // method 'updateClipboardActions'
-        QtPrivate::TypeAndForceComplete<void, std::false_type>
+        QtPrivate::TypeAndForceComplete<void, std::false_type>,
+        // method 'onTogglePerformanceMonitor'
+        QtPrivate::TypeAndForceComplete<void, std::false_type>,
+        QtPrivate::TypeAndForceComplete<bool, std::false_type>,
+        // method 'onTogglePerformanceOverlay'
+        QtPrivate::TypeAndForceComplete<void, std::false_type>,
+        QtPrivate::TypeAndForceComplete<bool, std::false_type>,
+        // method 'onShowPerformanceReport'
+        QtPrivate::TypeAndForceComplete<void, std::false_type>,
+        // method 'onHighQualityRendering'
+        QtPrivate::TypeAndForceComplete<void, std::false_type>,
+        QtPrivate::TypeAndForceComplete<bool, std::false_type>
     >,
     nullptr
 } };
@@ -198,6 +222,10 @@ void MainWindow::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, 
         case 14: _t->updateUndoRedoActions(); break;
         case 15: _t->updateActionStates(); break;
         case 16: _t->updateClipboardActions(); break;
+        case 17: _t->onTogglePerformanceMonitor((*reinterpret_cast< std::add_pointer_t<bool>>(_a[1]))); break;
+        case 18: _t->onTogglePerformanceOverlay((*reinterpret_cast< std::add_pointer_t<bool>>(_a[1]))); break;
+        case 19: _t->onShowPerformanceReport(); break;
+        case 20: _t->onHighQualityRendering((*reinterpret_cast< std::add_pointer_t<bool>>(_a[1]))); break;
         default: ;
         }
     }
@@ -255,14 +283,14 @@ int MainWindow::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 17)
+        if (_id < 21)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 17;
+        _id -= 21;
     }
     if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 17)
+        if (_id < 21)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 17;
+        _id -= 21;
     }
     return _id;
 }
