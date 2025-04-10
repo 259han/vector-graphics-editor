@@ -446,6 +446,12 @@
 			null
 		],
 		[
+			"F:/program/claudegraph/src/command/composite_command.h",
+			"MU",
+			"YB4PXEL5CK/moc_composite_command.cpp",
+			null
+		],
+		[
 			"F:/program/claudegraph/src/command/create_graphic_command.h",
 			"MU",
 			"YB4PXEL5CK/moc_create_graphic_command.cpp",
@@ -461,6 +467,12 @@
 			"F:/program/claudegraph/src/command/move_command.h",
 			"MU",
 			"YB4PXEL5CK/moc_move_command.cpp",
+			null
+		],
+		[
+			"F:/program/claudegraph/src/command/paste_command.h",
+			"MU",
+			"YB4PXEL5CK/moc_paste_command.cpp",
 			null
 		],
 		[
@@ -683,12 +695,18 @@
 		[ "F:/program/claudegraph/src/command/command.cpp", "MU", null ],
 		[ "F:/program/claudegraph/src/command/command_manager.cpp", "MU", null ],
 		[
+			"F:/program/claudegraph/src/command/composite_command.cpp",
+			"MU",
+			null
+		],
+		[
 			"F:/program/claudegraph/src/command/create_graphic_command.cpp",
 			"MU",
 			null
 		],
 		[ "F:/program/claudegraph/src/command/fill_command.cpp", "MU", null ],
 		[ "F:/program/claudegraph/src/command/move_command.cpp", "MU", null ],
+		[ "F:/program/claudegraph/src/command/paste_command.cpp", "MU", null ],
 		[ "F:/program/claudegraph/src/command/rotate_command.cpp", "MU", null ],
 		[ "F:/program/claudegraph/src/command/scale_command.cpp", "MU", null ],
 		[

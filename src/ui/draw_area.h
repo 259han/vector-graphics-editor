@@ -72,10 +72,16 @@ public:
     // 获取选中的图形项 - 使用SelectionManager
     QList<QGraphicsItem*> getSelectedItems() const;
     
-    // 复制、粘贴操作
+    // 增强的剪贴板操作
     void copySelectedItems();
     void pasteItems();
+    void pasteItemsAtPosition(const QPointF& pos);
     void cutSelectedItems();
+    
+    // 剪贴板交互
+    void copyToSystemClipboard();
+    void pasteFromSystemClipboard();
+    bool canPasteFromClipboard() const;
 
     // 添加图像调整器
     void addImageResizer(ImageResizer* resizer);
@@ -90,6 +96,10 @@ public:
     void setSelectionFilter(const SelectionManager::SelectionFilter& filter);
     void clearSelectionFilter();
 
+signals:
+    // 选择变更信号
+    void selectionChanged();
+
 protected:
     void mousePressEvent(QMouseEvent *event) override;
     void mouseReleaseEvent(QMouseEvent *event) override;
@@ -99,6 +109,7 @@ protected:
     void wheelEvent(QWheelEvent *event) override;
     void drawBackground(QPainter *painter, const QRectF &rect) override;
     void drawForeground(QPainter *painter, const QRectF &rect) override;
+    void contextMenuEvent(QContextMenuEvent *event) override;
 
 private:
     QGraphicsScene* m_scene;
@@ -120,8 +131,30 @@ private:
     QColor m_lineColor = Qt::black;
     int m_lineWidth = 2;
     
-    // 复制缓冲区
-    QList<QGraphicsItem*> m_copyBuffer;
+    // 剪贴板相关
+    // 内部剪贴板
+    struct ClipboardItem {
+        Graphic::GraphicType type;
+        QPen pen;
+        QBrush brush;
+        std::vector<QPointF> points;
+        QPointF position;
+        double rotation = 0.0;
+        QPointF scale = QPointF(1.0, 1.0);
+    };
+    QList<ClipboardItem> m_clipboardData;
+    
+    // 用于系统剪贴板的MIME类型
+    static const QString MIME_GRAPHICITEMS;
+    
+    // 辅助方法
+    QGraphicsItem* createItemFromClipboardData(const ClipboardItem& data, const QPointF& pastePosition);
+    QByteArray serializeGraphicItems(const QList<QGraphicsItem*>& items);
+    QList<ClipboardItem> deserializeGraphicItems(const QByteArray& data);
+    void createContextMenu(const QPoint& pos);
+    QPointF calculateSmartPastePosition() const;
+    QPointF getViewCenterScenePos() const;
+    void saveGraphicItemToClipboard(GraphicItem* item);
 
     QList<ImageResizer*> m_imageResizers;
     ImageManager* m_imageManager;

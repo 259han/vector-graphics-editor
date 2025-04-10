@@ -31,6 +31,14 @@
 #include "core/image_manager.h"
 #include "core/selection_manager.h"
 #include "../utils/logger.h"
+#include <QDataStream>
+#include <QMenu>
+#include <QContextMenuEvent>
+#include "../command/paste_command.h"
+#include "../command/command_manager.h"
+
+// Define the static MIME type constant
+const QString DrawArea::MIME_GRAPHICITEMS = "application/x-claudegraph-items";
 
 DrawArea::DrawArea(QWidget *parent)
     : QGraphicsView(parent)
@@ -66,8 +74,9 @@ DrawArea::DrawArea(QWidget *parent)
     m_imageManager->setDrawArea(this);
     
     // 连接选择管理器的信号
-    connect(m_selectionManager.get(), &SelectionManager::selectionChanged, [this]() {
+    connect(m_selectionManager.get(), &SelectionManager::selectionChanged, this, [this]() {
         viewport()->update();
+        emit selectionChanged();
     });
 }
 
@@ -626,27 +635,33 @@ void DrawArea::deleteSelectedGraphics()
     viewport()->update();
 }
 
-void DrawArea::selectAllGraphics()
-{
-    if (!m_selectionManager || !m_scene) {
+// 选择所有图形项
+void DrawArea::selectAllGraphics() {
+    if (!m_scene) {
         return;
     }
     
-    // 清除当前选择
-    m_selectionManager->clearSelection();
-    
-    // 获取所有图形项
+    // 获取场景中的所有可选择图形项
     QList<QGraphicsItem*> allItems = m_scene->items();
     
-    // 选择所有通过过滤器的图形项
-    for (QGraphicsItem* item : allItems) {
-        if (item && item->type() != QGraphicsRectItem::Type) {
-            m_selectionManager->addToSelection(item);
+    // 取消当前选择
+    for (auto item : m_scene->selectedItems()) {
+        item->setSelected(false);
+    }
+    
+    // 选择所有图形项
+    for (auto item : allItems) {
+        if (dynamic_cast<GraphicItem*>(item)) {
+            item->setSelected(true);
         }
     }
     
-    // 更新视图
-    viewport()->update();
+    // 如果需要，同步选择管理器的状态
+    if (m_selectionManager) {
+        m_selectionManager->syncSelectionFromScene();
+    }
+    
+    Logger::info(QString("已选择所有图形项: %1个").arg(m_scene->selectedItems().size()));
 }
 
 void DrawArea::bringToFront(QGraphicsItem* item)
@@ -750,67 +765,481 @@ QList<QGraphicsItem*> DrawArea::getSelectedItems() const
     return QList<QGraphicsItem*>();
 }
 
-// 复制选中的图形项
+// 复制选中的图形项到内部剪贴板
 void DrawArea::copySelectedItems() {
     auto selectedItems = getSelectedItems();
     if (selectedItems.isEmpty()) {
         return;
     }
     
-    // 清空复制缓冲区
-    m_copyBuffer.clear();
+    // 清空内部剪贴板数据
+    m_clipboardData.clear();
     
-    // 将选中项添加到复制缓冲区
+    // 保存选中项到内部剪贴板
     for (auto item : selectedItems) {
         if (auto* graphicItem = dynamic_cast<GraphicItem*>(item)) {
-            // 在这里可以深拷贝图形项，但现在先简单保存引用
-            m_copyBuffer.append(item);
+            saveGraphicItemToClipboard(graphicItem);
         }
     }
+    
+    Logger::info(QString("已复制 %1 个图形项到内部剪贴板").arg(m_clipboardData.size()));
 }
 
-// 粘贴复制的图形项
+// 粘贴复制的图形项（在默认位置）
 void DrawArea::pasteItems() {
-    if (m_copyBuffer.isEmpty() || !m_scene) {
+    // 使用智能定位
+    pasteItemsAtPosition(calculateSmartPastePosition());
+}
+
+// 在指定位置粘贴图形项
+void DrawArea::pasteItemsAtPosition(const QPointF& pos) {
+    // 防止重复执行粘贴操作
+    static bool isPasting = false;
+    if (isPasting) {
+        Logger::warning("DrawArea::pasteItemsAtPosition: 已有粘贴操作正在执行，防止重复粘贴");
         return;
     }
     
-    // 记录当前选中项
-    auto currentSelected = m_scene->selectedItems();
+    // 设置标志，防止重入
+    isPasting = true;
     
-    // 取消所有选择
-    for (auto item : currentSelected) {
-        item->setSelected(false);
+    // 进行标准检查
+    if (m_clipboardData.isEmpty() || !m_scene) {
+        Logger::warning("DrawArea::pasteItemsAtPosition: 剪贴板为空或场景无效，无法粘贴");
+        isPasting = false;
+        return;
     }
     
-    // 粘贴复制的图形项
-    QPointF offset(20, 20); // 粘贴时的偏移量
+    Logger::debug(QString("DrawArea::pasteItemsAtPosition: 开始粘贴 %1 个项目到位置 (%2, %3)")
+                 .arg(m_clipboardData.size())
+                 .arg(pos.x())
+                 .arg(pos.y()));
     
-    for (auto item : m_copyBuffer) {
-        if (auto* graphicItem = dynamic_cast<GraphicItem*>(item)) {
-            // 根据图形类型创建新图形
-            auto type = graphicItem->getGraphicType();
-            QGraphicsItem* newItem = m_graphicFactory->createItem(type, graphicItem->pos() + offset);
-            
-            if (newItem) {
-                // 复制属性（如果需要）
-                if (auto* newGraphicItem = dynamic_cast<GraphicItem*>(newItem)) {
-                    newGraphicItem->setPen(graphicItem->getPen());
-                    newGraphicItem->setBrush(graphicItem->getBrush());
-                    // 可以复制更多属性
+    try {
+        // 开始命令分组，确保粘贴操作是一个独立的命令
+        CommandManager::getInstance().beginCommandGroup();
+        
+        // 记录当前选中项
+        auto currentSelected = m_scene->selectedItems();
+        
+        // 取消所有选择
+        for (auto item : currentSelected) {
+            item->setSelected(false);
+        }
+        
+        // 计算图形项的边界矩形，用于居中
+        QRectF boundingRect;
+        bool first = true;
+        
+        for (const auto& clipData : m_clipboardData) {
+            QRectF itemRect;
+            if (clipData.points.size() >= 2) {
+                // 使用点集的边界矩形
+                QRectF rect(clipData.points[0], clipData.points[0]);
+                for (const auto& p : clipData.points) {
+                    rect.setLeft(std::min(rect.left(), p.x()));
+                    rect.setTop(std::min(rect.top(), p.y()));
+                    rect.setRight(std::max(rect.right(), p.x()));
+                    rect.setBottom(std::max(rect.bottom(), p.y()));
                 }
-                
-                m_scene->addItem(newItem);
-                newItem->setSelected(true);
+                itemRect = rect;
+            } else {
+                // 默认大小
+                itemRect = QRectF(0, 0, 50, 50);
+            }
+            
+            // 考虑位置
+            itemRect.translate(clipData.position);
+            
+            // 更新总的边界矩形
+            if (first) {
+                boundingRect = itemRect;
+                first = false;
+            } else {
+                boundingRect = boundingRect.united(itemRect);
             }
         }
+        
+        // 计算从边界矩形中心到粘贴位置的偏移
+        QPointF centerToPos;
+        if (!first) { // 如果边界矩形有效
+            centerToPos = pos - boundingRect.center();
+            Logger::debug(QString("DrawArea::pasteItemsAtPosition: 偏移量 (%1, %2)")
+                         .arg(centerToPos.x())
+                         .arg(centerToPos.y()));
+        }
+        
+        // 新创建的图形项集合
+        QList<QGraphicsItem*> pastedItems;
+        
+        // 创建所有图形项，但先不添加到场景
+        for (const auto& clipData : m_clipboardData) {
+            // 调整粘贴位置，使图形集合居中于目标位置
+            QPointF pastePos = clipData.position + centerToPos;
+            
+            Logger::debug(QString("DrawArea::pasteItemsAtPosition: 创建图形项，类型 %1，位置 (%2, %3)")
+                         .arg(static_cast<int>(clipData.type))
+                         .arg(pastePos.x())
+                         .arg(pastePos.y()));
+            
+            QGraphicsItem* newItem = createItemFromClipboardData(clipData, pastePos);
+            
+            if (newItem) {
+                pastedItems.append(newItem);
+            }
+        }
+        
+        // 只有在有图形项创建成功的情况下才继续
+        if (!pastedItems.isEmpty()) {
+            Logger::debug(QString("DrawArea::pasteItemsAtPosition: 为 %1 个图形项创建粘贴命令")
+                         .arg(pastedItems.size()));
+                         
+            // 1. 首先将所有图形项添加到场景，准备执行命令
+            for (QGraphicsItem* item : pastedItems) {
+                m_scene->addItem(item);
+                item->setSelected(true);
+            }
+            
+            // 2. 创建粘贴命令并执行（通过CommandManager记录到命令栈中）
+            PasteGraphicCommand* command = new PasteGraphicCommand(this, pastedItems);
+            
+            Logger::debug("DrawArea::pasteItemsAtPosition: 执行粘贴命令");
+            CommandManager::getInstance().executeCommand(command);
+            
+            // 通知场景更新
+            m_scene->update();
+            viewport()->update();
+            
+            Logger::info(QString("已粘贴 %1 个图形项").arg(pastedItems.size()));
+        } else {
+            Logger::warning("DrawArea::pasteItemsAtPosition: 没有创建任何图形项");
+        }
+        
+        // 结束命令分组
+        CommandManager::getInstance().endCommandGroup();
     }
+    catch (const std::exception& e) {
+        Logger::error(QString("DrawArea::pasteItemsAtPosition: 异常 - %1").arg(e.what()));
+        CommandManager::getInstance().endCommandGroup(); // 确保结束分组
+    }
+    catch (...) {
+        Logger::error("DrawArea::pasteItemsAtPosition: 未知异常");
+        CommandManager::getInstance().endCommandGroup(); // 确保结束分组
+    }
+    
+    // 重置粘贴标志
+    isPasting = false;
 }
 
 // 剪切选中的图形项
 void DrawArea::cutSelectedItems() {
     copySelectedItems();
+    copyToSystemClipboard(); // 同时复制到系统剪贴板
     deleteSelectedGraphics();
+    Logger::info("已剪切图形项");
+}
+
+// 复制到系统剪贴板
+void DrawArea::copyToSystemClipboard() {
+    auto selectedItems = getSelectedItems();
+    if (selectedItems.isEmpty()) {
+        return;
+    }
+    
+    // 序列化选中的图形项
+    QByteArray itemData = serializeGraphicItems(selectedItems);
+    
+    // 创建MIME数据
+    QMimeData* mimeData = new QMimeData();
+    mimeData->setData(MIME_GRAPHICITEMS, itemData);
+    
+    // 设置到系统剪贴板
+    QClipboard* clipboard = QApplication::clipboard();
+    clipboard->setMimeData(mimeData);
+    
+    Logger::info(QString("已复制 %1 个图形项到系统剪贴板").arg(selectedItems.size()));
+}
+
+// 从系统剪贴板粘贴
+void DrawArea::pasteFromSystemClipboard() {
+    if (!canPasteFromClipboard()) {
+        return;
+    }
+    
+    QClipboard* clipboard = QApplication::clipboard();
+    const QMimeData* mimeData = clipboard->mimeData();
+    
+    if (mimeData->hasFormat(MIME_GRAPHICITEMS)) {
+        QByteArray itemData = mimeData->data(MIME_GRAPHICITEMS);
+        QList<ClipboardItem> clipItems = deserializeGraphicItems(itemData);
+        
+        // 保存到内部剪贴板
+        m_clipboardData = clipItems;
+        
+        // 粘贴图形项
+        pasteItems();
+        
+        Logger::info(QString("已从系统剪贴板粘贴 %1 个图形项").arg(clipItems.size()));
+    }
+}
+
+// 检查剪贴板中是否有可粘贴的内容
+bool DrawArea::canPasteFromClipboard() const {
+    QClipboard* clipboard = QApplication::clipboard();
+    const QMimeData* mimeData = clipboard->mimeData();
+    
+    return mimeData && mimeData->hasFormat(MIME_GRAPHICITEMS);
+}
+
+// 处理右键菜单事件
+void DrawArea::contextMenuEvent(QContextMenuEvent* event) {
+    // 创建并显示上下文菜单
+    createContextMenu(event->pos());
+    event->accept();
+}
+
+// 创建右键菜单
+void DrawArea::createContextMenu(const QPoint& pos) {
+    QMenu menu(this);
+    
+    // 获取点击位置的场景坐标
+    QPointF scenePos = mapToScene(pos);
+    
+    // 添加各种操作
+    QAction* copyAction = menu.addAction("复制");
+    QAction* cutAction = menu.addAction("剪切");
+    QAction* pasteAction = menu.addAction("粘贴");
+    QAction* pasteHereAction = menu.addAction("粘贴到此处");
+    
+    // 根据当前状态启用/禁用选项
+    bool hasSelectedItems = !getSelectedItems().isEmpty();
+    bool canPaste = !m_clipboardData.isEmpty() || canPasteFromClipboard();
+    
+    copyAction->setEnabled(hasSelectedItems);
+    cutAction->setEnabled(hasSelectedItems);
+    pasteAction->setEnabled(canPaste);
+    pasteHereAction->setEnabled(canPaste);
+    
+    // 显示菜单并获取用户选择的操作
+    QAction* selectedAction = menu.exec(mapToGlobal(pos));
+    
+    // 执行选择的操作
+    if (selectedAction == copyAction) {
+        copySelectedItems();
+        copyToSystemClipboard();
+    } else if (selectedAction == cutAction) {
+        cutSelectedItems();
+    } else if (selectedAction == pasteAction) {
+        if (!m_clipboardData.isEmpty()) {
+            pasteItems();
+        } else if (canPasteFromClipboard()) {
+            pasteFromSystemClipboard();
+        }
+    } else if (selectedAction == pasteHereAction) {
+        if (!m_clipboardData.isEmpty()) {
+            pasteItemsAtPosition(scenePos);
+        } else if (canPasteFromClipboard()) {
+            const QMimeData* mimeData = QApplication::clipboard()->mimeData();
+            QByteArray itemData = mimeData->data(MIME_GRAPHICITEMS);
+            m_clipboardData = deserializeGraphicItems(itemData);
+            pasteItemsAtPosition(scenePos);
+        }
+    }
+}
+
+// 计算智能粘贴位置
+QPointF DrawArea::calculateSmartPastePosition() const {
+    // 如果有选中的项，使用最后选中项位置加上偏移
+    auto selectedItems = getSelectedItems();
+    if (!selectedItems.isEmpty()) {
+        QGraphicsItem* lastSelected = selectedItems.last();
+        return lastSelected->pos() + QPointF(30, 30); // 添加适当的偏移
+    }
+    
+    // 如果没有选中项，尝试使用视图中心
+    return getViewCenterScenePos();
+}
+
+// 获取视图中心的场景坐标
+QPointF DrawArea::getViewCenterScenePos() const {
+    QRect viewRect = viewport()->rect();
+    QPointF centerInView(viewRect.width() / 2.0, viewRect.height() / 2.0);
+    return mapToScene(centerInView.toPoint());
+}
+
+// 保存图形项到内部剪贴板
+void DrawArea::saveGraphicItemToClipboard(GraphicItem* item) {
+    if (!item) return;
+    
+    ClipboardItem clipData;
+    clipData.type = item->getGraphicType();
+    clipData.pen = item->getPen();
+    clipData.brush = item->getBrush();
+    clipData.points = item->getClipboardPoints();
+    clipData.position = item->pos();
+    clipData.rotation = item->rotation();
+    clipData.scale = item->getScale();
+    
+    m_clipboardData.append(clipData);
+}
+
+// 从剪贴板数据创建图形项
+QGraphicsItem* DrawArea::createItemFromClipboardData(const ClipboardItem& data, const QPointF& pastePosition) {
+    // 创建图形项
+    QGraphicsItem* newItem = m_graphicFactory->createCustomItem(data.type, data.points);
+    
+    if (!newItem) {
+        Logger::error("createItemFromClipboardData: 无法创建图形项");
+        return nullptr;
+    }
+    
+    // 设置属性
+    if (auto* graphicItem = dynamic_cast<GraphicItem*>(newItem)) {
+        // 先设置基本属性
+        graphicItem->setPen(data.pen);
+        graphicItem->setBrush(data.brush);
+        
+        // 应用旋转
+        graphicItem->setRotation(data.rotation);
+        
+        // 直接设置内部m_scale属性，绕过内部的scale自动平均处理
+        // 这种方法可以保证椭圆等不同的图形类型维持原始的XY比例
+        QPointF scale = data.scale;
+        
+        // 为不同形状特殊处理
+        if (data.type == Graphic::ELLIPSE) {
+            // 椭圆特殊处理：确保直接使用原始缩放值，不要让它被平均
+            // 保存原始缩放信息到私有数据区，以便子类可以访问
+            graphicItem->setItemData(1001, QVariant::fromValue(scale.x()));
+            graphicItem->setItemData(1002, QVariant::fromValue(scale.y()));
+            
+            // 这里调用自定义的setScale方法
+            graphicItem->setScale(scale);
+        } else {
+            // 其他形状使用正常的缩放设置
+            graphicItem->setScale(scale);
+        }
+        
+        // 应用标志
+        graphicItem->setFlag(QGraphicsItem::ItemIsSelectable, true);
+        graphicItem->setFlag(QGraphicsItem::ItemIsMovable, true);
+        
+        Logger::debug(QString("创建图形项，类型:%1, 缩放:(%2,%3), 位置:(%4,%5)")
+                     .arg(Graphic::graphicTypeToString(data.type))
+                     .arg(scale.x(), 0, 'f', 3)
+                     .arg(scale.y(), 0, 'f', 3)
+                     .arg(pastePosition.x())
+                     .arg(pastePosition.y()));
+    }
+    
+    // 设置位置
+    newItem->setPos(pastePosition);
+    
+    return newItem;
+}
+
+// 序列化图形项到字节数组
+QByteArray DrawArea::serializeGraphicItems(const QList<QGraphicsItem*>& items) {
+    QByteArray data;
+    QDataStream stream(&data, QIODevice::WriteOnly);
+    
+    // 写入版本信息
+    stream << (qint32)1; // 版本号
+    
+    // 写入图形项数量
+    stream << (qint32)items.size();
+    
+    // 序列化每个图形项
+    for (auto item : items) {
+        auto* graphicItem = dynamic_cast<GraphicItem*>(item);
+        if (!graphicItem) continue;
+        
+        // 写入图形类型
+        stream << (qint32)graphicItem->getGraphicType();
+        
+        // 写入画笔
+        stream << graphicItem->getPen();
+        
+        // 写入画刷
+        stream << graphicItem->getBrush();
+        
+        // 写入位置
+        stream << graphicItem->pos();
+        
+        // 写入旋转
+        stream << (qreal)graphicItem->rotation();
+        
+        // 写入缩放
+        stream << graphicItem->getScale();
+        
+        // 写入点集
+        auto points = graphicItem->getClipboardPoints();
+        stream << (qint32)points.size();
+        for (const auto& point : points) {
+            stream << point;
+        }
+    }
+    
+    return data;
+}
+
+// 从字节数组反序列化图形项
+QList<DrawArea::ClipboardItem> DrawArea::deserializeGraphicItems(const QByteArray& data) {
+    QList<ClipboardItem> result;
+    QDataStream stream(data);
+    
+    // 读取版本信息
+    qint32 version;
+    stream >> version;
+    
+    if (version != 1) {
+        Logger::error(QString("deserializeGraphicItems: 不支持的版本号 %1").arg(version));
+        return result;
+    }
+    
+    // 读取图形项数量
+    qint32 itemCount;
+    stream >> itemCount;
+    
+    // 反序列化每个图形项
+    for (qint32 i = 0; i < itemCount; ++i) {
+        ClipboardItem item;
+        
+        // 读取图形类型
+        qint32 type;
+        stream >> type;
+        item.type = static_cast<Graphic::GraphicType>(type);
+        
+        // 读取画笔
+        stream >> item.pen;
+        
+        // 读取画刷
+        stream >> item.brush;
+        
+        // 读取位置
+        stream >> item.position;
+        
+        // 读取旋转
+        stream >> item.rotation;
+        
+        // 读取缩放
+        stream >> item.scale;
+        
+        // 读取点集
+        qint32 pointCount;
+        stream >> pointCount;
+        item.points.reserve(pointCount);
+        
+        for (qint32 j = 0; j < pointCount; ++j) {
+            QPointF point;
+            stream >> point;
+            item.points.push_back(point);
+        }
+        
+        result.append(item);
+    }
+    
+    return result;
 }
 
 void DrawArea::addImageResizer(ImageResizer* resizer)

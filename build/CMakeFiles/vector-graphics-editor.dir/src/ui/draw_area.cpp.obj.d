@@ -596,4 +596,15 @@ CMakeFiles/vector-graphics-editor.dir/src/ui/draw_area.cpp.obj: \
  F:/program/claudegraph/src/core/image_manager.h \
  D:/Qt/6.8.2/mingw_64/include/QtWidgets/QGraphicsPixmapItem \
  F:/program/claudegraph/src/core/selection_manager.h \
- F:/program/claudegraph/src/utils/logger.h
+ F:/program/claudegraph/src/utils/logger.h \
+ D:/Qt/6.8.2/mingw_64/include/QtWidgets/QMenu \
+ D:/Qt/6.8.2/mingw_64/include/QtWidgets/qmenu.h \
+ D:/Qt/6.8.2/mingw_64/include/QtGui/QContextMenuEvent \
+ F:/program/claudegraph/src/command/paste_command.h \
+ F:/program/claudegraph/src/core/graphic.h \
+ F:/program/claudegraph/src/command/command_manager.h \
+ F:/program/claudegraph/src/command/composite_command.h \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/QReadWriteLock \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/qreadwritelock.h \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/QElapsedTimer \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/qelapsedtimer.h

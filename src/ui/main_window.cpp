@@ -20,6 +20,7 @@
 #include "../command/command_manager.h"
 #include <QApplication>
 #include <QTimer>
+#include <QClipboard>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -615,18 +616,67 @@ void MainWindow::onLineWidthChanged(int width) {
 
 // 添加setupConnections函数
 void MainWindow::setupConnections() {
-    // 只保留CommandManager相关的连接
-    // 撤销/重做按钮的连接已在createActions中设置
+    // 绘图区域的连接
+    connect(m_drawArea, &DrawArea::selectionChanged, this, &MainWindow::updateActionStates);
     
-    // 连接CommandManager信号到更新UI状态的槽
-    connect(&CommandManager::getInstance(), &CommandManager::commandExecuted, 
-            this, &MainWindow::updateUndoRedoActions);
-    connect(&CommandManager::getInstance(), &CommandManager::commandUndone, 
-            this, &MainWindow::updateUndoRedoActions);
-    connect(&CommandManager::getInstance(), &CommandManager::commandRedone, 
-            this, &MainWindow::updateUndoRedoActions);
-    connect(&CommandManager::getInstance(), &CommandManager::stackCleared, 
-            this, &MainWindow::updateUndoRedoActions);
+    // 撤销/重做按钮连接到CommandManager
+    CommandManager& cmdManager = CommandManager::getInstance();
+    connect(&cmdManager, &CommandManager::commandExecuted, this, &MainWindow::updateUndoRedoActions);
+    connect(&cmdManager, &CommandManager::commandUndone, this, &MainWindow::updateUndoRedoActions);
+    connect(&cmdManager, &CommandManager::commandRedone, this, &MainWindow::updateUndoRedoActions);
+    connect(&cmdManager, &CommandManager::stackCleared, this, &MainWindow::updateUndoRedoActions);
+    
+    // 撤销/重做动作连接
+    connect(m_undoAction, &QAction::triggered, this, &MainWindow::undo);
+    connect(m_redoAction, &QAction::triggered, this, &MainWindow::redo);
+    
+    // 剪贴板操作连接
+    connect(m_copyAction, &QAction::triggered, this, [this]() { onEditActionTriggered(m_copyAction); });
+    connect(m_pasteAction, &QAction::triggered, this, [this]() { onEditActionTriggered(m_pasteAction); });
+    connect(m_cutAction, &QAction::triggered, this, [this]() { onEditActionTriggered(m_cutAction); });
+    
+    // 监听系统剪贴板变化
+    connect(QApplication::clipboard(), &QClipboard::dataChanged, this, &MainWindow::updateClipboardActions);
+    
+    // 初始化动作状态
+    updateActionStates();
+}
+
+// Add this method before updateUndoRedoActions
+void MainWindow::updateActionStates() {
+    // 获取选中项数量
+    int selectedItemCount = m_drawArea->getSelectedItems().size();
+    bool hasSelection = selectedItemCount > 0;
+    
+    // 更新依赖选择的动作状态
+    m_copyAction->setEnabled(hasSelection);
+    m_cutAction->setEnabled(hasSelection);
+    
+    // 更新其他动作
+    m_deleteAction->setEnabled(hasSelection);
+    m_rotateAction->setEnabled(hasSelection);
+    m_scaleAction->setEnabled(hasSelection);
+    
+    // 图层操作
+    m_bringToFrontAction->setEnabled(hasSelection);
+    m_sendToBackAction->setEnabled(hasSelection);
+    m_bringForwardAction->setEnabled(hasSelection);
+    m_sendBackwardAction->setEnabled(hasSelection);
+    
+    // 更新剪贴板状态
+    updateClipboardActions();
+}
+
+// Add this method after updateActionStates
+void MainWindow::updateClipboardActions() {
+    // 检查是否可以从剪贴板粘贴
+    bool canPaste = m_drawArea->canPasteFromClipboard();
+    m_pasteAction->setEnabled(canPaste);
+    
+    // 状态栏提示
+    if (canPaste) {
+        statusBar()->showMessage(tr("剪贴板中有可粘贴的图形"), 3000);
+    }
 }
 
 // 实现撤销/重做槽函数

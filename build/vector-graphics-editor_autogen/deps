@@ -207,6 +207,7 @@ vector-graphics-editor_autogen/timestamp: \
 	C:/msys64/mingw64/lib/gcc/x86_64-w64-mingw32/14.2.0/include/syslimits.h \
 	D:/Qt/6.8.2/mingw_64/include/QtCore/QDataStream \
 	D:/Qt/6.8.2/mingw_64/include/QtCore/QDebug \
+	D:/Qt/6.8.2/mingw_64/include/QtCore/QElapsedTimer \
 	D:/Qt/6.8.2/mingw_64/include/QtCore/QList \
 	D:/Qt/6.8.2/mingw_64/include/QtCore/QObject \
 	D:/Qt/6.8.2/mingw_64/include/QtCore/QPointF \
@@ -757,12 +758,16 @@ vector-graphics-editor_autogen/timestamp: \
 	F:/program/claudegraph/src/command/command.h \
 	F:/program/claudegraph/src/command/command_manager.cpp \
 	F:/program/claudegraph/src/command/command_manager.h \
+	F:/program/claudegraph/src/command/composite_command.cpp \
+	F:/program/claudegraph/src/command/composite_command.h \
 	F:/program/claudegraph/src/command/create_graphic_command.cpp \
 	F:/program/claudegraph/src/command/create_graphic_command.h \
 	F:/program/claudegraph/src/command/fill_command.cpp \
 	F:/program/claudegraph/src/command/fill_command.h \
 	F:/program/claudegraph/src/command/move_command.cpp \
 	F:/program/claudegraph/src/command/move_command.h \
+	F:/program/claudegraph/src/command/paste_command.cpp \
+	F:/program/claudegraph/src/command/paste_command.h \
 	F:/program/claudegraph/src/command/rotate_command.cpp \
 	F:/program/claudegraph/src/command/rotate_command.h \
 	F:/program/claudegraph/src/command/scale_command.cpp \

@@ -40,6 +40,10 @@ private slots:
     void undo();
     void redo();
     void updateUndoRedoActions();
+    
+    // UI状态管理
+    void updateActionStates();
+    void updateClipboardActions();
 
 private:
     void createActions();

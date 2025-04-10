@@ -202,6 +202,30 @@ src/command/command_manager.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\vector-graphics-editor.dir\build.make CMakeFiles/vector-graphics-editor.dir/src/command/command_manager.cpp.s
 .PHONY : src/command/command_manager.cpp.s
 
+src/command/composite_command.obj: src/command/composite_command.cpp.obj
+.PHONY : src/command/composite_command.obj
+
+# target to build an object file
+src/command/composite_command.cpp.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\vector-graphics-editor.dir\build.make CMakeFiles/vector-graphics-editor.dir/src/command/composite_command.cpp.obj
+.PHONY : src/command/composite_command.cpp.obj
+
+src/command/composite_command.i: src/command/composite_command.cpp.i
+.PHONY : src/command/composite_command.i
+
+# target to preprocess a source file
+src/command/composite_command.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\vector-graphics-editor.dir\build.make CMakeFiles/vector-graphics-editor.dir/src/command/composite_command.cpp.i
+.PHONY : src/command/composite_command.cpp.i
+
+src/command/composite_command.s: src/command/composite_command.cpp.s
+.PHONY : src/command/composite_command.s
+
+# target to generate assembly for a file
+src/command/composite_command.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\vector-graphics-editor.dir\build.make CMakeFiles/vector-graphics-editor.dir/src/command/composite_command.cpp.s
+.PHONY : src/command/composite_command.cpp.s
+
 src/command/create_graphic_command.obj: src/command/create_graphic_command.cpp.obj
 .PHONY : src/command/create_graphic_command.obj
 
@@ -273,6 +297,30 @@ src/command/move_command.s: src/command/move_command.cpp.s
 src/command/move_command.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\vector-graphics-editor.dir\build.make CMakeFiles/vector-graphics-editor.dir/src/command/move_command.cpp.s
 .PHONY : src/command/move_command.cpp.s
+
+src/command/paste_command.obj: src/command/paste_command.cpp.obj
+.PHONY : src/command/paste_command.obj
+
+# target to build an object file
+src/command/paste_command.cpp.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\vector-graphics-editor.dir\build.make CMakeFiles/vector-graphics-editor.dir/src/command/paste_command.cpp.obj
+.PHONY : src/command/paste_command.cpp.obj
+
+src/command/paste_command.i: src/command/paste_command.cpp.i
+.PHONY : src/command/paste_command.i
+
+# target to preprocess a source file
+src/command/paste_command.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\vector-graphics-editor.dir\build.make CMakeFiles/vector-graphics-editor.dir/src/command/paste_command.cpp.i
+.PHONY : src/command/paste_command.cpp.i
+
+src/command/paste_command.s: src/command/paste_command.cpp.s
+.PHONY : src/command/paste_command.s
+
+# target to generate assembly for a file
+src/command/paste_command.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\vector-graphics-editor.dir\build.make CMakeFiles/vector-graphics-editor.dir/src/command/paste_command.cpp.s
+.PHONY : src/command/paste_command.cpp.s
 
 src/command/rotate_command.obj: src/command/rotate_command.cpp.obj
 .PHONY : src/command/rotate_command.obj
@@ -915,6 +963,9 @@ help:
 	@echo ... src/command/command_manager.obj
 	@echo ... src/command/command_manager.i
 	@echo ... src/command/command_manager.s
+	@echo ... src/command/composite_command.obj
+	@echo ... src/command/composite_command.i
+	@echo ... src/command/composite_command.s
 	@echo ... src/command/create_graphic_command.obj
 	@echo ... src/command/create_graphic_command.i
 	@echo ... src/command/create_graphic_command.s
@@ -924,6 +975,9 @@ help:
 	@echo ... src/command/move_command.obj
 	@echo ... src/command/move_command.i
 	@echo ... src/command/move_command.s
+	@echo ... src/command/paste_command.obj
+	@echo ... src/command/paste_command.i
+	@echo ... src/command/paste_command.s
 	@echo ... src/command/rotate_command.obj
 	@echo ... src/command/rotate_command.i
 	@echo ... src/command/rotate_command.s

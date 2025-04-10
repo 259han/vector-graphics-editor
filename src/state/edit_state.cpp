@@ -408,17 +408,42 @@ void EditState::keyPressEvent(DrawArea* drawArea, QKeyEvent* event)
             Logger::info("EditState: 执行删除命令");
         }
     } else if (event->key() == Qt::Key_C && event->modifiers() == Qt::ControlModifier) {
-        // 复制选中的图形
+        // 复制选中的图形到内部剪贴板和系统剪贴板
         drawArea->copySelectedItems();
-        Logger::info("EditState: 复制选中的图形");
+        drawArea->copyToSystemClipboard();
+        Logger::info("EditState: 复制选中的图形到剪贴板");
     } else if (event->key() == Qt::Key_V && event->modifiers() == Qt::ControlModifier) {
-        // 粘贴图形
-        drawArea->pasteItems();
-        Logger::info("EditState: 粘贴图形");
+        // 如果按下了Shift，则粘贴到光标位置
+        if (event->modifiers() & Qt::ShiftModifier) {
+            // 获取光标位置
+            QPoint cursorPos = drawArea->mapFromGlobal(QCursor::pos());
+            QPointF scenePos = drawArea->mapToScene(cursorPos);
+            
+            // 优先从内部剪贴板粘贴
+            if (drawArea->canPasteFromClipboard()) {
+                drawArea->pasteFromSystemClipboard();
+            } else {
+                drawArea->pasteItemsAtPosition(scenePos);
+            }
+            Logger::info("EditState: 粘贴图形到光标位置");
+        } else {
+            // 常规粘贴（智能定位）
+            // 优先从内部剪贴板粘贴
+            if (drawArea->canPasteFromClipboard()) {
+                drawArea->pasteFromSystemClipboard();
+            } else {
+                drawArea->pasteItems();
+            }
+            Logger::info("EditState: 粘贴图形（智能定位）");
+        }
     } else if (event->key() == Qt::Key_X && event->modifiers() == Qt::ControlModifier) {
         // 剪切选中的图形
         drawArea->cutSelectedItems();
         Logger::info("EditState: 剪切选中的图形");
+    } else if (event->key() == Qt::Key_A && event->modifiers() == Qt::ControlModifier) {
+        // 全选
+        drawArea->selectAllGraphics();
+        Logger::info("EditState: 全选图形");
     }
 }
 

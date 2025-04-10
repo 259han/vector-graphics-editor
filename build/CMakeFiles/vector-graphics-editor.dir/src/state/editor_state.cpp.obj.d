@@ -519,10 +519,13 @@ CMakeFiles/vector-graphics-editor.dir/src/state/editor_state.cpp.obj: \
  D:/Qt/6.8.2/mingw_64/include/QtCore/qcoreapplication.h \
  F:/program/claudegraph/src/command/command_manager.h \
  F:/program/claudegraph/src/command/command.h \
+ F:/program/claudegraph/src/command/composite_command.h \
  D:/Qt/6.8.2/mingw_64/include/QtCore/QStack \
  D:/Qt/6.8.2/mingw_64/include/QtCore/qstack.h \
  D:/Qt/6.8.2/mingw_64/include/QtCore/QReadWriteLock \
  D:/Qt/6.8.2/mingw_64/include/QtCore/qreadwritelock.h \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/QElapsedTimer \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/qelapsedtimer.h \
  D:/Qt/6.8.2/mingw_64/include/QtWidgets/QStatusBar \
  D:/Qt/6.8.2/mingw_64/include/QtWidgets/qstatusbar.h \
  D:/Qt/6.8.2/mingw_64/include/QtWidgets/QApplication \

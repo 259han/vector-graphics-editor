@@ -478,10 +478,13 @@ CMakeFiles/vector-graphics-editor.dir/src/state/edit_state.cpp.obj: \
  F:/program/claudegraph/src/core/selection_manager.h \
  F:/program/claudegraph/src/command/selection_command.h \
  F:/program/claudegraph/src/command/command_manager.h \
+ F:/program/claudegraph/src/command/composite_command.h \
  D:/Qt/6.8.2/mingw_64/include/QtCore/QStack \
  D:/Qt/6.8.2/mingw_64/include/QtCore/qstack.h \
  D:/Qt/6.8.2/mingw_64/include/QtCore/QReadWriteLock \
  D:/Qt/6.8.2/mingw_64/include/QtCore/qreadwritelock.h \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/QElapsedTimer \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/qelapsedtimer.h \
  F:/program/claudegraph/src/command/style_change_command.h \
  F:/program/claudegraph/src/utils/logger.h \
  D:/Qt/6.8.2/mingw_64/include/QtCore/QDateTime \

@@ -204,6 +204,8 @@ F:/program/claudegraph/build/vector-graphics-editor_autogen/YB4PXEL5CK/moc_comma
   C:/msys64/mingw64/lib/gcc/x86_64-w64-mingw32/14.2.0/include/stddef.h \
   C:/msys64/mingw64/lib/gcc/x86_64-w64-mingw32/14.2.0/include/stdint.h \
   C:/msys64/mingw64/lib/gcc/x86_64-w64-mingw32/14.2.0/include/syslimits.h \
+  D:/Qt/6.8.2/mingw_64/include/QtCore/QElapsedTimer \
+  D:/Qt/6.8.2/mingw_64/include/QtCore/QList \
   D:/Qt/6.8.2/mingw_64/include/QtCore/QObject \
   D:/Qt/6.8.2/mingw_64/include/QtCore/QReadWriteLock \
   D:/Qt/6.8.2/mingw_64/include/QtCore/QStack \
@@ -311,4 +313,5 @@ F:/program/claudegraph/build/vector-graphics-editor_autogen/YB4PXEL5CK/moc_comma
   D:/Qt/6.8.2/mingw_64/include/QtCore/qversiontagging.h \
   D:/Qt/6.8.2/mingw_64/include/QtCore/qxptype_traits.h \
   D:/Qt/6.8.2/mingw_64/include/QtCore/qyieldcpu.h \
-  F:/program/claudegraph/src/command/command.h
+  F:/program/claudegraph/src/command/command.h \
+  F:/program/claudegraph/src/command/composite_command.h

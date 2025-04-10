@@ -14,6 +14,10 @@ public:
     QRectF boundingRect() const override;
     Graphic::GraphicType getGraphicType() const override { return Graphic::ELLIPSE; }
     
+    // 重写缩放方法，以确保椭圆特有的非均匀缩放处理
+    void setScale(const QPointF& scale) override;
+    void setScale(qreal scale) override;
+    
     // 椭圆特有的方法
     QPointF getCenter() const;
     void setCenter(const QPointF& center);

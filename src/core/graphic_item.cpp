@@ -1,4 +1,11 @@
 #include "graphic_item.h"
+#include "../utils/logger.h"
+#include <QStyleOption>
+#include <QPainter>
+#include <QGraphicsScene>
+#include <QDebug>
+#include <QTransform>
+#include <cmath>
 
 GraphicItem::GraphicItem()
 {
@@ -213,20 +220,32 @@ void GraphicItem::setScale(const QPointF& scale)
 {
     m_scale = scale;
     
-    // Apply the scale to the QGraphicsItem using the average of x and y
+    // 为了最大程度保持原始的外观，使用X和Y比例的平均值应用到QGraphicsItem
+    // 注意：这是一个折中方案，因为QGraphicsItem本身不支持非均匀缩放
     qreal uniformScale = (scale.x() + scale.y()) / 2.0;
-    QGraphicsItem::setScale(uniformScale);
+    
+    // 确保缩放值合理
+    if (uniformScale > 0.001) {
+        QGraphicsItem::setScale(uniformScale);
+    }
     
     update();
+    
+    Logger::debug(QString("GraphicItem::setScale - 设置缩放为 (%1, %2), 均匀缩放: %3")
+                 .arg(scale.x(), 0, 'f', 3)
+                 .arg(scale.y(), 0, 'f', 3)
+                 .arg(uniformScale, 0, 'f', 3));
 }
 
 void GraphicItem::setScale(qreal scale)
 {
-    // Update our internal scale to maintain consistent x and y scales
+    // 确保维持一致的X和Y比例
     m_scale = QPointF(scale, scale);
     
-    // Call the base class implementation
-    QGraphicsItem::setScale(scale);
+    // 调用基类实现
+    if (scale > 0.001) {
+        QGraphicsItem::setScale(scale);
+    }
     
     update();
 }

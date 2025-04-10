@@ -76,6 +76,9 @@ public:
     
     // 辅助绘制方法
     void drawSelectionHandles(QPainter* painter);
+    
+    // 用于剪贴板功能的公共接口，获取绘图点集
+    std::vector<QPointF> getClipboardPoints() const { return getDrawPoints(); }
 
 protected:
     std::shared_ptr<DrawStrategy> m_drawStrategy;

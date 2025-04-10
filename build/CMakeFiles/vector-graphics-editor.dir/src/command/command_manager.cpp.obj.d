@@ -278,8 +278,8 @@ CMakeFiles/vector-graphics-editor.dir/src/command/command_manager.cpp.obj: \
  D:/Qt/6.8.2/mingw_64/include/QtCore/qstring.h \
  D:/Qt/6.8.2/mingw_64/include/QtCore/qstringconverter.h \
  D:/Qt/6.8.2/mingw_64/include/QtCore/qstringconverter_base.h \
- D:/Qt/6.8.2/mingw_64/include/QtCore/QStack \
- D:/Qt/6.8.2/mingw_64/include/QtCore/qstack.h \
+ F:/program/claudegraph/src/command/composite_command.h \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/QList \
  D:/Qt/6.8.2/mingw_64/include/QtCore/qlist.h \
  D:/Qt/6.8.2/mingw_64/include/QtCore/qhashfunctions.h \
  C:/msys64/mingw64/include/c++/14.2.0/numeric \
@@ -287,9 +287,12 @@ CMakeFiles/vector-graphics-editor.dir/src/command/command_manager.cpp.obj: \
  C:/msys64/mingw64/include/c++/14.2.0/pstl/glue_numeric_defs.h \
  D:/Qt/6.8.2/mingw_64/include/QtCore/qiterator.h \
  D:/Qt/6.8.2/mingw_64/include/QtCore/qbytearraylist.h \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/qlist.h \
  D:/Qt/6.8.2/mingw_64/include/QtCore/qstringlist.h \
  D:/Qt/6.8.2/mingw_64/include/QtCore/qalgorithms.h \
  D:/Qt/6.8.2/mingw_64/include/QtCore/qstringmatcher.h \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/QStack \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/qstack.h \
  D:/Qt/6.8.2/mingw_64/include/QtCore/QObject \
  D:/Qt/6.8.2/mingw_64/include/QtCore/qobject.h \
  D:/Qt/6.8.2/mingw_64/include/QtCore/qobjectdefs.h \
@@ -322,6 +325,8 @@ CMakeFiles/vector-graphics-editor.dir/src/command/command_manager.cpp.obj: \
  D:/Qt/6.8.2/mingw_64/include/QtCore/QReadWriteLock \
  D:/Qt/6.8.2/mingw_64/include/QtCore/qreadwritelock.h \
  D:/Qt/6.8.2/mingw_64/include/QtCore/qdeadlinetimer.h \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/qelapsedtimer.h \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/QElapsedTimer \
  D:/Qt/6.8.2/mingw_64/include/QtCore/qelapsedtimer.h \
  F:/program/claudegraph/src/utils/logger.h \
  D:/Qt/6.8.2/mingw_64/include/QtCore/QDateTime \

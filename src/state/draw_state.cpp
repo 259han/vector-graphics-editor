@@ -248,6 +248,16 @@ QGraphicsItem* DrawState::createFinalItem(DrawArea* drawArea)
 {
     QGraphicsItem* item = nullptr;
     
+    // 检查是否已经在创建过程中
+    static bool isCreating = false;
+    if (isCreating) {
+        Logger::warning("DrawState::createFinalItem: 已有创建图形项的命令正在执行，防止重复创建");
+        return nullptr;
+    }
+    
+    // 设置标志，防止重入
+    isCreating = true;
+    
     Logger::debug("DrawState::createFinalItem: 开始创建图形项");
     
     // 准备画笔和画刷
@@ -285,31 +295,65 @@ QGraphicsItem* DrawState::createFinalItem(DrawArea* drawArea)
     // 确保点数据合法
     if (points.size() < 2) {
         Logger::warning("DrawState::createFinalItem: 点数据不足，无法创建图形");
+        isCreating = false;
         return nullptr;
     }
     
     // 检查DrawArea和场景是否有效
     if (!drawArea || !drawArea->scene()) {
         Logger::error("DrawState::createFinalItem: DrawArea或场景无效");
+        isCreating = false;
         return nullptr;
     }
     
-    // 创建命令对象并执行命令
-    Logger::debug(QString("DrawState::createFinalItem: 创建命令对象，图形类型: %1").arg(static_cast<int>(m_graphicType)));
-    CreateGraphicCommand* command = new CreateGraphicCommand(
-        drawArea, m_graphicType, points, pen, brush);
-    
-    Logger::debug("DrawState::createFinalItem: 执行命令");
-    CommandManager::getInstance().executeCommand(command);
-    
-    // 获取创建的图形项
-    item = command->getCreatedItem();
-    if (item) {
-        Logger::debug("DrawState::createFinalItem: 图形项创建成功");
-    } else {
-        Logger::warning("DrawState::createFinalItem: 图形项创建失败");
+    try {
+        // 开始命令分组，确保这个绘图操作是独立的一个命令
+        CommandManager::getInstance().beginCommandGroup();
+        
+        // 创建命令对象并执行命令
+        Logger::debug(QString("DrawState::createFinalItem: 创建命令对象，图形类型: %1").arg(static_cast<int>(m_graphicType)));
+        
+        // 检查点集合是否合理
+        for (const auto& p : points) {
+            if (!std::isfinite(p.x()) || !std::isfinite(p.y())) {
+                Logger::error("DrawState::createFinalItem: 点位置包含无效值");
+                isCreating = false;
+                CommandManager::getInstance().endCommandGroup();
+                return nullptr;
+            }
+        }
+        
+        CreateGraphicCommand* command = new CreateGraphicCommand(
+            drawArea, m_graphicType, points, pen, brush);
+        
+        Logger::debug("DrawState::createFinalItem: 执行命令");
+        CommandManager::getInstance().executeCommand(command);
+        
+        // 获取创建的图形项
+        item = command->getCreatedItem();
+        
+        if (item) {
+            Logger::debug(QString("DrawState::createFinalItem: 图形项创建成功，指针: %1")
+                        .arg(reinterpret_cast<quintptr>(item)));
+            Logger::info(QString("DrawState: 创建了 %1 图形").arg(Graphic::graphicTypeToString(m_graphicType)));
+        } else {
+            Logger::warning("DrawState::createFinalItem: 图形项创建失败");
+        }
+        
+        // 结束命令分组
+        CommandManager::getInstance().endCommandGroup();
+    }
+    catch (const std::exception& e) {
+        Logger::error(QString("DrawState::createFinalItem: 异常 - %1").arg(e.what()));
+        CommandManager::getInstance().endCommandGroup(); // 确保结束分组
+    }
+    catch (...) {
+        Logger::error("DrawState::createFinalItem: 未知异常");
+        CommandManager::getInstance().endCommandGroup(); // 确保结束分组
     }
     
+    // 重置创建标志
+    isCreating = false;
     return item;
 }
 
