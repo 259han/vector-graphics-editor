@@ -268,24 +268,12 @@ QGraphicsItem* DrawState::createFinalItem(DrawArea* drawArea)
     std::vector<QPointF> points;
     
     if (m_graphicType == Graphic::BEZIER) {
-        // 为Bezier曲线使用所有控制点
+        // 为Bezier曲线只使用控制点，不计算曲线上的点
         points = m_bezierControlPoints;
         Logger::debug(QString("DrawState::createFinalItem: 贝塞尔曲线控制点数量: %1").arg(points.size()));
         
-        // 使用与预览相同的算法计算曲线上的点
-        if (points.size() > 2) {
-            std::vector<QPointF> curvePoints;
-            curvePoints.push_back(points[0]);
-            
-            const int steps = 100; // 与预览使用相同的步数
-            for (int i = 1; i <= steps; ++i) {
-                double t = static_cast<double>(i) / steps;
-                QPointF point = calculateBezierPoint(t, points);
-                curvePoints.push_back(point);
-            }
-            
-            points = curvePoints;
-        }
+        // 不再转换为曲线点，直接使用控制点创建贝塞尔曲线
+        // BezierGraphicItem 和 BezierDrawStrategy 会负责绘制曲线
     } else {
         // 其他图形使用起点和终点
         points.push_back(m_startPoint);
@@ -445,21 +433,53 @@ void DrawState::updatePreviewItem(DrawArea* drawArea)
         case Graphic::BEZIER: {
             // 贝塞尔曲线预览
             if (m_bezierControlPoints.size() >= 2) {
+                // 创建Path但不自己计算曲线点，只添加moveTo和控制点
                 QPainterPath path;
-                path.moveTo(m_bezierControlPoints[0]);
-                
-                // 使用n次贝塞尔曲线
-                if (m_bezierControlPoints.size() > 2) {
-                    // 计算贝塞尔曲线上的点
-                    const int steps = 100; // 曲线精度
+                // 对于两个点是直线
+                if (m_bezierControlPoints.size() == 2) {
+                    path.moveTo(m_bezierControlPoints[0]);
+                    path.lineTo(m_bezierControlPoints[1]);
+                } else if (m_bezierControlPoints.size() == 3) {
+                    // 2阶贝塞尔曲线
+                    path.moveTo(m_bezierControlPoints[0]);
+                    path.quadTo(m_bezierControlPoints[1], m_bezierControlPoints[2]);
+                } else if (m_bezierControlPoints.size() == 4) {
+                    // 3阶贝塞尔曲线
+                    path.moveTo(m_bezierControlPoints[0]);
+                    path.cubicTo(m_bezierControlPoints[1], m_bezierControlPoints[2], m_bezierControlPoints[3]);
+                } else {
+                    // 高阶贝塞尔曲线，使用与BezierDrawStrategy相同的算法
+                    path.moveTo(m_bezierControlPoints[0]);
+                    const int steps = 100;
                     for (int i = 1; i <= steps; ++i) {
                         double t = static_cast<double>(i) / steps;
-                        QPointF point = calculateBezierPoint(t, m_bezierControlPoints);
-                        path.lineTo(point);
+                        
+                        // 使用伯恩斯坦公式计算贝塞尔曲线点，与BezierDrawStrategy保持一致
+                        int n = m_bezierControlPoints.size() - 1;
+                        double x = 0.0, y = 0.0;
+                        
+                        for (int j = 0; j <= n; j++) {
+                            // 二项式系数 * t^j * (1-t)^(n-j)
+                            double coef = 1.0;
+                            // 简化计算二项式系数，只处理最常见的情况
+                            if (j == 0 || j == n) {
+                                coef = 1.0;
+                            } else {
+                                // 计算二项式系数C(n,j)
+                                coef = 1.0;
+                                for (int k = 1; k <= j; k++) {
+                                    coef *= (n - k + 1);
+                                    coef /= k;
+                                }
+                            }
+                            
+                            double bern = coef * pow(t, j) * pow(1 - t, n - j);
+                            x += bern * m_bezierControlPoints[j].x();
+                            y += bern * m_bezierControlPoints[j].y();
+                        }
+                        
+                        path.lineTo(QPointF(x, y));
                     }
-                } else {
-                    // 只有两个点时，直接画直线
-                    path.lineTo(m_bezierControlPoints[1]);
                 }
 
                 // 如果预览项不存在，创建新的
@@ -482,26 +502,6 @@ void DrawState::updatePreviewItem(DrawArea* drawArea)
     
     // 确保场景更新
     drawArea->scene()->update();
-}
-
-// 计算贝塞尔曲线上的点
-QPointF DrawState::calculateBezierPoint(double t, const std::vector<QPointF>& points)
-{
-    if (points.empty()) {
-        return QPointF();
-    }
-    
-    std::vector<QPointF> temp = points;
-    int n = temp.size() - 1;
-    
-    // 使用德卡斯特里奥算法计算贝塞尔曲线上的点
-    for (int r = 1; r <= n; ++r) {
-        for (int i = 0; i <= n - r; ++i) {
-            temp[i] = (1 - t) * temp[i] + t * temp[i + 1];
-        }
-    }
-    
-    return temp[0];
 }
 
 void DrawState::handleRightMousePress(DrawArea* drawArea, QPointF scenePos)

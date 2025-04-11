@@ -170,6 +170,7 @@ private:
         QPointF scale = QPointF(1.0, 1.0);
     };
     QList<ClipboardItem> m_clipboardData;
+    bool m_isClipboardFromCut = false;
     
     // 用于系统剪贴板的MIME类型
     static const QString MIME_GRAPHICITEMS;

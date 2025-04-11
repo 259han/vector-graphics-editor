@@ -1,12 +1,13 @@
-#include "state/edit_state.h"
-#include "ui/draw_area.h"
-#include "core/graphic_item.h"
-#include "core/selection_manager.h"
+#include "edit_state.h"
+#include "../ui/draw_area.h"
+#include "../core/graphic_item.h"
+#include "../core/selection_manager.h"
 // 裁剪功能已移至future/clip目录
-// #include "core/graphics_clipper.h"
-#include "command/selection_command.h"
-#include "command/command_manager.h"
-#include "command/style_change_command.h"
+// #include "../core/graphics_clipper.h"
+#include "../command/selection_command.h"
+#include "../command/style_change_command.h"
+#include "../command/transform_command.h"
+#include "../command/command_manager.h"
 #include "../utils/logger.h"
 #include <QDebug>
 #include <QGraphicsScene>
@@ -16,17 +17,24 @@
 #include <QTransform>
 #include <QGraphicsPathItem>
 #include <QtMath>
+#include <QKeyEvent>
+#include <QMouseEvent>
+#include <QPainter>
+#include <cmath>
+#include <QStatusBar>
+#include <QMainWindow>
 
 EditState::EditState()
     : m_isAreaSelecting(false),
       m_selectionStart(),
       m_isDragging(false),
       m_dragStartPosition(),
-      m_activeHandle(GraphicItem::None),
       m_isRotating(false),
       m_isScaling(false),
       m_initialAngle(0.0),
-      m_transformOrigin()
+      m_transformOrigin(),
+      m_scaleStartPos(),
+      m_activeHandle(GraphicItem::None)
 {
     Logger::info("EditState: 创建编辑状态");
     
@@ -163,100 +171,110 @@ void EditState::wheelEvent(DrawArea* drawArea, QWheelEvent* event)
 
 void EditState::handleLeftMousePress(DrawArea* drawArea, QPointF scenePos)
 {
-    qDebug() << "Edit State: 左键点击，位置:" << scenePos;
-    
     // 获取选择管理器
     SelectionManager* selectionManager = getSelectionManager(drawArea);
     if (!selectionManager) {
         return;
     }
     
-    // 检查点击位置是否有图形项或选择区域
+    // 首先检查是否点击在控制点上
+    bool hitControlPoint = false;
+    
+    // 1. 首先检查选择区域的控制点（优先级最高）
+    if (selectionManager->isSelectionValid()) {
+        m_activeHandle = selectionManager->handleAtPoint(scenePos);
+        if (m_activeHandle != GraphicItem::None) {
+            hitControlPoint = true;
+            
+            // 重置所有状态
+            m_isAreaSelecting = false;
+            m_isDragging = false; 
+            m_isRotating = false;
+            
+            // 设置缩放状态
+            m_isScaling = true;
+            m_scaleStartPos = scenePos;
+            updateCursor(m_activeHandle);
+            return;
+        }
+    }
+    
+    // 2. 检查图形项的控制点
     QGraphicsScene* scene = drawArea->scene();
     QGraphicsItem* item = scene->itemAt(scenePos, drawArea->transform());
     
-    // 检查点击是否在选择区域上
-    if (selectionManager->isSelectionValid() && 
-        (selectionManager->contains(scenePos) || selectionManager->handleAtPoint(scenePos) != GraphicItem::None)) {
+    if (!hitControlPoint && item && dynamic_cast<GraphicItem*>(item)) {
+        GraphicItem* graphicItem = dynamic_cast<GraphicItem*>(item);
         
-        // 获取选择区域上的控制点
-        m_activeHandle = selectionManager->handleAtPoint(scenePos);
+        // 使用场景坐标，GraphicItem::handleAtPoint内部会做坐标转换
+        m_activeHandle = graphicItem->handleAtPoint(scenePos);
         
         if (m_activeHandle != GraphicItem::None) {
-            // 如果点击在控制点上，设置缩放状态
-            m_isScaling = true;
-            m_transformOrigin = scenePos;
-            updateCursor(m_activeHandle);
-            qDebug() << "Edit State: Starting selection area scaling with handle:" << m_activeHandle;
+            hitControlPoint = true;
+            
+            // 确保图形项被选中
+            if (!selectionManager->isSelected(graphicItem)) {
+                selectionManager->clearSelection();
+                selectionManager->addToSelection(graphicItem);
+            }
+            
+            // 重置所有状态
+            m_isAreaSelecting = false;
+            m_isDragging = false;
+            
+            if (m_activeHandle == GraphicItem::Rotation) {
+                m_isRotating = true;
+                m_isScaling = false;
+                QPointF centerPos = graphicItem->mapToScene(graphicItem->boundingRect().center());
+                m_initialAngle = atan2(scenePos.y() - centerPos.y(), scenePos.x() - centerPos.x());
+                QApplication::setOverrideCursor(Qt::ClosedHandCursor);
+            } else {
+                m_isScaling = true;
+                m_isRotating = false;
+                m_scaleStartPos = scenePos;
+                updateCursor(m_activeHandle);
+            }
             return;
-        } else {
-            // 点击在选择区域上，但不在控制点上，准备拖动
-            m_dragStartPosition = QPoint(static_cast<int>(scenePos.x()), static_cast<int>(scenePos.y()));
+        }
+    }
+    
+    // 3. 如果没有点击到控制点，则处理普通的选择和拖动
+    if (!hitControlPoint) {
+        // 重置状态变量
+        m_isScaling = false;
+        m_isRotating = false;
+        m_activeHandle = GraphicItem::None;
+        
+        if (item) {
+            // 根据修饰键处理选择
+            if (QApplication::keyboardModifiers() & Qt::ControlModifier) {
+                selectionManager->toggleSelection(item);
+            } else if (QApplication::keyboardModifiers() & Qt::ShiftModifier) {
+                selectionManager->addToSelection(item);
+            } else if (!selectionManager->isSelected(item)) {
+                selectionManager->clearSelection();
+                selectionManager->addToSelection(item);
+            }
+            
+            // 开始拖动
+            m_isAreaSelecting = false;
+            m_isScaling = false;
+            m_isRotating = false;
             m_isDragging = true;
             selectionManager->setDraggingSelection(true);
-            qDebug() << "Edit State: Preparing to drag selection area";
-            return;
-        }
-    }
-    
-    // 如果点击了某个普通图形项
-    if (item) {
-        GraphicItem* graphicItem = dynamic_cast<GraphicItem*>(item);
-        if (graphicItem) {
-            // 查看是否点击了图形项的控制点
-            m_activeHandle = graphicItem->handleAtPoint(scenePos);
-            
-            if (m_activeHandle != GraphicItem::None) {
-                // 如果点击在控制点上，设置变换状态
-                if (m_activeHandle == GraphicItem::Rotation) {
-                    // 旋转控制点
-                    m_isRotating = true;
-                    m_transformOrigin = graphicItem->pos();
-                    m_initialAngle = atan2(scenePos.y() - m_transformOrigin.y(), 
-                                         scenePos.x() - m_transformOrigin.x());
-                } else {
-                    // 缩放控制点
-                    m_isScaling = true;
-                    m_transformOrigin = graphicItem->pos();
-                    m_initialDistance = sqrt(pow(scenePos.x() - m_transformOrigin.x(), 2) + 
-                                          pow(scenePos.y() - m_transformOrigin.y(), 2));
-                }
-                
-                // 更新光标
-                updateCursor(m_activeHandle);
-                return;
-            }
-            
-            // 正常选择图形项
-            bool ctrlPressed = QApplication::keyboardModifiers() & Qt::ControlModifier;
-            if (ctrlPressed) {
-                // Ctrl+点击，切换图形选择状态
-                selectionManager->toggleSelection(item);
-                
-                // 使用多选模式
-                selectionManager->setSelectionMode(SelectionManager::MultiSelection);
-            } else {
-                // 单击，如果项没被选中，先清除当前选择再选中这一项
-                if (!selectionManager->isSelected(item)) {
-                    selectionManager->clearSelection();
-                    selectionManager->addToSelection(item);
-                }
-                
-                // 使用单选模式
-                selectionManager->setSelectionMode(SelectionManager::SingleSelection);
-            }
-            
-            // 记录起始拖动位置
             m_dragStartPosition = QPoint(static_cast<int>(scenePos.x()), static_cast<int>(scenePos.y()));
-            m_isDragging = true;
-            return;
+            QApplication::setOverrideCursor(Qt::SizeAllCursor);
+        } else {
+            // 点击空白区域，开始区域选择
+            selectionManager->clearSelection();
+            m_isDragging = false;
+            m_isScaling = false;
+            m_isRotating = false;
+            m_isAreaSelecting = true;
+            selectionManager->startSelection(scenePos);
+            QApplication::setOverrideCursor(Qt::CrossCursor);
         }
     }
-    
-    // 点击在空白处，开始区域选择
-    m_isAreaSelecting = true;
-    m_selectionStart = QPoint(static_cast<int>(scenePos.x()), static_cast<int>(scenePos.y()));
-    selectionManager->startSelection(scenePos);
 }
 
 void EditState::handleRightMousePress(DrawArea* drawArea, QPointF scenePos)
@@ -296,57 +314,97 @@ void EditState::mouseMoveEvent(DrawArea* drawArea, QMouseEvent* event)
     if (m_isAreaSelecting) {
         // 更新选择区域
         selectionManager->updateSelection(scenePos);
+        
+        // 确保更新视图
+        drawArea->viewport()->update();
+    } else if (m_isScaling) {
+        // 处理缩放
+        if (m_activeHandle != GraphicItem::None) {
+            // 如果是单个图形项的缩放
+            if (selectionManager->getSelectedItems().size() == 1) {
+                QGraphicsItem* item = selectionManager->getSelectedItems().first();
+                GraphicItem* graphicItem = dynamic_cast<GraphicItem*>(item);
+                if (graphicItem) {
+                    handleItemScaling(drawArea, scenePos, graphicItem);
+                }
+            } else {
+                // 使用 SelectionManager 处理多个图形的缩放
+                selectionManager->scaleSelection(m_activeHandle, scenePos);
+            }
+        }
+        
+        // 确保更新视图
+        drawArea->viewport()->update();
+    } else if (m_isRotating) {
+        // 处理旋转
+        if (selectionManager->getSelectedItems().size() == 1) {
+            QGraphicsItem* item = selectionManager->getSelectedItems().first();
+            GraphicItem* graphicItem = dynamic_cast<GraphicItem*>(item);
+            if (graphicItem) {
+                handleItemRotation(drawArea, scenePos, graphicItem);
+            }
+        }
+        // 确保更新视图
+        drawArea->viewport()->update();
     } else if (m_isDragging) {
         // 移动选中的图形
         QPoint newPos(static_cast<int>(scenePos.x()), static_cast<int>(scenePos.y()));
         QPoint delta = newPos - m_dragStartPosition;
         
         // 只有当移动距离超过阈值时才真正移动对象
-        // 这可以防止在简单点击选择对象时意外的微小移动
         if (QPointF(delta).manhattanLength() > 3.0) {
             QPointF deltaF(delta.x(), delta.y());
-            
-            // 移动选中的图形
             drawArea->moveSelectedGraphics(deltaF);
-            
-            // 更新拖动起始位置
             m_dragStartPosition = newPos;
         }
-    } else if (m_isRotating) {
-        // 处理旋转
-        if (!drawArea->getSelectedItems().isEmpty()) {
-            QGraphicsItem* item = drawArea->getSelectedItems().first();
-            GraphicItem* graphicItem = dynamic_cast<GraphicItem*>(item);
-            if (graphicItem) {
-                handleItemRotation(drawArea, scenePos, graphicItem);
-            }
-        }
-    } else if (m_isScaling) {
-        // 处理缩放
-        if (m_activeHandle != GraphicItem::None) {
-            selectionManager->scaleSelection(m_activeHandle, scenePos);
-        }
+        
+        // 确保更新视图
+        drawArea->viewport()->update();
     } else {
         // 未按下鼠标时，更新光标样式
-        // 先检查是否在选择区域的控制点上
-        GraphicItem::ControlHandle handle = selectionManager->handleAtPoint(scenePos);
-        if (handle != GraphicItem::None) {
-            updateCursor(handle);
-            return;
-        }
+        bool cursorSet = false;
+        GraphicItem::ControlHandle handle = GraphicItem::None;
         
-        // 检查是否在图形项的控制点上
-        QGraphicsItem* item = drawArea->scene()->itemAt(scenePos, drawArea->transform());
-        if (GraphicItem* graphicItem = dynamic_cast<GraphicItem*>(item)) {
-            handle = graphicItem->handleAtPoint(scenePos);
+        // 1. 首先检查是否在选择区域的控制点上（优先级最高）
+        if (selectionManager->isSelectionValid()) {
+            handle = selectionManager->handleAtPoint(scenePos);
             if (handle != GraphicItem::None) {
                 updateCursor(handle);
-                return;
+                cursorSet = true;
             }
         }
         
-        // 不在控制点上时使用默认光标
-        resetCursor(drawArea);
+        // 2. 如果不在选择区域的控制点上，检查是否在图形项的控制点上
+        if (!cursorSet) {
+            QGraphicsItem* item = drawArea->scene()->itemAt(scenePos, drawArea->transform());
+            if (GraphicItem* graphicItem = dynamic_cast<GraphicItem*>(item)) {
+                // 直接使用场景坐标传递给handleAtPoint，它会内部处理坐标转换
+                handle = graphicItem->handleAtPoint(scenePos);
+                if (handle != GraphicItem::None) {
+                    updateCursor(handle);
+                    cursorSet = true;
+                }
+                // 3. 如果在图形项上但不在控制点上，并且该图形项被选中
+                else if (selectionManager->isSelected(item)) {
+                    QApplication::setOverrideCursor(Qt::SizeAllCursor);
+                    cursorSet = true;
+                }
+            }
+        }
+        
+        // 4. 如果不在控制点上，但在其他选中图形上
+        if (!cursorSet) {
+            QGraphicsItem* item = drawArea->scene()->itemAt(scenePos, drawArea->transform());
+            if (item && selectionManager->isSelected(item)) {
+                QApplication::setOverrideCursor(Qt::SizeAllCursor);
+                cursorSet = true;
+            }
+        }
+        
+        // 5. 如果以上都不是，使用默认光标
+        if (!cursorSet) {
+            resetCursor(drawArea);
+        }
     }
 }
 
@@ -378,23 +436,44 @@ void EditState::mouseReleaseEvent(DrawArea* drawArea, QMouseEvent* event)
                 CommandManager::getInstance().executeCommand(moveCommand);
             }
         }
-    } else if (m_isRotating) {
-        // 结束旋转
-        m_isRotating = false;
-        
-        // 创建旋转命令
-        // TODO: 实现旋转命令
     } else if (m_isScaling) {
         // 结束缩放
         m_isScaling = false;
         
-        // 创建缩放命令
-        // TODO: 实现缩放命令
+        // 获取选中的图形项
+        QList<QGraphicsItem*> selectedItems = selectionManager->getSelectedItems();
+        if (selectedItems.isEmpty()) {
+            resetCursor(drawArea);
+            return;
+        }
+        
+        // 创建并执行缩放命令
+        TransformCommand* scaleCommand = TransformCommand::createScaleCommand(
+            selectedItems, 1.0, selectionManager->selectionCenter());
+        
+        if (scaleCommand) {
+            CommandManager::getInstance().executeCommand(scaleCommand);
+            Logger::info("EditState: 执行缩放命令");
+        }
+    } else if (m_isRotating) {
+        // 结束旋转
+        m_isRotating = false;
+        
+        // 这里可以添加旋转命令的执行逻辑
     }
     
-    // 重置操作标志和光标
+    // 全面重置所有操作标志，确保状态干净
+    m_isAreaSelecting = false;
+    m_isDragging = false;
+    m_isScaling = false;
+    m_isRotating = false;
     m_activeHandle = GraphicItem::None;
+    
+    // 重置光标
     resetCursor(drawArea);
+    
+    // 确保更新视图
+    drawArea->viewport()->update();
 }
 
 void EditState::keyPressEvent(DrawArea* drawArea, QKeyEvent* event)
@@ -456,6 +535,11 @@ void EditState::paintEvent(DrawArea* drawArea, QPainter* painter)
 // 更新鼠标样式
 void EditState::updateCursor(GraphicItem::ControlHandle handle)
 {
+    // 先恢复默认光标，确保不会积累多个光标
+    while (QApplication::overrideCursor()) {
+        QApplication::restoreOverrideCursor();
+    }
+    
     switch (handle) {
         case GraphicItem::TopLeft:
         case GraphicItem::BottomRight:
@@ -477,7 +561,7 @@ void EditState::updateCursor(GraphicItem::ControlHandle handle)
             QApplication::setOverrideCursor(Qt::PointingHandCursor);
             break;
         default:
-            QApplication::restoreOverrideCursor();
+            // 默认不做任何事情，因为已经在函数开始时恢复了默认光标
             break;
     }
 }
@@ -485,14 +569,20 @@ void EditState::updateCursor(GraphicItem::ControlHandle handle)
 // 处理图形项旋转
 void EditState::handleItemRotation(DrawArea* drawArea, const QPointF& pos, GraphicItem* item)
 {
-    if (!item) return;
+    if (!item) {
+        return;
+    }
+    
+    // 计算中心点 - 使用场景坐标
+    QPointF centerPos = item->mapToScene(item->boundingRect().center());
     
     // 计算当前角度
-    QPointF centerPos = item->mapToScene(item->boundingRect().center());
     double currentAngle = atan2(pos.y() - centerPos.y(), pos.x() - centerPos.x());
     
-    // 计算角度差
+    // 计算角度差 (弧度)
     double angleDiff = currentAngle - m_initialAngle;
+    
+    // 转换为度数
     double degrees = angleDiff * 180.0 / M_PI;
     
     // 如果按住Shift键，限制为15度的倍数
@@ -501,76 +591,93 @@ void EditState::handleItemRotation(DrawArea* drawArea, const QPointF& pos, Graph
         degrees = steps * 15.0;
     }
     
-    // 应用旋转
-    item->setRotation(item->rotation() + degrees);
+    // 应用新的绝对旋转（而不是增量）
+    double newRotation = item->rotation() + degrees;
+    item->setRotation(newRotation);
     
-    // 更新初始角度
+    // 更新初始角度，以便下次移动时计算增量
     m_initialAngle = currentAngle;
 }
 
 // 处理图形项缩放
 void EditState::handleItemScaling(DrawArea* drawArea, const QPointF& pos, GraphicItem* item)
 {
-    if (!item) return;
+    if (!item) {
+        return;
+    }
     
-    // 获取项目的边界矩形
-    QRectF rect = item->boundingRect();
-    QPointF center = item->mapToScene(rect.center());
+    // 计算中心点 - 使用场景坐标
+    QPointF centerPos = item->mapToScene(item->boundingRect().center());
     
-    // 根据控制点类型进行不同的缩放操作
-    QPointF newScale = item->getScale();
-    QPointF lastPos = m_transformOrigin;
-    m_transformOrigin = pos;
+    // 根据控制点类型确定缩放方向
+    QPointF scaleFactors(1.0, 1.0);
+    QPointF currentScale = item->getScale();
     
-    // 计算缩放因子
-    QPointF delta = pos - lastPos;
+    // 计算鼠标位置与初始位置的差值
+    QPointF delta = pos - m_scaleStartPos;
     
+    // 控制缩放速度的敏感度（值越小，缩放越精细）
+    const qreal scaleSensitivity = 0.01;
+    
+    // 计算缩放方向和大小
     switch (m_activeHandle) {
         case GraphicItem::TopLeft:
-            newScale.setX(newScale.x() - delta.x() * 0.01);
-            newScale.setY(newScale.y() - delta.y() * 0.01);
+            // 左上角 - 缩放X和Y
+            scaleFactors.setX(1.0 - delta.x() * scaleSensitivity);
+            scaleFactors.setY(1.0 - delta.y() * scaleSensitivity);
             break;
         case GraphicItem::TopCenter:
-            newScale.setY(newScale.y() - delta.y() * 0.01);
+            // 上中 - 只缩放Y
+            scaleFactors.setX(1.0);
+            scaleFactors.setY(1.0 - delta.y() * scaleSensitivity);
             break;
         case GraphicItem::TopRight:
-            newScale.setX(newScale.x() + delta.x() * 0.01);
-            newScale.setY(newScale.y() - delta.y() * 0.01);
+            // 右上角 - 缩放X和Y
+            scaleFactors.setX(1.0 + delta.x() * scaleSensitivity);
+            scaleFactors.setY(1.0 - delta.y() * scaleSensitivity);
             break;
         case GraphicItem::MiddleLeft:
-            newScale.setX(newScale.x() - delta.x() * 0.01);
+            // 左中 - 只缩放X
+            scaleFactors.setX(1.0 - delta.x() * scaleSensitivity);
+            scaleFactors.setY(1.0);
             break;
         case GraphicItem::MiddleRight:
-            newScale.setX(newScale.x() + delta.x() * 0.01);
+            // 右中 - 只缩放X
+            scaleFactors.setX(1.0 + delta.x() * scaleSensitivity);
+            scaleFactors.setY(1.0);
             break;
         case GraphicItem::BottomLeft:
-            newScale.setX(newScale.x() - delta.x() * 0.01);
-            newScale.setY(newScale.y() + delta.y() * 0.01);
+            // 左下角 - 缩放X和Y
+            scaleFactors.setX(1.0 - delta.x() * scaleSensitivity);
+            scaleFactors.setY(1.0 + delta.y() * scaleSensitivity);
             break;
         case GraphicItem::BottomCenter:
-            newScale.setY(newScale.y() + delta.y() * 0.01);
+            // 下中 - 只缩放Y
+            scaleFactors.setX(1.0);
+            scaleFactors.setY(1.0 + delta.y() * scaleSensitivity);
             break;
         case GraphicItem::BottomRight:
-            newScale.setX(newScale.x() + delta.x() * 0.01);
-            newScale.setY(newScale.y() + delta.y() * 0.01);
+            // 右下角 - 缩放X和Y
+            scaleFactors.setX(1.0 + delta.x() * scaleSensitivity);
+            scaleFactors.setY(1.0 + delta.y() * scaleSensitivity);
             break;
         default:
             break;
     }
     
-    // 确保比例不会太小
+    // 计算新的缩放值
+    QPointF newScale(currentScale.x() * scaleFactors.x(), currentScale.y() * scaleFactors.y());
+    
+    // 确保缩放不会太小
     const qreal minScale = 0.1;
     newScale.setX(qMax(minScale, newScale.x()));
     newScale.setY(qMax(minScale, newScale.y()));
     
-    // 应用新的比例
-    if (GraphicItem* graphicItem = dynamic_cast<GraphicItem*>(item)) {
-        graphicItem->setScale(newScale);
-    } else {
-        // For regular QGraphicsItem, apply uniform scaling (average of x and y)
-        qreal uniformScale = (newScale.x() + newScale.y()) / 2.0;
-        item->setScale(uniformScale);
-    }
+    // 应用新的缩放
+    item->setScale(newScale);
+    
+    // 更新起始位置为当前位置，以便下一次移动计算增量
+    m_scaleStartPos = pos;
 }
 
 // 创建移动命令

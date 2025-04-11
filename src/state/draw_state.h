@@ -79,9 +79,6 @@ private:
     // 清除控制点标记
     void clearControlPointMarkers(DrawArea* drawArea);
     
-    // 贝塞尔曲线计算
-    QPointF calculateBezierPoint(double t, const std::vector<QPointF>& points);
-    
     // 工具方法
     QPointF getScenePos(DrawArea* drawArea, QMouseEvent* event);
     void updateStatusMessage(DrawArea* drawArea, const QString& message);

@@ -29,8 +29,8 @@ MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , m_drawArea(new DrawArea(this))
     , toolsGroup(new QActionGroup(this))
-    , m_currentFillColor(Qt::green) // 初始化填充颜色为绿色
-    , m_currentLineColor(Qt::blue) // 初始化线条颜色为蓝色
+    , m_currentFillColor(Qt::green) 
+    , m_currentLineColor(Qt::darkBlue)
     , m_lineWidth(2)
     , m_updateTimer(nullptr)
 {

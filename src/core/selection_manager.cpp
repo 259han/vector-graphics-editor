@@ -338,40 +338,52 @@ GraphicItem::ControlHandle SelectionManager::handleAtPoint(const QPointF& point)
         return GraphicItem::None;
     }
     
-    // 控制点大小
-    const int handleSize = 8;
+    // 使用与 GraphicItem 相同的控制点大小
+    const int handleSize = GraphicItem::getHandleSize();
+    
+    // 将场景坐标转换为选择矩形的本地坐标
+    QPointF localPoint = m_selectionRect->mapFromScene(point);
+    QRectF localRect = m_selectionRect->boundingRect();
     
     // 检查各个控制点
     // 左上角
-    if (QRectF(rect.left() - handleSize/2, rect.top() - handleSize/2, handleSize, handleSize).contains(point)) {
+    if (QRectF(localRect.left() - handleSize/2, localRect.top() - handleSize/2, handleSize, handleSize).contains(localPoint)) {
+        qDebug() << "SelectionManager: 检测到左上角控制点";
         return GraphicItem::TopLeft;
     }
     // 右上角
-    else if (QRectF(rect.right() - handleSize/2, rect.top() - handleSize/2, handleSize, handleSize).contains(point)) {
+    else if (QRectF(localRect.right() - handleSize/2, localRect.top() - handleSize/2, handleSize, handleSize).contains(localPoint)) {
+        qDebug() << "SelectionManager: 检测到右上角控制点";
         return GraphicItem::TopRight;
     }
     // 左下角
-    else if (QRectF(rect.left() - handleSize/2, rect.bottom() - handleSize/2, handleSize, handleSize).contains(point)) {
+    else if (QRectF(localRect.left() - handleSize/2, localRect.bottom() - handleSize/2, handleSize, handleSize).contains(localPoint)) {
+        qDebug() << "SelectionManager: 检测到左下角控制点";
         return GraphicItem::BottomLeft;
     }
     // 右下角
-    else if (QRectF(rect.right() - handleSize/2, rect.bottom() - handleSize/2, handleSize, handleSize).contains(point)) {
+    else if (QRectF(localRect.right() - handleSize/2, localRect.bottom() - handleSize/2, handleSize, handleSize).contains(localPoint)) {
+        qDebug() << "SelectionManager: 检测到右下角控制点";
         return GraphicItem::BottomRight;
     }
     // 上中
-    else if (QRectF(rect.center().x() - handleSize/2, rect.top() - handleSize/2, handleSize, handleSize).contains(point)) {
+    else if (QRectF(localRect.center().x() - handleSize/2, localRect.top() - handleSize/2, handleSize, handleSize).contains(localPoint)) {
+        qDebug() << "SelectionManager: 检测到上中控制点";
         return GraphicItem::TopCenter;
     }
     // 下中
-    else if (QRectF(rect.center().x() - handleSize/2, rect.bottom() - handleSize/2, handleSize, handleSize).contains(point)) {
+    else if (QRectF(localRect.center().x() - handleSize/2, localRect.bottom() - handleSize/2, handleSize, handleSize).contains(localPoint)) {
+        qDebug() << "SelectionManager: 检测到下中控制点";
         return GraphicItem::BottomCenter;
     }
     // 左中
-    else if (QRectF(rect.left() - handleSize/2, rect.center().y() - handleSize/2, handleSize, handleSize).contains(point)) {
+    else if (QRectF(localRect.left() - handleSize/2, localRect.center().y() - handleSize/2, handleSize, handleSize).contains(localPoint)) {
+        qDebug() << "SelectionManager: 检测到左中控制点";
         return GraphicItem::MiddleLeft;
     }
     // 右中
-    else if (QRectF(rect.right() - handleSize/2, rect.center().y() - handleSize/2, handleSize, handleSize).contains(point)) {
+    else if (QRectF(localRect.right() - handleSize/2, localRect.center().y() - handleSize/2, handleSize, handleSize).contains(localPoint)) {
+        qDebug() << "SelectionManager: 检测到右中控制点";
         return GraphicItem::MiddleRight;
     }
     
@@ -382,8 +394,11 @@ void SelectionManager::scaleSelection(GraphicItem::ControlHandle handle, const Q
 {
     // 如果没有选中项，返回
     if (m_selectedItems.isEmpty()) {
+        qDebug() << "SelectionManager::scaleSelection: 没有选中项，无法缩放";
         return;
     }
+    
+    qDebug() << "SelectionManager::scaleSelection: 尝试缩放选择，控制点类型:" << handle << "位置:" << point;
     
     // 获取选中项的边界矩形
     QRectF boundingRect;
@@ -407,6 +422,7 @@ void SelectionManager::scaleSelection(GraphicItem::ControlHandle handle, const Q
     qreal scaleY = 1.0;
     QPointF center = boundingRect.center();
     
+    // 根据控制点类型计算适当的缩放因子
     switch (handle) {
         case GraphicItem::TopLeft:
             scaleX = (boundingRect.right() - point.x()) / boundingRect.width();
@@ -425,20 +441,35 @@ void SelectionManager::scaleSelection(GraphicItem::ControlHandle handle, const Q
             scaleY = (point.y() - boundingRect.top()) / boundingRect.height();
             break;
         case GraphicItem::TopCenter:
+            // 只改变Y方向的缩放，X方向保持不变
+            scaleX = 1.0;
             scaleY = (boundingRect.bottom() - point.y()) / boundingRect.height();
             break;
         case GraphicItem::BottomCenter:
+            // 只改变Y方向的缩放，X方向保持不变
+            scaleX = 1.0;
             scaleY = (point.y() - boundingRect.top()) / boundingRect.height();
             break;
         case GraphicItem::MiddleLeft:
+            // 只改变X方向的缩放，Y方向保持不变
             scaleX = (boundingRect.right() - point.x()) / boundingRect.width();
+            scaleY = 1.0;
             break;
         case GraphicItem::MiddleRight:
+            // 只改变X方向的缩放，Y方向保持不变
             scaleX = (point.x() - boundingRect.left()) / boundingRect.width();
+            scaleY = 1.0;
             break;
         default:
+            qDebug() << "SelectionManager::scaleSelection: 无效的控制点类型:" << handle;
             return;
     }
+    
+    // 防止缩放因子过小或无效
+    if (scaleX <= 0.1) scaleX = 0.1;
+    if (scaleY <= 0.1) scaleY = 0.1;
+    
+    qDebug() << "SelectionManager::scaleSelection: 计算的缩放因子 X:" << scaleX << "Y:" << scaleY;
     
     // 应用缩放到所有选中项
     for (QGraphicsItem* item : m_selectedItems) {
@@ -447,7 +478,11 @@ void SelectionManager::scaleSelection(GraphicItem::ControlHandle handle, const Q
             // 获取当前缩放
             QPointF currentScale = graphicItem->getScale();
             // 应用新缩放
-            graphicItem->setScale(QPointF(currentScale.x() * scaleX, currentScale.y() * scaleY));
+            QPointF newScale(currentScale.x() * scaleX, currentScale.y() * scaleY);
+            qDebug() << "SelectionManager::scaleSelection: 图形项旧缩放:" << currentScale << "新缩放:" << newScale;
+            graphicItem->setScale(newScale);
+        } else {
+            qDebug() << "SelectionManager::scaleSelection: 图形项转换失败，无法应用缩放";
         }
     }
     
@@ -470,6 +505,8 @@ void SelectionManager::scaleSelection(GraphicItem::ControlHandle handle, const Q
             }
         }
         m_selectionRect->setRect(newBoundingRect);
+    } else {
+        qDebug() << "SelectionManager::scaleSelection: 选择矩形不存在或不在场景中，无法更新选择区域";
     }
     
     // 发出选择改变信号

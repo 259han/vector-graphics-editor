@@ -1,7 +1,7 @@
 CMakeFiles/vector-graphics-editor.dir/src/state/edit_state.cpp.obj: \
  F:\program\claudegraph\src\state\edit_state.cpp \
- F:/program/claudegraph/src/state/edit_state.h \
- F:/program/claudegraph/src/state/editor_state.h \
+ F:\program\claudegraph\src\state\edit_state.h \
+ F:\program\claudegraph\src\state\editor_state.h \
  D:/Qt/6.8.2/mingw_64/include/QtGui/QMouseEvent \
  D:/Qt/6.8.2/mingw_64/include/QtGui/qevent.h \
  D:/Qt/6.8.2/mingw_64/include/QtGui/qtguiglobal.h \
@@ -511,14 +511,11 @@ CMakeFiles/vector-graphics-editor.dir/src/state/edit_state.cpp.obj: \
  D:/Qt/6.8.2/mingw_64/include/QtWidgets/QGraphicsLineItem \
  D:/Qt/6.8.2/mingw_64/include/QtWidgets/QGraphicsEllipseItem \
  D:/Qt/6.8.2/mingw_64/include/QtWidgets/QGraphicsSceneEvent \
- F:/program/claudegraph/src/core/graphic_item.h \
- F:/program/claudegraph/src/core/selection_manager.h \
- F:/program/claudegraph/src/command/selection_command.h \
+ F:/program/claudegraph/src/command/transform_command.h \
  F:/program/claudegraph/src/command/command_manager.h \
  F:/program/claudegraph/src/command/composite_command.h \
  D:/Qt/6.8.2/mingw_64/include/QtCore/QStack \
  D:/Qt/6.8.2/mingw_64/include/QtCore/qstack.h \
- F:/program/claudegraph/src/command/style_change_command.h \
  F:/program/claudegraph/src/utils/logger.h \
  D:/Qt/6.8.2/mingw_64/include/QtCore/QFile \
  D:/Qt/6.8.2/mingw_64/include/QtCore/qfile.h \
@@ -569,4 +566,6 @@ CMakeFiles/vector-graphics-editor.dir/src/state/edit_state.cpp.obj: \
  D:/Qt/6.8.2/mingw_64/include/QtGui/QTransform \
  D:/Qt/6.8.2/mingw_64/include/QtWidgets/QGraphicsPathItem \
  D:/Qt/6.8.2/mingw_64/include/QtCore/QtMath \
- D:/Qt/6.8.2/mingw_64/include/QtCore/qmath.h
+ D:/Qt/6.8.2/mingw_64/include/QtCore/qmath.h \
+ D:/Qt/6.8.2/mingw_64/include/QtWidgets/QStatusBar \
+ D:/Qt/6.8.2/mingw_64/include/QtWidgets/qstatusbar.h

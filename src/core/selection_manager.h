@@ -31,7 +31,7 @@ public:
     // 选择过滤器接口
     using SelectionFilter = std::function<bool(QGraphicsItem*)>;
     
-    explicit SelectionManager(QGraphicsScene* scene);
+    explicit SelectionManager(QGraphicsScene* scene = nullptr);
     ~SelectionManager();
     
     // 开始创建选择区域

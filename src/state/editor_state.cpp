@@ -29,6 +29,12 @@ void EditorState::setCursor(DrawArea* drawArea, const QCursor& cursor) {
 }
 
 void EditorState::resetCursor(DrawArea* drawArea) {
+    // 清除Qt的光标堆栈
+    while (QApplication::overrideCursor()) {
+        QApplication::restoreOverrideCursor();
+    }
+    
+    // 清除DrawArea的自定义光标
     if (drawArea) {
         drawArea->unsetCursor();
     }

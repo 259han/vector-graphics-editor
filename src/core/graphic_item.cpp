@@ -126,62 +126,80 @@ void GraphicItem::drawSelectionHandles(QPainter* painter)
     painter->setBrush(origBrush);
 }
 
-GraphicItem::ControlHandle GraphicItem::handleAtPoint(const QPointF& point) const
+GraphicItem::ControlHandle GraphicItem::handleAtPoint(const QPointF& scenePoint) const
 {
+    // 将场景坐标转换为图形项的本地坐标
+    QPointF itemPoint = mapFromScene(scenePoint);
+    
+    // 增大控制点的判定范围
+    const qreal ENLARGED_HANDLE_SIZE = HANDLE_SIZE * 1.5;
+    
+    // 检查控制点时使用本地坐标
     QRectF rect = boundingRect();
+    
+    qDebug() << "GraphicItem::handleAtPoint - 场景坐标:" << scenePoint << "图形项坐标:" << itemPoint;
     
     // 检查是否在旋转控制点上
     QPointF rotateHandlePos(rect.center().x(), rect.top() - 20);
-    if (QRectF(rotateHandlePos.x() - HANDLE_SIZE/2, rotateHandlePos.y() - HANDLE_SIZE/2,
-               HANDLE_SIZE, HANDLE_SIZE).contains(point)) {
+    if (QRectF(rotateHandlePos.x() - ENLARGED_HANDLE_SIZE/2, rotateHandlePos.y() - ENLARGED_HANDLE_SIZE/2,
+               ENLARGED_HANDLE_SIZE, ENLARGED_HANDLE_SIZE).contains(itemPoint)) {
+        qDebug() << "GraphicItem::handleAtPoint - 检测到旋转控制点";
         return Rotation;
     }
     
     // 检查左上控制点
-    if (QRectF(rect.left() - HANDLE_SIZE/2, rect.top() - HANDLE_SIZE/2, 
-               HANDLE_SIZE, HANDLE_SIZE).contains(point)) {
+    if (QRectF(rect.left() - ENLARGED_HANDLE_SIZE/2, rect.top() - ENLARGED_HANDLE_SIZE/2, 
+               ENLARGED_HANDLE_SIZE, ENLARGED_HANDLE_SIZE).contains(itemPoint)) {
+        qDebug() << "GraphicItem::handleAtPoint - 检测到左上控制点";
         return TopLeft;
     }
     
     // 检查上中控制点
-    if (QRectF(rect.center().x() - HANDLE_SIZE/2, rect.top() - HANDLE_SIZE/2,
-               HANDLE_SIZE, HANDLE_SIZE).contains(point)) {
+    if (QRectF(rect.center().x() - ENLARGED_HANDLE_SIZE/2, rect.top() - ENLARGED_HANDLE_SIZE/2,
+               ENLARGED_HANDLE_SIZE, ENLARGED_HANDLE_SIZE).contains(itemPoint)) {
+        qDebug() << "GraphicItem::handleAtPoint - 检测到上中控制点";
         return TopCenter;
     }
     
     // 检查右上控制点
-    if (QRectF(rect.right() - HANDLE_SIZE/2, rect.top() - HANDLE_SIZE/2,
-               HANDLE_SIZE, HANDLE_SIZE).contains(point)) {
+    if (QRectF(rect.right() - ENLARGED_HANDLE_SIZE/2, rect.top() - ENLARGED_HANDLE_SIZE/2,
+               ENLARGED_HANDLE_SIZE, ENLARGED_HANDLE_SIZE).contains(itemPoint)) {
+        qDebug() << "GraphicItem::handleAtPoint - 检测到右上控制点";
         return TopRight;
     }
     
     // 检查中左控制点
-    if (QRectF(rect.left() - HANDLE_SIZE/2, rect.center().y() - HANDLE_SIZE/2,
-               HANDLE_SIZE, HANDLE_SIZE).contains(point)) {
+    if (QRectF(rect.left() - ENLARGED_HANDLE_SIZE/2, rect.center().y() - ENLARGED_HANDLE_SIZE/2,
+               ENLARGED_HANDLE_SIZE, ENLARGED_HANDLE_SIZE).contains(itemPoint)) {
+        qDebug() << "GraphicItem::handleAtPoint - 检测到中左控制点";
         return MiddleLeft;
     }
     
     // 检查中右控制点
-    if (QRectF(rect.right() - HANDLE_SIZE/2, rect.center().y() - HANDLE_SIZE/2,
-               HANDLE_SIZE, HANDLE_SIZE).contains(point)) {
+    if (QRectF(rect.right() - ENLARGED_HANDLE_SIZE/2, rect.center().y() - ENLARGED_HANDLE_SIZE/2,
+               ENLARGED_HANDLE_SIZE, ENLARGED_HANDLE_SIZE).contains(itemPoint)) {
+        qDebug() << "GraphicItem::handleAtPoint - 检测到中右控制点";
         return MiddleRight;
     }
     
     // 检查左下控制点
-    if (QRectF(rect.left() - HANDLE_SIZE/2, rect.bottom() - HANDLE_SIZE/2,
-               HANDLE_SIZE, HANDLE_SIZE).contains(point)) {
+    if (QRectF(rect.left() - ENLARGED_HANDLE_SIZE/2, rect.bottom() - ENLARGED_HANDLE_SIZE/2,
+               ENLARGED_HANDLE_SIZE, ENLARGED_HANDLE_SIZE).contains(itemPoint)) {
+        qDebug() << "GraphicItem::handleAtPoint - 检测到左下控制点";
         return BottomLeft;
     }
     
     // 检查下中控制点
-    if (QRectF(rect.center().x() - HANDLE_SIZE/2, rect.bottom() - HANDLE_SIZE/2,
-               HANDLE_SIZE, HANDLE_SIZE).contains(point)) {
+    if (QRectF(rect.center().x() - ENLARGED_HANDLE_SIZE/2, rect.bottom() - ENLARGED_HANDLE_SIZE/2,
+               ENLARGED_HANDLE_SIZE, ENLARGED_HANDLE_SIZE).contains(itemPoint)) {
+        qDebug() << "GraphicItem::handleAtPoint - 检测到下中控制点";
         return BottomCenter;
     }
     
     // 检查右下控制点
-    if (QRectF(rect.right() - HANDLE_SIZE/2, rect.bottom() - HANDLE_SIZE/2,
-               HANDLE_SIZE, HANDLE_SIZE).contains(point)) {
+    if (QRectF(rect.right() - ENLARGED_HANDLE_SIZE/2, rect.bottom() - ENLARGED_HANDLE_SIZE/2,
+               ENLARGED_HANDLE_SIZE, ENLARGED_HANDLE_SIZE).contains(itemPoint)) {
+        qDebug() << "GraphicItem::handleAtPoint - 检测到右下控制点";
         return BottomRight;
     }
     

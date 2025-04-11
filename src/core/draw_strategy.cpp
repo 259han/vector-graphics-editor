@@ -117,31 +117,32 @@ void BezierDrawStrategy::draw(QPainter* painter, const std::vector<QPointF>& poi
     pen.setWidthF(m_lineWidth);
     painter->setPen(pen);
 
-    // 贝塞尔曲线的计算和绘制
+    // 通用贝塞尔曲线绘制逻辑
+    QPainterPath path;
     if (points.size() == 2) {
-        // 只有两个点时，退化为直线
-        painter->drawLine(points[0], points[1]);
-    } else {
-        // 创建路径
-        QPainterPath path;
+        // 两个点退化为直线
         path.moveTo(points[0]);
-
-        // 计算三阶贝塞尔曲线（每四个点一组，起点、两个控制点、终点）
-        for (size_t i = 0; i + 3 < points.size(); i += 3) {
-            path.cubicTo(points[i+1], points[i+2], points[i+3]);
+        path.lineTo(points[1]);
+    } else {
+        // 使用伯恩斯坦公式计算贝塞尔曲线路径
+        path.moveTo(points[0]);
+        const int numSteps = 100; // 控制曲线平滑度的步数
+        for (int step = 1; step <= numSteps; ++step) {
+            double t = static_cast<double>(step) / numSteps;
+            QPointF p = calculateBezierPoint(points, t);
+            path.lineTo(p);
         }
-
-        // 绘制路径
-        painter->drawPath(path);
-        
     }
+    
+    // 绘制路径
+    painter->drawPath(path);
     
     // 恢复原始画笔
     painter->setPen(originalPen);
 }
 
 QPointF BezierDrawStrategy::calculateBezierPoint(const std::vector<QPointF>& controlPoints, double t) const {
-    int n = controlPoints.size() - 1; // 曲线阶数
+    int n = controlPoints.size() - 1; // 曲线阶数 = 控制点数 - 1
     double x = 0.0, y = 0.0;
     
     for (int i = 0; i <= n; i++) {
@@ -157,11 +158,12 @@ double BezierDrawStrategy::binomialCoefficient(int n, int k) const {
     if (k < 0 || k > n) return 0.0;
     if (k == 0 || k == n) return 1.0;
     
+    // 优化计算：利用组合数的对称性（C(n,k) = C(n, n-k)）
+    k = std::min(k, n - k);
     double result = 1.0;
     for (int i = 1; i <= k; i++) {
-        result *= (n - (k - i));
+        result *= (n - k + i);
         result /= i;
     }
-    
     return result;
 }

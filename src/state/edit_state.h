@@ -48,6 +48,9 @@ public:
     StateType getStateType() const override { return StateType::EditState; }
     QString getStateName() const override { return "编辑模式"; }
 
+    // 获取DrawArea的SelectionManager
+    SelectionManager* getSelectionManager(DrawArea* drawArea) const;
+
 private:
     // 区域选择相关
     bool m_isAreaSelecting = false;
@@ -80,15 +83,13 @@ private:
     SelectionCommand* createMoveCommand(DrawArea* drawArea, const QPointF& offset);
     SelectionCommand* createDeleteCommand(DrawArea* drawArea);
     
-    // 裁剪功能已移至future/clip目录
-    // SelectionCommand* createClipCommand(DrawArea* drawArea);
     
     // 创建样式变更命令
     StyleChangeCommand* createStyleChangeCommand(DrawArea* drawArea, 
                                               StyleChangeCommand::StylePropertyType propertyType);
     
-    // 获取DrawArea的SelectionManager
-    SelectionManager* getSelectionManager(DrawArea* drawArea) const;
+    // 新增 m_scaleStartPos 成员变量
+    QPointF m_scaleStartPos;
 };
 
 #endif // EDIT_STATE_H

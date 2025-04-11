@@ -80,6 +80,9 @@ public:
     // 用于剪贴板功能的公共接口，获取绘图点集
     std::vector<QPointF> getClipboardPoints() const { return getDrawPoints(); }
 
+    // 获取控制点大小
+    static int getHandleSize() { return HANDLE_SIZE; }
+
 protected:
     std::shared_ptr<DrawStrategy> m_drawStrategy;
     
@@ -97,7 +100,7 @@ protected:
     QMap<int, QVariant> m_itemData;
     
     // 控制点大小
-    static constexpr int HANDLE_SIZE = 8;
+    static constexpr int HANDLE_SIZE = 12;  // 增大控制点大小以便更容易点击
     
     // 重写事件处理
     QVariant itemChange(GraphicsItemChange change, const QVariant &value) override;
