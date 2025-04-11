@@ -222,10 +222,7 @@ static constexpr auto qt_meta_stringdata_ZN18PerformanceMonitorE = QtMocHelpers:
     "dataUpdated",
     "sendEvent",
     "PerformanceEvent",
-    "event",
-    "setOverlayEnabled",
-    "enable",
-    "isOverlayEnabled"
+    "event"
 );
 #else  // !QT_MOC_HAS_STRINGDATA
 #error "qtmochelpers.h not found or too old."
@@ -237,7 +234,7 @@ Q_CONSTINIT static const uint qt_meta_data_ZN18PerformanceMonitorE[] = {
       12,       // revision
        0,       // classname
        0,    0, // classinfo
-       6,   14, // methods
+       4,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
@@ -245,24 +242,16 @@ Q_CONSTINIT static const uint qt_meta_data_ZN18PerformanceMonitorE[] = {
        4,       // signalCount
 
  // signals: name, argc, parameters, tag, flags, initial metatype offsets
-       1,    1,   50,    2, 0x06,    1 /* Public */,
-       4,    1,   53,    2, 0x06,    3 /* Public */,
-       5,    0,   56,    2, 0x06,    5 /* Public */,
-       6,    1,   57,    2, 0x06,    6 /* Public */,
-
- // slots: name, argc, parameters, tag, flags, initial metatype offsets
-       9,    1,   60,    2, 0x0a,    8 /* Public */,
-      11,    0,   63,    2, 0x10a,   10 /* Public | MethodIsConst  */,
+       1,    1,   38,    2, 0x06,    1 /* Public */,
+       4,    1,   41,    2, 0x06,    3 /* Public */,
+       5,    0,   44,    2, 0x06,    5 /* Public */,
+       6,    1,   45,    2, 0x06,    6 /* Public */,
 
  // signals: parameters
     QMetaType::Void, QMetaType::Bool,    3,
     QMetaType::Void, QMetaType::Bool,    3,
     QMetaType::Void,
     QMetaType::Void, 0x80000000 | 7,    8,
-
- // slots: parameters
-    QMetaType::Void, QMetaType::Bool,   10,
-    QMetaType::Bool,
 
        0        // eod
 };
@@ -286,12 +275,7 @@ Q_CONSTINIT const QMetaObject PerformanceMonitor::staticMetaObject = { {
         QtPrivate::TypeAndForceComplete<void, std::false_type>,
         // method 'sendEvent'
         QtPrivate::TypeAndForceComplete<void, std::false_type>,
-        QtPrivate::TypeAndForceComplete<const PerformanceEvent &, std::false_type>,
-        // method 'setOverlayEnabled'
-        QtPrivate::TypeAndForceComplete<void, std::false_type>,
-        QtPrivate::TypeAndForceComplete<bool, std::false_type>,
-        // method 'isOverlayEnabled'
-        QtPrivate::TypeAndForceComplete<bool, std::false_type>
+        QtPrivate::TypeAndForceComplete<const PerformanceEvent &, std::false_type>
     >,
     nullptr
 } };
@@ -305,9 +289,6 @@ void PerformanceMonitor::qt_static_metacall(QObject *_o, QMetaObject::Call _c, i
         case 1: _t->overlayEnabledChanged((*reinterpret_cast< std::add_pointer_t<bool>>(_a[1]))); break;
         case 2: _t->dataUpdated(); break;
         case 3: _t->sendEvent((*reinterpret_cast< std::add_pointer_t<PerformanceEvent>>(_a[1]))); break;
-        case 4: _t->setOverlayEnabled((*reinterpret_cast< std::add_pointer_t<bool>>(_a[1]))); break;
-        case 5: { bool _r = _t->isOverlayEnabled();
-            if (_a[0]) *reinterpret_cast< bool*>(_a[0]) = std::move(_r); }  break;
         default: ;
         }
     }
@@ -363,14 +344,14 @@ int PerformanceMonitor::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 6)
+        if (_id < 4)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 6;
+        _id -= 4;
     }
     if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 6)
+        if (_id < 4)
             *reinterpret_cast<QMetaType *>(_a[0]) = QMetaType();
-        _id -= 6;
+        _id -= 4;
     }
     return _id;
 }

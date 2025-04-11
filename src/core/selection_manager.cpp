@@ -22,11 +22,36 @@ SelectionManager::SelectionManager(QGraphicsScene* scene)
 
 SelectionManager::~SelectionManager()
 {
-    clearSelection();
-    if (m_selectionRect && m_selectionRect->scene()) {
-        m_selectionRect->scene()->removeItem(m_selectionRect);
+    try {
+        qDebug() << "SelectionManager: 析构开始";
+        
+        // 断开所有信号连接
+        this->disconnect();
+        
+        // 安全地清除选择，不触发信号
+        m_selectedItems.clear();
+        
+        // 安全检查：确保m_selectionRect有效并且在场景中
+        if (m_selectionRect) {
+            if (m_selectionRect->scene() && m_scene && m_selectionRect->scene() == m_scene) {
+                m_scene->removeItem(m_selectionRect);
+            }
+            // 删除选择矩形
+            delete m_selectionRect;
+            m_selectionRect = nullptr;
+        }
+        
+        // 清空场景引用
+        m_scene = nullptr;
+        
+        qDebug() << "SelectionManager: 析构完成";
     }
-    delete m_selectionRect;
+    catch (const std::exception& e) {
+        qCritical() << "SelectionManager::~SelectionManager: 异常:" << e.what();
+    }
+    catch (...) {
+        qCritical() << "SelectionManager::~SelectionManager: 未知异常";
+    }
 }
 
 void SelectionManager::setScene(QGraphicsScene* scene)
@@ -164,34 +189,71 @@ void SelectionManager::clearSelection()
     try {
         qDebug() << "SelectionManager::clearSelection: 开始清除选择";
         
+        // 检查对象有效性
+        if (!m_scene) {
+            qDebug() << "SelectionManager::clearSelection: 场景为空，无需清除";
+            m_selectedItems.clear();
+            m_isDraggingSelection = false;
+            return;
+        }
+        
         // 如果选择矩形在场景中，移除它
         if (m_selectionRect && m_selectionRect->scene()) {
             qDebug() << "SelectionManager::clearSelection: 移除选择矩形";
-            m_selectionRect->scene()->removeItem(m_selectionRect);
+            // 安全检查：确保m_selectionRect->scene()是m_scene
+            if (m_selectionRect->scene() == m_scene) {
+                m_scene->removeItem(m_selectionRect);
+            }
         }
         
         // 记录被清除的项目数量
         int itemCount = m_selectedItems.size();
         qDebug() << "SelectionManager::clearSelection: 清除" << itemCount << "个选中项";
         
-        // 清除当前选择
+        // 安全清除当前选择
+        QSet<QGraphicsItem*> itemsToDeselect;
+        for (QGraphicsItem* item : m_selectedItems) {
+            if (item && m_scene->items().contains(item)) {
+                itemsToDeselect.insert(item);
+            }
+        }
+        
+        // 取消选中有效的项目
+        for (QGraphicsItem* item : itemsToDeselect) {
+            if (item) {
+                item->setSelected(false);
+            }
+        }
+        
+        // 清除选择集合
         m_selectedItems.clear();
         
         // 应用选择到场景
-        applySelectionToScene();
+        if (m_scene) {
+            applySelectionToScene();
+        }
+        
+        // 重置拖动状态
+        m_isDraggingSelection = false;
         
         // 发出选择改变信号
         emit selectionChanged();
-        
-        m_isDraggingSelection = false;
         
         qDebug() << "SelectionManager::clearSelection: 选择已清除";
     }
     catch (const std::exception& e) {
         qCritical() << "SelectionManager::clearSelection: 异常:" << e.what();
+        
+        // 即使出错，也要确保清除状态
+        m_selectedItems.clear();
+        m_isDraggingSelection = false;
     }
     catch (...) {
         qCritical() << "SelectionManager::clearSelection: 未知异常";
+        
+        // 即使出错，也要确保清除状态
+        m_selectedItems.clear();
+        m_isDraggingSelection = false;
     }
 }
 
@@ -637,7 +699,16 @@ void SelectionManager::applySelectionToScene()
                 continue;
             }
             
-            item->setSelected(true);
+            // 确保调用setSelected不会导致崩溃
+            try {
+                item->setSelected(true);
+            } catch (const std::exception& e) {
+                qWarning() << "SelectionManager::applySelectionToScene: 设置项选中状态时异常:" << e.what();
+                invalidItems.insert(item);
+            } catch (...) {
+                qWarning() << "SelectionManager::applySelectionToScene: 设置项选中状态时未知异常";
+                invalidItems.insert(item);
+            }
         }
         
         // 从选择集合中移除无效项

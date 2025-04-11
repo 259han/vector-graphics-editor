@@ -465,8 +465,6 @@ CMakeFiles/vector-graphics-editor.dir/src/ui/draw_area.cpp.obj: \
  D:/Qt/6.8.2/mingw_64/include/QtCore/qelapsedtimer.h \
  D:/Qt/6.8.2/mingw_64/include/QtCore/QMap \
  D:/Qt/6.8.2/mingw_64/include/QtCore/qmap.h \
- D:/Qt/6.8.2/mingw_64/include/QtCore/QVector \
- D:/Qt/6.8.2/mingw_64/include/QtCore/qvector.h \
  D:/Qt/6.8.2/mingw_64/include/QtCore/QMutex \
  D:/Qt/6.8.2/mingw_64/include/QtCore/qmutex.h \
  D:/Qt/6.8.2/mingw_64/include/QtCore/qtsan_impl.h \
@@ -495,11 +493,22 @@ CMakeFiles/vector-graphics-editor.dir/src/ui/draw_area.cpp.obj: \
  D:/Qt/6.8.2/mingw_64/include/QtCore/QDateTime \
  D:/Qt/6.8.2/mingw_64/include/QtCore/qdatetime.h \
  D:/Qt/6.8.2/mingw_64/include/QtCore/qcalendar.h \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/QReadWriteLock \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/qreadwritelock.h \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/QSharedPointer \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/qsharedpointer.h \
  F:\program\claudegraph\src\ui\image_resizer.h \
  D:/Qt/6.8.2/mingw_64/include/QtWidgets/QGraphicsObject \
  D:/Qt/6.8.2/mingw_64/include/QtWidgets/QGraphicsLineItem \
  D:/Qt/6.8.2/mingw_64/include/QtWidgets/QGraphicsEllipseItem \
  D:/Qt/6.8.2/mingw_64/include/QtWidgets/QGraphicsSceneEvent \
+ F:/program/claudegraph/src/core/graphic_item.h \
+ F:/program/claudegraph/src/core/line_graphic_item.h \
+ F:/program/claudegraph/src/core/graphic_item.h \
+ F:/program/claudegraph/src/core/rectangle_graphic_item.h \
+ F:/program/claudegraph/src/core/ellipse_graphic_item.h \
+ F:/program/claudegraph/src/core/circle_graphic_item.h \
+ F:/program/claudegraph/src/core/bezier_graphic_item.h \
  F:/program/claudegraph/src/state/draw_state.h \
  F:/program/claudegraph/src/state/editor_state.h \
  F:/program/claudegraph/src/core/graphic.h \
@@ -568,7 +577,17 @@ CMakeFiles/vector-graphics-editor.dir/src/ui/draw_area.cpp.obj: \
  D:/Qt/6.8.2/mingw_64/include/QtGui/qimage.h \
  D:/Qt/6.8.2/mingw_64/include/QtGui/QPixmap \
  D:/Qt/6.8.2/mingw_64/include/QtGui/qpixmap.h \
+ F:/program/claudegraph/src/utils/logger.h \
+ F:/program/claudegraph/src/command/command_manager.h \
+ F:/program/claudegraph/src/command/composite_command.h \
+ F:/program/claudegraph/src/command/create_graphic_command.h \
+ F:/program/claudegraph/src/core/graphic.h \
  F:/program/claudegraph/src/core/graphic_item.h \
+ F:/program/claudegraph/src/command/transform_command.h \
+ F:/program/claudegraph/src/command/move_command.h \
+ F:/program/claudegraph/src/command/style_change_command.h \
+ F:/program/claudegraph/src/command/selection_command.h \
+ F:/program/claudegraph/src/command/paste_command.h \
  D:/Qt/6.8.2/mingw_64/include/QtGui/QPaintEvent \
  D:/Qt/6.8.2/mingw_64/include/QtWidgets/QFileDialog \
  D:/Qt/6.8.2/mingw_64/include/QtWidgets/qfiledialog.h \
@@ -616,20 +635,11 @@ CMakeFiles/vector-graphics-editor.dir/src/ui/draw_area.cpp.obj: \
  D:/Qt/6.8.2/mingw_64/include/QtWidgets/qlayoutitem.h \
  D:/Qt/6.8.2/mingw_64/include/QtWidgets/qboxlayout.h \
  D:/Qt/6.8.2/mingw_64/include/QtWidgets/qgridlayout.h \
- F:/program/claudegraph/src/ui/image_resizer.h \
- F:/program/claudegraph/src/core/image_manager.h \
- D:/Qt/6.8.2/mingw_64/include/QtWidgets/QGraphicsPixmapItem \
- F:/program/claudegraph/src/core/selection_manager.h \
- F:/program/claudegraph/src/utils/logger.h \
+ D:/Qt/6.8.2/mingw_64/include/QtGui/QDragEnterEvent \
+ D:/Qt/6.8.2/mingw_64/include/QtGui/QDropEvent \
  D:/Qt/6.8.2/mingw_64/include/QtWidgets/QMenu \
  D:/Qt/6.8.2/mingw_64/include/QtWidgets/qmenu.h \
  D:/Qt/6.8.2/mingw_64/include/QtGui/QContextMenuEvent \
- F:/program/claudegraph/src/command/paste_command.h \
- F:/program/claudegraph/src/core/graphic.h \
- F:/program/claudegraph/src/command/command_manager.h \
- F:/program/claudegraph/src/command/composite_command.h \
- D:/Qt/6.8.2/mingw_64/include/QtCore/QReadWriteLock \
- D:/Qt/6.8.2/mingw_64/include/QtCore/qreadwritelock.h \
  D:/Qt/6.8.2/mingw_64/include/QtCore/QRandomGenerator \
  D:/Qt/6.8.2/mingw_64/include/QtCore/qrandom.h \
  C:/msys64/mingw64/include/c++/14.2.0/random \

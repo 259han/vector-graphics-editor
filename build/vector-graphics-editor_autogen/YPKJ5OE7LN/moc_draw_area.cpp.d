@@ -224,14 +224,15 @@ F:/program/claudegraph/build/vector-graphics-editor_autogen/YPKJ5OE7LN/moc_draw_
   D:/Qt/6.8.2/mingw_64/include/QtCore/QObject \
   D:/Qt/6.8.2/mingw_64/include/QtCore/QPointF \
   D:/Qt/6.8.2/mingw_64/include/QtCore/QQueue \
+  D:/Qt/6.8.2/mingw_64/include/QtCore/QReadWriteLock \
   D:/Qt/6.8.2/mingw_64/include/QtCore/QRect \
   D:/Qt/6.8.2/mingw_64/include/QtCore/QSet \
+  D:/Qt/6.8.2/mingw_64/include/QtCore/QSharedPointer \
   D:/Qt/6.8.2/mingw_64/include/QtCore/QSize \
   D:/Qt/6.8.2/mingw_64/include/QtCore/QSizeF \
   D:/Qt/6.8.2/mingw_64/include/QtCore/QString \
   D:/Qt/6.8.2/mingw_64/include/QtCore/QThread \
   D:/Qt/6.8.2/mingw_64/include/QtCore/QTimer \
-  D:/Qt/6.8.2/mingw_64/include/QtCore/QVector \
   D:/Qt/6.8.2/mingw_64/include/QtCore/QWaitCondition \
   D:/Qt/6.8.2/mingw_64/include/QtCore/q20functional.h \
   D:/Qt/6.8.2/mingw_64/include/QtCore/q20iterator.h \
@@ -317,6 +318,7 @@ F:/program/claudegraph/build/vector-graphics-editor_autogen/YPKJ5OE7LN/moc_draw_
   D:/Qt/6.8.2/mingw_64/include/QtCore/qpoint.h \
   D:/Qt/6.8.2/mingw_64/include/QtCore/qprocessordetection.h \
   D:/Qt/6.8.2/mingw_64/include/QtCore/qqueue.h \
+  D:/Qt/6.8.2/mingw_64/include/QtCore/qreadwritelock.h \
   D:/Qt/6.8.2/mingw_64/include/QtCore/qrect.h \
   D:/Qt/6.8.2/mingw_64/include/QtCore/qrefcount.h \
   D:/Qt/6.8.2/mingw_64/include/QtCore/qregularexpression.h \
@@ -370,7 +372,6 @@ F:/program/claudegraph/build/vector-graphics-editor_autogen/YPKJ5OE7LN/moc_draw_
   D:/Qt/6.8.2/mingw_64/include/QtCore/qutf8stringview.h \
   D:/Qt/6.8.2/mingw_64/include/QtCore/qvariant.h \
   D:/Qt/6.8.2/mingw_64/include/QtCore/qvarlengtharray.h \
-  D:/Qt/6.8.2/mingw_64/include/QtCore/qvector.h \
   D:/Qt/6.8.2/mingw_64/include/QtCore/qversiontagging.h \
   D:/Qt/6.8.2/mingw_64/include/QtCore/qwaitcondition.h \
   D:/Qt/6.8.2/mingw_64/include/QtCore/qxptype_traits.h \

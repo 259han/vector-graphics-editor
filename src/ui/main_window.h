@@ -13,13 +13,17 @@
 #include <QComboBox>
 #include "draw_area.h"
 #include <QTimer>
+#include <QCloseEvent>
 
 class MainWindow : public QMainWindow {
     Q_OBJECT
 
 public:
     explicit MainWindow(QWidget *parent = nullptr);
-    ~MainWindow() override = default;
+    ~MainWindow() override;
+
+protected:
+    void closeEvent(QCloseEvent* event) override;
 
 private slots:
     void onDrawActionTriggered(QAction* action);
@@ -54,7 +58,11 @@ private slots:
 private:
     void createActions();
     void createMenus();
+    void createToolbars();
     void createToolBars();
+    void createStatusBar();
+    void createDockWindows();
+    void createPerformanceMenu();
     void createFillSettingsDialog();
     void createToolOptions();
     void setupConnections();
@@ -86,6 +94,8 @@ private:
     QAction* m_rotateAction;
     QAction* m_scaleAction;
     QAction* m_deleteAction;
+    QAction* m_flipHorizontalAction; // 水平翻转
+    QAction* m_flipVerticalAction;   // 垂直翻转
 
     // 图层工具
     QAction* m_bringToFrontAction;
@@ -120,6 +130,8 @@ private:
     QAction* m_saveAction;
     QAction* m_saveAsAction;
     QAction* m_exportAction;
+    QAction* m_aboutAction;
+    QAction* m_aboutQtAction;
     
     QAction* m_gridAction;
     QAction* m_snapAction;
@@ -136,6 +148,9 @@ private:
 
     // 更新定时器
     QTimer* m_updateTimer;
+
+    // 性能监控相关
+    void setupPerformanceMonitoring();
 };
 
 #endif // MAIN_WINDOW_H

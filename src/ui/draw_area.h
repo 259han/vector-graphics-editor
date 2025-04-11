@@ -13,7 +13,6 @@
 
 class GraphicItem;
 class ImageResizer;
-class ImageManager;
 
 class DrawArea : public QGraphicsView {
     Q_OBJECT
@@ -59,6 +58,7 @@ public:
     void clearGraphics();
     void saveImage();
     void importImage();
+    void importImageAt(const QImage &image, const QPoint &pos);
 
     // 视口交互功能
     void enableGrid(bool enable);
@@ -70,6 +70,7 @@ public:
     void moveSelectedGraphics(const QPointF& offset);
     void rotateSelectedGraphics(double angle);
     void scaleSelectedGraphics(double factor);
+    void flipSelectedGraphics(bool horizontal);
     void deleteSelectedGraphics();
     
     // 选择所有图形
@@ -107,6 +108,9 @@ public:
     // 设置选择过滤器
     void setSelectionFilter(const SelectionManager::SelectionFilter& filter);
     void clearSelectionFilter();
+    
+    // 清除当前选择
+    void clearSelection();
 
 signals:
     // 选择变更信号
@@ -122,6 +126,9 @@ protected:
     void drawBackground(QPainter *painter, const QRectF &rect) override;
     void drawForeground(QPainter *painter, const QRectF &rect) override;
     void contextMenuEvent(QContextMenuEvent *event) override;
+    void dragEnterEvent(QDragEnterEvent *event) override;
+    void dropEvent(QDropEvent *event) override;
+    void dragMoveEvent(QDragMoveEvent *event) override;
     void paintEvent(QPaintEvent *event) override;
 
 private:
@@ -177,7 +184,6 @@ private:
     void saveGraphicItemToClipboard(GraphicItem* item);
 
     QList<ImageResizer*> m_imageResizers;
-    ImageManager* m_imageManager;
 
     // 设置为DrawArea类的友元，以便可以访问私有成员
     friend class FillState;

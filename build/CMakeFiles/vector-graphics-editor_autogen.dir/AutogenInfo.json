@@ -500,6 +500,12 @@
 			null
 		],
 		[
+			"F:/program/claudegraph/src/command/transform_command.h",
+			"MU",
+			"YB4PXEL5CK/moc_transform_command.cpp",
+			null
+		],
+		[
 			"F:/program/claudegraph/src/core/bezier_graphic_item.h",
 			"MU",
 			"PRMOGMWJPH/moc_bezier_graphic_item.cpp",
@@ -722,6 +728,11 @@
 		],
 		[
 			"F:/program/claudegraph/src/command/style_change_command.cpp",
+			"MU",
+			null
+		],
+		[
+			"F:/program/claudegraph/src/command/transform_command.cpp",
 			"MU",
 			null
 		],

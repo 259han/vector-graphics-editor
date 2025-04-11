@@ -489,8 +489,6 @@ CMakeFiles/vector-graphics-editor.dir/src/ui/main_window.cpp.obj: \
  D:/Qt/6.8.2/mingw_64/include/QtCore/qelapsedtimer.h \
  D:/Qt/6.8.2/mingw_64/include/QtCore/QMap \
  D:/Qt/6.8.2/mingw_64/include/QtCore/qmap.h \
- D:/Qt/6.8.2/mingw_64/include/QtCore/QVector \
- D:/Qt/6.8.2/mingw_64/include/QtCore/qvector.h \
  D:/Qt/6.8.2/mingw_64/include/QtCore/QMutex \
  D:/Qt/6.8.2/mingw_64/include/QtCore/qmutex.h \
  D:/Qt/6.8.2/mingw_64/include/QtCore/qtsan_impl.h \
@@ -519,11 +517,16 @@ CMakeFiles/vector-graphics-editor.dir/src/ui/main_window.cpp.obj: \
  D:/Qt/6.8.2/mingw_64/include/QtCore/QDateTime \
  D:/Qt/6.8.2/mingw_64/include/QtCore/qdatetime.h \
  D:/Qt/6.8.2/mingw_64/include/QtCore/qcalendar.h \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/QReadWriteLock \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/qreadwritelock.h \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/QSharedPointer \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/qsharedpointer.h \
  F:\program\claudegraph\src\ui\image_resizer.h \
  D:/Qt/6.8.2/mingw_64/include/QtWidgets/QGraphicsObject \
  D:/Qt/6.8.2/mingw_64/include/QtWidgets/QGraphicsLineItem \
  D:/Qt/6.8.2/mingw_64/include/QtWidgets/QGraphicsEllipseItem \
  D:/Qt/6.8.2/mingw_64/include/QtWidgets/QGraphicsSceneEvent \
+ D:/Qt/6.8.2/mingw_64/include/QtGui/QCloseEvent \
  F:/program/claudegraph/src/state/draw_state.h \
  F:/program/claudegraph/src/state/editor_state.h \
  F:/program/claudegraph/src/core/graphic.h \
@@ -629,9 +632,12 @@ CMakeFiles/vector-graphics-editor.dir/src/ui/main_window.cpp.obj: \
  F:/program/claudegraph/src/core/graphic.h \
  F:/program/claudegraph/src/command/command_manager.h \
  F:/program/claudegraph/src/command/composite_command.h \
- D:/Qt/6.8.2/mingw_64/include/QtCore/QReadWriteLock \
- D:/Qt/6.8.2/mingw_64/include/QtCore/qreadwritelock.h \
  D:/Qt/6.8.2/mingw_64/include/QtWidgets/QApplication \
  D:/Qt/6.8.2/mingw_64/include/QtWidgets/qapplication.h \
  D:/Qt/6.8.2/mingw_64/include/QtGui/QClipboard \
- D:/Qt/6.8.2/mingw_64/include/QtGui/qclipboard.h
+ D:/Qt/6.8.2/mingw_64/include/QtGui/qclipboard.h \
+ D:/Qt/6.8.2/mingw_64/include/QtWidgets/QInputDialog \
+ D:/Qt/6.8.2/mingw_64/include/QtWidgets/qinputdialog.h \
+ D:/Qt/6.8.2/mingw_64/include/QtWidgets/qlineedit.h \
+ D:/Qt/6.8.2/mingw_64/include/QtGui/qtextcursor.h \
+ D:/Qt/6.8.2/mingw_64/include/QtGui/qtextformat.h

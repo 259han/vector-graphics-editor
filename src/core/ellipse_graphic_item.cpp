@@ -39,11 +39,12 @@ std::vector<QPointF> EllipseGraphicItem::getDrawPoints() const
     double scaledHeight = m_height * m_scale.y();
     
     // 提供给DrawStrategy的点集合
-    // 对于椭圆，需要左上角和右下角点来定义包围矩形
-    return {
-        QPointF(-scaledWidth/2, -scaledHeight/2),  // 左上角点
-        QPointF(scaledWidth/2, scaledHeight/2)     // 右下角点
-    };
+    // 对于椭圆，创建左上角和右下角点来定义包围矩形
+    QPointF topLeft(-scaledWidth/2, -scaledHeight/2);  // 左上角点
+    QPointF bottomRight(scaledWidth/2, scaledHeight/2);  // 右下角点
+    
+    // 确保返回标准化矩形的点，与预览中创建的QRectF匹配
+    return { topLeft, bottomRight };
 }
 
 QPointF EllipseGraphicItem::getCenter() const

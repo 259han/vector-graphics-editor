@@ -290,6 +290,16 @@ QGraphicsItem* DrawState::createFinalItem(DrawArea* drawArea)
         // 其他图形使用起点和终点
         points.push_back(m_startPoint);
         points.push_back(m_currentPoint);
+        
+        // 对于椭圆类型，确保使用与预览相同的标准化矩形
+        if (m_graphicType == Graphic::ELLIPSE) {
+            // 清除之前添加的点
+            points.clear();
+            // 使用标准化矩形的左上角和右下角点，与预览完全匹配
+            QRectF rect = QRectF(m_startPoint, m_currentPoint).normalized();
+            points.push_back(rect.topLeft());
+            points.push_back(rect.bottomRight());
+        }
     }
     
     // 确保点数据合法
@@ -363,42 +373,115 @@ void DrawState::updatePreviewItem(DrawArea* drawArea)
         return;
     }
 
-    // 创建新的预览项
-    if (m_graphicType == Graphic::BEZIER && m_bezierControlPoints.size() >= 2) {
-        QPainterPath path;
-        path.moveTo(m_bezierControlPoints[0]);
-        
-        // 使用n次贝塞尔曲线
-        if (m_bezierControlPoints.size() > 2) {
-            // 计算贝塞尔曲线上的点
-            const int steps = 100; // 曲线精度
-            for (int i = 1; i <= steps; ++i) {
-                double t = static_cast<double>(i) / steps;
-                QPointF point = calculateBezierPoint(t, m_bezierControlPoints);
-                path.lineTo(point);
-            }
-        } else {
-            // 只有两个点时，直接画直线
-            path.lineTo(m_bezierControlPoints[1]);
-        }
-
-        // 如果预览项不存在，创建新的
-        if (!m_previewItem) {
-            m_previewItem = new QGraphicsPathItem(path);
-            QPen pen(m_lineColor, m_lineWidth);
-            pen.setStyle(Qt::DashLine); // 使用虚线作为预览
-            static_cast<QGraphicsPathItem*>(m_previewItem)->setPen(pen);
-            drawArea->scene()->addItem(m_previewItem);
-        } else {
-            // 如果预览项已存在，直接更新路径
-            static_cast<QGraphicsPathItem*>(m_previewItem)->setPath(path);
-        }
-    } else if (m_previewItem) {
-        // 如果不是贝塞尔曲线模式且有预览项，则移除它
-        drawArea->scene()->removeItem(m_previewItem);
-        delete m_previewItem;
-        m_previewItem = nullptr;
+    // 如果未处于绘制状态，则不需要预览
+    if (!m_isDrawing) {
+        return;
     }
+
+    // 为不同的图形类型创建或更新预览
+    switch (m_graphicType) {
+        case Graphic::LINE: {
+            // 线条预览
+            if (!m_previewItem) {
+                // 创建新的线条预览
+                m_previewItem = new QGraphicsLineItem(m_startPoint.x(), m_startPoint.y(), m_currentPoint.x(), m_currentPoint.y());
+                QPen pen(m_lineColor, m_lineWidth);
+                pen.setStyle(Qt::DashLine); // 使用虚线表示预览
+                static_cast<QGraphicsLineItem*>(m_previewItem)->setPen(pen);
+                drawArea->scene()->addItem(m_previewItem);
+            } else {
+                // 更新现有线条
+                static_cast<QGraphicsLineItem*>(m_previewItem)->setLine(
+                    m_startPoint.x(), m_startPoint.y(), m_currentPoint.x(), m_currentPoint.y());
+            }
+            break;
+        }
+        case Graphic::RECTANGLE: {
+            // 矩形预览
+            QRectF rect = QRectF(m_startPoint, m_currentPoint).normalized();
+            
+            if (!m_previewItem) {
+                // 创建新的矩形预览
+                m_previewItem = new QGraphicsRectItem(rect);
+                QPen pen(m_lineColor, m_lineWidth);
+                pen.setStyle(Qt::DashLine); // 使用虚线表示预览
+                static_cast<QGraphicsRectItem*>(m_previewItem)->setPen(pen);
+                
+                // 如果设置了填充，则应用填充
+                if (m_fillMode) {
+                    static_cast<QGraphicsRectItem*>(m_previewItem)->setBrush(QBrush(m_fillColor));
+                }
+                
+                drawArea->scene()->addItem(m_previewItem);
+            } else {
+                // 更新现有矩形
+                static_cast<QGraphicsRectItem*>(m_previewItem)->setRect(rect);
+            }
+            break;
+        }
+        case Graphic::ELLIPSE: {
+            // 椭圆预览
+            QRectF rect = QRectF(m_startPoint, m_currentPoint).normalized();
+            
+            if (!m_previewItem) {
+                // 创建新的椭圆预览
+                m_previewItem = new QGraphicsEllipseItem(rect);
+                QPen pen(m_lineColor, m_lineWidth);
+                pen.setStyle(Qt::DashLine); // 使用虚线表示预览
+                static_cast<QGraphicsEllipseItem*>(m_previewItem)->setPen(pen);
+                
+                // 如果设置了填充，则应用填充
+                if (m_fillMode) {
+                    static_cast<QGraphicsEllipseItem*>(m_previewItem)->setBrush(QBrush(m_fillColor));
+                }
+                
+                drawArea->scene()->addItem(m_previewItem);
+            } else {
+                // 更新现有椭圆
+                static_cast<QGraphicsEllipseItem*>(m_previewItem)->setRect(rect);
+            }
+            break;
+        }
+        case Graphic::BEZIER: {
+            // 贝塞尔曲线预览
+            if (m_bezierControlPoints.size() >= 2) {
+                QPainterPath path;
+                path.moveTo(m_bezierControlPoints[0]);
+                
+                // 使用n次贝塞尔曲线
+                if (m_bezierControlPoints.size() > 2) {
+                    // 计算贝塞尔曲线上的点
+                    const int steps = 100; // 曲线精度
+                    for (int i = 1; i <= steps; ++i) {
+                        double t = static_cast<double>(i) / steps;
+                        QPointF point = calculateBezierPoint(t, m_bezierControlPoints);
+                        path.lineTo(point);
+                    }
+                } else {
+                    // 只有两个点时，直接画直线
+                    path.lineTo(m_bezierControlPoints[1]);
+                }
+
+                // 如果预览项不存在，创建新的
+                if (!m_previewItem) {
+                    m_previewItem = new QGraphicsPathItem(path);
+                    QPen pen(m_lineColor, m_lineWidth);
+                    pen.setStyle(Qt::DashLine); // 使用虚线作为预览
+                    static_cast<QGraphicsPathItem*>(m_previewItem)->setPen(pen);
+                    drawArea->scene()->addItem(m_previewItem);
+                } else {
+                    // 如果预览项已存在，直接更新路径
+                    static_cast<QGraphicsPathItem*>(m_previewItem)->setPath(path);
+                }
+            }
+            break;
+        }
+        default:
+            break;
+    }
+    
+    // 确保场景更新
+    drawArea->scene()->update();
 }
 
 // 计算贝塞尔曲线上的点

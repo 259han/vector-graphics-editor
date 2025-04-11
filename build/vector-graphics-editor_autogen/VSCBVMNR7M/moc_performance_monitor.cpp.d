@@ -216,14 +216,16 @@ F:/program/claudegraph/build/vector-graphics-editor_autogen/VSCBVMNR7M/moc_perfo
   D:/Qt/6.8.2/mingw_64/include/QtCore/QDateTime \
   D:/Qt/6.8.2/mingw_64/include/QtCore/QDeadlineTimer \
   D:/Qt/6.8.2/mingw_64/include/QtCore/QElapsedTimer \
+  D:/Qt/6.8.2/mingw_64/include/QtCore/QList \
   D:/Qt/6.8.2/mingw_64/include/QtCore/QMap \
   D:/Qt/6.8.2/mingw_64/include/QtCore/QMutex \
   D:/Qt/6.8.2/mingw_64/include/QtCore/QObject \
   D:/Qt/6.8.2/mingw_64/include/QtCore/QQueue \
+  D:/Qt/6.8.2/mingw_64/include/QtCore/QReadWriteLock \
+  D:/Qt/6.8.2/mingw_64/include/QtCore/QSharedPointer \
   D:/Qt/6.8.2/mingw_64/include/QtCore/QString \
   D:/Qt/6.8.2/mingw_64/include/QtCore/QThread \
   D:/Qt/6.8.2/mingw_64/include/QtCore/QTimer \
-  D:/Qt/6.8.2/mingw_64/include/QtCore/QVector \
   D:/Qt/6.8.2/mingw_64/include/QtCore/QWaitCondition \
   D:/Qt/6.8.2/mingw_64/include/QtCore/q20functional.h \
   D:/Qt/6.8.2/mingw_64/include/QtCore/q20iterator.h \
@@ -302,6 +304,7 @@ F:/program/claudegraph/build/vector-graphics-editor_autogen/VSCBVMNR7M/moc_perfo
   D:/Qt/6.8.2/mingw_64/include/QtCore/qpoint.h \
   D:/Qt/6.8.2/mingw_64/include/QtCore/qprocessordetection.h \
   D:/Qt/6.8.2/mingw_64/include/QtCore/qqueue.h \
+  D:/Qt/6.8.2/mingw_64/include/QtCore/qreadwritelock.h \
   D:/Qt/6.8.2/mingw_64/include/QtCore/qrect.h \
   D:/Qt/6.8.2/mingw_64/include/QtCore/qrefcount.h \
   D:/Qt/6.8.2/mingw_64/include/QtCore/qscopedpointer.h \
@@ -353,7 +356,6 @@ F:/program/claudegraph/build/vector-graphics-editor_autogen/VSCBVMNR7M/moc_perfo
   D:/Qt/6.8.2/mingw_64/include/QtCore/qutf8stringview.h \
   D:/Qt/6.8.2/mingw_64/include/QtCore/qvariant.h \
   D:/Qt/6.8.2/mingw_64/include/QtCore/qvarlengtharray.h \
-  D:/Qt/6.8.2/mingw_64/include/QtCore/qvector.h \
   D:/Qt/6.8.2/mingw_64/include/QtCore/qversiontagging.h \
   D:/Qt/6.8.2/mingw_64/include/QtCore/qwaitcondition.h \
   D:/Qt/6.8.2/mingw_64/include/QtCore/qxptype_traits.h \

@@ -418,6 +418,30 @@ src/command/style_change_command.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\vector-graphics-editor.dir\build.make CMakeFiles/vector-graphics-editor.dir/src/command/style_change_command.cpp.s
 .PHONY : src/command/style_change_command.cpp.s
 
+src/command/transform_command.obj: src/command/transform_command.cpp.obj
+.PHONY : src/command/transform_command.obj
+
+# target to build an object file
+src/command/transform_command.cpp.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\vector-graphics-editor.dir\build.make CMakeFiles/vector-graphics-editor.dir/src/command/transform_command.cpp.obj
+.PHONY : src/command/transform_command.cpp.obj
+
+src/command/transform_command.i: src/command/transform_command.cpp.i
+.PHONY : src/command/transform_command.i
+
+# target to preprocess a source file
+src/command/transform_command.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\vector-graphics-editor.dir\build.make CMakeFiles/vector-graphics-editor.dir/src/command/transform_command.cpp.i
+.PHONY : src/command/transform_command.cpp.i
+
+src/command/transform_command.s: src/command/transform_command.cpp.s
+.PHONY : src/command/transform_command.s
+
+# target to generate assembly for a file
+src/command/transform_command.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\vector-graphics-editor.dir\build.make CMakeFiles/vector-graphics-editor.dir/src/command/transform_command.cpp.s
+.PHONY : src/command/transform_command.cpp.s
+
 src/core/bezier_graphic_item.obj: src/core/bezier_graphic_item.cpp.obj
 .PHONY : src/core/bezier_graphic_item.obj
 
@@ -1014,6 +1038,9 @@ help:
 	@echo ... src/command/style_change_command.obj
 	@echo ... src/command/style_change_command.i
 	@echo ... src/command/style_change_command.s
+	@echo ... src/command/transform_command.obj
+	@echo ... src/command/transform_command.i
+	@echo ... src/command/transform_command.s
 	@echo ... src/core/bezier_graphic_item.obj
 	@echo ... src/core/bezier_graphic_item.i
 	@echo ... src/core/bezier_graphic_item.s

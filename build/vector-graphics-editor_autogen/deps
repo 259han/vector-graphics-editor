@@ -226,13 +226,13 @@ vector-graphics-editor_autogen/timestamp: \
 	D:/Qt/6.8.2/mingw_64/include/QtCore/QReadWriteLock \
 	D:/Qt/6.8.2/mingw_64/include/QtCore/QRect \
 	D:/Qt/6.8.2/mingw_64/include/QtCore/QSet \
+	D:/Qt/6.8.2/mingw_64/include/QtCore/QSharedPointer \
 	D:/Qt/6.8.2/mingw_64/include/QtCore/QSize \
 	D:/Qt/6.8.2/mingw_64/include/QtCore/QSizeF \
 	D:/Qt/6.8.2/mingw_64/include/QtCore/QStack \
 	D:/Qt/6.8.2/mingw_64/include/QtCore/QString \
 	D:/Qt/6.8.2/mingw_64/include/QtCore/QThread \
 	D:/Qt/6.8.2/mingw_64/include/QtCore/QTimer \
-	D:/Qt/6.8.2/mingw_64/include/QtCore/QVector \
 	D:/Qt/6.8.2/mingw_64/include/QtCore/QWaitCondition \
 	D:/Qt/6.8.2/mingw_64/include/QtCore/q20functional.h \
 	D:/Qt/6.8.2/mingw_64/include/QtCore/q20iterator.h \
@@ -373,7 +373,6 @@ vector-graphics-editor_autogen/timestamp: \
 	D:/Qt/6.8.2/mingw_64/include/QtCore/qutf8stringview.h \
 	D:/Qt/6.8.2/mingw_64/include/QtCore/qvariant.h \
 	D:/Qt/6.8.2/mingw_64/include/QtCore/qvarlengtharray.h \
-	D:/Qt/6.8.2/mingw_64/include/QtCore/qvector.h \
 	D:/Qt/6.8.2/mingw_64/include/QtCore/qversiontagging.h \
 	D:/Qt/6.8.2/mingw_64/include/QtCore/qwaitcondition.h \
 	D:/Qt/6.8.2/mingw_64/include/QtCore/qxptype_traits.h \
@@ -381,6 +380,7 @@ vector-graphics-editor_autogen/timestamp: \
 	D:/Qt/6.8.2/mingw_64/include/QtGui/QAction \
 	D:/Qt/6.8.2/mingw_64/include/QtGui/QActionGroup \
 	D:/Qt/6.8.2/mingw_64/include/QtGui/QBrush \
+	D:/Qt/6.8.2/mingw_64/include/QtGui/QCloseEvent \
 	D:/Qt/6.8.2/mingw_64/include/QtGui/QColor \
 	D:/Qt/6.8.2/mingw_64/include/QtGui/QCursor \
 	D:/Qt/6.8.2/mingw_64/include/QtGui/QFont \
@@ -801,6 +801,8 @@ vector-graphics-editor_autogen/timestamp: \
 	F:/program/claudegraph/src/command/selection_command.h \
 	F:/program/claudegraph/src/command/style_change_command.cpp \
 	F:/program/claudegraph/src/command/style_change_command.h \
+	F:/program/claudegraph/src/command/transform_command.cpp \
+	F:/program/claudegraph/src/command/transform_command.h \
 	F:/program/claudegraph/src/core/bezier_graphic_item.cpp \
 	F:/program/claudegraph/src/core/bezier_graphic_item.h \
 	F:/program/claudegraph/src/core/circle_graphic_item.cpp \

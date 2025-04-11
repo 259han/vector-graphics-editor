@@ -71,19 +71,19 @@ QGraphicsItem* DefaultGraphicsItemFactory::createCustomItem(Graphic::GraphicType
             
         case Graphic::ELLIPSE:
             if (points.size() >= 2) {
-                QPointF center = points[0];
-                QPointF radiusPoint = points[1];
+                // 创建标准化矩形，匹配预览椭圆的方式
+                QRectF rect = QRectF(points[0], points[1]).normalized();
                 
-                // 计算椭圆的半径 - 使用两点之间的差值作为半径
-                double radiusX = std::abs(radiusPoint.x() - center.x());
-                double radiusY = std::abs(radiusPoint.y() - center.y());
+                // 计算中心点和尺寸
+                QPointF center = rect.center();
+                double width = rect.width();
+                double height = rect.height();
                 
-                // 确保半径不为零
-                radiusX = radiusX < 1.0 ? 1.0 : radiusX;
-                radiusY = radiusY < 1.0 ? 1.0 : radiusY;
+                // 确保最小尺寸
+                width = width < 1.0 ? 1.0 : width;
+                height = height < 1.0 ? 1.0 : height;
                 
-                // 参数是宽度和高度，不是半径，所以需要乘以2
-                return new EllipseGraphicItem(center, radiusX * 2, radiusY * 2);
+                return new EllipseGraphicItem(center, width, height);
             }
             break;
             

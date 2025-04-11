@@ -21,6 +21,8 @@ file(REMOVE_RECURSE
   "CMakeFiles/vector-graphics-editor.dir/src/command/selection_command.cpp.obj.d"
   "CMakeFiles/vector-graphics-editor.dir/src/command/style_change_command.cpp.obj"
   "CMakeFiles/vector-graphics-editor.dir/src/command/style_change_command.cpp.obj.d"
+  "CMakeFiles/vector-graphics-editor.dir/src/command/transform_command.cpp.obj"
+  "CMakeFiles/vector-graphics-editor.dir/src/command/transform_command.cpp.obj.d"
   "CMakeFiles/vector-graphics-editor.dir/src/core/bezier_graphic_item.cpp.obj"
   "CMakeFiles/vector-graphics-editor.dir/src/core/bezier_graphic_item.cpp.obj.d"
   "CMakeFiles/vector-graphics-editor.dir/src/core/circle_graphic_item.cpp.obj"

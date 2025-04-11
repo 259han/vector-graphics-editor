@@ -3,6 +3,7 @@
 
 #include "command.h"
 #include "../core/graphic.h"
+#include "../core/graphic_item.h"
 #include <QGraphicsItem>
 #include <QPointF>
 #include <vector>
@@ -29,6 +30,13 @@ public:
                         const std::vector<QPointF>& points,
                         const QPen& pen,
                         const QBrush& brush);
+    
+    /**
+     * @brief 构造函数 - 直接接收已创建的GraphicItem
+     * @param scene 场景指针
+     * @param graphicItem 已创建的图形项
+     */
+    CreateGraphicCommand(QGraphicsScene* scene, GraphicItem* graphicItem);
     
     /**
      * @brief 析构函数
@@ -64,13 +72,15 @@ public:
     QGraphicsItem* getCreatedItem() const { return m_createdItem; }
 
 private:
-    DrawArea* m_drawArea;
+    DrawArea* m_drawArea = nullptr;
+    QGraphicsScene* m_scene = nullptr;
     Graphic::GraphicType m_type;
     std::vector<QPointF> m_points;
     QPen m_pen;
     QBrush m_brush;
     QGraphicsItem* m_createdItem = nullptr; // 创建的图形项
     bool m_executed = false;               // 命令是否已执行
+    bool m_directCreation = false;         // 是否是直接创建模式
 };
 
 #endif // CREATE_GRAPHIC_COMMAND_H 

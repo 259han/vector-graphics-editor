@@ -699,6 +699,7 @@ F:/program/claudegraph/src/command/selection_command.h
 F:/program/claudegraph/src/utils/logger.h
 F:/program/claudegraph/src/core/rectangle_graphic_item.h
 F:/program/claudegraph/src/command/style_change_command.h
+F:/program/claudegraph/src/command/transform_command.h
 F:/program/claudegraph/src/core/bezier_graphic_item.h
 F:/program/claudegraph/src/core/draw_strategy.h
 F:/program/claudegraph/src/core/graphic.h
@@ -1340,14 +1341,15 @@ F:/program/claudegraph/src/ui/draw_area.h
  mdp:D:/Qt/6.8.2/mingw_64/include/QtCore/QObject
  mdp:D:/Qt/6.8.2/mingw_64/include/QtCore/QPointF
  mdp:D:/Qt/6.8.2/mingw_64/include/QtCore/QQueue
+ mdp:D:/Qt/6.8.2/mingw_64/include/QtCore/QReadWriteLock
  mdp:D:/Qt/6.8.2/mingw_64/include/QtCore/QRect
  mdp:D:/Qt/6.8.2/mingw_64/include/QtCore/QSet
+ mdp:D:/Qt/6.8.2/mingw_64/include/QtCore/QSharedPointer
  mdp:D:/Qt/6.8.2/mingw_64/include/QtCore/QSize
  mdp:D:/Qt/6.8.2/mingw_64/include/QtCore/QSizeF
  mdp:D:/Qt/6.8.2/mingw_64/include/QtCore/QString
  mdp:D:/Qt/6.8.2/mingw_64/include/QtCore/QThread
  mdp:D:/Qt/6.8.2/mingw_64/include/QtCore/QTimer
- mdp:D:/Qt/6.8.2/mingw_64/include/QtCore/QVector
  mdp:D:/Qt/6.8.2/mingw_64/include/QtCore/QWaitCondition
  mdp:D:/Qt/6.8.2/mingw_64/include/QtCore/q20functional.h
  mdp:D:/Qt/6.8.2/mingw_64/include/QtCore/q20iterator.h
@@ -1433,6 +1435,7 @@ F:/program/claudegraph/src/ui/draw_area.h
  mdp:D:/Qt/6.8.2/mingw_64/include/QtCore/qpoint.h
  mdp:D:/Qt/6.8.2/mingw_64/include/QtCore/qprocessordetection.h
  mdp:D:/Qt/6.8.2/mingw_64/include/QtCore/qqueue.h
+ mdp:D:/Qt/6.8.2/mingw_64/include/QtCore/qreadwritelock.h
  mdp:D:/Qt/6.8.2/mingw_64/include/QtCore/qrect.h
  mdp:D:/Qt/6.8.2/mingw_64/include/QtCore/qrefcount.h
  mdp:D:/Qt/6.8.2/mingw_64/include/QtCore/qregularexpression.h
@@ -1486,7 +1489,6 @@ F:/program/claudegraph/src/ui/draw_area.h
  mdp:D:/Qt/6.8.2/mingw_64/include/QtCore/qutf8stringview.h
  mdp:D:/Qt/6.8.2/mingw_64/include/QtCore/qvariant.h
  mdp:D:/Qt/6.8.2/mingw_64/include/QtCore/qvarlengtharray.h
- mdp:D:/Qt/6.8.2/mingw_64/include/QtCore/qvector.h
  mdp:D:/Qt/6.8.2/mingw_64/include/QtCore/qversiontagging.h
  mdp:D:/Qt/6.8.2/mingw_64/include/QtCore/qwaitcondition.h
  mdp:D:/Qt/6.8.2/mingw_64/include/QtCore/qxptype_traits.h
@@ -2184,14 +2186,15 @@ F:/program/claudegraph/src/ui/main_window.h
  mdp:D:/Qt/6.8.2/mingw_64/include/QtCore/QObject
  mdp:D:/Qt/6.8.2/mingw_64/include/QtCore/QPointF
  mdp:D:/Qt/6.8.2/mingw_64/include/QtCore/QQueue
+ mdp:D:/Qt/6.8.2/mingw_64/include/QtCore/QReadWriteLock
  mdp:D:/Qt/6.8.2/mingw_64/include/QtCore/QRect
  mdp:D:/Qt/6.8.2/mingw_64/include/QtCore/QSet
+ mdp:D:/Qt/6.8.2/mingw_64/include/QtCore/QSharedPointer
  mdp:D:/Qt/6.8.2/mingw_64/include/QtCore/QSize
  mdp:D:/Qt/6.8.2/mingw_64/include/QtCore/QSizeF
  mdp:D:/Qt/6.8.2/mingw_64/include/QtCore/QString
  mdp:D:/Qt/6.8.2/mingw_64/include/QtCore/QThread
  mdp:D:/Qt/6.8.2/mingw_64/include/QtCore/QTimer
- mdp:D:/Qt/6.8.2/mingw_64/include/QtCore/QVector
  mdp:D:/Qt/6.8.2/mingw_64/include/QtCore/QWaitCondition
  mdp:D:/Qt/6.8.2/mingw_64/include/QtCore/q20functional.h
  mdp:D:/Qt/6.8.2/mingw_64/include/QtCore/q20iterator.h
@@ -2277,6 +2280,7 @@ F:/program/claudegraph/src/ui/main_window.h
  mdp:D:/Qt/6.8.2/mingw_64/include/QtCore/qpoint.h
  mdp:D:/Qt/6.8.2/mingw_64/include/QtCore/qprocessordetection.h
  mdp:D:/Qt/6.8.2/mingw_64/include/QtCore/qqueue.h
+ mdp:D:/Qt/6.8.2/mingw_64/include/QtCore/qreadwritelock.h
  mdp:D:/Qt/6.8.2/mingw_64/include/QtCore/qrect.h
  mdp:D:/Qt/6.8.2/mingw_64/include/QtCore/qrefcount.h
  mdp:D:/Qt/6.8.2/mingw_64/include/QtCore/qregularexpression.h
@@ -2330,7 +2334,6 @@ F:/program/claudegraph/src/ui/main_window.h
  mdp:D:/Qt/6.8.2/mingw_64/include/QtCore/qutf8stringview.h
  mdp:D:/Qt/6.8.2/mingw_64/include/QtCore/qvariant.h
  mdp:D:/Qt/6.8.2/mingw_64/include/QtCore/qvarlengtharray.h
- mdp:D:/Qt/6.8.2/mingw_64/include/QtCore/qvector.h
  mdp:D:/Qt/6.8.2/mingw_64/include/QtCore/qversiontagging.h
  mdp:D:/Qt/6.8.2/mingw_64/include/QtCore/qwaitcondition.h
  mdp:D:/Qt/6.8.2/mingw_64/include/QtCore/qxptype_traits.h
@@ -2338,6 +2341,7 @@ F:/program/claudegraph/src/ui/main_window.h
  mdp:D:/Qt/6.8.2/mingw_64/include/QtGui/QAction
  mdp:D:/Qt/6.8.2/mingw_64/include/QtGui/QActionGroup
  mdp:D:/Qt/6.8.2/mingw_64/include/QtGui/QBrush
+ mdp:D:/Qt/6.8.2/mingw_64/include/QtGui/QCloseEvent
  mdp:D:/Qt/6.8.2/mingw_64/include/QtGui/QColor
  mdp:D:/Qt/6.8.2/mingw_64/include/QtGui/QCursor
  mdp:D:/Qt/6.8.2/mingw_64/include/QtGui/QFont
@@ -2450,7 +2454,6 @@ F:/program/claudegraph/src/ui/main_window.h
  mdp:F:/program/claudegraph/src/ui/image_resizer.h
  mdp:F:/program/claudegraph/src/ui/main_window.h
  mdp:F:/program/claudegraph/src/utils/performance_monitor.h
-F:/program/claudegraph/src/utils/logger.cpp
 F:/program/claudegraph/src/utils/performance_monitor.h
  mmc:Q_OBJECT
  mdp:C:/msys64/mingw64/include/_mingw.h
@@ -2669,14 +2672,16 @@ F:/program/claudegraph/src/utils/performance_monitor.h
  mdp:D:/Qt/6.8.2/mingw_64/include/QtCore/QDateTime
  mdp:D:/Qt/6.8.2/mingw_64/include/QtCore/QDeadlineTimer
  mdp:D:/Qt/6.8.2/mingw_64/include/QtCore/QElapsedTimer
+ mdp:D:/Qt/6.8.2/mingw_64/include/QtCore/QList
  mdp:D:/Qt/6.8.2/mingw_64/include/QtCore/QMap
  mdp:D:/Qt/6.8.2/mingw_64/include/QtCore/QMutex
  mdp:D:/Qt/6.8.2/mingw_64/include/QtCore/QObject
  mdp:D:/Qt/6.8.2/mingw_64/include/QtCore/QQueue
+ mdp:D:/Qt/6.8.2/mingw_64/include/QtCore/QReadWriteLock
+ mdp:D:/Qt/6.8.2/mingw_64/include/QtCore/QSharedPointer
  mdp:D:/Qt/6.8.2/mingw_64/include/QtCore/QString
  mdp:D:/Qt/6.8.2/mingw_64/include/QtCore/QThread
  mdp:D:/Qt/6.8.2/mingw_64/include/QtCore/QTimer
- mdp:D:/Qt/6.8.2/mingw_64/include/QtCore/QVector
  mdp:D:/Qt/6.8.2/mingw_64/include/QtCore/QWaitCondition
  mdp:D:/Qt/6.8.2/mingw_64/include/QtCore/q20functional.h
  mdp:D:/Qt/6.8.2/mingw_64/include/QtCore/q20iterator.h
@@ -2755,6 +2760,7 @@ F:/program/claudegraph/src/utils/performance_monitor.h
  mdp:D:/Qt/6.8.2/mingw_64/include/QtCore/qpoint.h
  mdp:D:/Qt/6.8.2/mingw_64/include/QtCore/qprocessordetection.h
  mdp:D:/Qt/6.8.2/mingw_64/include/QtCore/qqueue.h
+ mdp:D:/Qt/6.8.2/mingw_64/include/QtCore/qreadwritelock.h
  mdp:D:/Qt/6.8.2/mingw_64/include/QtCore/qrect.h
  mdp:D:/Qt/6.8.2/mingw_64/include/QtCore/qrefcount.h
  mdp:D:/Qt/6.8.2/mingw_64/include/QtCore/qscopedpointer.h
@@ -2806,7 +2812,6 @@ F:/program/claudegraph/src/utils/performance_monitor.h
  mdp:D:/Qt/6.8.2/mingw_64/include/QtCore/qutf8stringview.h
  mdp:D:/Qt/6.8.2/mingw_64/include/QtCore/qvariant.h
  mdp:D:/Qt/6.8.2/mingw_64/include/QtCore/qvarlengtharray.h
- mdp:D:/Qt/6.8.2/mingw_64/include/QtCore/qvector.h
  mdp:D:/Qt/6.8.2/mingw_64/include/QtCore/qversiontagging.h
  mdp:D:/Qt/6.8.2/mingw_64/include/QtCore/qwaitcondition.h
  mdp:D:/Qt/6.8.2/mingw_64/include/QtCore/qxptype_traits.h
@@ -2847,12 +2852,12 @@ F:/program/claudegraph/src/command/command.cpp
 F:/program/claudegraph/src/command/composite_command.cpp
 F:/program/claudegraph/src/core/ellipse_graphic_item.cpp
 F:/program/claudegraph/src/command/create_graphic_command.cpp
-F:/program/claudegraph/src/utils/graphics_utils.cpp
 F:/program/claudegraph/src/core/line_graphic_item.cpp
 F:/program/claudegraph/src/command/paste_command.cpp
 F:/program/claudegraph/src/core/circle_graphic_item.cpp
 F:/program/claudegraph/src/command/rotate_command.cpp
 F:/program/claudegraph/src/command/selection_command.cpp
+F:/program/claudegraph/src/command/transform_command.cpp
 F:/program/claudegraph/src/core/draw_strategy.cpp
 F:/program/claudegraph/src/core/graphic.cpp
 F:/program/claudegraph/src/state/draw_state.cpp
@@ -2860,4 +2865,6 @@ F:/program/claudegraph/src/state/fill_state.cpp
 F:/program/claudegraph/src/ui/draw_area.cpp
 F:/program/claudegraph/src/ui/image_resizer.cpp
 F:/program/claudegraph/src/ui/main_window.cpp
+F:/program/claudegraph/src/utils/graphics_utils.cpp
+F:/program/claudegraph/src/utils/logger.cpp
 F:/program/claudegraph/src/utils/performance_monitor.cpp

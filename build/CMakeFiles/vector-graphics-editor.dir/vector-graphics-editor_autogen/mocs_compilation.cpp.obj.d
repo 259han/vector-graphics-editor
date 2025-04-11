@@ -482,8 +482,6 @@ CMakeFiles/vector-graphics-editor.dir/vector-graphics-editor_autogen/mocs_compil
  F:/program/claudegraph/src/utils/performance_monitor.h \
  D:/Qt/6.8.2/mingw_64/include/QtCore/QMap \
  D:/Qt/6.8.2/mingw_64/include/QtCore/qmap.h \
- D:/Qt/6.8.2/mingw_64/include/QtCore/QVector \
- D:/Qt/6.8.2/mingw_64/include/QtCore/qvector.h \
  D:/Qt/6.8.2/mingw_64/include/QtCore/QMutex \
  D:/Qt/6.8.2/mingw_64/include/QtCore/qmutex.h \
  D:/Qt/6.8.2/mingw_64/include/QtCore/qtsan_impl.h \
@@ -512,6 +510,8 @@ CMakeFiles/vector-graphics-editor.dir/vector-graphics-editor_autogen/mocs_compil
  D:/Qt/6.8.2/mingw_64/include/QtCore/QDateTime \
  D:/Qt/6.8.2/mingw_64/include/QtCore/qdatetime.h \
  D:/Qt/6.8.2/mingw_64/include/QtCore/qcalendar.h \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/QSharedPointer \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/qsharedpointer.h \
  F:/program/claudegraph/src/ui/image_resizer.h \
  D:/Qt/6.8.2/mingw_64/include/QtWidgets/QGraphicsObject \
  D:/Qt/6.8.2/mingw_64/include/QtWidgets/QGraphicsLineItem \
@@ -545,6 +545,7 @@ CMakeFiles/vector-graphics-editor.dir/vector-graphics-editor_autogen/mocs_compil
  D:/Qt/6.8.2/mingw_64/include/QtWidgets/qabstractitemdelegate.h \
  D:/Qt/6.8.2/mingw_64/include/QtWidgets/qstyleoption.h \
  F:/program/claudegraph/src/ui/draw_area.h \
+ D:/Qt/6.8.2/mingw_64/include/QtGui/QCloseEvent \
  D:/Qt/6.8.2/mingw_64/include/QtGui/qtextcursor.h \
  D:/Qt/6.8.2/mingw_64/include/QtGui/qtextformat.h \
  F:\program\claudegraph\build\vector-graphics-editor_autogen\VSCBVMNR7M/moc_performance_monitor.cpp \

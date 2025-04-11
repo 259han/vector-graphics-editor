@@ -1,8 +1,25 @@
 #include "draw_area.h"
+#include "../core/graphic_item.h"
+#include "../core/line_graphic_item.h"
+#include "../core/rectangle_graphic_item.h"
+#include "../core/ellipse_graphic_item.h"
+#include "../core/circle_graphic_item.h"
+#include "../core/bezier_graphic_item.h"
 #include "../state/draw_state.h"
 #include "../state/edit_state.h"
 #include "../state/fill_state.h"
-#include "../core/graphic_item.h"
+#include "../core/graphics_item_factory.h"
+#include "image_resizer.h"
+#include "../utils/logger.h"
+#include "../command/command_manager.h"
+#include "../command/create_graphic_command.h"
+#include "../command/transform_command.h"
+#include "../command/move_command.h"
+#include "../command/style_change_command.h"
+#include "../command/selection_command.h"
+#include "../command/paste_command.h"
+#include "../utils/performance_monitor.h"
+
 #include <QPaintEvent>
 #include <QMouseEvent>
 #include <QWheelEvent>
@@ -12,8 +29,6 @@
 #include <QImageReader>
 #include <QPainter>
 #include <QDebug>
-#include "../core/graphics_item_factory.h"
-#include "../state/editor_state.h"
 #include <QApplication>
 #include <QGuiApplication>
 #include <QKeyEvent>
@@ -27,17 +42,11 @@
 #include <QVBoxLayout>
 #include <QGraphicsSceneMouseEvent>
 #include <QTimer>
-#include "ui/image_resizer.h"
-#include "core/image_manager.h"
-#include "core/selection_manager.h"
-#include "../utils/logger.h"
-#include "../utils/performance_monitor.h"
+#include <QDragEnterEvent>
+#include <QDropEvent>
 #include <QDataStream>
 #include <QMenu>
 #include <QContextMenuEvent>
-#include "../command/paste_command.h"
-#include "../command/command_manager.h"
-#include <memory>
 #include <QElapsedTimer>
 #include <QRandomGenerator>
 
@@ -48,7 +57,6 @@ DrawArea::DrawArea(QWidget *parent)
     : QGraphicsView(parent)
     , m_scene(new QGraphicsScene(this))
     , m_currentState(nullptr)
-    , m_imageManager(new ImageManager(this))
     , m_graphicFactory(std::make_unique<DefaultGraphicsItemFactory>())
     , m_selectionManager(std::make_unique<SelectionManager>(m_scene))
 {
@@ -74,9 +82,6 @@ DrawArea::DrawArea(QWidget *parent)
     // 允许拖放
     setAcceptDrops(true);
     
-    // 设置图像管理器
-    m_imageManager->setDrawArea(this);
-    
     // 连接选择管理器的信号
     connect(m_selectionManager.get(), &SelectionManager::selectionChanged, this, [this]() {
         viewport()->update();
@@ -86,12 +91,43 @@ DrawArea::DrawArea(QWidget *parent)
 
 DrawArea::~DrawArea()
 {
-    // 清理图像调整器
-    qDeleteAll(m_imageResizers);
-    m_imageResizers.clear();
-    
-    // 图像管理器会由Qt的父子关系自动清理
-    // m_scene会由Qt的父子关系自动清理
+    try {
+        qDebug() << "DrawArea: 析构开始";
+        
+        // 断开所有信号连接
+        this->disconnect();
+        
+        // 安全地清理图像调整器
+        qDeleteAll(m_imageResizers);
+        m_imageResizers.clear();
+        
+        // 安全地清除选择，防止在对象析构过程中引用已释放对象
+        if (m_selectionManager) {
+            m_selectionManager->disconnect();
+            m_selectionManager->clearSelection();
+        }
+        
+        // 安全地处理场景
+        if (m_scene) {
+            // 断开场景的连接
+            m_scene->disconnect();
+            
+            // 清除场景的选择
+            m_scene->clearSelection();
+            m_scene->clearFocus();
+        }
+        
+        // 确保处理任何挂起的事件
+        QApplication::processEvents();
+        
+        qDebug() << "DrawArea: 析构完成";
+    }
+    catch (const std::exception& e) {
+        qCritical() << "DrawArea::~DrawArea: 异常:" << e.what();
+    }
+    catch (...) {
+        qCritical() << "DrawArea::~DrawArea: 未知异常";
+    }
 }
 
 void DrawArea::setDrawState(Graphic::GraphicType graphicType)
@@ -403,13 +439,9 @@ void DrawArea::mouseReleaseEvent(QMouseEvent *event)
 
 void DrawArea::keyPressEvent(QKeyEvent *event)
 {
-    // 处理空格键（进入准备平移状态）
-    if (event->key() == Qt::Key_Space && !event->isAutoRepeat()) {
-        m_spaceKeyPressed = true;
-        setCursor(Qt::OpenHandCursor);
-        event->accept();
-        return;
-    }
+    // 检查性能监控是否启用
+    bool perfEnabled = isPerformanceMonitorEnabled();
+    bool overlayShown = isPerformanceOverlayShown();
     
     // 处理Ctrl键
     if (event->key() == Qt::Key_Control) {
@@ -419,12 +451,147 @@ void DrawArea::keyPressEvent(QKeyEvent *event)
         }
     }
     
-    // 委托给当前状态处理
-    if (m_currentState) {
-        m_currentState->keyPressEvent(this, event);
-    } else {
-        QGraphicsView::keyPressEvent(event);
+    // 处理复制、剪切、粘贴的快捷键
+    if (event->modifiers() & Qt::ControlModifier) {
+        switch (event->key()) {
+            case Qt::Key_C: // 复制
+                copySelectedItems();
+                copyToSystemClipboard();
+                event->accept();
+                return;
+                
+            case Qt::Key_X: // 剪切
+                cutSelectedItems();
+                event->accept();
+                return;
+                
+            case Qt::Key_V: // 粘贴
+                if (!m_clipboardData.isEmpty()) {
+                    pasteItems();
+                } else if (canPasteFromClipboard()) {
+                    pasteFromSystemClipboard();
+                }
+                event->accept();
+                return;
+                
+            case Qt::Key_A: // 全选
+                if (m_currentState && m_currentState->getStateType() == EditorState::EditState) {
+                    selectAllGraphics();
+                    event->accept();
+                    return;
+                }
+                break;
+        }
     }
+    
+    // 组合键: Ctrl+Shift+P 切换性能监控
+    if (event->modifiers() == (Qt::ControlModifier | Qt::ShiftModifier) && event->key() == Qt::Key_P) {
+        enablePerformanceMonitor(!perfEnabled);
+        event->accept();
+        return;
+    }
+    
+    // 组合键: Ctrl+Shift+O 切换性能覆盖层
+    if (event->modifiers() == (Qt::ControlModifier | Qt::ShiftModifier) && event->key() == Qt::Key_O) {
+        showPerformanceOverlay(!overlayShown);
+        event->accept();
+        return;
+    }
+    
+    // 以下快捷键仅在性能覆盖层显示时有效
+    if (perfEnabled && overlayShown) {
+        // 组合键: Ctrl+Shift+1/2/3/4 切换图表模式
+        if (event->modifiers() == (Qt::ControlModifier | Qt::ShiftModifier)) {
+            auto& monitor = PerformanceMonitor::instance();
+            
+            switch (event->key()) {
+                case Qt::Key_1:
+                    // 切换为折线图
+                    monitor.setChartDisplayMode(PerformanceMonitor::LineChart);
+                    Logger::info("性能监控图表模式已切换为: 折线图");
+                    viewport()->update();
+                    event->accept();
+                    return;
+                    
+                case Qt::Key_2:
+                    // 切换为柱状图
+                    monitor.setChartDisplayMode(PerformanceMonitor::BarChart);
+                    Logger::info("性能监控图表模式已切换为: 柱状图");
+                    viewport()->update();
+                    event->accept();
+                    return;
+                    
+                case Qt::Key_3:
+                    // 切换为面积图
+                    monitor.setChartDisplayMode(PerformanceMonitor::AreaChart);
+                    Logger::info("性能监控图表模式已切换为: 面积图");
+                    viewport()->update();
+                    event->accept();
+                    return;
+                    
+                case Qt::Key_4:
+                    // 切换为散点图
+                    monitor.setChartDisplayMode(PerformanceMonitor::DotChart);
+                    Logger::info("性能监控图表模式已切换为: 散点图");
+                    viewport()->update();
+                    event->accept();
+                    return;
+                    
+                case Qt::Key_Up:
+                    // 增加透明度
+                    {
+                        double opacity = monitor.getOverlayOpacity();
+                        monitor.setOverlayOpacity(opacity + 0.05);
+                        viewport()->update();
+                        event->accept();
+                        return;
+                    }
+                    
+                case Qt::Key_Down:
+                    // 减少透明度
+                    {
+                        double opacity = monitor.getOverlayOpacity();
+                        monitor.setOverlayOpacity(opacity - 0.05);
+                        viewport()->update();
+                        event->accept();
+                        return;
+                    }
+                    
+                case Qt::Key_M:
+                    // 切换位置
+                    {
+                        auto position = monitor.getOverlayPosition();
+                        // 循环切换位置
+                        position = static_cast<PerformanceMonitor::OverlayPosition>((position + 1) % 4);
+                        monitor.setOverlayPosition(position);
+                        
+                        QString posText;
+                        switch (position) {
+                            case PerformanceMonitor::TopLeft:
+                                posText = "左上角";
+                                break;
+                            case PerformanceMonitor::TopRight:
+                                posText = "右上角";
+                                break;
+                            case PerformanceMonitor::BottomLeft:
+                                posText = "左下角";
+                                break;
+                            case PerformanceMonitor::BottomRight:
+                                posText = "右下角";
+                                break;
+                        }
+                        
+                        Logger::info(QString("性能监控覆盖层位置已切换为: %1").arg(posText));
+                        viewport()->update();
+                        event->accept();
+                        return;
+                    }
+            }
+        }
+    }
+    
+    // 如果没有处理，传递给基类
+    QGraphicsView::keyPressEvent(event);
 }
 
 void DrawArea::keyReleaseEvent(QKeyEvent *event)
@@ -512,13 +679,45 @@ void DrawArea::setImage(const QImage &image)
         return;
     }
     
-    // 委托给ImageManager处理
-    m_imageManager->addImageToScene(image);
+    // 创建QGraphicsPixmapItem并添加到场景
+    QGraphicsPixmapItem* item = new QGraphicsPixmapItem(QPixmap::fromImage(image));
+    if (m_scene) {
+        m_scene->addItem(item);
+        item->setPos(0, 0);
+    }
+    
+    // 更新视图
+    viewport()->update();
 }
 
 void DrawArea::saveImage()
 {
-    m_imageManager->saveImage(QString());
+    // 打开文件对话框选择保存位置
+    QString fileName = QFileDialog::getSaveFileName(
+        this,
+        tr("保存图像"),
+        QString(),
+        tr("PNG文件 (*.png);;JPEG文件 (*.jpg);;BMP文件 (*.bmp);;所有文件 (*)")
+    );
+    
+    if (fileName.isEmpty()) {
+        return;
+    }
+    
+    // 获取当前场景内容
+    QRectF sceneRect = m_scene->itemsBoundingRect();
+    QPixmap pixmap(sceneRect.size().toSize());
+    pixmap.fill(Qt::white);
+    
+    QPainter painter(&pixmap);
+    painter.setRenderHint(QPainter::Antialiasing);
+    m_scene->render(&painter, QRectF(), sceneRect);
+    painter.end();
+    
+    // 保存图像
+    if (!pixmap.save(fileName)) {
+        QMessageBox::warning(this, tr("保存失败"), tr("无法保存图像到文件: %1").arg(fileName));
+    }
 }
 
 void DrawArea::importImage()
@@ -531,7 +730,24 @@ void DrawArea::importImage()
     );
     
     if (!fileName.isEmpty()) {
-        m_imageManager->importImage(fileName);
+        // 直接加载图像并添加到场景
+        QImage image(fileName);
+        if (!image.isNull()) {
+            // 将图像添加到场景中心
+            QGraphicsPixmapItem* item = new QGraphicsPixmapItem(QPixmap::fromImage(image));
+            if (m_scene) {
+                m_scene->addItem(item);
+                
+                // 放置在视图中心
+                QRectF viewRect = mapToScene(viewport()->rect()).boundingRect();
+                QPointF center = viewRect.center();
+                QRectF itemRect = item->boundingRect();
+                item->setPos(center - QPointF(itemRect.width()/2, itemRect.height()/2));
+            }
+            
+            // 更新视图
+            viewport()->update();
+        }
     }
 }
 
@@ -552,35 +768,18 @@ void DrawArea::rotateSelectedGraphics(double angle)
     // 性能监控
     PERF_SCOPE(LogicTime);
     
-    // SelectionManager没有rotateSelection方法，恢复原来的实现
     if (!m_selectionManager || m_selectionManager->getSelectedItems().isEmpty()) {
         return;
     }
     
+    QList<QGraphicsItem*> selectedItems = m_selectionManager->getSelectedItems();
+    
     // 获取选择中心点作为旋转中心
     QPointF center = m_selectionManager->selectionCenter();
     
-    // 对每个选中的图形项应用旋转
-    for (QGraphicsItem* item : m_selectionManager->getSelectedItems()) {
-        GraphicItem* graphicItem = dynamic_cast<GraphicItem*>(item);
-        if (graphicItem) {
-            // 计算相对于中心点的旋转
-            QPointF itemPos = item->pos();
-            QPointF relativePos = itemPos - center;
-            
-            // 应用旋转变换
-            QTransform transform;
-            transform.translate(center.x(), center.y())
-                    .rotate(angle)
-                    .translate(-center.x(), -center.y());
-            
-            QPointF newPos = transform.map(itemPos);
-            item->setPos(newPos);
-            
-            // 旋转图形自身
-            graphicItem->rotateBy(angle);
-        }
-    }
+    // 创建旋转命令并执行
+    TransformCommand* command = TransformCommand::createRotateCommand(selectedItems, angle, center);
+    CommandManager::getInstance().executeCommand(command);
     
     // 更新视图
     viewport()->update();
@@ -591,31 +790,18 @@ void DrawArea::scaleSelectedGraphics(double factor)
     // 性能监控
     PERF_SCOPE(LogicTime);
     
-    // SelectionManager的scaleSelection方法需要不同的参数，恢复原来的实现
     if (!m_selectionManager || m_selectionManager->getSelectedItems().isEmpty()) {
         return;
     }
     
+    QList<QGraphicsItem*> selectedItems = m_selectionManager->getSelectedItems();
+    
     // 获取选择中心点作为缩放中心
     QPointF center = m_selectionManager->selectionCenter();
     
-    // 对每个选中的图形项应用缩放
-    for (QGraphicsItem* item : m_selectionManager->getSelectedItems()) {
-        GraphicItem* graphicItem = dynamic_cast<GraphicItem*>(item);
-        if (graphicItem) {
-            // 计算相对于中心点的缩放
-            QPointF itemPos = item->pos();
-            QPointF relativePos = itemPos - center;
-            QPointF newRelativePos = relativePos * factor;
-            QPointF newPos = center + newRelativePos;
-            
-            // 设置新位置
-            item->setPos(newPos);
-            
-            // 缩放图形自身
-            graphicItem->scaleBy(factor);
-        }
-    }
+    // 创建缩放命令并执行
+    TransformCommand* command = TransformCommand::createScaleCommand(selectedItems, factor, center);
+    CommandManager::getInstance().executeCommand(command);
     
     // 更新视图
     viewport()->update();
@@ -803,147 +989,77 @@ void DrawArea::copySelectedItems() {
 // 粘贴复制的图形项（在默认位置）
 void DrawArea::pasteItems() {
     // 使用智能定位
-    pasteItemsAtPosition(calculateSmartPastePosition());
-}
-
-// 在指定位置粘贴图形项
-void DrawArea::pasteItemsAtPosition(const QPointF& pos) {
-    // 防止重复执行粘贴操作
-    static bool isPasting = false;
-    if (isPasting) {
-        Logger::warning("DrawArea::pasteItemsAtPosition: 已有粘贴操作正在执行，防止重复粘贴");
-        return;
-    }
+    QPointF pastePosition = calculateSmartPastePosition();
     
-    // 设置标志，防止重入
-    isPasting = true;
-    
-    // 进行标准检查
+    // 检查剪贴板是否为空
     if (m_clipboardData.isEmpty() || !m_scene) {
-        Logger::warning("DrawArea::pasteItemsAtPosition: 剪贴板为空或场景无效，无法粘贴");
-        isPasting = false;
+        Logger::warning("DrawArea::pasteItems: 剪贴板为空或场景无效，无法粘贴");
         return;
     }
     
-    Logger::debug(QString("DrawArea::pasteItemsAtPosition: 开始粘贴 %1 个项目到位置 (%2, %3)")
-                 .arg(m_clipboardData.size())
-                 .arg(pos.x())
-                 .arg(pos.y()));
+    Logger::debug(QString("DrawArea::pasteItems: 开始粘贴 %1 个项目").arg(m_clipboardData.size()));
+    
+    // 取消当前所有选择
+    if (m_selectionManager) {
+        m_selectionManager->clearSelection();
+    }
+    
+    // 开始命令组
+    CommandManager::getInstance().beginCommandGroup();
+    
+    // 新创建的图形项集合
+    QList<QGraphicsItem*> pastedItems;
     
     try {
-        // 开始命令分组，确保粘贴操作是一个独立的命令
-        CommandManager::getInstance().beginCommandGroup();
-        
-        // 记录当前选中项
-        auto currentSelected = m_scene->selectedItems();
-        
-        // 取消所有选择
-        for (auto item : currentSelected) {
-            item->setSelected(false);
-        }
-        
-        // 计算图形项的边界矩形，用于居中
-        QRectF boundingRect;
-        bool first = true;
-        
+        // 为每个剪贴板项创建图形项
         for (const auto& clipData : m_clipboardData) {
-            QRectF itemRect;
-            if (clipData.points.size() >= 2) {
-                // 使用点集的边界矩形
-                QRectF rect(clipData.points[0], clipData.points[0]);
-                for (const auto& p : clipData.points) {
-                    rect.setLeft(std::min(rect.left(), p.x()));
-                    rect.setTop(std::min(rect.top(), p.y()));
-                    rect.setRight(std::max(rect.right(), p.x()));
-                    rect.setBottom(std::max(rect.bottom(), p.y()));
-                }
-                itemRect = rect;
-            } else {
-                // 默认大小
-                itemRect = QRectF(0, 0, 50, 50);
+            // 创建图形项
+            QGraphicsItem* item = m_graphicFactory->createCustomItem(clipData.type, clipData.points);
+            if (!item) continue;
+            
+            GraphicItem* graphicItem = dynamic_cast<GraphicItem*>(item);
+            if (!graphicItem) {
+                delete item;
+                continue;
             }
             
-            // 考虑位置
-            itemRect.translate(clipData.position);
+            // 设置图形项属性
+            graphicItem->setPen(clipData.pen);
+            graphicItem->setBrush(clipData.brush);
             
-            // 更新总的边界矩形
-            if (first) {
-                boundingRect = itemRect;
-                first = false;
-            } else {
-                boundingRect = boundingRect.united(itemRect);
-            }
+            // 计算相对位置 - 保持所有粘贴项之间的相对位置
+            QPointF relativePos = clipData.position - m_clipboardData.first().position;
+            graphicItem->setPos(pastePosition + relativePos);
+            
+            graphicItem->setRotation(clipData.rotation);
+            graphicItem->setScale(clipData.scale);
+            graphicItem->setFlag(QGraphicsItem::ItemIsSelectable, true);
+            graphicItem->setFlag(QGraphicsItem::ItemIsMovable, true);
+            
+            // 创建添加图形命令并执行
+            CommandManager::getInstance().addCommandToGroup(
+                new CreateGraphicCommand(m_scene, graphicItem));
+            
+            pastedItems.append(graphicItem);
         }
         
-        // 计算从边界矩形中心到粘贴位置的偏移
-        QPointF centerToPos;
-        if (!first) { // 如果边界矩形有效
-            centerToPos = pos - boundingRect.center();
-            Logger::debug(QString("DrawArea::pasteItemsAtPosition: 偏移量 (%1, %2)")
-                         .arg(centerToPos.x())
-                         .arg(centerToPos.y()));
+        // 结束并提交命令组
+        CommandManager::getInstance().commitCommandGroup();
+        
+        // 选择新粘贴的图形
+        for (QGraphicsItem* item : pastedItems) {
+            item->setSelected(true);
         }
         
-        // 新创建的图形项集合
-        QList<QGraphicsItem*> pastedItems;
+        // 更新视图
+        viewport()->update();
         
-        // 创建所有图形项，但先不添加到场景
-        for (const auto& clipData : m_clipboardData) {
-            // 调整粘贴位置，使图形集合居中于目标位置
-            QPointF pastePos = clipData.position + centerToPos;
-            
-            Logger::debug(QString("DrawArea::pasteItemsAtPosition: 创建图形项，类型 %1，位置 (%2, %3)")
-                         .arg(static_cast<int>(clipData.type))
-                         .arg(pastePos.x())
-                         .arg(pastePos.y()));
-            
-            QGraphicsItem* newItem = createItemFromClipboardData(clipData, pastePos);
-            
-            if (newItem) {
-                pastedItems.append(newItem);
-            }
-        }
-        
-        // 只有在有图形项创建成功的情况下才继续
-        if (!pastedItems.isEmpty()) {
-            Logger::debug(QString("DrawArea::pasteItemsAtPosition: 为 %1 个图形项创建粘贴命令")
-                         .arg(pastedItems.size()));
-                         
-            // 1. 首先将所有图形项添加到场景，准备执行命令
-            for (QGraphicsItem* item : pastedItems) {
-                m_scene->addItem(item);
-                item->setSelected(true);
-            }
-            
-            // 2. 创建粘贴命令并执行（通过CommandManager记录到命令栈中）
-            PasteGraphicCommand* command = new PasteGraphicCommand(this, pastedItems);
-            
-            Logger::debug("DrawArea::pasteItemsAtPosition: 执行粘贴命令");
-            CommandManager::getInstance().executeCommand(command);
-            
-            // 通知场景更新
-            m_scene->update();
-            viewport()->update();
-            
-            Logger::info(QString("已粘贴 %1 个图形项").arg(pastedItems.size()));
-        } else {
-            Logger::warning("DrawArea::pasteItemsAtPosition: 没有创建任何图形项");
-        }
-        
-        // 结束命令分组
-        CommandManager::getInstance().endCommandGroup();
+        Logger::info(QString("DrawArea::pasteItems: 已粘贴 %1 个图形项").arg(pastedItems.size()));
     }
     catch (const std::exception& e) {
-        Logger::error(QString("DrawArea::pasteItemsAtPosition: 异常 - %1").arg(e.what()));
-        CommandManager::getInstance().endCommandGroup(); // 确保结束分组
+        Logger::error(QString("DrawArea::pasteItems: 异常 - %1").arg(e.what()));
+        CommandManager::getInstance().endCommandGroup();
     }
-    catch (...) {
-        Logger::error("DrawArea::pasteItemsAtPosition: 未知异常");
-        CommandManager::getInstance().endCommandGroup(); // 确保结束分组
-    }
-    
-    // 重置粘贴标志
-    isPasting = false;
 }
 
 // 剪切选中的图形项
@@ -1007,14 +1123,16 @@ bool DrawArea::canPasteFromClipboard() const {
 }
 
 // 处理右键菜单事件
-void DrawArea::contextMenuEvent(QContextMenuEvent* event) {
+void DrawArea::contextMenuEvent(QContextMenuEvent* event)
+{
     // 创建并显示上下文菜单
     createContextMenu(event->pos());
     event->accept();
 }
 
 // 创建右键菜单
-void DrawArea::createContextMenu(const QPoint& pos) {
+void DrawArea::createContextMenu(const QPoint& pos)
+{
     QMenu menu(this);
     
     // 获取点击位置的场景坐标
@@ -1063,7 +1181,8 @@ void DrawArea::createContextMenu(const QPoint& pos) {
 }
 
 // 计算智能粘贴位置
-QPointF DrawArea::calculateSmartPastePosition() const {
+QPointF DrawArea::calculateSmartPastePosition() const
+{
     // 如果有选中的项，使用最后选中项位置加上偏移
     auto selectedItems = getSelectedItems();
     if (!selectedItems.isEmpty()) {
@@ -1076,14 +1195,16 @@ QPointF DrawArea::calculateSmartPastePosition() const {
 }
 
 // 获取视图中心的场景坐标
-QPointF DrawArea::getViewCenterScenePos() const {
+QPointF DrawArea::getViewCenterScenePos() const
+{
     QRect viewRect = viewport()->rect();
     QPointF centerInView(viewRect.width() / 2.0, viewRect.height() / 2.0);
     return mapToScene(centerInView.toPoint());
 }
 
 // 保存图形项到内部剪贴板
-void DrawArea::saveGraphicItemToClipboard(GraphicItem* item) {
+void DrawArea::saveGraphicItemToClipboard(GraphicItem* item)
+{
     if (!item) return;
     
     ClipboardItem clipData;
@@ -1099,7 +1220,8 @@ void DrawArea::saveGraphicItemToClipboard(GraphicItem* item) {
 }
 
 // 从剪贴板数据创建图形项
-QGraphicsItem* DrawArea::createItemFromClipboardData(const ClipboardItem& data, const QPointF& pastePosition) {
+QGraphicsItem* DrawArea::createItemFromClipboardData(const ClipboardItem& data, const QPointF& pastePosition)
+{
     // 创建图形项
     QGraphicsItem* newItem = m_graphicFactory->createCustomItem(data.type, data.points);
     
@@ -1117,23 +1239,12 @@ QGraphicsItem* DrawArea::createItemFromClipboardData(const ClipboardItem& data, 
         // 应用旋转
         graphicItem->setRotation(data.rotation);
         
-        // 直接设置内部m_scale属性，绕过内部的scale自动平均处理
-        // 这种方法可以保证椭圆等不同的图形类型维持原始的XY比例
+        // 处理缩放 - 注意不同图形类型的特殊需求
         QPointF scale = data.scale;
         
-        // 为不同形状特殊处理
-        if (data.type == Graphic::ELLIPSE) {
-            // 椭圆特殊处理：确保直接使用原始缩放值，不要让它被平均
-            // 保存原始缩放信息到私有数据区，以便子类可以访问
-            graphicItem->setItemData(1001, QVariant::fromValue(scale.x()));
-            graphicItem->setItemData(1002, QVariant::fromValue(scale.y()));
-            
-            // 这里调用自定义的setScale方法
-            graphicItem->setScale(scale);
-        } else {
-            // 其他形状使用正常的缩放设置
-            graphicItem->setScale(scale);
-        }
+        // 所有图形类型都使用统一的缩放设置方法
+        // 对于椭圆类等特殊形状，它们已经重写了setScale方法来适当处理
+        graphicItem->setScale(scale);
         
         // 应用标志
         graphicItem->setFlag(QGraphicsItem::ItemIsSelectable, true);
@@ -1154,7 +1265,8 @@ QGraphicsItem* DrawArea::createItemFromClipboardData(const ClipboardItem& data, 
 }
 
 // 序列化图形项到字节数组
-QByteArray DrawArea::serializeGraphicItems(const QList<QGraphicsItem*>& items) {
+QByteArray DrawArea::serializeGraphicItems(const QList<QGraphicsItem*>& items)
+{
     QByteArray data;
     QDataStream stream(&data, QIODevice::WriteOnly);
     
@@ -1199,7 +1311,8 @@ QByteArray DrawArea::serializeGraphicItems(const QList<QGraphicsItem*>& items) {
 }
 
 // 从字节数组反序列化图形项
-QList<DrawArea::ClipboardItem> DrawArea::deserializeGraphicItems(const QByteArray& data) {
+QList<DrawArea::ClipboardItem> DrawArea::deserializeGraphicItems(const QByteArray& data)
+{
     QList<ClipboardItem> result;
     QDataStream stream(data);
     
@@ -1311,6 +1424,24 @@ void DrawArea::clearSelectionFilter()
     }
 }
 
+void DrawArea::clearSelection()
+{
+    // 安全地清除选择
+    try {
+        if (m_selectionManager) {
+            m_selectionManager->clearSelection();
+        }
+        
+        // 确保场景中的项目也被清除选择状态
+        if (m_scene) {
+            m_scene->clearSelection();
+        }
+    }
+    catch (const std::exception& e) {
+        qCritical() << "DrawArea::clearSelection: 异常:" << e.what();
+    }
+}
+
 // 实现drawForeground用于绘制选择控制点
 void DrawArea::drawForeground(QPainter *painter, const QRectF &rect)
 {
@@ -1371,52 +1502,58 @@ void DrawArea::enablePerformanceMonitor(bool enable)
     isProcessing = true;
     
     try {
-        // 异步设计中不再需要监测操作时间和读取当前状态
-        // 直接设置性能监控状态，现在这是一个非阻塞操作
-        PerformanceMonitor::instance().setEnabled(enable);
+        // 获取性能监控实例并设置状态
+        PerformanceMonitor& monitor = PerformanceMonitor::instance();
+        monitor.setEnabled(enable);
         
-        // 如果启用，重置所有指标确保有测量数据
-        if (enable) {
-            // 启动时先模拟几个数据点，确保报告能显示值
-            for (int i = 0; i < 5; i++) {
-                PERF_START(UpdateTime);
-                QThread::msleep(5); // 模拟短暂的更新时间
-                PERF_END(UpdateTime);
-                
-                PERF_START(EventTime);
-                QThread::msleep(3); // 模拟短暂的事件处理时间
-                PERF_END(EventTime);
-                
-                PERF_START(DrawTime);
-                QThread::msleep(7); // 模拟短暂的绘制时间
-                PERF_END(DrawTime);
-                
-                PERF_START(LogicTime);
-                QThread::msleep(4); // 模拟短暂的逻辑处理时间
-                PERF_END(LogicTime);
-                
-                // 通知帧完成以更新FPS
-                PerformanceMonitor::instance().frameCompleted();
-            }
-        }
+        // 断开之前可能存在的连接，避免重复连接
+        disconnect(&monitor, &PerformanceMonitor::enabledChanged, this, nullptr);
+        disconnect(&monitor, &PerformanceMonitor::overlayEnabledChanged, this, nullptr);
         
-        // 记录日志
-        Logger::info(QString("性能监控%1请求已发送").arg(enable ? "启用" : "禁用"));
-        
-        // 连接信号，当状态实际改变时更新UI - 不使用UniqueConnection
-        connect(&PerformanceMonitor::instance(), &PerformanceMonitor::enabledChanged,
+        // 连接状态变更信号到视图更新
+        connect(&monitor, &PerformanceMonitor::enabledChanged,
                 this, [this](bool enabled) {
-                    // 状态实际变化后更新视图
                     viewport()->update();
                     Logger::info(QString("性能监控状态已变更为%1").arg(enabled ? "启用" : "禁用"));
                 });
         
-        // 覆盖层状态变化时也更新视图 - 不使用UniqueConnection
-        connect(&PerformanceMonitor::instance(), &PerformanceMonitor::overlayEnabledChanged,
+        connect(&monitor, &PerformanceMonitor::overlayEnabledChanged,
                 this, [this](bool enabled) {
-                    // 覆盖层状态变化后更新视图
                     viewport()->update();
                 });
+        
+        // 如果启用，生成一些示例数据
+        if (enable) {
+            // 使用轻量级宏产生示例数据
+            for (int i = 0; i < 5; i++) {
+                // 模拟各种操作的性能数据
+                PERF_START(UpdateTime);
+                QThread::msleep(5);
+                PERF_END(UpdateTime);
+                
+                PERF_START(EventTime);
+                QThread::msleep(3);
+                PERF_END(EventTime);
+                
+                PERF_START(DrawTime);
+                QThread::msleep(7);
+                PERF_END(DrawTime);
+                
+                PERF_START(LogicTime);
+                QThread::msleep(4);
+                PERF_END(LogicTime);
+                
+                // 记录一些自定义事件
+                PERF_EVENT("InitSample", i);
+                
+                // 通知帧完成
+                PERF_FRAME_COMPLETED();
+            }
+            
+            Logger::info("性能监控已启用，并生成了初始示例数据");
+        } else {
+            Logger::info("性能监控已禁用");
+        }
     }
     catch (const std::exception& e) {
         Logger::error(QString("请求启用性能监控时发生异常: %1").arg(e.what()));
@@ -1430,7 +1567,18 @@ void DrawArea::enablePerformanceMonitor(bool enable)
 
 bool DrawArea::isPerformanceMonitorEnabled() const
 {
-    return PerformanceMonitor::instance().isEnabled();
+    // 首先检查实例是否已创建
+    if (!PerformanceMonitor::isInstanceCreated()) {
+        return false;
+    }
+    
+    try {
+        // 实例已创建，获取启用状态
+        return PerformanceMonitor::instance().isEnabled();
+    } catch (...) {
+        // 如果发生异常，则认为未启用
+        return false;
+    }
 }
 
 void DrawArea::showPerformanceOverlay(bool show)
@@ -1444,21 +1592,25 @@ void DrawArea::showPerformanceOverlay(bool show)
     isProcessing = true;
     
     try {
-        // 检查性能监控状态
-        bool monitorEnabled = PerformanceMonitor::instance().isEnabled();
+        // 检查性能监控是否已初始化且已启用
+        bool monitorEnabled = isPerformanceMonitorEnabled();
         
         // 如果要显示覆盖层但性能监控未启用，先启用性能监控
         if (show && !monitorEnabled) {
             Logger::info("需要先启用性能监控才能显示覆盖层");
-            // 先启用性能监控
-            PerformanceMonitor::instance().setEnabled(true);
+            // 先启用性能监控 - 这会初始化PerformanceMonitor实例
+            enablePerformanceMonitor(true);
         }
         
-        // 设置覆盖层状态 - 在异步设计中这是非阻塞操作
-        PerformanceMonitor::instance().setOverlayEnabled(show);
-        
-        // 记录请求日志
-        Logger::info(QString("性能覆盖层%1请求已发送").arg(show ? "显示" : "隐藏"));
+        // 使用引用获取单例实例
+        try {
+            // 设置覆盖层状态 - 在异步设计中这是非阻塞操作
+            PerformanceMonitor::instance().setOverlayEnabled(show);
+            // 记录请求日志
+            Logger::info(QString("性能覆盖层%1请求已发送").arg(show ? "显示" : "隐藏"));
+        } catch (const std::exception& e) {
+            Logger::error(QString("设置性能覆盖层状态失败: %1").arg(e.what()));
+        }
     }
     catch (const std::exception& e) {
         Logger::error(QString("请求设置性能覆盖层时发生异常: %1").arg(e.what()));
@@ -1472,68 +1624,104 @@ void DrawArea::showPerformanceOverlay(bool show)
 
 bool DrawArea::isPerformanceOverlayShown() const
 {
-    return PerformanceMonitor::instance().isOverlayEnabled();
+    // 首先检查实例是否已创建
+    if (!PerformanceMonitor::isInstanceCreated()) {
+        return false;
+    }
+    
+    try {
+        // 实例已创建，获取覆盖层状态
+        return PerformanceMonitor::instance().isOverlayEnabled();
+    } catch (...) {
+        // 如果发生异常，则认为未启用
+        return false;
+    }
 }
 
 QString DrawArea::getPerformanceReport() const
 {
-    return PerformanceMonitor::instance().getPerformanceReport();
+    try {
+        // 使用引用获取单例实例，如果尚未初始化会抛出异常
+        return PerformanceMonitor::instance().getPerformanceReport();
+    } catch (const std::exception& e) {
+        // 如果获取实例失败，返回错误消息
+        return QString("无法获取性能报告: %1").arg(e.what());
+    } catch (...) {
+        // 处理未知异常
+        return "无法获取性能报告: 未知错误";
+    }
 }
 
 // 添加paintEvent实现，以支持性能覆盖层
 void DrawArea::paintEvent(QPaintEvent *event)
 {
-    // 缓存性能监控状态，避免多次调用
-    bool monitorEnabled = isPerformanceMonitorEnabled();
+    // 整体绘制时间测量
+    PERF_SCOPE(DrawTime);
     
-    // 使用RAII智能指针管理计时器对象
-    std::unique_ptr<PerformanceMonitor::ScopedTimer> timerGuard;
-    
-    // 仅在性能监控启用时使用计时器
-    if (monitorEnabled) {
-        try {
-            // 在异步设计中，这只会将事件加入队列，不会阻塞
-            timerGuard.reset(new PerformanceMonitor::ScopedTimer(PerformanceMonitor::DrawTime));
-        } catch (const std::exception& e) {
-            // 即使计时器创建失败也继续绘制
-            Logger::warning(QString("创建性能计时器失败: %1").arg(e.what()));
-        } catch (...) {
-            Logger::warning("创建性能计时器时发生未知错误");
-        }
-    }
-    
-    // 调用基类实现
-    QGraphicsView::paintEvent(event);
-    
-    // 仅在性能监控启用时考虑绘制覆盖层
-    if (monitorEnabled) {
-        bool overlayEnabled = PerformanceMonitor::instance().isOverlayEnabled();
+    // 记录场景中的图形项数量和复杂度
+    if (m_scene) {
+        const QList<QGraphicsItem*> sceneItems = m_scene->items();
+        PERF_EVENT("ShapesPerFrame", sceneItems.count());
         
-        // 仅在覆盖层明确启用时绘制
-        if (overlayEnabled) {
-            try {
-                QPainter painter(viewport());
-                QRectF overlayRect(10, 10, 300, 200); // 覆盖层位置和大小
-                PerformanceMonitor::instance().renderOverlay(&painter, overlayRect);
-            } catch (const std::exception& e) {
-                Logger::warning(QString("绘制性能覆盖层时发生异常: %1").arg(e.what()));
-            } catch (...) {
-                Logger::warning("绘制性能覆盖层时发生未知异常");
+        // 计算帧复杂度 - 基于场景物体类型和数量
+        int frameComplexity = 0;
+        for (QGraphicsItem* item : sceneItems) {
+            switch (item->type()) {
+                case QGraphicsPixmapItem::Type: frameComplexity += 10; break; // 位图较复杂
+                case QGraphicsPathItem::Type: frameComplexity += 5; break;    // 路径中等复杂度
+                case QGraphicsLineItem::Type: frameComplexity += 1; break;    // 线条简单
+                default: frameComplexity += 2; break;                          // 默认中低复杂度
             }
+            
+            // 变换和透明度会增加复杂度
+            if (!item->transform().isIdentity()) frameComplexity += 3;
+            if (item->opacity() < 1.0) frameComplexity += 2;
         }
         
-        // 通知帧完成 - 仅需在性能监控启用时
-        try {
-            // 在异步设计中，这只会将事件加入队列，不会阻塞
-            PerformanceMonitor::instance().frameCompleted();
-        } catch (const std::exception& e) {
-            Logger::warning(QString("帧完成通知失败: %1").arg(e.what()));
-        } catch (...) {
-            Logger::warning("帧完成通知时发生未知异常");
-        }
+        PERF_EVENT("FrameComplexity", frameComplexity);
     }
     
-    // timerGuard会在这里自动销毁，结束DrawTime的测量
+    // 渲染准备阶段
+    {
+        PERF_SCOPE(RenderPrepTime);
+        // 此处可以添加渲染前的准备工作
+    }
+    
+    // 实际图形绘制阶段
+    {
+        PERF_SCOPE(ShapesDrawTime);
+        QGraphicsView::paintEvent(event);
+    }
+    
+    // 路径处理时间（如有自定义路径处理）
+    if (m_scene && !m_scene->items().isEmpty()) {
+        PERF_SCOPE(PathProcessTime);
+        // 此处可添加额外的路径处理代码
+    }
+    
+    // 渲染性能覆盖层（如果启用）
+    if (isPerformanceMonitorEnabled() && isPerformanceOverlayShown()) {
+        QPainter painter(viewport());
+        QRectF viewRect = QRectF(0, 0, viewport()->width(), viewport()->height());
+        PerformanceMonitor::instance().renderOverlay(&painter, viewRect);
+    }
+    
+    // 记录可见区域统计信息
+    if (m_scene) {
+        // 记录当前视口可见区域大小
+        QRectF visibleRect = mapToScene(viewport()->rect()).boundingRect();
+        PERF_EVENT("VisibleArea", visibleRect.width() * visibleRect.height());
+        
+        // 计算可见项目数量
+        int visibleItems = 0;
+        for (QGraphicsItem* item : m_scene->items(visibleRect)) {
+            if (item->isVisible()) visibleItems++;
+        }
+        PERF_EVENT("VisibleItems", visibleItems);
+    }
+    
+    // 通知帧完成
+    PERF_FRAME_COMPLETED();
 }
 
 // 修改scheduleUpdate方法，以便在更新过程中进行性能监控
@@ -1545,28 +1733,302 @@ void DrawArea::scheduleUpdate()
             if (m_updatePending) {
                 m_updatePending = false;
                 
-                // 仅在性能监控启用时使用性能监控
-                std::unique_ptr<PerformanceMonitor::ScopedTimer> timerGuard;
+                // 更新时间测量
+                PERF_SCOPE(UpdateTime);
                 
-                // 安全地创建计时器 - 在异步设计中这是非阻塞的
-                if (isPerformanceMonitorEnabled()) {
-                    try {
-                        timerGuard.reset(new PerformanceMonitor::ScopedTimer(PerformanceMonitor::UpdateTime));
-                    } catch (const std::exception& e) {
-                        Logger::warning(QString("创建更新计时器失败: %1").arg(e.what()));
-                    } catch (...) {
-                        Logger::warning("创建更新计时器时发生未知错误");
-                    }
-                }
-                
-                // 执行更新操作
-                viewport()->update();
+                // 记录场景项目数量
                 if (m_scene) {
-                    m_scene->update();
+                    PERF_EVENT("SceneItemsCount", m_scene->items().count());
+                    
+                    // 记录选中项数量
+                    QList<QGraphicsItem*> selectedItems = m_scene->selectedItems();
+                    PERF_EVENT("SelectedItemsCount", selectedItems.count());
+                    
+                    // 记录项目类型分布
+                    int pathItems = 0, pixmapItems = 0, textItems = 0;
+                    for (QGraphicsItem* item : m_scene->items()) {
+                        if (item->type() == QGraphicsPathItem::Type) pathItems++;
+                        else if (item->type() == QGraphicsPixmapItem::Type) pixmapItems++;
+                        else if (item->type() == QGraphicsTextItem::Type) textItems++;
+                    }
+                    PERF_EVENT("PathItemsCount", pathItems);
+                    PERF_EVENT("PixmapItemsCount", pixmapItems);
+                    PERF_EVENT("TextItemsCount", textItems);
                 }
                 
-                // timerGuard会自动销毁，在异步设计中这会将结束事件加入队列
+                update();
             }
         });
+    }
+}
+
+// 实现拖放事件处理方法
+void DrawArea::dragEnterEvent(QDragEnterEvent *event)
+{
+    // 添加安全检查
+    if (!event || !event->mimeData()) {
+        QGraphicsView::dragEnterEvent(event);
+        return;
+    }
+    
+    try {
+        // 检查是否包含图像数据
+        if (event->mimeData()->hasImage() || event->mimeData()->hasUrls()) {
+            event->acceptProposedAction();
+        } else {
+            // 如果不接受这种数据，则调用基类方法
+            QGraphicsView::dragEnterEvent(event);
+        }
+    } catch (...) {
+        // 出现任何异常，都调用基类方法并拒绝拖放
+        QGraphicsView::dragEnterEvent(event);
+        event->ignore();
+    }
+}
+
+void DrawArea::dragMoveEvent(QDragMoveEvent *event)
+{
+    // 添加安全检查
+    if (!event || !event->mimeData()) {
+        QGraphicsView::dragMoveEvent(event);
+        return;
+    }
+    
+    try {
+        if (event->mimeData()->hasImage() || event->mimeData()->hasUrls()) {
+            event->acceptProposedAction();
+        } else {
+            // 如果不接受这种数据，则调用基类方法
+            QGraphicsView::dragMoveEvent(event);
+        }
+    } catch (...) {
+        // 出现任何异常，都调用基类方法并拒绝拖放
+        QGraphicsView::dragMoveEvent(event);
+        event->ignore();
+    }
+}
+
+void DrawArea::dropEvent(QDropEvent *event)
+{
+    // 使用PERF_SCOPE跟踪拖放处理时间
+    PERF_SCOPE(EventTime);
+    
+    // 添加安全检查
+    if (!event || !event->mimeData() || !m_scene) {
+        QGraphicsView::dropEvent(event);
+        return;
+    }
+    
+    try {
+        // 处理图像拖放
+        if (event->mimeData()->hasImage()) {
+            QImage image = qvariant_cast<QImage>(event->mimeData()->imageData());
+            if (!image.isNull()) {
+                // 记录图像大小信息
+                PERF_EVENT("DroppedImageSize", image.width() * image.height());
+                
+                // 在拖放位置添加图像
+                QPointF pos = event->position();
+                importImageAt(image, pos.toPoint());
+                event->acceptProposedAction();
+                return;
+            }
+        }
+        // 处理文件拖放
+        else if (event->mimeData()->hasUrls()) {
+            QList<QUrl> urls = event->mimeData()->urls();
+            
+            // 记录拖放的URL数量
+            PERF_EVENT("DroppedUrlCount", urls.size());
+            
+            for (const QUrl &url : urls) {
+                if (url.isLocalFile()) {
+                    QString filePath = url.toLocalFile();
+                    
+                    // 检查文件是否存在
+                    if (!QFile::exists(filePath)) {
+                        continue;
+                    }
+                    
+                    QFileInfo fileInfo(filePath);
+                    
+                    // 检查是否为图像文件
+                    QStringList supportedFormats;
+                    for (const QByteArray &format : QImageReader::supportedImageFormats()) {
+                        supportedFormats << QString(format);
+                    }
+                    
+                    if (supportedFormats.contains(fileInfo.suffix().toLower())) {
+                        // 尝试加载图像
+                        QImage image(filePath);
+                        if (!image.isNull()) {
+                            // 记录文件大小
+                            PERF_EVENT("DroppedFileSize", fileInfo.size());
+                            
+                            // 在拖放位置添加图像
+                            QPointF pos = event->position();
+                            importImageAt(image, pos.toPoint());
+                            event->acceptProposedAction();
+                            return; // 只处理第一个图像文件
+                        }
+                    }
+                }
+            }
+        }
+        
+        // 如果走到这里，说明我们没有处理这个拖放事件，调用基类方法
+        QGraphicsView::dropEvent(event);
+    } catch (const std::exception& e) {
+        qWarning() << "Exception in dropEvent:" << e.what();
+        QGraphicsView::dropEvent(event);
+    } catch (...) {
+        qWarning() << "Unknown exception in dropEvent";
+        QGraphicsView::dropEvent(event);
+    }
+}
+
+// 辅助方法，在指定位置导入图像
+void DrawArea::importImageAt(const QImage &image, const QPoint &pos)
+{
+    // 使用作用域性能监控
+    PERF_SCOPE(LogicTime);
+    
+    if (image.isNull() || !m_scene) return;
+    
+    try {
+        // 转换坐标从视口到场景
+        QPointF scenePos = mapToScene(pos);
+
+        // 开始记录图像处理时间
+        PERF_START(EventTime);
+        
+        // 创建图形项
+        QGraphicsPixmapItem* item = new QGraphicsPixmapItem(QPixmap::fromImage(image));
+        item->setPos(scenePos);
+        
+        // 记录图像处理结束
+        PERF_END(EventTime);
+        
+        // 开始记录场景更新时间
+        PERF_START(UpdateTime);
+        
+        // 添加到场景
+        m_scene->addItem(item);
+        
+        // 记录场景更新结束
+        PERF_END(UpdateTime);
+        
+        // 记录导入图像的大小
+        PERF_EVENT("ImportedImageSize", image.width() * image.height());
+        PERF_EVENT("ImportedImageWidth", image.width());
+        PERF_EVENT("ImportedImageHeight", image.height());
+        
+        // 确保视图更新
+        viewport()->update();
+    } catch (const std::exception& e) {
+        qWarning() << "Exception in importImageAt:" << e.what();
+    } catch (...) {
+        qWarning() << "Unknown exception in importImageAt";
+    }
+}
+
+void DrawArea::flipSelectedGraphics(bool horizontal)
+{
+    // 性能监控
+    PERF_SCOPE(LogicTime);
+    
+    if (!m_selectionManager || m_selectionManager->getSelectedItems().isEmpty()) {
+        return;
+    }
+    
+    QList<QGraphicsItem*> selectedItems = m_selectionManager->getSelectedItems();
+    
+    // 获取选择中心点作为翻转中心
+    QPointF center = m_selectionManager->selectionCenter();
+    
+    // 创建翻转命令并执行
+    TransformCommand* command = TransformCommand::createFlipCommand(selectedItems, horizontal, center);
+    CommandManager::getInstance().executeCommand(command);
+    
+    // 更新视图
+    viewport()->update();
+    
+    // 发出选择变更信号，以便更新UI状态
+    emit selectionChanged();
+}
+
+// 在指定位置粘贴图形项
+void DrawArea::pasteItemsAtPosition(const QPointF& pos) {
+    // 检查剪贴板是否为空
+    if (m_clipboardData.isEmpty() || !m_scene) {
+        Logger::warning("DrawArea::pasteItemsAtPosition: 剪贴板为空或场景无效，无法粘贴");
+        return;
+    }
+    
+    Logger::debug(QString("DrawArea::pasteItemsAtPosition: 开始粘贴 %1 个项目到位置 (%2, %3)")
+                 .arg(m_clipboardData.size())
+                 .arg(pos.x())
+                 .arg(pos.y()));
+    
+    // 取消当前所有选择
+    if (m_selectionManager) {
+        m_selectionManager->clearSelection();
+    }
+    
+    // 开始命令组
+    CommandManager::getInstance().beginCommandGroup();
+    
+    // 新创建的图形项集合
+    QList<QGraphicsItem*> pastedItems;
+    
+    try {
+        // 为每个剪贴板项创建图形项
+        for (const auto& clipData : m_clipboardData) {
+            // 创建图形项
+            QGraphicsItem* item = m_graphicFactory->createCustomItem(clipData.type, clipData.points);
+            if (!item) continue;
+            
+            GraphicItem* graphicItem = dynamic_cast<GraphicItem*>(item);
+            if (!graphicItem) {
+                delete item;
+                continue;
+            }
+            
+            // 设置图形项属性
+            graphicItem->setPen(clipData.pen);
+            graphicItem->setBrush(clipData.brush);
+            
+            // 计算相对位置 - 保持所有粘贴项之间的相对位置
+            QPointF relativePos = clipData.position - m_clipboardData.first().position;
+            graphicItem->setPos(pos + relativePos);
+            
+            graphicItem->setRotation(clipData.rotation);
+            graphicItem->setScale(clipData.scale);
+            graphicItem->setFlag(QGraphicsItem::ItemIsSelectable, true);
+            graphicItem->setFlag(QGraphicsItem::ItemIsMovable, true);
+            
+            // 创建添加图形命令并执行
+            CommandManager::getInstance().addCommandToGroup(
+                new CreateGraphicCommand(m_scene, graphicItem));
+            
+            pastedItems.append(graphicItem);
+        }
+        
+        // 结束并提交命令组
+        CommandManager::getInstance().commitCommandGroup();
+        
+        // 选择新粘贴的图形
+        for (QGraphicsItem* item : pastedItems) {
+            item->setSelected(true);
+        }
+        
+        // 更新视图
+        viewport()->update();
+        
+        Logger::info(QString("DrawArea::pasteItemsAtPosition: 已粘贴 %1 个图形项").arg(pastedItems.size()));
+    }
+    catch (const std::exception& e) {
+        Logger::error(QString("DrawArea::pasteItemsAtPosition: 异常 - %1").arg(e.what()));
+        CommandManager::getInstance().endCommandGroup();
     }
 }

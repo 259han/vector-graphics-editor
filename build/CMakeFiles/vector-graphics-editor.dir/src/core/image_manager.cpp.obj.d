@@ -469,8 +469,6 @@ CMakeFiles/vector-graphics-editor.dir/src/core/image_manager.cpp.obj: \
  D:/Qt/6.8.2/mingw_64/include/QtCore/qelapsedtimer.h \
  D:/Qt/6.8.2/mingw_64/include/QtCore/QMap \
  D:/Qt/6.8.2/mingw_64/include/QtCore/qmap.h \
- D:/Qt/6.8.2/mingw_64/include/QtCore/QVector \
- D:/Qt/6.8.2/mingw_64/include/QtCore/qvector.h \
  D:/Qt/6.8.2/mingw_64/include/QtCore/QMutex \
  D:/Qt/6.8.2/mingw_64/include/QtCore/qmutex.h \
  D:/Qt/6.8.2/mingw_64/include/QtCore/qtsan_impl.h \
@@ -499,6 +497,10 @@ CMakeFiles/vector-graphics-editor.dir/src/core/image_manager.cpp.obj: \
  D:/Qt/6.8.2/mingw_64/include/QtCore/QDateTime \
  D:/Qt/6.8.2/mingw_64/include/QtCore/qdatetime.h \
  D:/Qt/6.8.2/mingw_64/include/QtCore/qcalendar.h \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/QReadWriteLock \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/qreadwritelock.h \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/QSharedPointer \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/qsharedpointer.h \
  F:/program/claudegraph/src/ui/image_resizer.h \
  D:/Qt/6.8.2/mingw_64/include/QtWidgets/QGraphicsObject \
  D:/Qt/6.8.2/mingw_64/include/QtWidgets/QGraphicsLineItem \

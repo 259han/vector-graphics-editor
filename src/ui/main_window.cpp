@@ -23,6 +23,7 @@
 #include <QClipboard>
 #include <QElapsedTimer>
 #include "../utils/performance_monitor.h"
+#include <QInputDialog>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -39,7 +40,7 @@ MainWindow::MainWindow(QWidget *parent)
     // 创建动作和菜单
     createActions();
     createMenus();
-    createToolBars();
+    createToolbars();
     createFillSettingsDialog();
     createToolOptions();
     
@@ -66,6 +67,78 @@ MainWindow::MainWindow(QWidget *parent)
         m_undoAction->setEnabled(manager.canUndo());
         m_redoAction->setEnabled(manager.canRedo());
     });
+    
+    // 确保性能监控选项最初是禁用的
+    if (m_performanceMonitorAction) {
+        m_performanceMonitorAction->setChecked(false);
+    }
+    if (m_performanceOverlayAction) {
+        m_performanceOverlayAction->setChecked(false);
+        m_performanceOverlayAction->setEnabled(false);
+    }
+    if (m_showPerformanceReportAction) {
+        m_showPerformanceReportAction->setEnabled(false);
+    }
+
+    // 设置性能监控
+    setupPerformanceMonitoring();
+}
+
+MainWindow::~MainWindow()
+{
+    // 断开所有信号槽连接，防止析构时的信号触发
+    this->disconnect();
+    
+    // 确保停止任何可能正在运行的定时器
+    if (m_updateTimer) {
+        m_updateTimer->stop();
+    }
+    
+    // 确保清除选择
+    if (m_drawArea) {
+        // 断开绘图区域的所有连接
+        m_drawArea->disconnect();
+        
+        // 清除选择
+        m_drawArea->clearSelection();
+        
+        // 如果有场景，清理场景状态
+        if (m_drawArea->scene()) {
+            m_drawArea->scene()->clearSelection();
+            m_drawArea->scene()->clearFocus();
+        }
+    }
+    
+    // 处理任何挂起的事件
+    QApplication::processEvents();
+}
+
+void MainWindow::closeEvent(QCloseEvent* event)
+{
+    // 断开关键的信号槽连接，避免窗口关闭过程中触发回调
+    this->disconnect(&CommandManager::getInstance());
+    
+    // 禁用绘图区域的更新
+    if (m_drawArea) {
+        // 断开相关连接
+        m_drawArea->disconnect();
+        
+        // 清除选择，防止析构时访问已释放的对象
+        m_drawArea->clearSelection();
+        
+        // 清理场景状态
+        if (m_drawArea->scene()) {
+            m_drawArea->scene()->clearSelection();
+            m_drawArea->scene()->clearFocus();
+            m_drawArea->scene()->disconnect();
+        }
+    }
+    
+    // 确保处理所有挂起的事件，但避免因此创建新事件
+    QApplication::processEvents();
+    
+    // 接受关闭事件
+    event->accept();
 }
 
 void MainWindow::createActions() {
@@ -103,8 +176,25 @@ void MainWindow::createActions() {
 
     // 创建变换工具
     m_rotateAction = new QAction(QIcon(":/icons/rotate.png"), tr("旋转"), this);
+    m_rotateAction->setShortcut(QKeySequence("Ctrl+R"));
+    m_rotateAction->setStatusTip(tr("旋转选中的图形"));
+    
     m_scaleAction = new QAction(QIcon(":/icons/scale.png"), tr("缩放"), this);
+    m_scaleAction->setShortcut(QKeySequence("Ctrl+T")); // 避免与保存冲突
+    m_scaleAction->setStatusTip(tr("缩放选中的图形"));
+    
     m_deleteAction = new QAction(QIcon(":/icons/delete.png"), tr("删除"), this);
+    m_deleteAction->setShortcut(QKeySequence::Delete); // Delete键
+    m_deleteAction->setStatusTip(tr("删除选中的图形"));
+
+    // 添加翻转动作
+    m_flipHorizontalAction = new QAction(QIcon(":/icons/flip_h.png"), tr("水平翻转"), this);
+    m_flipHorizontalAction->setShortcut(QKeySequence("Ctrl+H"));
+    m_flipHorizontalAction->setStatusTip(tr("水平翻转选中的图形"));
+    
+    m_flipVerticalAction = new QAction(QIcon(":/icons/flip_v.png"), tr("垂直翻转"), this);
+    m_flipVerticalAction->setShortcut(QKeySequence("Ctrl+J"));
+    m_flipVerticalAction->setStatusTip(tr("垂直翻转选中的图形"));
 
     // 创建图层工具
     m_bringToFrontAction = new QAction(QIcon(":/icons/front.png"), tr("置顶"), this);
@@ -114,8 +204,16 @@ void MainWindow::createActions() {
 
     // 创建编辑工具
     m_copyAction = new QAction(QIcon(":/icons/copy.png"), tr("复制"), this);
+    m_copyAction->setShortcut(QKeySequence::Copy); // Ctrl+C
+    m_copyAction->setStatusTip(tr("复制选中的图形"));
+    
     m_pasteAction = new QAction(QIcon(":/icons/paste.png"), tr("粘贴"), this);
+    m_pasteAction->setShortcut(QKeySequence::Paste); // Ctrl+V
+    m_pasteAction->setStatusTip(tr("粘贴剪贴板中的图形"));
+    
     m_cutAction = new QAction(QIcon(":/icons/cut.png"), tr("剪切"), this);
+    m_cutAction->setShortcut(QKeySequence::Cut); // Ctrl+X
+    m_cutAction->setStatusTip(tr("剪切选中的图形"));
 
     // 创建撤销/重做操作
     m_undoAction = new QAction(QIcon(":/icons/undo.png"), tr("撤销"), this);
@@ -148,6 +246,8 @@ void MainWindow::createActions() {
     connect(m_rotateAction, &QAction::triggered, this, [this]() { onTransformActionTriggered(m_rotateAction); });
     connect(m_scaleAction, &QAction::triggered, this, [this]() { onTransformActionTriggered(m_scaleAction); });
     connect(m_deleteAction, &QAction::triggered, this, [this]() { onTransformActionTriggered(m_deleteAction); });
+    connect(m_flipHorizontalAction, &QAction::triggered, this, [this]() { onTransformActionTriggered(m_flipHorizontalAction); });
+    connect(m_flipVerticalAction, &QAction::triggered, this, [this]() { onTransformActionTriggered(m_flipVerticalAction); });
 
     // 图层工具信号槽
     connect(m_bringToFrontAction, &QAction::triggered, this, [this]() { onLayerActionTriggered(m_bringToFrontAction); });
@@ -205,6 +305,18 @@ void MainWindow::createActions() {
     m_snapAction->setCheckable(true);
     m_snapAction->setChecked(false);
     connect(m_snapAction, &QAction::toggled, this, &MainWindow::onSnapToGridToggled);
+    
+    // 初始化关于动作
+    m_aboutAction = new QAction(tr("关于..."), this);
+    connect(m_aboutAction, &QAction::triggered, this, [this]() {
+        QMessageBox::about(this, tr("关于矢量图形编辑器"),
+                           tr("版本 1.0\n\n"
+                              "矢量图形编辑器是一个简单的2D绘图工具，"
+                              "支持基本图形绘制、编辑和变换。"));
+    });
+    
+    m_aboutQtAction = new QAction(tr("关于Qt..."), this);
+    connect(m_aboutQtAction, &QAction::triggered, qApp, &QApplication::aboutQt);
 }
 
 void MainWindow::createMenus() {
@@ -235,9 +347,14 @@ void MainWindow::createMenus() {
     viewMenu->addAction(m_performanceMonitorAction);
     viewMenu->addAction(m_performanceOverlayAction);
     viewMenu->addAction(m_showPerformanceReportAction);
+
+    // 创建帮助菜单
+    QMenu* helpMenu = menuBar()->addMenu(tr("帮助"));
+    helpMenu->addAction(m_aboutAction);
+    helpMenu->addAction(m_aboutQtAction);
 }
 
-void MainWindow::createToolBars() {
+void MainWindow::createToolbars() {
     // 创建绘图工具栏
     m_drawToolBar = addToolBar(tr("绘图工具"));
     m_drawToolBar->addAction(m_selectAction);
@@ -259,6 +376,9 @@ void MainWindow::createToolBars() {
     m_transformToolBar->addAction(m_rotateAction);
     m_transformToolBar->addAction(m_scaleAction);
     m_transformToolBar->addAction(m_deleteAction);
+    m_transformToolBar->addSeparator();
+    m_transformToolBar->addAction(m_flipHorizontalAction);
+    m_transformToolBar->addAction(m_flipVerticalAction);
 
     // 创建图层工具栏
     m_layerToolBar = addToolBar(tr("图层工具"));
@@ -378,11 +498,80 @@ void MainWindow::onTransformActionTriggered(QAction* action) {
     }
 
     if (action == m_rotateAction) {
-        m_drawArea->rotateSelectedGraphics(45.0); // 旋转45度
+        // 创建一个菜单提供多种旋转选项
+        QMenu rotateMenu;
+        QAction* rotate45Action = rotateMenu.addAction(tr("旋转45度"));
+        QAction* rotate90Action = rotateMenu.addAction(tr("旋转90度"));
+        QAction* rotate180Action = rotateMenu.addAction(tr("旋转180度"));
+        rotateMenu.addSeparator();
+        QAction* customRotateAction = rotateMenu.addAction(tr("自定义角度..."));
+        
+        QAction* selectedAction = rotateMenu.exec(QCursor::pos());
+        
+        if (selectedAction == rotate45Action) {
+            m_drawArea->rotateSelectedGraphics(45.0);
+            statusBar()->showMessage(tr("已旋转选中图形 45 度"), 3000);
+        } else if (selectedAction == rotate90Action) {
+            m_drawArea->rotateSelectedGraphics(90.0);
+            statusBar()->showMessage(tr("已旋转选中图形 90 度"), 3000);
+        } else if (selectedAction == rotate180Action) {
+            m_drawArea->rotateSelectedGraphics(180.0);
+            statusBar()->showMessage(tr("已旋转选中图形 180 度"), 3000);
+        } else if (selectedAction == customRotateAction) {
+            // 使用输入对话框获取旋转角度
+            bool ok;
+            double angle = QInputDialog::getDouble(this, tr("旋转"),
+                                              tr("请输入旋转角度（顺时针为正，逆时针为负）:"),
+                                              45.0, -360.0, 360.0, 1, &ok);
+            if (ok && angle != 0.0) {
+                m_drawArea->rotateSelectedGraphics(angle);
+                statusBar()->showMessage(tr("已旋转选中图形 %.1f 度").arg(angle), 3000);
+            }
+        }
     } else if (action == m_scaleAction) {
-        m_drawArea->scaleSelectedGraphics(1.2); // 放大1.2倍
+        // 创建一个菜单提供多种缩放选项
+        QMenu scaleMenu;
+        QAction* enlargeAction = scaleMenu.addAction(tr("放大 (×1.2)"));
+        QAction* shrinkAction = scaleMenu.addAction(tr("缩小 (×0.8)"));
+        QAction* doubleAction = scaleMenu.addAction(tr("放大一倍 (×2)"));
+        QAction* halfAction = scaleMenu.addAction(tr("缩小一半 (×0.5)"));
+        scaleMenu.addSeparator();
+        QAction* customScaleAction = scaleMenu.addAction(tr("自定义比例..."));
+        
+        QAction* selectedAction = scaleMenu.exec(QCursor::pos());
+        
+        if (selectedAction == enlargeAction) {
+            m_drawArea->scaleSelectedGraphics(1.2);
+            statusBar()->showMessage(tr("已放大选中图形 1.2 倍"), 3000);
+        } else if (selectedAction == shrinkAction) {
+            m_drawArea->scaleSelectedGraphics(0.8);
+            statusBar()->showMessage(tr("已缩小选中图形 0.8 倍"), 3000);
+        } else if (selectedAction == doubleAction) {
+            m_drawArea->scaleSelectedGraphics(2.0);
+            statusBar()->showMessage(tr("已放大选中图形 2 倍"), 3000);
+        } else if (selectedAction == halfAction) {
+            m_drawArea->scaleSelectedGraphics(0.5);
+            statusBar()->showMessage(tr("已缩小选中图形 0.5 倍"), 3000);
+        } else if (selectedAction == customScaleAction) {
+            // 使用输入对话框获取缩放比例
+            bool ok;
+            double factor = QInputDialog::getDouble(this, tr("缩放"),
+                                              tr("请输入缩放比例（大于1放大，小于1缩小）:"),
+                                              1.2, 0.1, 10.0, 2, &ok);
+            if (ok && factor != 1.0) {
+                m_drawArea->scaleSelectedGraphics(factor);
+                statusBar()->showMessage(tr("已缩放选中图形 %.2f 倍").arg(factor), 3000);
+            }
+        }
     } else if (action == m_deleteAction) {
         m_drawArea->deleteSelectedGraphics();
+        statusBar()->showMessage(tr("已删除选中图形"), 3000);
+    } else if (action == m_flipHorizontalAction) {
+        m_drawArea->flipSelectedGraphics(true); // 水平翻转
+        statusBar()->showMessage(tr("已水平翻转选中图形"), 3000);
+    } else if (action == m_flipVerticalAction) {
+        m_drawArea->flipSelectedGraphics(false); // 垂直翻转
+        statusBar()->showMessage(tr("已垂直翻转选中图形"), 3000);
     }
 }
 
@@ -705,6 +894,8 @@ void MainWindow::updateActionStates() {
     m_deleteAction->setEnabled(hasSelection);
     m_rotateAction->setEnabled(hasSelection);
     m_scaleAction->setEnabled(hasSelection);
+    m_flipHorizontalAction->setEnabled(hasSelection);
+    m_flipVerticalAction->setEnabled(hasSelection);
     
     // 图层操作
     m_bringToFrontAction->setEnabled(hasSelection);
@@ -778,27 +969,35 @@ void MainWindow::onTogglePerformanceMonitor(bool checked)
     // 如果禁用监控，立即取消勾选覆盖层
     if (!checked) {
         m_performanceOverlayAction->setChecked(false);
+        return; // 如果是禁用操作，直接返回，不需要初始化性能监控系统
     }
     
     // 立即给用户反馈
     statusBar()->showMessage(checked ? "正在启用性能监控..." : "正在禁用性能监控...");
     
     try {
-        // 连接到性能监控系统的状态改变信号 - 移除UniqueConnection标志
-        connect(&PerformanceMonitor::instance(), &PerformanceMonitor::enabledChanged,
-                this, [this](bool enabled) {
-                    // 更新状态栏消息
-                    statusBar()->showMessage(enabled ? "性能监控已启用" : "性能监控已禁用", 3000);
-                });
-        
-        // 调用异步的enablePerformanceMonitor方法，不会阻塞UI
-        m_drawArea->enablePerformanceMonitor(checked);
+        // 延迟初始化PerformanceMonitor，只有在用户实际请求启用性能监控时才初始化
+        if (checked) {
+            // 断开之前可能存在的连接，避免重复连接
+            disconnect(&PerformanceMonitor::instance(), &PerformanceMonitor::enabledChanged,
+                      this, nullptr);
+            
+            // 重新连接信号
+            connect(&PerformanceMonitor::instance(), &PerformanceMonitor::enabledChanged,
+                    this, [this](bool enabled) {
+                        // 更新状态栏消息
+                        statusBar()->showMessage(enabled ? "性能监控已启用" : "性能监控已禁用", 3000);
+                    });
+            
+            // 调用异步的enablePerformanceMonitor方法，不会阻塞UI
+            m_drawArea->enablePerformanceMonitor(checked);
+        }
     }
     catch (const std::exception& e) {
         // 出现异常时恢复UI状态
-        m_performanceMonitorAction->setChecked(!checked);
-        m_performanceOverlayAction->setEnabled(!checked);
-        m_showPerformanceReportAction->setEnabled(!checked);
+        m_performanceMonitorAction->setChecked(false);
+        m_performanceOverlayAction->setEnabled(false);
+        m_showPerformanceReportAction->setEnabled(false);
         
         QString errorMsg = QString("启用性能监控时发生错误: %1").arg(e.what());
         statusBar()->showMessage(errorMsg, 5000);
@@ -808,9 +1007,9 @@ void MainWindow::onTogglePerformanceMonitor(bool checked)
     }
     catch (...) {
         // 处理未知异常
-        m_performanceMonitorAction->setChecked(!checked);
-        m_performanceOverlayAction->setEnabled(!checked);
-        m_showPerformanceReportAction->setEnabled(!checked);
+        m_performanceMonitorAction->setChecked(false);
+        m_performanceOverlayAction->setEnabled(false);
+        m_showPerformanceReportAction->setEnabled(false);
         
         QString errorMsg = "启用性能监控时发生未知错误";
         statusBar()->showMessage(errorMsg, 5000);
@@ -833,5 +1032,49 @@ void MainWindow::onShowPerformanceReport()
 
 void MainWindow::onHighQualityRendering(bool checked)
 {
+    // 使用作用域计时器测量整个函数执行时间
+    PERF_SCOPE(LogicTime);
+    
+    // 设置高质量渲染
     m_drawArea->setHighQualityRendering(checked);
+    
+    // 记录自定义事件
+    PERF_EVENT("QualityChanged", checked ? 1 : 0);
+}
+
+// 实现createPerformanceMenu方法，由于已在createMenus中直接实现，此处留空
+void MainWindow::createPerformanceMenu()
+{
+    // 性能菜单已在createMenus()方法中创建
+    // 此处仅为了解决链接错误而保留空实现
+}
+
+// 实现在MainWindow中使用轻量级性能监控的示例函数
+void MainWindow::setupPerformanceMonitoring()
+{
+    // 注册自定义指标回调 - 监控应用内存使用
+    PerformanceMonitor::instance().registerMetricCallback("SystemMetrics", [](QMap<QString, QVariant>& metrics) {
+        // 这里可以添加系统指标收集代码
+        // 示例: 收集应用程序内存使用情况
+        metrics["MemoryUsage"] = QApplication::instance()->property("memoryUsage").toLongLong();
+        
+        // 示例: 记录CPU使用率 (实际实现需要使用操作系统API)
+        metrics["CpuUsage"] = 5.0; // 占位值
+        
+        // 示例: 线程数量
+        metrics["ThreadCount"] = QThread::idealThreadCount();
+    });
+    
+    // 连接数据更新信号，当性能数据更新时可以做其他操作
+    connect(&PerformanceMonitor::instance(), &PerformanceMonitor::dataUpdated, 
+            this, [this]() {
+                // 这里可以进行自定义的数据处理
+                // 例如更新状态栏、检查是否超过阈值等
+                if (PerformanceMonitor::instance().getFPS() < 30) {
+                    // 仅在性能监控启用且FPS过低时执行
+                    if (PerformanceMonitor::instance().isEnabled()) {
+                        statusBar()->showMessage("警告: 帧率较低", 2000);
+                    }
+                }
+            });
 }

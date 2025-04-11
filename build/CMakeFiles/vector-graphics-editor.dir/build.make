@@ -270,11 +270,26 @@ CMakeFiles/vector-graphics-editor.dir/src/command/style_change_command.cpp.s: cm
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/vector-graphics-editor.dir/src/command/style_change_command.cpp.s"
 	C:\msys64\mingw64\bin\c++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S F:\program\claudegraph\src\command\style_change_command.cpp -o CMakeFiles\vector-graphics-editor.dir\src\command\style_change_command.cpp.s
 
+CMakeFiles/vector-graphics-editor.dir/src/command/transform_command.cpp.obj: CMakeFiles/vector-graphics-editor.dir/flags.make
+CMakeFiles/vector-graphics-editor.dir/src/command/transform_command.cpp.obj: CMakeFiles/vector-graphics-editor.dir/includes_CXX.rsp
+CMakeFiles/vector-graphics-editor.dir/src/command/transform_command.cpp.obj: F:/program/claudegraph/src/command/transform_command.cpp
+CMakeFiles/vector-graphics-editor.dir/src/command/transform_command.cpp.obj: CMakeFiles/vector-graphics-editor.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=F:\program\claudegraph\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_15) "Building CXX object CMakeFiles/vector-graphics-editor.dir/src/command/transform_command.cpp.obj"
+	C:\msys64\mingw64\bin\c++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/vector-graphics-editor.dir/src/command/transform_command.cpp.obj -MF CMakeFiles\vector-graphics-editor.dir\src\command\transform_command.cpp.obj.d -o CMakeFiles\vector-graphics-editor.dir\src\command\transform_command.cpp.obj -c F:\program\claudegraph\src\command\transform_command.cpp
+
+CMakeFiles/vector-graphics-editor.dir/src/command/transform_command.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/vector-graphics-editor.dir/src/command/transform_command.cpp.i"
+	C:\msys64\mingw64\bin\c++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E F:\program\claudegraph\src\command\transform_command.cpp > CMakeFiles\vector-graphics-editor.dir\src\command\transform_command.cpp.i
+
+CMakeFiles/vector-graphics-editor.dir/src/command/transform_command.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/vector-graphics-editor.dir/src/command/transform_command.cpp.s"
+	C:\msys64\mingw64\bin\c++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S F:\program\claudegraph\src\command\transform_command.cpp -o CMakeFiles\vector-graphics-editor.dir\src\command\transform_command.cpp.s
+
 CMakeFiles/vector-graphics-editor.dir/src/core/bezier_graphic_item.cpp.obj: CMakeFiles/vector-graphics-editor.dir/flags.make
 CMakeFiles/vector-graphics-editor.dir/src/core/bezier_graphic_item.cpp.obj: CMakeFiles/vector-graphics-editor.dir/includes_CXX.rsp
 CMakeFiles/vector-graphics-editor.dir/src/core/bezier_graphic_item.cpp.obj: F:/program/claudegraph/src/core/bezier_graphic_item.cpp
 CMakeFiles/vector-graphics-editor.dir/src/core/bezier_graphic_item.cpp.obj: CMakeFiles/vector-graphics-editor.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=F:\program\claudegraph\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_15) "Building CXX object CMakeFiles/vector-graphics-editor.dir/src/core/bezier_graphic_item.cpp.obj"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=F:\program\claudegraph\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_16) "Building CXX object CMakeFiles/vector-graphics-editor.dir/src/core/bezier_graphic_item.cpp.obj"
 	C:\msys64\mingw64\bin\c++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/vector-graphics-editor.dir/src/core/bezier_graphic_item.cpp.obj -MF CMakeFiles\vector-graphics-editor.dir\src\core\bezier_graphic_item.cpp.obj.d -o CMakeFiles\vector-graphics-editor.dir\src\core\bezier_graphic_item.cpp.obj -c F:\program\claudegraph\src\core\bezier_graphic_item.cpp
 
 CMakeFiles/vector-graphics-editor.dir/src/core/bezier_graphic_item.cpp.i: cmake_force
@@ -289,7 +304,7 @@ CMakeFiles/vector-graphics-editor.dir/src/core/circle_graphic_item.cpp.obj: CMak
 CMakeFiles/vector-graphics-editor.dir/src/core/circle_graphic_item.cpp.obj: CMakeFiles/vector-graphics-editor.dir/includes_CXX.rsp
 CMakeFiles/vector-graphics-editor.dir/src/core/circle_graphic_item.cpp.obj: F:/program/claudegraph/src/core/circle_graphic_item.cpp
 CMakeFiles/vector-graphics-editor.dir/src/core/circle_graphic_item.cpp.obj: CMakeFiles/vector-graphics-editor.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=F:\program\claudegraph\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_16) "Building CXX object CMakeFiles/vector-graphics-editor.dir/src/core/circle_graphic_item.cpp.obj"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=F:\program\claudegraph\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_17) "Building CXX object CMakeFiles/vector-graphics-editor.dir/src/core/circle_graphic_item.cpp.obj"
 	C:\msys64\mingw64\bin\c++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/vector-graphics-editor.dir/src/core/circle_graphic_item.cpp.obj -MF CMakeFiles\vector-graphics-editor.dir\src\core\circle_graphic_item.cpp.obj.d -o CMakeFiles\vector-graphics-editor.dir\src\core\circle_graphic_item.cpp.obj -c F:\program\claudegraph\src\core\circle_graphic_item.cpp
 
 CMakeFiles/vector-graphics-editor.dir/src/core/circle_graphic_item.cpp.i: cmake_force
@@ -304,7 +319,7 @@ CMakeFiles/vector-graphics-editor.dir/src/core/draw_strategy.cpp.obj: CMakeFiles
 CMakeFiles/vector-graphics-editor.dir/src/core/draw_strategy.cpp.obj: CMakeFiles/vector-graphics-editor.dir/includes_CXX.rsp
 CMakeFiles/vector-graphics-editor.dir/src/core/draw_strategy.cpp.obj: F:/program/claudegraph/src/core/draw_strategy.cpp
 CMakeFiles/vector-graphics-editor.dir/src/core/draw_strategy.cpp.obj: CMakeFiles/vector-graphics-editor.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=F:\program\claudegraph\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_17) "Building CXX object CMakeFiles/vector-graphics-editor.dir/src/core/draw_strategy.cpp.obj"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=F:\program\claudegraph\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_18) "Building CXX object CMakeFiles/vector-graphics-editor.dir/src/core/draw_strategy.cpp.obj"
 	C:\msys64\mingw64\bin\c++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/vector-graphics-editor.dir/src/core/draw_strategy.cpp.obj -MF CMakeFiles\vector-graphics-editor.dir\src\core\draw_strategy.cpp.obj.d -o CMakeFiles\vector-graphics-editor.dir\src\core\draw_strategy.cpp.obj -c F:\program\claudegraph\src\core\draw_strategy.cpp
 
 CMakeFiles/vector-graphics-editor.dir/src/core/draw_strategy.cpp.i: cmake_force
@@ -319,7 +334,7 @@ CMakeFiles/vector-graphics-editor.dir/src/core/ellipse_graphic_item.cpp.obj: CMa
 CMakeFiles/vector-graphics-editor.dir/src/core/ellipse_graphic_item.cpp.obj: CMakeFiles/vector-graphics-editor.dir/includes_CXX.rsp
 CMakeFiles/vector-graphics-editor.dir/src/core/ellipse_graphic_item.cpp.obj: F:/program/claudegraph/src/core/ellipse_graphic_item.cpp
 CMakeFiles/vector-graphics-editor.dir/src/core/ellipse_graphic_item.cpp.obj: CMakeFiles/vector-graphics-editor.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=F:\program\claudegraph\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_18) "Building CXX object CMakeFiles/vector-graphics-editor.dir/src/core/ellipse_graphic_item.cpp.obj"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=F:\program\claudegraph\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_19) "Building CXX object CMakeFiles/vector-graphics-editor.dir/src/core/ellipse_graphic_item.cpp.obj"
 	C:\msys64\mingw64\bin\c++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/vector-graphics-editor.dir/src/core/ellipse_graphic_item.cpp.obj -MF CMakeFiles\vector-graphics-editor.dir\src\core\ellipse_graphic_item.cpp.obj.d -o CMakeFiles\vector-graphics-editor.dir\src\core\ellipse_graphic_item.cpp.obj -c F:\program\claudegraph\src\core\ellipse_graphic_item.cpp
 
 CMakeFiles/vector-graphics-editor.dir/src/core/ellipse_graphic_item.cpp.i: cmake_force
@@ -334,7 +349,7 @@ CMakeFiles/vector-graphics-editor.dir/src/core/graphic.cpp.obj: CMakeFiles/vecto
 CMakeFiles/vector-graphics-editor.dir/src/core/graphic.cpp.obj: CMakeFiles/vector-graphics-editor.dir/includes_CXX.rsp
 CMakeFiles/vector-graphics-editor.dir/src/core/graphic.cpp.obj: F:/program/claudegraph/src/core/graphic.cpp
 CMakeFiles/vector-graphics-editor.dir/src/core/graphic.cpp.obj: CMakeFiles/vector-graphics-editor.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=F:\program\claudegraph\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_19) "Building CXX object CMakeFiles/vector-graphics-editor.dir/src/core/graphic.cpp.obj"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=F:\program\claudegraph\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_20) "Building CXX object CMakeFiles/vector-graphics-editor.dir/src/core/graphic.cpp.obj"
 	C:\msys64\mingw64\bin\c++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/vector-graphics-editor.dir/src/core/graphic.cpp.obj -MF CMakeFiles\vector-graphics-editor.dir\src\core\graphic.cpp.obj.d -o CMakeFiles\vector-graphics-editor.dir\src\core\graphic.cpp.obj -c F:\program\claudegraph\src\core\graphic.cpp
 
 CMakeFiles/vector-graphics-editor.dir/src/core/graphic.cpp.i: cmake_force
@@ -349,7 +364,7 @@ CMakeFiles/vector-graphics-editor.dir/src/core/graphic_item.cpp.obj: CMakeFiles/
 CMakeFiles/vector-graphics-editor.dir/src/core/graphic_item.cpp.obj: CMakeFiles/vector-graphics-editor.dir/includes_CXX.rsp
 CMakeFiles/vector-graphics-editor.dir/src/core/graphic_item.cpp.obj: F:/program/claudegraph/src/core/graphic_item.cpp
 CMakeFiles/vector-graphics-editor.dir/src/core/graphic_item.cpp.obj: CMakeFiles/vector-graphics-editor.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=F:\program\claudegraph\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_20) "Building CXX object CMakeFiles/vector-graphics-editor.dir/src/core/graphic_item.cpp.obj"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=F:\program\claudegraph\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_21) "Building CXX object CMakeFiles/vector-graphics-editor.dir/src/core/graphic_item.cpp.obj"
 	C:\msys64\mingw64\bin\c++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/vector-graphics-editor.dir/src/core/graphic_item.cpp.obj -MF CMakeFiles\vector-graphics-editor.dir\src\core\graphic_item.cpp.obj.d -o CMakeFiles\vector-graphics-editor.dir\src\core\graphic_item.cpp.obj -c F:\program\claudegraph\src\core\graphic_item.cpp
 
 CMakeFiles/vector-graphics-editor.dir/src/core/graphic_item.cpp.i: cmake_force
@@ -364,7 +379,7 @@ CMakeFiles/vector-graphics-editor.dir/src/core/graphics_item_factory.cpp.obj: CM
 CMakeFiles/vector-graphics-editor.dir/src/core/graphics_item_factory.cpp.obj: CMakeFiles/vector-graphics-editor.dir/includes_CXX.rsp
 CMakeFiles/vector-graphics-editor.dir/src/core/graphics_item_factory.cpp.obj: F:/program/claudegraph/src/core/graphics_item_factory.cpp
 CMakeFiles/vector-graphics-editor.dir/src/core/graphics_item_factory.cpp.obj: CMakeFiles/vector-graphics-editor.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=F:\program\claudegraph\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_21) "Building CXX object CMakeFiles/vector-graphics-editor.dir/src/core/graphics_item_factory.cpp.obj"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=F:\program\claudegraph\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_22) "Building CXX object CMakeFiles/vector-graphics-editor.dir/src/core/graphics_item_factory.cpp.obj"
 	C:\msys64\mingw64\bin\c++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/vector-graphics-editor.dir/src/core/graphics_item_factory.cpp.obj -MF CMakeFiles\vector-graphics-editor.dir\src\core\graphics_item_factory.cpp.obj.d -o CMakeFiles\vector-graphics-editor.dir\src\core\graphics_item_factory.cpp.obj -c F:\program\claudegraph\src\core\graphics_item_factory.cpp
 
 CMakeFiles/vector-graphics-editor.dir/src/core/graphics_item_factory.cpp.i: cmake_force
@@ -379,7 +394,7 @@ CMakeFiles/vector-graphics-editor.dir/src/core/image_manager.cpp.obj: CMakeFiles
 CMakeFiles/vector-graphics-editor.dir/src/core/image_manager.cpp.obj: CMakeFiles/vector-graphics-editor.dir/includes_CXX.rsp
 CMakeFiles/vector-graphics-editor.dir/src/core/image_manager.cpp.obj: F:/program/claudegraph/src/core/image_manager.cpp
 CMakeFiles/vector-graphics-editor.dir/src/core/image_manager.cpp.obj: CMakeFiles/vector-graphics-editor.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=F:\program\claudegraph\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_22) "Building CXX object CMakeFiles/vector-graphics-editor.dir/src/core/image_manager.cpp.obj"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=F:\program\claudegraph\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_23) "Building CXX object CMakeFiles/vector-graphics-editor.dir/src/core/image_manager.cpp.obj"
 	C:\msys64\mingw64\bin\c++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/vector-graphics-editor.dir/src/core/image_manager.cpp.obj -MF CMakeFiles\vector-graphics-editor.dir\src\core\image_manager.cpp.obj.d -o CMakeFiles\vector-graphics-editor.dir\src\core\image_manager.cpp.obj -c F:\program\claudegraph\src\core\image_manager.cpp
 
 CMakeFiles/vector-graphics-editor.dir/src/core/image_manager.cpp.i: cmake_force
@@ -394,7 +409,7 @@ CMakeFiles/vector-graphics-editor.dir/src/core/line_graphic_item.cpp.obj: CMakeF
 CMakeFiles/vector-graphics-editor.dir/src/core/line_graphic_item.cpp.obj: CMakeFiles/vector-graphics-editor.dir/includes_CXX.rsp
 CMakeFiles/vector-graphics-editor.dir/src/core/line_graphic_item.cpp.obj: F:/program/claudegraph/src/core/line_graphic_item.cpp
 CMakeFiles/vector-graphics-editor.dir/src/core/line_graphic_item.cpp.obj: CMakeFiles/vector-graphics-editor.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=F:\program\claudegraph\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_23) "Building CXX object CMakeFiles/vector-graphics-editor.dir/src/core/line_graphic_item.cpp.obj"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=F:\program\claudegraph\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_24) "Building CXX object CMakeFiles/vector-graphics-editor.dir/src/core/line_graphic_item.cpp.obj"
 	C:\msys64\mingw64\bin\c++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/vector-graphics-editor.dir/src/core/line_graphic_item.cpp.obj -MF CMakeFiles\vector-graphics-editor.dir\src\core\line_graphic_item.cpp.obj.d -o CMakeFiles\vector-graphics-editor.dir\src\core\line_graphic_item.cpp.obj -c F:\program\claudegraph\src\core\line_graphic_item.cpp
 
 CMakeFiles/vector-graphics-editor.dir/src/core/line_graphic_item.cpp.i: cmake_force
@@ -409,7 +424,7 @@ CMakeFiles/vector-graphics-editor.dir/src/core/rectangle_graphic_item.cpp.obj: C
 CMakeFiles/vector-graphics-editor.dir/src/core/rectangle_graphic_item.cpp.obj: CMakeFiles/vector-graphics-editor.dir/includes_CXX.rsp
 CMakeFiles/vector-graphics-editor.dir/src/core/rectangle_graphic_item.cpp.obj: F:/program/claudegraph/src/core/rectangle_graphic_item.cpp
 CMakeFiles/vector-graphics-editor.dir/src/core/rectangle_graphic_item.cpp.obj: CMakeFiles/vector-graphics-editor.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=F:\program\claudegraph\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_24) "Building CXX object CMakeFiles/vector-graphics-editor.dir/src/core/rectangle_graphic_item.cpp.obj"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=F:\program\claudegraph\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_25) "Building CXX object CMakeFiles/vector-graphics-editor.dir/src/core/rectangle_graphic_item.cpp.obj"
 	C:\msys64\mingw64\bin\c++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/vector-graphics-editor.dir/src/core/rectangle_graphic_item.cpp.obj -MF CMakeFiles\vector-graphics-editor.dir\src\core\rectangle_graphic_item.cpp.obj.d -o CMakeFiles\vector-graphics-editor.dir\src\core\rectangle_graphic_item.cpp.obj -c F:\program\claudegraph\src\core\rectangle_graphic_item.cpp
 
 CMakeFiles/vector-graphics-editor.dir/src/core/rectangle_graphic_item.cpp.i: cmake_force
@@ -424,7 +439,7 @@ CMakeFiles/vector-graphics-editor.dir/src/core/selection_manager.cpp.obj: CMakeF
 CMakeFiles/vector-graphics-editor.dir/src/core/selection_manager.cpp.obj: CMakeFiles/vector-graphics-editor.dir/includes_CXX.rsp
 CMakeFiles/vector-graphics-editor.dir/src/core/selection_manager.cpp.obj: F:/program/claudegraph/src/core/selection_manager.cpp
 CMakeFiles/vector-graphics-editor.dir/src/core/selection_manager.cpp.obj: CMakeFiles/vector-graphics-editor.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=F:\program\claudegraph\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_25) "Building CXX object CMakeFiles/vector-graphics-editor.dir/src/core/selection_manager.cpp.obj"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=F:\program\claudegraph\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_26) "Building CXX object CMakeFiles/vector-graphics-editor.dir/src/core/selection_manager.cpp.obj"
 	C:\msys64\mingw64\bin\c++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/vector-graphics-editor.dir/src/core/selection_manager.cpp.obj -MF CMakeFiles\vector-graphics-editor.dir\src\core\selection_manager.cpp.obj.d -o CMakeFiles\vector-graphics-editor.dir\src\core\selection_manager.cpp.obj -c F:\program\claudegraph\src\core\selection_manager.cpp
 
 CMakeFiles/vector-graphics-editor.dir/src/core/selection_manager.cpp.i: cmake_force
@@ -439,7 +454,7 @@ CMakeFiles/vector-graphics-editor.dir/src/state/draw_state.cpp.obj: CMakeFiles/v
 CMakeFiles/vector-graphics-editor.dir/src/state/draw_state.cpp.obj: CMakeFiles/vector-graphics-editor.dir/includes_CXX.rsp
 CMakeFiles/vector-graphics-editor.dir/src/state/draw_state.cpp.obj: F:/program/claudegraph/src/state/draw_state.cpp
 CMakeFiles/vector-graphics-editor.dir/src/state/draw_state.cpp.obj: CMakeFiles/vector-graphics-editor.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=F:\program\claudegraph\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_26) "Building CXX object CMakeFiles/vector-graphics-editor.dir/src/state/draw_state.cpp.obj"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=F:\program\claudegraph\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_27) "Building CXX object CMakeFiles/vector-graphics-editor.dir/src/state/draw_state.cpp.obj"
 	C:\msys64\mingw64\bin\c++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/vector-graphics-editor.dir/src/state/draw_state.cpp.obj -MF CMakeFiles\vector-graphics-editor.dir\src\state\draw_state.cpp.obj.d -o CMakeFiles\vector-graphics-editor.dir\src\state\draw_state.cpp.obj -c F:\program\claudegraph\src\state\draw_state.cpp
 
 CMakeFiles/vector-graphics-editor.dir/src/state/draw_state.cpp.i: cmake_force
@@ -454,7 +469,7 @@ CMakeFiles/vector-graphics-editor.dir/src/state/edit_state.cpp.obj: CMakeFiles/v
 CMakeFiles/vector-graphics-editor.dir/src/state/edit_state.cpp.obj: CMakeFiles/vector-graphics-editor.dir/includes_CXX.rsp
 CMakeFiles/vector-graphics-editor.dir/src/state/edit_state.cpp.obj: F:/program/claudegraph/src/state/edit_state.cpp
 CMakeFiles/vector-graphics-editor.dir/src/state/edit_state.cpp.obj: CMakeFiles/vector-graphics-editor.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=F:\program\claudegraph\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_27) "Building CXX object CMakeFiles/vector-graphics-editor.dir/src/state/edit_state.cpp.obj"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=F:\program\claudegraph\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_28) "Building CXX object CMakeFiles/vector-graphics-editor.dir/src/state/edit_state.cpp.obj"
 	C:\msys64\mingw64\bin\c++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/vector-graphics-editor.dir/src/state/edit_state.cpp.obj -MF CMakeFiles\vector-graphics-editor.dir\src\state\edit_state.cpp.obj.d -o CMakeFiles\vector-graphics-editor.dir\src\state\edit_state.cpp.obj -c F:\program\claudegraph\src\state\edit_state.cpp
 
 CMakeFiles/vector-graphics-editor.dir/src/state/edit_state.cpp.i: cmake_force
@@ -469,7 +484,7 @@ CMakeFiles/vector-graphics-editor.dir/src/state/editor_state.cpp.obj: CMakeFiles
 CMakeFiles/vector-graphics-editor.dir/src/state/editor_state.cpp.obj: CMakeFiles/vector-graphics-editor.dir/includes_CXX.rsp
 CMakeFiles/vector-graphics-editor.dir/src/state/editor_state.cpp.obj: F:/program/claudegraph/src/state/editor_state.cpp
 CMakeFiles/vector-graphics-editor.dir/src/state/editor_state.cpp.obj: CMakeFiles/vector-graphics-editor.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=F:\program\claudegraph\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_28) "Building CXX object CMakeFiles/vector-graphics-editor.dir/src/state/editor_state.cpp.obj"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=F:\program\claudegraph\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_29) "Building CXX object CMakeFiles/vector-graphics-editor.dir/src/state/editor_state.cpp.obj"
 	C:\msys64\mingw64\bin\c++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/vector-graphics-editor.dir/src/state/editor_state.cpp.obj -MF CMakeFiles\vector-graphics-editor.dir\src\state\editor_state.cpp.obj.d -o CMakeFiles\vector-graphics-editor.dir\src\state\editor_state.cpp.obj -c F:\program\claudegraph\src\state\editor_state.cpp
 
 CMakeFiles/vector-graphics-editor.dir/src/state/editor_state.cpp.i: cmake_force
@@ -484,7 +499,7 @@ CMakeFiles/vector-graphics-editor.dir/src/state/fill_state.cpp.obj: CMakeFiles/v
 CMakeFiles/vector-graphics-editor.dir/src/state/fill_state.cpp.obj: CMakeFiles/vector-graphics-editor.dir/includes_CXX.rsp
 CMakeFiles/vector-graphics-editor.dir/src/state/fill_state.cpp.obj: F:/program/claudegraph/src/state/fill_state.cpp
 CMakeFiles/vector-graphics-editor.dir/src/state/fill_state.cpp.obj: CMakeFiles/vector-graphics-editor.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=F:\program\claudegraph\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_29) "Building CXX object CMakeFiles/vector-graphics-editor.dir/src/state/fill_state.cpp.obj"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=F:\program\claudegraph\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_30) "Building CXX object CMakeFiles/vector-graphics-editor.dir/src/state/fill_state.cpp.obj"
 	C:\msys64\mingw64\bin\c++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/vector-graphics-editor.dir/src/state/fill_state.cpp.obj -MF CMakeFiles\vector-graphics-editor.dir\src\state\fill_state.cpp.obj.d -o CMakeFiles\vector-graphics-editor.dir\src\state\fill_state.cpp.obj -c F:\program\claudegraph\src\state\fill_state.cpp
 
 CMakeFiles/vector-graphics-editor.dir/src/state/fill_state.cpp.i: cmake_force
@@ -499,7 +514,7 @@ CMakeFiles/vector-graphics-editor.dir/src/ui/draw_area.cpp.obj: CMakeFiles/vecto
 CMakeFiles/vector-graphics-editor.dir/src/ui/draw_area.cpp.obj: CMakeFiles/vector-graphics-editor.dir/includes_CXX.rsp
 CMakeFiles/vector-graphics-editor.dir/src/ui/draw_area.cpp.obj: F:/program/claudegraph/src/ui/draw_area.cpp
 CMakeFiles/vector-graphics-editor.dir/src/ui/draw_area.cpp.obj: CMakeFiles/vector-graphics-editor.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=F:\program\claudegraph\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_30) "Building CXX object CMakeFiles/vector-graphics-editor.dir/src/ui/draw_area.cpp.obj"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=F:\program\claudegraph\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_31) "Building CXX object CMakeFiles/vector-graphics-editor.dir/src/ui/draw_area.cpp.obj"
 	C:\msys64\mingw64\bin\c++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/vector-graphics-editor.dir/src/ui/draw_area.cpp.obj -MF CMakeFiles\vector-graphics-editor.dir\src\ui\draw_area.cpp.obj.d -o CMakeFiles\vector-graphics-editor.dir\src\ui\draw_area.cpp.obj -c F:\program\claudegraph\src\ui\draw_area.cpp
 
 CMakeFiles/vector-graphics-editor.dir/src/ui/draw_area.cpp.i: cmake_force
@@ -514,7 +529,7 @@ CMakeFiles/vector-graphics-editor.dir/src/ui/image_resizer.cpp.obj: CMakeFiles/v
 CMakeFiles/vector-graphics-editor.dir/src/ui/image_resizer.cpp.obj: CMakeFiles/vector-graphics-editor.dir/includes_CXX.rsp
 CMakeFiles/vector-graphics-editor.dir/src/ui/image_resizer.cpp.obj: F:/program/claudegraph/src/ui/image_resizer.cpp
 CMakeFiles/vector-graphics-editor.dir/src/ui/image_resizer.cpp.obj: CMakeFiles/vector-graphics-editor.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=F:\program\claudegraph\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_31) "Building CXX object CMakeFiles/vector-graphics-editor.dir/src/ui/image_resizer.cpp.obj"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=F:\program\claudegraph\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_32) "Building CXX object CMakeFiles/vector-graphics-editor.dir/src/ui/image_resizer.cpp.obj"
 	C:\msys64\mingw64\bin\c++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/vector-graphics-editor.dir/src/ui/image_resizer.cpp.obj -MF CMakeFiles\vector-graphics-editor.dir\src\ui\image_resizer.cpp.obj.d -o CMakeFiles\vector-graphics-editor.dir\src\ui\image_resizer.cpp.obj -c F:\program\claudegraph\src\ui\image_resizer.cpp
 
 CMakeFiles/vector-graphics-editor.dir/src/ui/image_resizer.cpp.i: cmake_force
@@ -529,7 +544,7 @@ CMakeFiles/vector-graphics-editor.dir/src/ui/main_window.cpp.obj: CMakeFiles/vec
 CMakeFiles/vector-graphics-editor.dir/src/ui/main_window.cpp.obj: CMakeFiles/vector-graphics-editor.dir/includes_CXX.rsp
 CMakeFiles/vector-graphics-editor.dir/src/ui/main_window.cpp.obj: F:/program/claudegraph/src/ui/main_window.cpp
 CMakeFiles/vector-graphics-editor.dir/src/ui/main_window.cpp.obj: CMakeFiles/vector-graphics-editor.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=F:\program\claudegraph\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_32) "Building CXX object CMakeFiles/vector-graphics-editor.dir/src/ui/main_window.cpp.obj"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=F:\program\claudegraph\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_33) "Building CXX object CMakeFiles/vector-graphics-editor.dir/src/ui/main_window.cpp.obj"
 	C:\msys64\mingw64\bin\c++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/vector-graphics-editor.dir/src/ui/main_window.cpp.obj -MF CMakeFiles\vector-graphics-editor.dir\src\ui\main_window.cpp.obj.d -o CMakeFiles\vector-graphics-editor.dir\src\ui\main_window.cpp.obj -c F:\program\claudegraph\src\ui\main_window.cpp
 
 CMakeFiles/vector-graphics-editor.dir/src/ui/main_window.cpp.i: cmake_force
@@ -544,7 +559,7 @@ CMakeFiles/vector-graphics-editor.dir/src/utils/graphics_utils.cpp.obj: CMakeFil
 CMakeFiles/vector-graphics-editor.dir/src/utils/graphics_utils.cpp.obj: CMakeFiles/vector-graphics-editor.dir/includes_CXX.rsp
 CMakeFiles/vector-graphics-editor.dir/src/utils/graphics_utils.cpp.obj: F:/program/claudegraph/src/utils/graphics_utils.cpp
 CMakeFiles/vector-graphics-editor.dir/src/utils/graphics_utils.cpp.obj: CMakeFiles/vector-graphics-editor.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=F:\program\claudegraph\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_33) "Building CXX object CMakeFiles/vector-graphics-editor.dir/src/utils/graphics_utils.cpp.obj"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=F:\program\claudegraph\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_34) "Building CXX object CMakeFiles/vector-graphics-editor.dir/src/utils/graphics_utils.cpp.obj"
 	C:\msys64\mingw64\bin\c++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/vector-graphics-editor.dir/src/utils/graphics_utils.cpp.obj -MF CMakeFiles\vector-graphics-editor.dir\src\utils\graphics_utils.cpp.obj.d -o CMakeFiles\vector-graphics-editor.dir\src\utils\graphics_utils.cpp.obj -c F:\program\claudegraph\src\utils\graphics_utils.cpp
 
 CMakeFiles/vector-graphics-editor.dir/src/utils/graphics_utils.cpp.i: cmake_force
@@ -559,7 +574,7 @@ CMakeFiles/vector-graphics-editor.dir/src/utils/logger.cpp.obj: CMakeFiles/vecto
 CMakeFiles/vector-graphics-editor.dir/src/utils/logger.cpp.obj: CMakeFiles/vector-graphics-editor.dir/includes_CXX.rsp
 CMakeFiles/vector-graphics-editor.dir/src/utils/logger.cpp.obj: F:/program/claudegraph/src/utils/logger.cpp
 CMakeFiles/vector-graphics-editor.dir/src/utils/logger.cpp.obj: CMakeFiles/vector-graphics-editor.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=F:\program\claudegraph\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_34) "Building CXX object CMakeFiles/vector-graphics-editor.dir/src/utils/logger.cpp.obj"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=F:\program\claudegraph\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_35) "Building CXX object CMakeFiles/vector-graphics-editor.dir/src/utils/logger.cpp.obj"
 	C:\msys64\mingw64\bin\c++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/vector-graphics-editor.dir/src/utils/logger.cpp.obj -MF CMakeFiles\vector-graphics-editor.dir\src\utils\logger.cpp.obj.d -o CMakeFiles\vector-graphics-editor.dir\src\utils\logger.cpp.obj -c F:\program\claudegraph\src\utils\logger.cpp
 
 CMakeFiles/vector-graphics-editor.dir/src/utils/logger.cpp.i: cmake_force
@@ -574,7 +589,7 @@ CMakeFiles/vector-graphics-editor.dir/src/utils/performance_monitor.cpp.obj: CMa
 CMakeFiles/vector-graphics-editor.dir/src/utils/performance_monitor.cpp.obj: CMakeFiles/vector-graphics-editor.dir/includes_CXX.rsp
 CMakeFiles/vector-graphics-editor.dir/src/utils/performance_monitor.cpp.obj: F:/program/claudegraph/src/utils/performance_monitor.cpp
 CMakeFiles/vector-graphics-editor.dir/src/utils/performance_monitor.cpp.obj: CMakeFiles/vector-graphics-editor.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=F:\program\claudegraph\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_35) "Building CXX object CMakeFiles/vector-graphics-editor.dir/src/utils/performance_monitor.cpp.obj"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=F:\program\claudegraph\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_36) "Building CXX object CMakeFiles/vector-graphics-editor.dir/src/utils/performance_monitor.cpp.obj"
 	C:\msys64\mingw64\bin\c++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/vector-graphics-editor.dir/src/utils/performance_monitor.cpp.obj -MF CMakeFiles\vector-graphics-editor.dir\src\utils\performance_monitor.cpp.obj.d -o CMakeFiles\vector-graphics-editor.dir\src\utils\performance_monitor.cpp.obj -c F:\program\claudegraph\src\utils\performance_monitor.cpp
 
 CMakeFiles/vector-graphics-editor.dir/src/utils/performance_monitor.cpp.i: cmake_force
@@ -600,6 +615,7 @@ vector__graphics__editor_OBJECTS = \
 "CMakeFiles/vector-graphics-editor.dir/src/command/scale_command.cpp.obj" \
 "CMakeFiles/vector-graphics-editor.dir/src/command/selection_command.cpp.obj" \
 "CMakeFiles/vector-graphics-editor.dir/src/command/style_change_command.cpp.obj" \
+"CMakeFiles/vector-graphics-editor.dir/src/command/transform_command.cpp.obj" \
 "CMakeFiles/vector-graphics-editor.dir/src/core/bezier_graphic_item.cpp.obj" \
 "CMakeFiles/vector-graphics-editor.dir/src/core/circle_graphic_item.cpp.obj" \
 "CMakeFiles/vector-graphics-editor.dir/src/core/draw_strategy.cpp.obj" \
@@ -638,6 +654,7 @@ vector-graphics-editor.exe: CMakeFiles/vector-graphics-editor.dir/src/command/ro
 vector-graphics-editor.exe: CMakeFiles/vector-graphics-editor.dir/src/command/scale_command.cpp.obj
 vector-graphics-editor.exe: CMakeFiles/vector-graphics-editor.dir/src/command/selection_command.cpp.obj
 vector-graphics-editor.exe: CMakeFiles/vector-graphics-editor.dir/src/command/style_change_command.cpp.obj
+vector-graphics-editor.exe: CMakeFiles/vector-graphics-editor.dir/src/command/transform_command.cpp.obj
 vector-graphics-editor.exe: CMakeFiles/vector-graphics-editor.dir/src/core/bezier_graphic_item.cpp.obj
 vector-graphics-editor.exe: CMakeFiles/vector-graphics-editor.dir/src/core/circle_graphic_item.cpp.obj
 vector-graphics-editor.exe: CMakeFiles/vector-graphics-editor.dir/src/core/draw_strategy.cpp.obj
@@ -666,7 +683,7 @@ vector-graphics-editor.exe: D:/Qt/6.8.2/mingw_64/lib/libQt6Core.a
 vector-graphics-editor.exe: CMakeFiles/vector-graphics-editor.dir/linkLibs.rsp
 vector-graphics-editor.exe: CMakeFiles/vector-graphics-editor.dir/objects1.rsp
 vector-graphics-editor.exe: CMakeFiles/vector-graphics-editor.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=F:\program\claudegraph\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_36) "Linking CXX executable vector-graphics-editor.exe"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=F:\program\claudegraph\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_37) "Linking CXX executable vector-graphics-editor.exe"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles\vector-graphics-editor.dir\link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.

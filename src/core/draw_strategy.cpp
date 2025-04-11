@@ -91,7 +91,8 @@ void EllipseDrawStrategy::draw(QPainter* painter, const std::vector<QPointF>& po
     pen.setWidthF(m_lineWidth);
     painter->setPen(pen);
     
-    // 从左上角和右下角点创建矩形
+    // 从提供的点创建矩形
+    // 确保从左上角和右下角点创建标准化矩形
     QRectF rect(points[0], points[1]);
     
     // 绘制椭圆
@@ -133,16 +134,6 @@ void BezierDrawStrategy::draw(QPainter* painter, const std::vector<QPointF>& poi
         // 绘制路径
         painter->drawPath(path);
         
-        // 移除调试用的控制点绘制，避免额外绘制开销
-        // 以下代码在发布版中应该被注释掉
-        /*
-        painter->save();
-        painter->setPen(QPen(Qt::red, 1, Qt::DashLine));
-        for (size_t i = 0; i + 1 < points.size(); i++) {
-            painter->drawLine(points[i], points[i+1]);
-        }
-        painter->restore();
-        */
     }
     
     // 恢复原始画笔

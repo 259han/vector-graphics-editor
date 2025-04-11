@@ -22,6 +22,19 @@ CreateGraphicCommand::CreateGraphicCommand(DrawArea* drawArea,
         .arg(points.size()));
 }
 
+CreateGraphicCommand::CreateGraphicCommand(QGraphicsScene* scene, GraphicItem* graphicItem)
+    : m_scene(scene),
+      m_type(graphicItem->getGraphicType()),
+      m_pen(graphicItem->getPen()),
+      m_brush(graphicItem->getBrush()),
+      m_createdItem(graphicItem),
+      m_directCreation(true)
+{
+    m_points = graphicItem->getClipboardPoints();
+    Logger::debug(QString("CreateGraphicCommand: 创建直接图形命令 - 类型: %1")
+        .arg(static_cast<int>(m_type)));
+}
+
 CreateGraphicCommand::~CreateGraphicCommand()
 {
     // 注意：不删除 m_createdItem，因为它属于场景
@@ -30,6 +43,31 @@ CreateGraphicCommand::~CreateGraphicCommand()
 
 void CreateGraphicCommand::execute()
 {
+    // 对于直接创建模式，直接使用m_scene
+    if (m_directCreation) {
+        if (m_executed || !m_scene || !m_createdItem) {
+            Logger::warning("CreateGraphicCommand::execute: 直接创建模式 - 命令已执行或场景/图形项无效");
+            return;
+        }
+        
+        Logger::debug("CreateGraphicCommand::execute: 开始执行直接创建图形命令");
+        
+        // 添加到场景
+        Logger::debug(QString("CreateGraphicCommand::execute: 将图形项添加到场景, 指针: %1")
+            .arg(reinterpret_cast<quintptr>(m_createdItem)));
+        
+        m_scene->addItem(m_createdItem);
+        m_executed = true;
+        
+        // 强制更新场景
+        m_scene->update();
+        
+        Logger::info(QString("CreateGraphicCommand::execute: 直接创建图形命令执行成功 - 类型: %1")
+            .arg(static_cast<int>(m_type)));
+        return;
+    }
+    
+    // 原有的创建模式
     if (m_executed || !m_drawArea) {
         Logger::warning("CreateGraphicCommand::execute: 命令已执行或DrawArea无效");
         return;
@@ -95,18 +133,18 @@ void CreateGraphicCommand::execute()
 
 void CreateGraphicCommand::undo()
 {
-    if (!m_executed || !m_drawArea || !m_createdItem) {
+    if (!m_executed || !m_createdItem) {
         return;
     }
     
     // 从场景中移除图形项
-    QGraphicsScene* scene = m_drawArea->scene();
+    QGraphicsScene* scene = m_directCreation ? m_scene : m_drawArea->scene();
     if (scene) {
         scene->removeItem(m_createdItem);
         
         // 强制更新场景和视图
         scene->update();
-        if (m_drawArea && m_drawArea->viewport()) {
+        if (!m_directCreation && m_drawArea && m_drawArea->viewport()) {
             m_drawArea->viewport()->update();
             QApplication::processEvents();
         }
