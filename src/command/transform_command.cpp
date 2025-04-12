@@ -100,9 +100,9 @@ void TransformCommand::undo()
 QString TransformCommand::getDescription() const
 {
     if (m_transformType == TransformType::Rotate) {
-        return QString("旋转图形 %.1f 度").arg(m_angle);
+        return QString("旋转图形 %1 度").arg(m_angle, 0, 'f', 1);
     } else if (m_transformType == TransformType::Scale) {
-        return QString("缩放图形 %.2f 倍").arg(m_factor);
+        return QString("缩放图形 %1 倍").arg(m_factor, 0, 'f', 2);
     } else {
         return QString(m_isHorizontal ? "水平翻转图形" : "垂直翻转图形");
     }

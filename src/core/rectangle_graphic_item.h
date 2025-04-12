@@ -14,6 +14,10 @@ public:
     QRectF boundingRect() const override;
     Graphic::GraphicType getGraphicType() const override { return Graphic::RECTANGLE; }
     
+    // 重写缩放方法，以确保矩形特有的非均匀缩放处理
+    void setScale(const QPointF& scale) override;
+    void setScale(qreal scale) override;
+    
     // 矩形特有的方法
     QPointF getTopLeft() const;
     void setTopLeft(const QPointF& topLeft);

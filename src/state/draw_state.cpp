@@ -101,12 +101,12 @@ void DrawState::mouseMoveEvent(DrawArea* drawArea, QMouseEvent* event)
                 double height = qAbs(m_currentPoint.y() - m_startPoint.y());
                 
                 if (m_graphicType == Graphic::LINE) {
-                    statusMsg = QString("正在绘制直线: 长度 %.1f").arg(
-                        QLineF(m_startPoint, m_currentPoint).length());
+                    double length = QLineF(m_startPoint, m_currentPoint).length();
+                    statusMsg = QString("正在绘制直线: 长度 %1").arg(length, 0, 'f', 1);
                 } else if (m_graphicType == Graphic::RECTANGLE) {
-                    statusMsg = QString("正在绘制矩形: %.1f x %.1f").arg(width).arg(height);
+                    statusMsg = QString("正在绘制矩形: %1 x %2").arg(width, 0, 'f', 1).arg(height, 0, 'f', 1);
                 } else if (m_graphicType == Graphic::ELLIPSE) {
-                    statusMsg = QString("正在绘制椭圆: %.1f x %.1f").arg(width).arg(height);
+                    statusMsg = QString("正在绘制椭圆: %1 x %2").arg(width, 0, 'f', 1).arg(height, 0, 'f', 1);
                 }
             }
             updateStatusMessage(drawArea, statusMsg);

@@ -1,5 +1,6 @@
 #include "rectangle_graphic_item.h"
 #include <QPainter>
+#include "../utils/logger.h"
 
 RectangleGraphicItem::RectangleGraphicItem(const QPointF& topLeft, const QSizeF& size)
 {
@@ -27,24 +28,38 @@ RectangleGraphicItem::RectangleGraphicItem(const QPointF& topLeft, const QSizeF&
 
 QRectF RectangleGraphicItem::boundingRect() const
 {
+    // 应用缩放因子计算实际尺寸
+    double scaledWidth = m_size.width() * m_scale.x();
+    double scaledHeight = m_size.height() * m_scale.y();
+    
+    // 基于缩放后的尺寸计算左上角相对位置
+    QPointF scaledTopLeft = QPointF(-scaledWidth/2, -scaledHeight/2);
+    
     // 边界矩形，相对于图形项坐标系的原点
     // 增加一些边距确保能正确显示边框
     qreal extra = m_pen.width() + 5.0;
     return QRectF(
-        m_topLeft.x() - extra,
-        m_topLeft.y() - extra,
-        m_size.width() + extra * 2,
-        m_size.height() + extra * 2
+        scaledTopLeft.x() - extra,
+        scaledTopLeft.y() - extra,
+        scaledWidth + extra * 2,
+        scaledHeight + extra * 2
     );
 }
 
 std::vector<QPointF> RectangleGraphicItem::getDrawPoints() const
 {
+    // 应用缩放因子计算实际尺寸
+    double scaledWidth = m_size.width() * m_scale.x();
+    double scaledHeight = m_size.height() * m_scale.y();
+    
+    // 基于缩放后的尺寸计算左上角相对位置
+    QPointF scaledTopLeft = QPointF(-scaledWidth/2, -scaledHeight/2);
+    
     // 提供给DrawStrategy的点集合
     // 对于矩形，需要左上角和右下角点
     return {
-        m_topLeft,
-        m_topLeft + QPointF(m_size.width(), m_size.height())
+        scaledTopLeft,
+        scaledTopLeft + QPointF(scaledWidth, scaledHeight)
     };
 }
 
@@ -80,4 +95,33 @@ void RectangleGraphicItem::setSize(const QSizeF& size)
     m_topLeft = QPointF(-validSize.width()/2, -validSize.height()/2);
     
     update();
+}
+
+void RectangleGraphicItem::setScale(const QPointF& scale)
+{
+    // 设置新的基础比例
+    m_scale = scale;
+    
+    // 直接应用scale进行绘制，而不是改变m_size
+    // 这样可以避免累积放大效应
+    
+    // 绘制时的尺寸会根据getDrawPoints()计算，因此不需要修改m_size
+    
+    // 设置QGraphicsItem的基础缩放为1.0，让我们自行处理缩放
+    QGraphicsItem::setScale(1.0);
+    
+    Logger::debug(QString("RectangleGraphicItem::setScale - 设置为(%1, %2), 基础尺寸: %3x%4")
+                 .arg(scale.x(), 0, 'f', 3)
+                 .arg(scale.y(), 0, 'f', 3)
+                 .arg(m_size.width())
+                 .arg(m_size.height()));
+    
+    // 更新图形
+    update();
+}
+
+void RectangleGraphicItem::setScale(qreal scale)
+{
+    // 使用相同的x和y缩放
+    setScale(QPointF(scale, scale));
 } 

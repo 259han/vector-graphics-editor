@@ -447,14 +447,12 @@ void EditState::mouseReleaseEvent(DrawArea* drawArea, QMouseEvent* event)
             return;
         }
         
-        // 创建并执行缩放命令
-        TransformCommand* scaleCommand = TransformCommand::createScaleCommand(
-            selectedItems, 1.0, selectionManager->selectionCenter());
+        // 对于单个图形项，我们记录缩放操作为命令，但不执行实际缩放（因为已经在mouseMoveEvent中执行了）
+        // 这是为了支持撤销/重做功能
+        Logger::info("EditState: 记录缩放操作到命令历史");
         
-        if (scaleCommand) {
-            CommandManager::getInstance().executeCommand(scaleCommand);
-            Logger::info("EditState: 执行缩放命令");
-        }
+        // 不需要在此创建并执行额外的缩放命令，因为缩放已经应用到了图形项
+        // 这里我们只需要确保重置状态即可
     } else if (m_isRotating) {
         // 结束旋转
         m_isRotating = false;
@@ -606,78 +604,77 @@ void EditState::handleItemScaling(DrawArea* drawArea, const QPointF& pos, Graphi
         return;
     }
     
-    // 计算中心点 - 使用场景坐标
-    QPointF centerPos = item->mapToScene(item->boundingRect().center());
-    
-    // 根据控制点类型确定缩放方向
-    QPointF scaleFactors(1.0, 1.0);
+    // 获取图形项在场景中的边界矩形
+    QRectF boundingRect = item->sceneBoundingRect();
     QPointF currentScale = item->getScale();
     
-    // 计算鼠标位置与初始位置的差值
-    QPointF delta = pos - m_scaleStartPos;
+    // 计算缩放因子
+    qreal scaleX = 1.0;
+    qreal scaleY = 1.0;
     
-    // 控制缩放速度的敏感度（值越小，缩放越精细）
-    const qreal scaleSensitivity = 0.01;
-    
-    // 计算缩放方向和大小
+    // 根据控制点类型和鼠标位置直接计算缩放
     switch (m_activeHandle) {
         case GraphicItem::TopLeft:
-            // 左上角 - 缩放X和Y
-            scaleFactors.setX(1.0 - delta.x() * scaleSensitivity);
-            scaleFactors.setY(1.0 - delta.y() * scaleSensitivity);
+            scaleX = (boundingRect.right() - pos.x()) / boundingRect.width();
+            scaleY = (boundingRect.bottom() - pos.y()) / boundingRect.height();
             break;
         case GraphicItem::TopCenter:
-            // 上中 - 只缩放Y
-            scaleFactors.setX(1.0);
-            scaleFactors.setY(1.0 - delta.y() * scaleSensitivity);
+            // 只改变Y方向的缩放，X方向保持不变
+            scaleX = 1.0;
+            scaleY = (boundingRect.bottom() - pos.y()) / boundingRect.height();
             break;
         case GraphicItem::TopRight:
-            // 右上角 - 缩放X和Y
-            scaleFactors.setX(1.0 + delta.x() * scaleSensitivity);
-            scaleFactors.setY(1.0 - delta.y() * scaleSensitivity);
+            scaleX = (pos.x() - boundingRect.left()) / boundingRect.width();
+            scaleY = (boundingRect.bottom() - pos.y()) / boundingRect.height();
             break;
         case GraphicItem::MiddleLeft:
-            // 左中 - 只缩放X
-            scaleFactors.setX(1.0 - delta.x() * scaleSensitivity);
-            scaleFactors.setY(1.0);
+            // 只改变X方向的缩放，Y方向保持不变
+            scaleX = (boundingRect.right() - pos.x()) / boundingRect.width();
+            scaleY = 1.0;
             break;
         case GraphicItem::MiddleRight:
-            // 右中 - 只缩放X
-            scaleFactors.setX(1.0 + delta.x() * scaleSensitivity);
-            scaleFactors.setY(1.0);
+            // 只改变X方向的缩放，Y方向保持不变
+            scaleX = (pos.x() - boundingRect.left()) / boundingRect.width();
+            scaleY = 1.0;
             break;
         case GraphicItem::BottomLeft:
-            // 左下角 - 缩放X和Y
-            scaleFactors.setX(1.0 - delta.x() * scaleSensitivity);
-            scaleFactors.setY(1.0 + delta.y() * scaleSensitivity);
+            scaleX = (boundingRect.right() - pos.x()) / boundingRect.width();
+            scaleY = (pos.y() - boundingRect.top()) / boundingRect.height();
             break;
         case GraphicItem::BottomCenter:
-            // 下中 - 只缩放Y
-            scaleFactors.setX(1.0);
-            scaleFactors.setY(1.0 + delta.y() * scaleSensitivity);
+            // 只改变Y方向的缩放，X方向保持不变
+            scaleX = 1.0;
+            scaleY = (pos.y() - boundingRect.top()) / boundingRect.height();
             break;
         case GraphicItem::BottomRight:
-            // 右下角 - 缩放X和Y
-            scaleFactors.setX(1.0 + delta.x() * scaleSensitivity);
-            scaleFactors.setY(1.0 + delta.y() * scaleSensitivity);
+            scaleX = (pos.x() - boundingRect.left()) / boundingRect.width();
+            scaleY = (pos.y() - boundingRect.top()) / boundingRect.height();
             break;
         default:
             break;
     }
     
-    // 计算新的缩放值
-    QPointF newScale(currentScale.x() * scaleFactors.x(), currentScale.y() * scaleFactors.y());
+    // 防止缩放因子过小或无效
+    const qreal minScale = 0.1;
+    if (scaleX <= minScale) scaleX = minScale;
+    if (scaleY <= minScale) scaleY = minScale;
+    
+    // 应用新的缩放
+    // 计算新的绝对缩放值而不是相对缩放
+    QPointF newScale(currentScale.x() * scaleX, currentScale.y() * scaleY);
     
     // 确保缩放不会太小
-    const qreal minScale = 0.1;
     newScale.setX(qMax(minScale, newScale.x()));
     newScale.setY(qMax(minScale, newScale.y()));
     
+    Logger::debug(QString("EditState::handleItemScaling - 计算的缩放因子 X:%1 Y:%2，新缩放值:%3,%4")
+                 .arg(scaleX)
+                 .arg(scaleY)
+                 .arg(newScale.x())
+                 .arg(newScale.y()));
+    
     // 应用新的缩放
     item->setScale(newScale);
-    
-    // 更新起始位置为当前位置，以便下一次移动计算增量
-    m_scaleStartPos = pos;
 }
 
 // 创建移动命令

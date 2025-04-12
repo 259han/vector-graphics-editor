@@ -404,4 +404,64 @@ CMakeFiles/vector-graphics-editor.dir/src/core/rectangle_graphic_item.cpp.obj: \
  D:/Qt/6.8.2/mingw_64/include/QtCore/qstring.h \
  F:\program\claudegraph\src\core\draw_strategy.h \
  D:/Qt/6.8.2/mingw_64/include/QtGui/QPainterPath \
- D:/Qt/6.8.2/mingw_64/include/QtGui/qpainterpath.h
+ D:/Qt/6.8.2/mingw_64/include/QtGui/qpainterpath.h \
+ F:/program/claudegraph/src/utils/logger.h \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/QDateTime \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/qdatetime.h \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/qcalendar.h \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/QFile \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/qfile.h \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/qfiledevice.h \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/qiodevice.h \
+ C:/msys64/mingw64/include/c++/14.2.0/filesystem \
+ C:/msys64/mingw64/include/c++/14.2.0/bits/fs_fwd.h \
+ C:/msys64/mingw64/include/c++/14.2.0/bits/fs_path.h \
+ C:/msys64/mingw64/include/c++/14.2.0/locale \
+ C:/msys64/mingw64/include/c++/14.2.0/bits/locale_facets.h \
+ C:/msys64/mingw64/include/c++/14.2.0/cwctype \
+ C:/msys64/mingw64/include/wctype.h \
+ C:/msys64/mingw64/include/c++/14.2.0/x86_64-w64-mingw32/bits/ctype_base.h \
+ C:/msys64/mingw64/include/c++/14.2.0/x86_64-w64-mingw32/bits/ctype_inline.h \
+ C:/msys64/mingw64/include/c++/14.2.0/bits/locale_facets.tcc \
+ C:/msys64/mingw64/include/c++/14.2.0/bits/locale_facets_nonio.h \
+ C:/msys64/mingw64/include/c++/14.2.0/x86_64-w64-mingw32/bits/time_members.h \
+ C:/msys64/mingw64/include/c++/14.2.0/x86_64-w64-mingw32/bits/messages_members.h \
+ C:/msys64/mingw64/include/c++/14.2.0/bits/codecvt.h \
+ C:/msys64/mingw64/include/c++/14.2.0/bits/locale_facets_nonio.tcc \
+ C:/msys64/mingw64/include/c++/14.2.0/bits/locale_conv.h \
+ C:/msys64/mingw64/include/c++/14.2.0/iomanip \
+ C:/msys64/mingw64/include/c++/14.2.0/bits/quoted_string.h \
+ C:/msys64/mingw64/include/c++/14.2.0/sstream \
+ C:/msys64/mingw64/include/c++/14.2.0/istream \
+ C:/msys64/mingw64/include/c++/14.2.0/ios \
+ C:/msys64/mingw64/include/c++/14.2.0/bits/basic_ios.h \
+ C:/msys64/mingw64/include/c++/14.2.0/bits/basic_ios.tcc \
+ C:/msys64/mingw64/include/c++/14.2.0/ostream \
+ C:/msys64/mingw64/include/c++/14.2.0/bits/ostream.tcc \
+ C:/msys64/mingw64/include/c++/14.2.0/bits/istream.tcc \
+ C:/msys64/mingw64/include/c++/14.2.0/bits/sstream.tcc \
+ C:/msys64/mingw64/include/c++/14.2.0/codecvt \
+ C:/msys64/mingw64/include/c++/14.2.0/bits/fs_dir.h \
+ C:/msys64/mingw64/include/c++/14.2.0/bits/fs_ops.h \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/QTextStream \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/qtextstream.h \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/QDebug \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/qdebug.h \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/QMutex \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/qmutex.h \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/qdeadlinetimer.h \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/qelapsedtimer.h \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/qtsan_impl.h \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/QDir \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/qdir.h \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/qdirlisting.h \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/qdatetime.h \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/qfile.h \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/qfileinfo.h \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/qtimezone.h \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/QCoreApplication \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/qcoreapplication.h \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/qeventloop.h \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/qnativeinterface.h \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/qcoreapplication_platform.h \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/qcoreapplication.h
