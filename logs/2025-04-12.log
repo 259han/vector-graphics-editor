@@ -5529,3 +5529,493 @@
 [2025-04-12 17:16:10.186] [DEBUG] CreateGraphicCommand: 销毁图形创建命令
 [2025-04-12 17:16:10.189] [DEBUG] CreateGraphicCommand: 销毁图形创建命令
 [2025-04-12 17:16:10.192] [DEBUG] CreateGraphicCommand: 销毁图形创建命令
+
+=== Log started at 2025-04-12 17:35:02 ===
+=== Log directory: F:/program/claudegraph/logs ===
+[2025-04-12 17:35:02.139] [INFO] 应用程序启动
+[2025-04-12 17:35:02.143] [DEBUG] DrawArea::setEditState: 开始切换到编辑状态
+[2025-04-12 17:35:02.146] [DEBUG] DrawArea::setEditState: 创建新的编辑状态
+[2025-04-12 17:35:02.148] [DEBUG] 创建新的编辑器状态
+[2025-04-12 17:35:02.149] [INFO] EditState: 创建编辑状态
+[2025-04-12 17:35:02.151] [DEBUG] DrawArea::setEditState: 编辑状态已创建
+[2025-04-12 17:35:02.154] [DEBUG] DrawArea::setEditState: 通知编辑状态已进入
+[2025-04-12 17:35:02.157] [DEBUG] EditState::onEnterState: 开始初始化编辑状态
+[2025-04-12 17:35:02.159] [DEBUG] EditState::onEnterState: 设置了 0 个图形项为可选择状态
+[2025-04-12 17:35:02.162] [DEBUG] EditState::onEnterState: 选择管理器已初始化
+[2025-04-12 17:35:02.167] [INFO] EditState::onEnterState: 编辑状态初始化完成
+[2025-04-12 17:35:02.170] [DEBUG] DrawArea::setEditState: 编辑状态初始化完成
+[2025-04-12 17:35:02.173] [DEBUG] DrawArea::setEditState: 设置场景中的图形项为可选择状态
+[2025-04-12 17:35:02.176] [DEBUG] DrawArea::setEditState: 已设置 0 个图形项为可选择状态
+[2025-04-12 17:35:02.179] [DEBUG] DrawArea::setEditState: 切换到编辑状态完成
+[2025-04-12 17:35:02.199] [INFO] CommandManager: 初始化
+[2025-04-12 17:35:02.208] [DEBUG] 性能监控工作线程已创建
+[2025-04-12 17:35:02.210] [DEBUG] 已注册性能指标回调: SystemResources
+[2025-04-12 17:35:02.213] [INFO] 性能监控系统已初始化
+[2025-04-12 17:35:02.216] [DEBUG] 已注册性能指标回调: SystemMetrics
+[2025-04-12 17:35:02.313] [INFO] 主窗口显示完成
+[2025-04-12 17:35:09.767] [INFO] DrawArea::clearGraphics: 开始清空场景
+[2025-04-12 17:35:09.769] [DEBUG] DrawArea::clearGraphics: 清除选择状态
+[2025-04-12 17:35:09.777] [DEBUG] DrawArea::clearGraphics: 准备清除 0 个项目
+[2025-04-12 17:35:09.779] [DEBUG] DrawArea::clearGraphics: 所有项目已清除
+[2025-04-12 17:35:09.785] [INFO] DrawArea::clearGraphics: 场景清空完成
+[2025-04-12 17:35:26.054] [INFO] EditState: 退出编辑状态
+[2025-04-12 17:35:26.057] [INFO] EditState: 销毁编辑状态
+[2025-04-12 17:35:26.059] [DEBUG] 创建新的编辑器状态
+[2025-04-12 17:35:26.061] [INFO] DrawState: 创建绘制状态，图形类型: 3
+[2025-04-12 17:35:26.065] [INFO] DrawState: 进入绘制状态，当前图形类型: 3
+[2025-04-12 17:35:26.068] [DEBUG] DrawState: 设置线条颜色为 #000080, 线宽为 2
+[2025-04-12 17:35:26.657] [DEBUG] DrawState::createFinalItem: 开始创建图形项
+[2025-04-12 17:35:26.659] [DEBUG] DrawState::createFinalItem: 创建命令对象，图形类型: 3
+[2025-04-12 17:35:26.662] [DEBUG] CreateGraphicCommand: 创建图形命令 - 类型: 3, 点数: 2
+[2025-04-12 17:35:26.666] [DEBUG] DrawState::createFinalItem: 执行命令
+[2025-04-12 17:35:26.668] [DEBUG] CommandManager::executeCommand: 执行命令 '创建椭圆' [类型: create] (分组中)
+[2025-04-12 17:35:26.671] [DEBUG] CreateGraphicCommand::execute: 开始执行创建图形命令
+[2025-04-12 17:35:26.675] [DEBUG] CreateGraphicCommand::execute: 创建图形项 - 类型: 3, 点数: 2
+[2025-04-12 17:35:26.678] [DEBUG] CreateGraphicCommand::execute: 设置图形样式完成
+[2025-04-12 17:35:26.682] [DEBUG] CreateGraphicCommand::execute: 设置图形标志完成
+[2025-04-12 17:35:26.685] [DEBUG] CreateGraphicCommand::execute: 将图形项添加到场景, 指针: 1580186776944
+[2025-04-12 17:35:26.689] [INFO] CreateGraphicCommand::execute: 创建图形命令执行成功 - 类型: 3
+[2025-04-12 17:35:26.692] [DEBUG] CommandManager: 撤销栈大小: 1, 重做栈大小: 0
+[2025-04-12 17:35:26.695] [DEBUG] DrawState::createFinalItem: 图形项创建成功，指针: 1580186776944
+[2025-04-12 17:35:26.698] [INFO] DrawState: 创建了 椭圆 图形
+[2025-04-12 17:35:27.531] [INFO] DrawState::onExitState: 开始退出绘制状态
+[2025-04-12 17:35:27.535] [DEBUG] DrawState::onExitState: 重置鼠标光标
+[2025-04-12 17:35:27.538] [DEBUG] DrawState::onExitState: 更新场景
+[2025-04-12 17:35:27.541] [INFO] DrawState::onExitState: 绘制状态退出完成
+[2025-04-12 17:35:27.543] [DEBUG] 创建新的编辑器状态
+[2025-04-12 17:35:27.545] [INFO] DrawState: 创建绘制状态，图形类型: 1
+[2025-04-12 17:35:27.549] [INFO] DrawState: 进入绘制状态，当前图形类型: 1
+[2025-04-12 17:35:27.553] [DEBUG] DrawState: 设置线条颜色为 #000080, 线宽为 2
+[2025-04-12 17:35:28.249] [DEBUG] DrawState::createFinalItem: 开始创建图形项
+[2025-04-12 17:35:28.253] [DEBUG] DrawState::createFinalItem: 创建命令对象，图形类型: 1
+[2025-04-12 17:35:28.256] [DEBUG] CreateGraphicCommand: 创建图形命令 - 类型: 1, 点数: 2
+[2025-04-12 17:35:28.259] [DEBUG] DrawState::createFinalItem: 执行命令
+[2025-04-12 17:35:28.262] [DEBUG] CommandManager::executeCommand: 执行命令 '创建直线' [类型: create] (分组中)
+[2025-04-12 17:35:28.265] [DEBUG] CreateGraphicCommand::execute: 开始执行创建图形命令
+[2025-04-12 17:35:28.269] [DEBUG] CreateGraphicCommand::execute: 创建图形项 - 类型: 1, 点数: 2
+[2025-04-12 17:35:28.273] [DEBUG] CreateGraphicCommand::execute: 设置图形样式完成
+[2025-04-12 17:35:28.275] [DEBUG] CreateGraphicCommand::execute: 设置图形标志完成
+[2025-04-12 17:35:28.278] [DEBUG] CreateGraphicCommand::execute: 将图形项添加到场景, 指针: 1580186775600
+[2025-04-12 17:35:28.282] [INFO] CreateGraphicCommand::execute: 创建图形命令执行成功 - 类型: 1
+[2025-04-12 17:35:28.285] [DEBUG] CommandManager: 撤销栈大小: 2, 重做栈大小: 0
+[2025-04-12 17:35:28.289] [DEBUG] DrawState::createFinalItem: 图形项创建成功，指针: 1580186775600
+[2025-04-12 17:35:28.292] [INFO] DrawState: 创建了 直线 图形
+[2025-04-12 17:35:48.846] [INFO] 成功导出SVG到 F:/program/claudegraph/build/1.svg
+[2025-04-12 17:36:27.428] [INFO] DrawArea::clearGraphics: 开始清空场景
+[2025-04-12 17:36:27.431] [DEBUG] DrawArea::clearGraphics: 清除选择状态
+[2025-04-12 17:36:27.438] [DEBUG] DrawArea::clearGraphics: 准备清除 2 个项目
+[2025-04-12 17:36:27.441] [DEBUG] DrawArea::clearGraphics: 删除项目 1580186775600
+[2025-04-12 17:36:27.444] [DEBUG] DrawArea::clearGraphics: 删除项目 1580186776944
+[2025-04-12 17:36:27.447] [DEBUG] DrawArea::clearGraphics: 所有项目已清除
+[2025-04-12 17:36:27.453] [INFO] DrawArea::clearGraphics: 场景清空完成
+[2025-04-12 17:36:53.449] [INFO] DrawState::onExitState: 开始退出绘制状态
+[2025-04-12 17:36:53.453] [DEBUG] DrawState::onExitState: 重置鼠标光标
+[2025-04-12 17:36:53.455] [DEBUG] DrawState::onExitState: 更新场景
+[2025-04-12 17:36:53.458] [INFO] DrawState::onExitState: 绘制状态退出完成
+[2025-04-12 17:36:53.460] [DEBUG] 创建新的编辑器状态
+[2025-04-12 17:36:53.463] [INFO] DrawState: 创建绘制状态，图形类型: 3
+[2025-04-12 17:36:53.466] [INFO] DrawState: 进入绘制状态，当前图形类型: 3
+[2025-04-12 17:36:53.469] [DEBUG] DrawState: 设置线条颜色为 #000080, 线宽为 2
+[2025-04-12 17:36:53.940] [DEBUG] DrawState::createFinalItem: 开始创建图形项
+[2025-04-12 17:36:53.944] [DEBUG] DrawState::createFinalItem: 创建命令对象，图形类型: 3
+[2025-04-12 17:36:53.948] [DEBUG] CreateGraphicCommand: 创建图形命令 - 类型: 3, 点数: 2
+[2025-04-12 17:36:53.950] [DEBUG] DrawState::createFinalItem: 执行命令
+[2025-04-12 17:36:53.954] [DEBUG] CommandManager::executeCommand: 执行命令 '创建椭圆' [类型: create] (分组中)
+[2025-04-12 17:36:53.957] [DEBUG] CreateGraphicCommand::execute: 开始执行创建图形命令
+[2025-04-12 17:36:53.960] [DEBUG] CreateGraphicCommand::execute: 创建图形项 - 类型: 3, 点数: 2
+[2025-04-12 17:36:53.963] [DEBUG] CreateGraphicCommand::execute: 设置图形样式完成
+[2025-04-12 17:36:53.965] [DEBUG] CreateGraphicCommand::execute: 设置图形标志完成
+[2025-04-12 17:36:53.968] [DEBUG] CreateGraphicCommand::execute: 将图形项添加到场景, 指针: 1580186774256
+[2025-04-12 17:36:53.972] [INFO] CreateGraphicCommand::execute: 创建图形命令执行成功 - 类型: 3
+[2025-04-12 17:36:53.975] [DEBUG] CommandManager: 撤销栈大小: 3, 重做栈大小: 0
+[2025-04-12 17:36:53.978] [DEBUG] DrawState::createFinalItem: 图形项创建成功，指针: 1580186774256
+[2025-04-12 17:36:53.980] [INFO] DrawState: 创建了 椭圆 图形
+[2025-04-12 17:36:54.895] [INFO] DrawState::onExitState: 开始退出绘制状态
+[2025-04-12 17:36:54.898] [DEBUG] DrawState::onExitState: 重置鼠标光标
+[2025-04-12 17:36:54.901] [DEBUG] DrawState::onExitState: 更新场景
+[2025-04-12 17:36:54.904] [INFO] DrawState::onExitState: 绘制状态退出完成
+[2025-04-12 17:36:54.906] [DEBUG] 创建新的编辑器状态
+[2025-04-12 17:36:54.909] [INFO] DrawState: 创建绘制状态，图形类型: 2
+[2025-04-12 17:36:54.913] [INFO] DrawState: 进入绘制状态，当前图形类型: 2
+[2025-04-12 17:36:54.915] [DEBUG] DrawState: 设置线条颜色为 #000080, 线宽为 2
+[2025-04-12 17:36:55.838] [DEBUG] DrawState::createFinalItem: 开始创建图形项
+[2025-04-12 17:36:55.841] [DEBUG] DrawState::createFinalItem: 创建命令对象，图形类型: 2
+[2025-04-12 17:36:55.845] [DEBUG] CreateGraphicCommand: 创建图形命令 - 类型: 2, 点数: 2
+[2025-04-12 17:36:55.848] [DEBUG] DrawState::createFinalItem: 执行命令
+[2025-04-12 17:36:55.849] [DEBUG] CommandManager::executeCommand: 执行命令 '创建矩形' [类型: create] (分组中)
+[2025-04-12 17:36:55.853] [DEBUG] CreateGraphicCommand::execute: 开始执行创建图形命令
+[2025-04-12 17:36:55.855] [DEBUG] CreateGraphicCommand::execute: 创建图形项 - 类型: 2, 点数: 2
+[2025-04-12 17:36:55.859] [DEBUG] CreateGraphicCommand::execute: 设置图形样式完成
+[2025-04-12 17:36:55.862] [DEBUG] CreateGraphicCommand::execute: 设置图形标志完成
+[2025-04-12 17:36:55.864] [DEBUG] CreateGraphicCommand::execute: 将图形项添加到场景, 指针: 1580186774704
+[2025-04-12 17:36:55.867] [INFO] CreateGraphicCommand::execute: 创建图形命令执行成功 - 类型: 2
+[2025-04-12 17:36:55.871] [DEBUG] CommandManager: 撤销栈大小: 4, 重做栈大小: 0
+[2025-04-12 17:36:55.873] [DEBUG] DrawState::createFinalItem: 图形项创建成功，指针: 1580186774704
+[2025-04-12 17:36:55.876] [INFO] DrawState: 创建了 矩形 图形
+[2025-04-12 17:37:01.853] [INFO] 成功保存文件到 F:/program/claudegraph/build/2.cvg
+[2025-04-12 17:37:04.968] [INFO] DrawArea::clearGraphics: 开始清空场景
+[2025-04-12 17:37:04.972] [DEBUG] DrawArea::clearGraphics: 清除选择状态
+[2025-04-12 17:37:04.979] [DEBUG] DrawArea::clearGraphics: 准备清除 3 个项目
+[2025-04-12 17:37:04.983] [DEBUG] DrawArea::clearGraphics: 删除项目 1580186774704
+[2025-04-12 17:37:04.986] [DEBUG] DrawArea::clearGraphics: 删除项目 1580186774256
+[2025-04-12 17:37:04.989] [DEBUG] DrawArea::clearGraphics: 删除项目 1580188318832
+[2025-04-12 17:37:04.992] [DEBUG] DrawArea::clearGraphics: 所有项目已清除
+[2025-04-12 17:37:04.997] [INFO] DrawArea::clearGraphics: 场景清空完成
+[2025-04-12 17:37:11.274] [DEBUG] RectangleGraphicItem::setScale - 设置为(1.000, 1.000), 基础尺寸: 116x201
+[2025-04-12 17:37:11.278] [DEBUG] EllipseGraphicItem::setScale - 设置为(1.000, 1.000), 基础尺寸: 322x115
+[2025-04-12 17:37:11.281] [ERROR] 加载文件失败: F:/program/claudegraph/build/2.cvg
+[2025-04-12 17:37:16.024] [DEBUG] DrawState::createFinalItem: 开始创建图形项
+[2025-04-12 17:37:16.028] [DEBUG] DrawState::createFinalItem: 创建命令对象，图形类型: 2
+[2025-04-12 17:37:16.030] [DEBUG] CreateGraphicCommand: 创建图形命令 - 类型: 2, 点数: 2
+[2025-04-12 17:37:16.034] [DEBUG] DrawState::createFinalItem: 执行命令
+[2025-04-12 17:37:16.036] [DEBUG] CommandManager::executeCommand: 执行命令 '创建矩形' [类型: create] (分组中)
+[2025-04-12 17:37:16.041] [DEBUG] CreateGraphicCommand::execute: 开始执行创建图形命令
+[2025-04-12 17:37:16.043] [DEBUG] CreateGraphicCommand::execute: 创建图形项 - 类型: 2, 点数: 2
+[2025-04-12 17:37:16.045] [DEBUG] CreateGraphicCommand::execute: 设置图形样式完成
+[2025-04-12 17:37:16.048] [DEBUG] CreateGraphicCommand::execute: 设置图形标志完成
+[2025-04-12 17:37:16.050] [DEBUG] CreateGraphicCommand::execute: 将图形项添加到场景, 指针: 1580186774704
+[2025-04-12 17:37:16.053] [INFO] CreateGraphicCommand::execute: 创建图形命令执行成功 - 类型: 2
+[2025-04-12 17:37:16.057] [DEBUG] CommandManager: 撤销栈大小: 5, 重做栈大小: 0
+[2025-04-12 17:37:16.059] [DEBUG] DrawState::createFinalItem: 图形项创建成功，指针: 1580186774704
+[2025-04-12 17:37:16.063] [INFO] DrawState: 创建了 矩形 图形
+[2025-04-12 17:37:18.058] [DEBUG] CommandManager::undo: 撤销命令 '创建矩形' [类型: create]
+[2025-04-12 17:37:18.065] [INFO] CreateGraphicCommand: 撤销创建图形命令 - 类型: 2
+[2025-04-12 17:37:18.068] [DEBUG] CommandManager: 撤销后 - 撤销栈大小: 4, 重做栈大小: 1
+[2025-04-12 17:37:19.575] [DEBUG] DrawArea::setEditState: 开始切换到编辑状态
+[2025-04-12 17:37:19.577] [DEBUG] DrawArea::setEditState: 通知当前状态即将退出
+[2025-04-12 17:37:19.580] [INFO] DrawState::onExitState: 开始退出绘制状态
+[2025-04-12 17:37:19.583] [DEBUG] DrawState::onExitState: 重置鼠标光标
+[2025-04-12 17:37:19.585] [DEBUG] DrawState::onExitState: 更新场景
+[2025-04-12 17:37:19.588] [INFO] DrawState::onExitState: 绘制状态退出完成
+[2025-04-12 17:37:19.590] [DEBUG] DrawArea::setEditState: 当前状态已退出
+[2025-04-12 17:37:19.597] [DEBUG] DrawArea::setEditState: 创建新的编辑状态
+[2025-04-12 17:37:19.599] [DEBUG] 创建新的编辑器状态
+[2025-04-12 17:37:19.601] [INFO] EditState: 创建编辑状态
+[2025-04-12 17:37:19.603] [DEBUG] DrawArea::setEditState: 编辑状态已创建
+[2025-04-12 17:37:19.607] [DEBUG] DrawArea::setEditState: 通知编辑状态已进入
+[2025-04-12 17:37:19.609] [DEBUG] EditState::onEnterState: 开始初始化编辑状态
+[2025-04-12 17:37:19.611] [DEBUG] EditState::onEnterState: 设置了 3 个图形项为可选择状态
+[2025-04-12 17:37:19.614] [DEBUG] EditState::onEnterState: 选择管理器已初始化
+[2025-04-12 17:37:19.620] [INFO] EditState::onEnterState: 编辑状态初始化完成
+[2025-04-12 17:37:19.623] [DEBUG] DrawArea::setEditState: 编辑状态初始化完成
+[2025-04-12 17:37:19.625] [DEBUG] DrawArea::setEditState: 设置场景中的图形项为可选择状态
+[2025-04-12 17:37:19.628] [DEBUG] DrawArea::setEditState: 已设置 0 个图形项为可选择状态
+[2025-04-12 17:37:19.635] [DEBUG] DrawArea::setEditState: 切换到编辑状态完成
+[2025-04-12 17:37:36.726] [INFO] EditState: 退出编辑状态
+[2025-04-12 17:37:36.729] [INFO] EditState: 销毁编辑状态
+[2025-04-12 17:37:36.731] [DEBUG] 创建新的编辑器状态
+[2025-04-12 17:37:36.733] [INFO] DrawState: 创建绘制状态，图形类型: 3
+[2025-04-12 17:37:36.738] [INFO] DrawState: 进入绘制状态，当前图形类型: 3
+[2025-04-12 17:37:36.740] [DEBUG] DrawState: 设置线条颜色为 #000080, 线宽为 2
+[2025-04-12 17:37:37.311] [DEBUG] DrawArea::setEditState: 开始切换到编辑状态
+[2025-04-12 17:37:37.314] [DEBUG] DrawArea::setEditState: 通知当前状态即将退出
+[2025-04-12 17:37:37.317] [INFO] DrawState::onExitState: 开始退出绘制状态
+[2025-04-12 17:37:37.320] [DEBUG] DrawState::onExitState: 重置鼠标光标
+[2025-04-12 17:37:37.323] [DEBUG] DrawState::onExitState: 更新场景
+[2025-04-12 17:37:37.326] [INFO] DrawState::onExitState: 绘制状态退出完成
+[2025-04-12 17:37:37.328] [DEBUG] DrawArea::setEditState: 当前状态已退出
+[2025-04-12 17:37:37.334] [DEBUG] DrawArea::setEditState: 创建新的编辑状态
+[2025-04-12 17:37:37.337] [DEBUG] 创建新的编辑器状态
+[2025-04-12 17:37:37.338] [INFO] EditState: 创建编辑状态
+[2025-04-12 17:37:37.340] [DEBUG] DrawArea::setEditState: 编辑状态已创建
+[2025-04-12 17:37:37.342] [DEBUG] DrawArea::setEditState: 通知编辑状态已进入
+[2025-04-12 17:37:37.344] [DEBUG] EditState::onEnterState: 开始初始化编辑状态
+[2025-04-12 17:37:37.347] [DEBUG] EditState::onEnterState: 设置了 3 个图形项为可选择状态
+[2025-04-12 17:37:37.349] [DEBUG] EditState::onEnterState: 选择管理器已初始化
+[2025-04-12 17:37:37.357] [INFO] EditState::onEnterState: 编辑状态初始化完成
+[2025-04-12 17:37:37.360] [DEBUG] DrawArea::setEditState: 编辑状态初始化完成
+[2025-04-12 17:37:37.363] [DEBUG] DrawArea::setEditState: 设置场景中的图形项为可选择状态
+[2025-04-12 17:37:37.365] [DEBUG] DrawArea::setEditState: 已设置 0 个图形项为可选择状态
+[2025-04-12 17:37:37.376] [DEBUG] DrawArea::setEditState: 切换到编辑状态完成
+[2025-04-12 17:38:30.841] [INFO] DrawArea::clearGraphics: 开始清空场景
+[2025-04-12 17:38:30.843] [DEBUG] DrawArea::clearGraphics: 清除选择状态
+[2025-04-12 17:38:30.852] [DEBUG] DrawArea::clearGraphics: 准备清除 3 个项目
+[2025-04-12 17:38:30.854] [DEBUG] DrawArea::clearGraphics: 删除项目 1580186776496
+[2025-04-12 17:38:30.857] [DEBUG] DrawArea::clearGraphics: 删除项目 1580186777168
+[2025-04-12 17:38:30.859] [DEBUG] DrawArea::clearGraphics: 删除项目 1580186774480
+[2025-04-12 17:38:30.863] [DEBUG] DrawArea::clearGraphics: 所有项目已清除
+[2025-04-12 17:38:30.868] [INFO] DrawArea::clearGraphics: 场景清空完成
+[2025-04-12 17:38:32.923] [INFO] DrawArea::clearGraphics: 开始清空场景
+[2025-04-12 17:38:32.926] [DEBUG] DrawArea::clearGraphics: 清除选择状态
+[2025-04-12 17:38:32.934] [DEBUG] DrawArea::clearGraphics: 准备清除 0 个项目
+[2025-04-12 17:38:32.937] [DEBUG] DrawArea::clearGraphics: 所有项目已清除
+[2025-04-12 17:38:32.944] [INFO] DrawArea::clearGraphics: 场景清空完成
+[2025-04-12 17:38:36.527] [INFO] EditState: 退出编辑状态
+[2025-04-12 17:38:36.529] [INFO] EditState: 销毁编辑状态
+[2025-04-12 17:38:36.531] [DEBUG] 创建新的编辑器状态
+[2025-04-12 17:38:36.535] [INFO] DrawState: 创建绘制状态，图形类型: 2
+[2025-04-12 17:38:36.538] [INFO] DrawState: 进入绘制状态，当前图形类型: 2
+[2025-04-12 17:38:36.540] [DEBUG] DrawState: 设置线条颜色为 #000080, 线宽为 2
+[2025-04-12 17:38:36.950] [DEBUG] DrawState::createFinalItem: 开始创建图形项
+[2025-04-12 17:38:36.953] [DEBUG] DrawState::createFinalItem: 创建命令对象，图形类型: 2
+[2025-04-12 17:38:36.957] [DEBUG] CreateGraphicCommand: 创建图形命令 - 类型: 2, 点数: 2
+[2025-04-12 17:38:36.960] [DEBUG] DrawState::createFinalItem: 执行命令
+[2025-04-12 17:38:36.963] [DEBUG] CommandManager::executeCommand: 执行命令 '创建矩形' [类型: create] (分组中)
+[2025-04-12 17:38:36.968] [DEBUG] CreateGraphicCommand::execute: 开始执行创建图形命令
+[2025-04-12 17:38:36.970] [DEBUG] CreateGraphicCommand::execute: 创建图形项 - 类型: 2, 点数: 2
+[2025-04-12 17:38:36.973] [DEBUG] CreateGraphicCommand::execute: 设置图形样式完成
+[2025-04-12 17:38:36.975] [DEBUG] CreateGraphicCommand::execute: 设置图形标志完成
+[2025-04-12 17:38:36.979] [DEBUG] CreateGraphicCommand::execute: 将图形项添加到场景, 指针: 1580186774256
+[2025-04-12 17:38:36.981] [INFO] CreateGraphicCommand::execute: 创建图形命令执行成功 - 类型: 2
+[2025-04-12 17:38:36.985] [DEBUG] CreateGraphicCommand: 销毁图形创建命令
+[2025-04-12 17:38:36.987] [DEBUG] CommandManager: 撤销栈大小: 5, 重做栈大小: 0
+[2025-04-12 17:38:36.989] [DEBUG] DrawState::createFinalItem: 图形项创建成功，指针: 1580186774256
+[2025-04-12 17:38:36.992] [INFO] DrawState: 创建了 矩形 图形
+[2025-04-12 17:38:39.083] [INFO] DrawArea::clearGraphics: 开始清空场景
+[2025-04-12 17:38:39.085] [DEBUG] DrawArea::clearGraphics: 清除选择状态
+[2025-04-12 17:38:39.094] [DEBUG] DrawArea::clearGraphics: 准备清除 1 个项目
+[2025-04-12 17:38:39.097] [DEBUG] DrawArea::clearGraphics: 删除项目 1580186774256
+[2025-04-12 17:38:39.099] [DEBUG] DrawArea::clearGraphics: 所有项目已清除
+[2025-04-12 17:38:39.106] [INFO] DrawArea::clearGraphics: 场景清空完成
+[2025-04-12 17:38:43.455] [INFO] DrawArea::clearGraphics: 开始清空场景
+[2025-04-12 17:38:43.459] [DEBUG] DrawArea::clearGraphics: 清除选择状态
+[2025-04-12 17:38:43.467] [DEBUG] DrawArea::clearGraphics: 准备清除 0 个项目
+[2025-04-12 17:38:43.471] [DEBUG] DrawArea::clearGraphics: 所有项目已清除
+[2025-04-12 17:38:43.477] [INFO] DrawArea::clearGraphics: 场景清空完成
+[2025-04-12 17:38:47.551] [DEBUG] DrawState::createFinalItem: 开始创建图形项
+[2025-04-12 17:38:47.554] [DEBUG] DrawState::createFinalItem: 创建命令对象，图形类型: 2
+[2025-04-12 17:38:47.557] [DEBUG] CreateGraphicCommand: 创建图形命令 - 类型: 2, 点数: 2
+[2025-04-12 17:38:47.559] [DEBUG] DrawState::createFinalItem: 执行命令
+[2025-04-12 17:38:47.562] [DEBUG] CommandManager::executeCommand: 执行命令 '创建矩形' [类型: create] (分组中)
+[2025-04-12 17:38:47.565] [DEBUG] CreateGraphicCommand::execute: 开始执行创建图形命令
+[2025-04-12 17:38:47.569] [DEBUG] CreateGraphicCommand::execute: 创建图形项 - 类型: 2, 点数: 2
+[2025-04-12 17:38:47.571] [DEBUG] CreateGraphicCommand::execute: 设置图形样式完成
+[2025-04-12 17:38:47.574] [DEBUG] CreateGraphicCommand::execute: 设置图形标志完成
+[2025-04-12 17:38:47.577] [DEBUG] CreateGraphicCommand::execute: 将图形项添加到场景, 指针: 1580186774480
+[2025-04-12 17:38:47.581] [INFO] CreateGraphicCommand::execute: 创建图形命令执行成功 - 类型: 2
+[2025-04-12 17:38:47.584] [DEBUG] CommandManager: 撤销栈大小: 6, 重做栈大小: 0
+[2025-04-12 17:38:47.587] [DEBUG] DrawState::createFinalItem: 图形项创建成功，指针: 1580186774480
+[2025-04-12 17:38:47.590] [INFO] DrawState: 创建了 矩形 图形
+[2025-04-12 17:38:49.248] [DEBUG] CommandManager::undo: 撤销命令 '创建矩形' [类型: create]
+[2025-04-12 17:38:49.254] [INFO] CreateGraphicCommand: 撤销创建图形命令 - 类型: 2
+[2025-04-12 17:38:49.257] [DEBUG] CommandManager: 撤销后 - 撤销栈大小: 5, 重做栈大小: 1
+[2025-04-12 17:38:51.282] [INFO] DrawState::onExitState: 开始退出绘制状态
+[2025-04-12 17:38:51.285] [DEBUG] DrawState::onExitState: 重置鼠标光标
+[2025-04-12 17:38:51.288] [DEBUG] DrawState::onExitState: 更新场景
+[2025-04-12 17:38:51.290] [INFO] DrawState::onExitState: 绘制状态退出完成
+[2025-04-12 17:38:51.294] [DEBUG] 创建新的编辑器状态
+[2025-04-12 17:38:51.295] [INFO] DrawState: 创建绘制状态，图形类型: 5
+[2025-04-12 17:38:51.299] [INFO] DrawState: 进入绘制状态，当前图形类型: 5
+[2025-04-12 17:38:51.302] [DEBUG] DrawState: 设置线条颜色为 #000080, 线宽为 2
+[2025-04-12 17:38:53.028] [DEBUG] DrawState::createFinalItem: 开始创建图形项
+[2025-04-12 17:38:53.030] [DEBUG] DrawState::createFinalItem: 贝塞尔曲线控制点数量: 6
+[2025-04-12 17:38:53.034] [DEBUG] DrawState::createFinalItem: 创建命令对象，图形类型: 5
+[2025-04-12 17:38:53.037] [DEBUG] CreateGraphicCommand: 创建图形命令 - 类型: 5, 点数: 6
+[2025-04-12 17:38:53.039] [DEBUG] DrawState::createFinalItem: 执行命令
+[2025-04-12 17:38:53.043] [DEBUG] CommandManager::executeCommand: 执行命令 '创建贝塞尔曲线' [类型: create] (分组中)
+[2025-04-12 17:38:53.046] [DEBUG] CreateGraphicCommand::execute: 开始执行创建图形命令
+[2025-04-12 17:38:53.049] [DEBUG] CreateGraphicCommand::execute: 创建图形项 - 类型: 5, 点数: 6
+[2025-04-12 17:38:53.052] [DEBUG] CreateGraphicCommand::execute: 设置图形样式完成
+[2025-04-12 17:38:53.055] [DEBUG] CreateGraphicCommand::execute: 设置图形标志完成
+[2025-04-12 17:38:53.057] [DEBUG] CreateGraphicCommand::execute: 将图形项添加到场景, 指针: 1580187136960
+[2025-04-12 17:38:53.061] [INFO] CreateGraphicCommand::execute: 创建图形命令执行成功 - 类型: 5
+[2025-04-12 17:38:53.063] [DEBUG] CreateGraphicCommand: 销毁图形创建命令
+[2025-04-12 17:38:53.065] [DEBUG] CommandManager: 撤销栈大小: 6, 重做栈大小: 0
+[2025-04-12 17:38:53.068] [DEBUG] DrawState::createFinalItem: 图形项创建成功，指针: 1580187136960
+[2025-04-12 17:38:53.071] [INFO] DrawState: 创建了 贝塞尔曲线 图形
+[2025-04-12 17:39:09.402] [INFO] 成功导出SVG到 C:/Users/Player/3.svg
+[2025-04-12 17:39:47.114] [INFO] 成功导出SVG到 F:/program/claudegraph/build/3.svg
+[2025-04-12 17:40:20.364] [INFO] DrawArea::clearGraphics: 开始清空场景
+[2025-04-12 17:40:20.368] [DEBUG] DrawArea::clearGraphics: 清除选择状态
+[2025-04-12 17:40:20.375] [DEBUG] DrawArea::clearGraphics: 准备清除 1 个项目
+[2025-04-12 17:40:20.378] [DEBUG] DrawArea::clearGraphics: 删除项目 1580187136960
+[2025-04-12 17:40:20.380] [DEBUG] DrawArea::clearGraphics: 所有项目已清除
+[2025-04-12 17:40:20.386] [INFO] DrawArea::clearGraphics: 场景清空完成
+[2025-04-12 17:40:27.319] [DEBUG] DrawState::createFinalItem: 开始创建图形项
+[2025-04-12 17:40:27.322] [DEBUG] DrawState::createFinalItem: 贝塞尔曲线控制点数量: 6
+[2025-04-12 17:40:27.324] [DEBUG] DrawState::createFinalItem: 创建命令对象，图形类型: 5
+[2025-04-12 17:40:27.327] [DEBUG] CreateGraphicCommand: 创建图形命令 - 类型: 5, 点数: 6
+[2025-04-12 17:40:27.330] [DEBUG] DrawState::createFinalItem: 执行命令
+[2025-04-12 17:40:27.332] [DEBUG] CommandManager::executeCommand: 执行命令 '创建贝塞尔曲线' [类型: create] (分组中)
+[2025-04-12 17:40:27.337] [DEBUG] CreateGraphicCommand::execute: 开始执行创建图形命令
+[2025-04-12 17:40:27.339] [DEBUG] CreateGraphicCommand::execute: 创建图形项 - 类型: 5, 点数: 6
+[2025-04-12 17:40:27.342] [DEBUG] CreateGraphicCommand::execute: 设置图形样式完成
+[2025-04-12 17:40:27.344] [DEBUG] CreateGraphicCommand::execute: 设置图形标志完成
+[2025-04-12 17:40:27.347] [DEBUG] CreateGraphicCommand::execute: 将图形项添加到场景, 指针: 1580187136336
+[2025-04-12 17:40:27.351] [INFO] CreateGraphicCommand::execute: 创建图形命令执行成功 - 类型: 5
+[2025-04-12 17:40:27.355] [DEBUG] CommandManager: 撤销栈大小: 7, 重做栈大小: 0
+[2025-04-12 17:40:27.357] [DEBUG] DrawState::createFinalItem: 图形项创建成功，指针: 1580187136336
+[2025-04-12 17:40:27.360] [INFO] DrawState: 创建了 贝塞尔曲线 图形
+[2025-04-12 17:40:29.202] [INFO] DrawState::onExitState: 开始退出绘制状态
+[2025-04-12 17:40:29.205] [DEBUG] DrawState::onExitState: 重置鼠标光标
+[2025-04-12 17:40:29.208] [DEBUG] DrawState::onExitState: 更新场景
+[2025-04-12 17:40:29.211] [INFO] DrawState::onExitState: 绘制状态退出完成
+[2025-04-12 17:40:29.213] [DEBUG] 创建新的编辑器状态
+[2025-04-12 17:40:29.215] [INFO] DrawState: 创建绘制状态，图形类型: 3
+[2025-04-12 17:40:29.219] [INFO] DrawState: 进入绘制状态，当前图形类型: 3
+[2025-04-12 17:40:29.221] [DEBUG] DrawState: 设置线条颜色为 #000080, 线宽为 2
+[2025-04-12 17:40:30.503] [DEBUG] DrawState::createFinalItem: 开始创建图形项
+[2025-04-12 17:40:30.507] [DEBUG] DrawState::createFinalItem: 创建命令对象，图形类型: 3
+[2025-04-12 17:40:30.510] [DEBUG] CreateGraphicCommand: 创建图形命令 - 类型: 3, 点数: 2
+[2025-04-12 17:40:30.514] [DEBUG] DrawState::createFinalItem: 执行命令
+[2025-04-12 17:40:30.517] [DEBUG] CommandManager::executeCommand: 执行命令 '创建椭圆' [类型: create] (分组中)
+[2025-04-12 17:40:30.521] [DEBUG] CreateGraphicCommand::execute: 开始执行创建图形命令
+[2025-04-12 17:40:30.523] [DEBUG] CreateGraphicCommand::execute: 创建图形项 - 类型: 3, 点数: 2
+[2025-04-12 17:40:30.526] [DEBUG] CreateGraphicCommand::execute: 设置图形样式完成
+[2025-04-12 17:40:30.529] [DEBUG] CreateGraphicCommand::execute: 设置图形标志完成
+[2025-04-12 17:40:30.532] [DEBUG] CreateGraphicCommand::execute: 将图形项添加到场景, 指针: 1580186776496
+[2025-04-12 17:40:30.535] [INFO] CreateGraphicCommand::execute: 创建图形命令执行成功 - 类型: 3
+[2025-04-12 17:40:30.537] [DEBUG] CommandManager: 撤销栈大小: 8, 重做栈大小: 0
+[2025-04-12 17:40:30.539] [DEBUG] DrawState::createFinalItem: 图形项创建成功，指针: 1580186776496
+[2025-04-12 17:40:30.542] [INFO] DrawState: 创建了 椭圆 图形
+[2025-04-12 17:40:35.864] [INFO] 成功保存文件到 F:/program/claudegraph/build/1.cvg
+[2025-04-12 17:40:38.999] [INFO] DrawArea::clearGraphics: 开始清空场景
+[2025-04-12 17:40:39.002] [DEBUG] DrawArea::clearGraphics: 清除选择状态
+[2025-04-12 17:40:39.010] [DEBUG] DrawArea::clearGraphics: 准备清除 2 个项目
+[2025-04-12 17:40:39.013] [DEBUG] DrawArea::clearGraphics: 删除项目 1580186776496
+[2025-04-12 17:40:39.016] [DEBUG] DrawArea::clearGraphics: 删除项目 1580187136336
+[2025-04-12 17:40:39.018] [DEBUG] DrawArea::clearGraphics: 所有项目已清除
+[2025-04-12 17:40:39.024] [INFO] DrawArea::clearGraphics: 场景清空完成
+[2025-04-12 17:40:44.681] [DEBUG] EllipseGraphicItem::setScale - 设置为(1.000, 1.000), 基础尺寸: 339x50
+[2025-04-12 17:40:44.684] [INFO] 成功加载文件: F:/program/claudegraph/build/1.cvg
+[2025-04-12 17:40:50.066] [DEBUG] DrawArea::setEditState: 开始切换到编辑状态
+[2025-04-12 17:40:50.070] [DEBUG] DrawArea::setEditState: 通知当前状态即将退出
+[2025-04-12 17:40:50.072] [INFO] DrawState::onExitState: 开始退出绘制状态
+[2025-04-12 17:40:50.075] [DEBUG] DrawState::onExitState: 重置鼠标光标
+[2025-04-12 17:40:50.077] [DEBUG] DrawState::onExitState: 更新场景
+[2025-04-12 17:40:50.081] [INFO] DrawState::onExitState: 绘制状态退出完成
+[2025-04-12 17:40:50.083] [DEBUG] DrawArea::setEditState: 当前状态已退出
+[2025-04-12 17:40:50.089] [DEBUG] DrawArea::setEditState: 创建新的编辑状态
+[2025-04-12 17:40:50.093] [DEBUG] 创建新的编辑器状态
+[2025-04-12 17:40:50.094] [INFO] EditState: 创建编辑状态
+[2025-04-12 17:40:50.096] [DEBUG] DrawArea::setEditState: 编辑状态已创建
+[2025-04-12 17:40:50.099] [DEBUG] DrawArea::setEditState: 通知编辑状态已进入
+[2025-04-12 17:40:50.101] [DEBUG] EditState::onEnterState: 开始初始化编辑状态
+[2025-04-12 17:40:50.104] [DEBUG] EditState::onEnterState: 设置了 2 个图形项为可选择状态
+[2025-04-12 17:40:50.106] [DEBUG] EditState::onEnterState: 选择管理器已初始化
+[2025-04-12 17:40:50.114] [INFO] EditState::onEnterState: 编辑状态初始化完成
+[2025-04-12 17:40:50.116] [DEBUG] DrawArea::setEditState: 编辑状态初始化完成
+[2025-04-12 17:40:50.119] [DEBUG] DrawArea::setEditState: 设置场景中的图形项为可选择状态
+[2025-04-12 17:40:50.122] [DEBUG] DrawArea::setEditState: 已设置 0 个图形项为可选择状态
+[2025-04-12 17:40:50.132] [DEBUG] DrawArea::setEditState: 切换到编辑状态完成
+[2025-04-12 17:41:02.998] [INFO] 成功保存文件到 F:/program/claudegraph/build/1.cvg
+[2025-04-12 17:41:10.861] [DEBUG] DrawArea::setEditState: 开始切换到编辑状态
+[2025-04-12 17:41:10.865] [DEBUG] DrawArea::setEditState: 通知当前状态即将退出
+[2025-04-12 17:41:10.868] [INFO] EditState: 退出编辑状态
+[2025-04-12 17:41:10.870] [DEBUG] DrawArea::setEditState: 当前状态已退出
+[2025-04-12 17:41:10.877] [DEBUG] DrawArea::setEditState: 创建新的编辑状态
+[2025-04-12 17:41:10.879] [DEBUG] 创建新的编辑器状态
+[2025-04-12 17:41:10.881] [INFO] EditState: 创建编辑状态
+[2025-04-12 17:41:10.883] [INFO] EditState: 销毁编辑状态
+[2025-04-12 17:41:10.885] [DEBUG] DrawArea::setEditState: 编辑状态已创建
+[2025-04-12 17:41:10.887] [DEBUG] DrawArea::setEditState: 通知编辑状态已进入
+[2025-04-12 17:41:10.889] [DEBUG] EditState::onEnterState: 开始初始化编辑状态
+[2025-04-12 17:41:10.892] [DEBUG] EditState::onEnterState: 设置了 2 个图形项为可选择状态
+[2025-04-12 17:41:10.894] [DEBUG] EditState::onEnterState: 选择管理器已初始化
+[2025-04-12 17:41:10.902] [INFO] EditState::onEnterState: 编辑状态初始化完成
+[2025-04-12 17:41:10.904] [DEBUG] DrawArea::setEditState: 编辑状态初始化完成
+[2025-04-12 17:41:10.906] [DEBUG] DrawArea::setEditState: 设置场景中的图形项为可选择状态
+[2025-04-12 17:41:10.909] [DEBUG] DrawArea::setEditState: 已设置 0 个图形项为可选择状态
+[2025-04-12 17:41:10.917] [DEBUG] DrawArea::setEditState: 切换到编辑状态完成
+[2025-04-12 17:41:22.864] [INFO] DrawArea::clearGraphics: 开始清空场景
+[2025-04-12 17:41:22.867] [DEBUG] DrawArea::clearGraphics: 清除选择状态
+[2025-04-12 17:41:22.876] [DEBUG] DrawArea::clearGraphics: 准备清除 2 个项目
+[2025-04-12 17:41:22.878] [DEBUG] DrawArea::clearGraphics: 删除项目 1580187136128
+[2025-04-12 17:41:22.882] [DEBUG] DrawArea::clearGraphics: 删除项目 1580186776048
+[2025-04-12 17:41:22.884] [DEBUG] DrawArea::clearGraphics: 所有项目已清除
+[2025-04-12 17:41:22.891] [INFO] DrawArea::clearGraphics: 场景清空完成
+[2025-04-12 17:41:55.235] [DEBUG] EllipseGraphicItem::setScale - 设置为(1.000, 1.000), 基础尺寸: 339x50
+[2025-04-12 17:41:55.239] [INFO] 成功加载文件: F:/program/claudegraph/build/1.cvg
+[2025-04-12 17:42:16.879] [INFO] EditState: 退出编辑状态
+[2025-04-12 17:42:16.882] [INFO] EditState: 销毁编辑状态
+[2025-04-12 17:42:16.885] [DEBUG] 创建新的编辑器状态
+[2025-04-12 17:42:16.887] [INFO] DrawState: 创建绘制状态，图形类型: 2
+[2025-04-12 17:42:16.890] [INFO] DrawState: 进入绘制状态，当前图形类型: 2
+[2025-04-12 17:42:16.892] [DEBUG] DrawState: 设置线条颜色为 #000080, 线宽为 2
+[2025-04-12 17:42:18.115] [DEBUG] DrawState::createFinalItem: 开始创建图形项
+[2025-04-12 17:42:18.117] [DEBUG] DrawState::createFinalItem: 创建命令对象，图形类型: 2
+[2025-04-12 17:42:18.121] [DEBUG] CreateGraphicCommand: 创建图形命令 - 类型: 2, 点数: 2
+[2025-04-12 17:42:18.124] [DEBUG] DrawState::createFinalItem: 执行命令
+[2025-04-12 17:42:18.128] [DEBUG] CommandManager::executeCommand: 执行命令 '创建矩形' [类型: create] (分组中)
+[2025-04-12 17:42:18.132] [DEBUG] CreateGraphicCommand::execute: 开始执行创建图形命令
+[2025-04-12 17:42:18.134] [DEBUG] CreateGraphicCommand::execute: 创建图形项 - 类型: 2, 点数: 2
+[2025-04-12 17:42:18.137] [DEBUG] CreateGraphicCommand::execute: 设置图形样式完成
+[2025-04-12 17:42:18.139] [DEBUG] CreateGraphicCommand::execute: 设置图形标志完成
+[2025-04-12 17:42:18.142] [DEBUG] CreateGraphicCommand::execute: 将图形项添加到场景, 指针: 1580186776944
+[2025-04-12 17:42:18.145] [INFO] CreateGraphicCommand::execute: 创建图形命令执行成功 - 类型: 2
+[2025-04-12 17:42:18.149] [DEBUG] CommandManager: 撤销栈大小: 9, 重做栈大小: 0
+[2025-04-12 17:42:18.151] [DEBUG] DrawState::createFinalItem: 图形项创建成功，指针: 1580186776944
+[2025-04-12 17:42:18.154] [INFO] DrawState: 创建了 矩形 图形
+[2025-04-12 17:42:21.945] [INFO] DrawState::onExitState: 开始退出绘制状态
+[2025-04-12 17:42:21.950] [DEBUG] DrawState::onExitState: 重置鼠标光标
+[2025-04-12 17:42:21.952] [DEBUG] DrawState::onExitState: 更新场景
+[2025-04-12 17:42:21.956] [INFO] DrawState::onExitState: 绘制状态退出完成
+[2025-04-12 17:42:21.959] [DEBUG] 创建新的编辑器状态
+[2025-04-12 17:42:21.961] [INFO] DrawState: 创建绘制状态，图形类型: 3
+[2025-04-12 17:42:21.964] [INFO] DrawState: 进入绘制状态，当前图形类型: 3
+[2025-04-12 17:42:21.967] [DEBUG] DrawState: 设置线条颜色为 #000080, 线宽为 2
+[2025-04-12 17:42:25.552] [DEBUG] DrawState::createFinalItem: 开始创建图形项
+[2025-04-12 17:42:25.554] [DEBUG] DrawState::createFinalItem: 创建命令对象，图形类型: 3
+[2025-04-12 17:42:25.557] [DEBUG] CreateGraphicCommand: 创建图形命令 - 类型: 3, 点数: 2
+[2025-04-12 17:42:25.560] [DEBUG] DrawState::createFinalItem: 执行命令
+[2025-04-12 17:42:25.563] [DEBUG] CommandManager::executeCommand: 执行命令 '创建椭圆' [类型: create] (分组中)
+[2025-04-12 17:42:25.566] [DEBUG] CreateGraphicCommand::execute: 开始执行创建图形命令
+[2025-04-12 17:42:25.571] [DEBUG] CreateGraphicCommand::execute: 创建图形项 - 类型: 3, 点数: 2
+[2025-04-12 17:42:25.574] [DEBUG] CreateGraphicCommand::execute: 设置图形样式完成
+[2025-04-12 17:42:25.577] [DEBUG] CreateGraphicCommand::execute: 设置图形标志完成
+[2025-04-12 17:42:25.579] [DEBUG] CreateGraphicCommand::execute: 将图形项添加到场景, 指针: 1580186776720
+[2025-04-12 17:42:25.583] [INFO] CreateGraphicCommand::execute: 创建图形命令执行成功 - 类型: 3
+[2025-04-12 17:42:25.586] [DEBUG] CommandManager: 撤销栈大小: 10, 重做栈大小: 0
+[2025-04-12 17:42:25.589] [DEBUG] DrawState::createFinalItem: 图形项创建成功，指针: 1580186776720
+[2025-04-12 17:42:25.593] [INFO] DrawState: 创建了 椭圆 图形
+[2025-04-12 17:42:27.063] [DEBUG] DrawState::createFinalItem: 开始创建图形项
+[2025-04-12 17:42:27.067] [DEBUG] DrawState::createFinalItem: 创建命令对象，图形类型: 3
+[2025-04-12 17:42:27.070] [DEBUG] CreateGraphicCommand: 创建图形命令 - 类型: 3, 点数: 2
+[2025-04-12 17:42:27.073] [DEBUG] DrawState::createFinalItem: 执行命令
+[2025-04-12 17:42:27.075] [DEBUG] CommandManager::executeCommand: 执行命令 '创建椭圆' [类型: create] (分组中)
+[2025-04-12 17:42:27.080] [DEBUG] CreateGraphicCommand::execute: 开始执行创建图形命令
+[2025-04-12 17:42:27.082] [DEBUG] CreateGraphicCommand::execute: 创建图形项 - 类型: 3, 点数: 2
+[2025-04-12 17:42:27.086] [DEBUG] CreateGraphicCommand::execute: 设置图形样式完成
+[2025-04-12 17:42:27.088] [DEBUG] CreateGraphicCommand::execute: 设置图形标志完成
+[2025-04-12 17:42:27.091] [DEBUG] CreateGraphicCommand::execute: 将图形项添加到场景, 指针: 1580186776496
+[2025-04-12 17:42:27.094] [INFO] CreateGraphicCommand::execute: 创建图形命令执行成功 - 类型: 3
+[2025-04-12 17:42:27.096] [DEBUG] CommandManager: 撤销栈大小: 11, 重做栈大小: 0
+[2025-04-12 17:42:27.099] [DEBUG] DrawState::createFinalItem: 图形项创建成功，指针: 1580186776496
+[2025-04-12 17:42:27.102] [INFO] DrawState: 创建了 椭圆 图形
+[2025-04-12 17:42:28.677] [INFO] DrawState::onExitState: 开始退出绘制状态
+[2025-04-12 17:42:28.681] [DEBUG] DrawState::onExitState: 重置鼠标光标
+[2025-04-12 17:42:28.684] [DEBUG] DrawState::onExitState: 更新场景
+[2025-04-12 17:42:28.687] [INFO] DrawState::onExitState: 绘制状态退出完成
+[2025-04-12 17:42:28.689] [DEBUG] 创建新的编辑器状态
+[2025-04-12 17:42:28.691] [DEBUG] FillState: 创建填充状态，颜色: #ff00ff00
+[2025-04-12 17:42:28.698] [INFO] FillState: 进入填充状态
+[2025-04-12 17:42:29.679] [DEBUG] FillState: 开始填充 - 位置: (-9, 154)
+[2025-04-12 17:42:29.768] [DEBUG] FillCommand: 创建填充命令 - 位置: (-9, 154), 颜色: #ff00ff00
+[2025-04-12 17:42:29.772] [DEBUG] CommandManager::executeCommand: 执行命令 '填充区域 (坐标: -9, 154 颜色: #00ff00)' [类型: fill]
+[2025-04-12 17:42:29.839] [DEBUG] FillCommand: 填充完成，填充了 30340 个像素
+[2025-04-12 17:42:29.844] [INFO] FillCommand: 执行填充命令 - 填充了 30340 个像素
+[2025-04-12 17:42:29.847] [DEBUG] CommandManager: 撤销栈大小: 12, 重做栈大小: 0
+[2025-04-12 17:42:29.850] [INFO] FillState: 执行填充命令 - 位置: (-9, 154), 颜色: #00ff00
+[2025-04-12 17:42:30.264] [DEBUG] FillState: 开始填充 - 位置: (-77, 4)
+[2025-04-12 17:42:30.337] [DEBUG] FillCommand: 创建填充命令 - 位置: (-77, 4), 颜色: #ff00ff00
+[2025-04-12 17:42:30.341] [DEBUG] CommandManager::executeCommand: 执行命令 '填充区域 (坐标: -77, 4 颜色: #00ff00)' [类型: fill]
+[2025-04-12 17:42:30.403] [DEBUG] FillCommand: 填充完成，填充了 7233 个像素
+[2025-04-12 17:42:30.407] [INFO] FillCommand: 执行填充命令 - 填充了 7233 个像素
+[2025-04-12 17:42:30.410] [DEBUG] CommandManager: 撤销栈大小: 13, 重做栈大小: 0
+[2025-04-12 17:42:30.414] [INFO] FillState: 执行填充命令 - 位置: (-77, 4), 颜色: #00ff00
+[2025-04-12 17:42:48.639] [INFO] 成功导出SVG到 F:/program/claudegraph/build/1.svg
+[2025-04-12 17:43:10.729] [INFO] DrawArea::clearGraphics: 开始清空场景
+[2025-04-12 17:43:10.733] [DEBUG] DrawArea::clearGraphics: 清除选择状态
+[2025-04-12 17:43:10.740] [DEBUG] DrawArea::clearGraphics: 准备清除 7 个项目
+[2025-04-12 17:43:10.743] [DEBUG] DrawArea::clearGraphics: 删除项目 1580186776496
+[2025-04-12 17:43:10.746] [DEBUG] DrawArea::clearGraphics: 删除项目 1580186776720
+[2025-04-12 17:43:10.748] [DEBUG] DrawArea::clearGraphics: 删除项目 1580186776944
+[2025-04-12 17:43:10.751] [DEBUG] DrawArea::clearGraphics: 删除项目 1580186775152
+[2025-04-12 17:43:10.754] [DEBUG] DrawArea::clearGraphics: 删除项目 1580187136752
+[2025-04-12 17:43:10.756] [DEBUG] DrawArea::clearGraphics: 删除项目 1580061882256
+[2025-04-12 17:43:10.759] [DEBUG] DrawArea::clearGraphics: 删除项目 1580061649568
+[2025-04-12 17:43:10.763] [DEBUG] DrawArea::clearGraphics: 所有项目已清除
+[2025-04-12 17:43:10.769] [INFO] DrawArea::clearGraphics: 场景清空完成
+[2025-04-12 17:43:12.117] [DEBUG] CreateGraphicCommand: 销毁图形创建命令
+[2025-04-12 17:43:12.119] [DEBUG] CreateGraphicCommand: 销毁图形创建命令
+[2025-04-12 17:43:12.122] [DEBUG] CreateGraphicCommand: 销毁图形创建命令
+[2025-04-12 17:43:12.124] [DEBUG] CreateGraphicCommand: 销毁图形创建命令
+[2025-04-12 17:43:12.127] [DEBUG] CreateGraphicCommand: 销毁图形创建命令
+[2025-04-12 17:43:12.129] [DEBUG] CreateGraphicCommand: 销毁图形创建命令
+[2025-04-12 17:43:12.132] [DEBUG] CreateGraphicCommand: 销毁图形创建命令
+[2025-04-12 17:43:12.135] [DEBUG] CreateGraphicCommand: 销毁图形创建命令
+[2025-04-12 17:43:12.137] [DEBUG] CreateGraphicCommand: 销毁图形创建命令
+[2025-04-12 17:43:12.139] [DEBUG] CreateGraphicCommand: 销毁图形创建命令
+[2025-04-12 17:43:12.142] [DEBUG] CreateGraphicCommand: 销毁图形创建命令
+[2025-04-12 17:43:12.145] [DEBUG] FillCommand: 销毁填充命令
+[2025-04-12 17:43:12.147] [DEBUG] FillCommand: 销毁填充命令

@@ -2460,6 +2460,9 @@ F:/program/claudegraph/src/ui/main_window.h
  mdp:F:/program/claudegraph/src/ui/image_resizer.h
  mdp:F:/program/claudegraph/src/ui/main_window.h
  mdp:F:/program/claudegraph/src/utils/performance_monitor.h
+F:/program/claudegraph/src/command/fill_command.cpp
+F:/program/claudegraph/src/command/command.cpp
+F:/program/claudegraph/src/utils/file_format_manager.h
 F:/program/claudegraph/src/utils/performance_monitor.h
  mmc:Q_OBJECT
  mdp:C:/msys64/mingw64/include/_mingw.h
@@ -2853,8 +2856,6 @@ F:/program/claudegraph/src/utils/performance_monitor.h
  mdp:F:/program/claudegraph/src/utils/performance_monitor.h
 F:/program/claudegraph/src/core/rectangle_graphic_item.cpp
 F:/program/claudegraph/src/command/style_change_command.cpp
-F:/program/claudegraph/src/command/fill_command.cpp
-F:/program/claudegraph/src/command/command.cpp
 F:/program/claudegraph/src/command/composite_command.cpp
 F:/program/claudegraph/src/core/ellipse_graphic_item.cpp
 F:/program/claudegraph/src/command/create_graphic_command.cpp
@@ -2871,6 +2872,7 @@ F:/program/claudegraph/src/state/fill_state.cpp
 F:/program/claudegraph/src/ui/draw_area.cpp
 F:/program/claudegraph/src/ui/image_resizer.cpp
 F:/program/claudegraph/src/ui/main_window.cpp
+F:/program/claudegraph/src/utils/file_format_manager.cpp
 F:/program/claudegraph/src/utils/graphics_utils.cpp
 F:/program/claudegraph/src/utils/logger.cpp
 F:/program/claudegraph/src/utils/performance_monitor.cpp

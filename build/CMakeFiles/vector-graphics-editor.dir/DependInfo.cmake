@@ -40,6 +40,7 @@ set(CMAKE_DEPENDS_DEPENDENCY_FILES
   "F:/program/claudegraph/src/ui/draw_area.cpp" "CMakeFiles/vector-graphics-editor.dir/src/ui/draw_area.cpp.obj" "gcc" "CMakeFiles/vector-graphics-editor.dir/src/ui/draw_area.cpp.obj.d"
   "F:/program/claudegraph/src/ui/image_resizer.cpp" "CMakeFiles/vector-graphics-editor.dir/src/ui/image_resizer.cpp.obj" "gcc" "CMakeFiles/vector-graphics-editor.dir/src/ui/image_resizer.cpp.obj.d"
   "F:/program/claudegraph/src/ui/main_window.cpp" "CMakeFiles/vector-graphics-editor.dir/src/ui/main_window.cpp.obj" "gcc" "CMakeFiles/vector-graphics-editor.dir/src/ui/main_window.cpp.obj.d"
+  "F:/program/claudegraph/src/utils/file_format_manager.cpp" "CMakeFiles/vector-graphics-editor.dir/src/utils/file_format_manager.cpp.obj" "gcc" "CMakeFiles/vector-graphics-editor.dir/src/utils/file_format_manager.cpp.obj.d"
   "F:/program/claudegraph/src/utils/graphics_utils.cpp" "CMakeFiles/vector-graphics-editor.dir/src/utils/graphics_utils.cpp.obj" "gcc" "CMakeFiles/vector-graphics-editor.dir/src/utils/graphics_utils.cpp.obj.d"
   "F:/program/claudegraph/src/utils/logger.cpp" "CMakeFiles/vector-graphics-editor.dir/src/utils/logger.cpp.obj" "gcc" "CMakeFiles/vector-graphics-editor.dir/src/utils/logger.cpp.obj.d"
   "F:/program/claudegraph/src/utils/performance_monitor.cpp" "CMakeFiles/vector-graphics-editor.dir/src/utils/performance_monitor.cpp.obj" "gcc" "CMakeFiles/vector-graphics-editor.dir/src/utils/performance_monitor.cpp.obj.d"

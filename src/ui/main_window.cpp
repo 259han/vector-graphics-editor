@@ -25,6 +25,8 @@
 #include "../utils/performance_monitor.h"
 #include <QInputDialog>
 #include <QCheckBox>
+#include <QDesktopServices>
+#include <QUrl>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -34,6 +36,8 @@ MainWindow::MainWindow(QWidget *parent)
     , m_currentLineColor(Qt::darkBlue)
     , m_lineWidth(2)
     , m_updateTimer(nullptr)
+    , m_isUntitled(true)
+    , m_currentFilePath("")
 {
     // 创建中心部件
     setCentralWidget(m_drawArea);
@@ -325,6 +329,50 @@ void MainWindow::createActions() {
     m_clippingOptimizationAction->setCheckable(true);
     m_clippingOptimizationAction->setChecked(true);
     connect(m_clippingOptimizationAction, &QAction::toggled, this, &MainWindow::onClippingOptimizationToggled);
+
+    // 创建文件操作动作
+    m_newAction = new QAction(QIcon(":/icons/new.png"), tr("新建"), this);
+    m_newAction->setShortcut(QKeySequence::New);
+    m_newAction->setStatusTip(tr("创建新文件"));
+    connect(m_newAction, &QAction::triggered, this, &MainWindow::onNewFile);
+    
+    m_openAction = new QAction(QIcon(":/icons/open.png"), tr("打开..."), this);
+    m_openAction->setShortcut(QKeySequence::Open);
+    m_openAction->setStatusTip(tr("打开已有文件"));
+    connect(m_openAction, &QAction::triggered, this, &MainWindow::onOpenFile);
+    
+    m_saveAction = new QAction(QIcon(":/icons/save.png"), tr("保存"), this);
+    m_saveAction->setShortcut(QKeySequence::Save);
+    m_saveAction->setStatusTip(tr("保存当前文件"));
+    connect(m_saveAction, &QAction::triggered, this, &MainWindow::onSaveFile);
+    
+    m_saveAsAction = new QAction(QIcon(":/icons/saveas.png"), tr("另存为..."), this);
+    m_saveAsAction->setShortcut(QKeySequence::SaveAs);
+    m_saveAsAction->setStatusTip(tr("以新名称保存文件"));
+    connect(m_saveAsAction, &QAction::triggered, this, &MainWindow::onSaveFileAs);
+    
+    m_exportSVGAction = new QAction(QIcon(":/icons/svg.png"), tr("导出为SVG..."), this);
+    m_exportSVGAction->setShortcut(QKeySequence("Ctrl+Shift+E"));
+    m_exportSVGAction->setStatusTip(tr("导出为标准SVG矢量格式"));
+    connect(m_exportSVGAction, &QAction::triggered, this, &MainWindow::onExportToSVG);
+    
+    // 初始化最近文件动作
+    for (int i = 0; i < MaxRecentFiles; ++i) {
+        m_recentFileActions[i] = new QAction(this);
+        m_recentFileActions[i]->setVisible(false);
+        connect(m_recentFileActions[i], &QAction::triggered, this, &MainWindow::onRecentFileTriggered);
+    }
+    
+    m_recentFileSeparator = new QAction(this);
+    m_recentFileSeparator->setSeparator(true);
+    m_recentFileSeparator->setVisible(false);
+    
+    m_clearRecentFilesAction = new QAction(tr("清除最近打开的文件"), this);
+    connect(m_clearRecentFilesAction, &QAction::triggered, this, [this]() {
+        m_recentFiles.clear();
+        updateRecentFileActions();
+    });
+    m_clearRecentFilesAction->setVisible(false);
 }
 
 void MainWindow::createMenus() {
@@ -360,8 +408,23 @@ void MainWindow::createMenus() {
 
     // 创建文件菜单
     QMenu* fileMenu = menuBar()->addMenu(tr("文件"));
-    fileMenu->addAction(m_saveImageAction);
+    fileMenu->addAction(m_newAction);
+    fileMenu->addAction(m_openAction);
+    fileMenu->addSeparator();
+    fileMenu->addAction(m_saveAction);
+    fileMenu->addAction(m_saveAsAction);
+    fileMenu->addSeparator();
+    
+    // 添加最近文件菜单项
+    for (int i = 0; i < MaxRecentFiles; ++i) {
+        fileMenu->addAction(m_recentFileActions[i]);
+    }
+    fileMenu->addAction(m_recentFileSeparator);
+    fileMenu->addAction(m_clearRecentFilesAction);
+    
+    fileMenu->addSeparator();
     fileMenu->addAction(m_exportAction);
+    fileMenu->addAction(m_exportSVGAction);
     fileMenu->addSeparator();
     fileMenu->addAction(m_importImageAction);
     fileMenu->addSeparator();
@@ -642,6 +705,12 @@ void MainWindow::onLineWidthChanged(int width) {
 void MainWindow::setupConnections() {
     // 绘图区域的连接
     connect(m_drawArea, &DrawArea::selectionChanged, this, &MainWindow::updateActionStates);
+    
+    // 连接DrawArea的状态消息信号到状态栏
+    connect(m_drawArea, &DrawArea::statusMessageChanged, this, 
+            [this](const QString& message, int timeout) {
+                statusBar()->showMessage(message, timeout);
+            });
     
     // 撤销/重做按钮连接到CommandManager
     CommandManager& cmdManager = CommandManager::getInstance();
@@ -1131,5 +1200,295 @@ void MainWindow::onDrawActionTriggered(QAction* action) {
         m_drawArea->setLineWidth(m_lineWidth);
         m_drawArea->setFillColor(m_currentFillColor);
         statusBar()->showMessage(tr("贝塞尔曲线工具: 点击创建控制点，双击结束"));
+    }
+}
+
+// 新建文件
+void MainWindow::onNewFile() {
+    // 询问是否保存当前文件
+    if (!m_isUntitled || m_drawArea->scene()->items().count() > 0) {
+        QMessageBox::StandardButton ret = QMessageBox::warning(
+            this, tr("新建文件"),
+            tr("当前文件尚未保存，是否保存更改？"),
+            QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel
+        );
+        
+        if (ret == QMessageBox::Save) {
+            onSaveFile();
+        } else if (ret == QMessageBox::Cancel) {
+            return;
+        }
+    }
+    
+    // 创建新文件
+    m_drawArea->clearGraphics();
+    m_currentFilePath.clear();
+    m_isUntitled = true;
+    setWindowTitle(tr("无标题 - 矢量图形编辑器"));
+    statusBar()->showMessage(tr("已创建新文件"), 2000);
+}
+
+// 打开文件
+void MainWindow::onOpenFile() {
+    // 询问是否保存当前文件
+    if (!m_isUntitled || m_drawArea->scene()->items().count() > 0) {
+        QMessageBox::StandardButton ret = QMessageBox::warning(
+            this, tr("打开文件"),
+            tr("当前文件尚未保存，是否保存更改？"),
+            QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel
+        );
+        
+        if (ret == QMessageBox::Save) {
+            onSaveFile();
+        } else if (ret == QMessageBox::Cancel) {
+            return;
+        }
+    }
+    
+    // 打开文件
+    m_drawArea->openWithFormatDialog();
+    // 此处假设打开成功，如果需要可以添加成功标志返回值
+    m_isUntitled = false;
+    m_currentFilePath = ""; // TODO: 获取实际文件路径
+    
+    updateRecentFileActions();
+}
+
+// 保存文件
+void MainWindow::onSaveFile() {
+    if (m_isUntitled) {
+        // 如果是无标题文件，转到另存为
+        onSaveFileAs();
+    } else {
+        // 检查文件类型
+        QFileInfo info(m_currentFilePath);
+        QString suffix = info.suffix().toLower();
+        
+        bool success = false;
+        if (suffix == "cvg") {
+            success = m_drawArea->saveToCustomFormat(m_currentFilePath);
+        } else {
+            // 其他格式用另存为对话框
+            onSaveFileAs();
+            return;
+        }
+        
+        if (success) {
+            statusBar()->showMessage(tr("文件已保存"), 2000);
+            
+            // 添加到最近文件列表
+            addToRecentFiles(m_currentFilePath);
+        }
+    }
+}
+
+// 另存为
+void MainWindow::onSaveFileAs() {
+    // 使用DrawArea中的格式选择对话框
+    m_drawArea->saveAsWithFormatDialog();
+    // TODO: 获取实际保存的文件路径
+    
+    m_isUntitled = false;
+    updateWindowTitle();
+}
+
+// 导出SVG
+void MainWindow::onExportToSVG() {
+    QString fileName = QFileDialog::getSaveFileName(this, tr("导出为SVG"),
+        QDir::homePath(), tr("SVG文件 (*.svg)"));
+    
+    if (fileName.isEmpty()) {
+        return;
+    }
+    
+    if (!fileName.endsWith(".svg", Qt::CaseInsensitive)) {
+        fileName += ".svg";
+    }
+    
+    // 创建尺寸设置对话框
+    QDialog sizeDialog(this);
+    sizeDialog.setWindowTitle(tr("设置SVG尺寸"));
+    
+    QVBoxLayout* layout = new QVBoxLayout(&sizeDialog);
+    
+    // 场景尺寸
+    QRectF sceneRect = m_drawArea->scene()->sceneRect();
+    int defaultWidth = sceneRect.width();
+    int defaultHeight = sceneRect.height();
+    
+    // 宽度设置
+    QHBoxLayout* widthLayout = new QHBoxLayout();
+    QLabel* widthLabel = new QLabel(tr("宽度:"));
+    QSpinBox* widthSpin = new QSpinBox();
+    widthSpin->setRange(1, 10000);
+    widthSpin->setValue(defaultWidth);
+    widthSpin->setSuffix(tr(" px"));
+    widthLayout->addWidget(widthLabel);
+    widthLayout->addWidget(widthSpin);
+    
+    // 高度设置
+    QHBoxLayout* heightLayout = new QHBoxLayout();
+    QLabel* heightLabel = new QLabel(tr("高度:"));
+    QSpinBox* heightSpin = new QSpinBox();
+    heightSpin->setRange(1, 10000);
+    heightSpin->setValue(defaultHeight);
+    heightSpin->setSuffix(tr(" px"));
+    heightLayout->addWidget(heightLabel);
+    heightLayout->addWidget(heightSpin);
+    
+    // 保持比例
+    QCheckBox* keepAspectRatio = new QCheckBox(tr("保持宽高比"));
+    keepAspectRatio->setChecked(true);
+    
+    // 连接保持比例信号
+    double aspectRatio = static_cast<double>(defaultWidth) / defaultHeight;
+    connect(widthSpin, QOverload<int>::of(&QSpinBox::valueChanged), 
+            [&](int value) {
+                if (keepAspectRatio->isChecked()) {
+                    heightSpin->blockSignals(true);
+                    heightSpin->setValue(qRound(value / aspectRatio));
+                    heightSpin->blockSignals(false);
+                }
+            });
+    
+    connect(heightSpin, QOverload<int>::of(&QSpinBox::valueChanged), 
+            [&](int value) {
+                if (keepAspectRatio->isChecked()) {
+                    widthSpin->blockSignals(true);
+                    widthSpin->setValue(qRound(value * aspectRatio));
+                    widthSpin->blockSignals(false);
+                }
+            });
+    
+    // 按钮
+    QDialogButtonBox* buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
+    connect(buttonBox, &QDialogButtonBox::accepted, &sizeDialog, &QDialog::accept);
+    connect(buttonBox, &QDialogButtonBox::rejected, &sizeDialog, &QDialog::reject);
+    
+    // 添加到布局
+    layout->addLayout(widthLayout);
+    layout->addLayout(heightLayout);
+    layout->addWidget(keepAspectRatio);
+    layout->addWidget(buttonBox);
+    
+    // 执行对话框
+    if (sizeDialog.exec() != QDialog::Accepted) {
+        return;
+    }
+    
+    // 获取设置的尺寸并导出
+    QSize size(widthSpin->value(), heightSpin->value());
+    if (m_drawArea->exportToSVG(fileName, size)) {
+        statusBar()->showMessage(tr("SVG已导出: %1").arg(fileName), 3000);
+        
+        // 可选：打开导出的文件
+        QMessageBox::StandardButton ret = QMessageBox::question(
+            this, tr("导出成功"),
+            tr("SVG文件已成功导出。是否打开该文件？"),
+            QMessageBox::Yes | QMessageBox::No
+        );
+        
+        if (ret == QMessageBox::Yes) {
+            QDesktopServices::openUrl(QUrl::fromLocalFile(fileName));
+        }
+    }
+}
+
+// 处理最近文件菜单项点击
+void MainWindow::onRecentFileTriggered() {
+    QAction* action = qobject_cast<QAction*>(sender());
+    if (action) {
+        QString filePath = action->data().toString();
+        if (QFile::exists(filePath)) {
+            // 询问是否保存当前文件
+            if (!m_isUntitled || m_drawArea->scene()->items().count() > 0) {
+                QMessageBox::StandardButton ret = QMessageBox::warning(
+                    this, tr("打开文件"),
+                    tr("当前文件尚未保存，是否保存更改？"),
+                    QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel
+                );
+                
+                if (ret == QMessageBox::Save) {
+                    onSaveFile();
+                } else if (ret == QMessageBox::Cancel) {
+                    return;
+                }
+            }
+            
+            // 根据文件类型打开
+            QFileInfo info(filePath);
+            QString suffix = info.suffix().toLower();
+            
+            if (suffix == "cvg") {
+                m_drawArea->loadFromCustomFormat(filePath);
+            } else {
+                // 为图像文件
+                QImage image(filePath);
+                if (!image.isNull()) {
+                    m_drawArea->clearGraphics();
+                    // 导入图像到场景中心
+                    QPointF center = m_drawArea->scene()->sceneRect().center() - QPointF(image.width() / 2, image.height() / 2);
+                    m_drawArea->importImageAt(image, center.toPoint());
+                } else {
+                    QMessageBox::warning(this, tr("打开失败"), tr("无法打开文件: %1").arg(filePath));
+                    return;
+                }
+            }
+            
+            m_currentFilePath = filePath;
+            m_isUntitled = false;
+            updateWindowTitle();
+            addToRecentFiles(filePath);
+        } else {
+            QMessageBox::warning(this, tr("文件不存在"), tr("文件 %1 不存在或已被移动").arg(filePath));
+            m_recentFiles.removeOne(filePath);
+            updateRecentFileActions();
+        }
+    }
+}
+
+// 更新最近文件动作
+void MainWindow::updateRecentFileActions() {
+    int numRecentFiles = qMin(m_recentFiles.size(), (int)MaxRecentFiles);
+    
+    for (int i = 0; i < numRecentFiles; ++i) {
+        QString text = tr("&%1 %2").arg(i + 1).arg(QFileInfo(m_recentFiles[i]).fileName());
+        m_recentFileActions[i]->setText(text);
+        m_recentFileActions[i]->setData(m_recentFiles[i]);
+        m_recentFileActions[i]->setVisible(true);
+    }
+    
+    for (int j = numRecentFiles; j < MaxRecentFiles; ++j) {
+        m_recentFileActions[j]->setVisible(false);
+    }
+    
+    m_recentFileSeparator->setVisible(numRecentFiles > 0);
+    m_clearRecentFilesAction->setVisible(numRecentFiles > 0);
+}
+
+// 添加到最近文件列表
+void MainWindow::addToRecentFiles(const QString& filePath) {
+    if (filePath.isEmpty()) return;
+    
+    // 如果已存在，则移除旧的条目
+    m_recentFiles.removeAll(filePath);
+    
+    // 添加到头部
+    m_recentFiles.prepend(filePath);
+    
+    // 限制最大数量
+    while (m_recentFiles.size() > MaxRecentFiles) {
+        m_recentFiles.removeLast();
+    }
+    
+    updateRecentFileActions();
+}
+
+// 更新窗口标题
+void MainWindow::updateWindowTitle() {
+    if (m_isUntitled) {
+        setWindowTitle(tr("无标题 - 矢量图形编辑器"));
+    } else {
+        setWindowTitle(tr("%1 - 矢量图形编辑器").arg(QFileInfo(m_currentFilePath).fileName()));
     }
 }

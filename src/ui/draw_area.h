@@ -60,6 +60,18 @@ public:
     void importImage();
     void importImageAt(const QImage &image, const QPoint &pos);
 
+    // 新增文件格式支持方法
+    bool saveToCustomFormat(const QString& filePath); // 保存为.cvg格式
+    bool loadFromCustomFormat(const QString& filePath); // 从.cvg格式加载
+    bool exportToSVG(const QString& filePath, const QSize& size = QSize()); // 导出为SVG
+    void saveAsWithFormatDialog(); // 带格式选择的保存对话框
+    void openWithFormatDialog(); // 带格式选择的打开对话框
+    
+    // 性能优化相关方法
+    void saveImageOptimized();
+    void saveImageWithOptions();
+    void exportLargeImage(const QString& filePath, const QSize& size, bool transparent = false);
+
     // 视口交互功能
     void enableGrid(bool enable);
     void setGridSize(int size);
@@ -119,11 +131,6 @@ public:
     // 裁剪优化方法
     void enableClippingOptimization(bool enable);
     bool isClippingOptimizationEnabled() const { return m_clippingOptimizationEnabled; }
-    
-    // 增强的图像导出功能
-    void saveImageOptimized();
-    void saveImageWithOptions();
-    void exportLargeImage(const QString& filePath, const QSize& size, bool transparent = false);
 
 signals:
     // 选择变更信号
@@ -132,6 +139,9 @@ signals:
     // 性能相关信号
     void cachingStatusChanged(bool enabled);
     void clippingStatusChanged(bool enabled);
+    
+    // 状态消息信号
+    void statusMessageChanged(const QString& message, int timeout);
 
 protected:
     void mousePressEvent(QMouseEvent *event) override;

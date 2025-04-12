@@ -629,6 +629,14 @@ vector-graphics-editor_autogen/timestamp: \
 	D:/Qt/6.8.2/mingw_64/lib/cmake/Qt6GuiTools/Qt6GuiToolsTargets-relwithdebinfo.cmake \
 	D:/Qt/6.8.2/mingw_64/lib/cmake/Qt6GuiTools/Qt6GuiToolsTargets.cmake \
 	D:/Qt/6.8.2/mingw_64/lib/cmake/Qt6GuiTools/Qt6GuiToolsVersionlessTargets.cmake \
+	D:/Qt/6.8.2/mingw_64/lib/cmake/Qt6Svg/Qt6SvgAdditionalTargetInfo.cmake \
+	D:/Qt/6.8.2/mingw_64/lib/cmake/Qt6Svg/Qt6SvgConfig.cmake \
+	D:/Qt/6.8.2/mingw_64/lib/cmake/Qt6Svg/Qt6SvgConfigVersion.cmake \
+	D:/Qt/6.8.2/mingw_64/lib/cmake/Qt6Svg/Qt6SvgConfigVersionImpl.cmake \
+	D:/Qt/6.8.2/mingw_64/lib/cmake/Qt6Svg/Qt6SvgDependencies.cmake \
+	D:/Qt/6.8.2/mingw_64/lib/cmake/Qt6Svg/Qt6SvgTargets-relwithdebinfo.cmake \
+	D:/Qt/6.8.2/mingw_64/lib/cmake/Qt6Svg/Qt6SvgTargets.cmake \
+	D:/Qt/6.8.2/mingw_64/lib/cmake/Qt6Svg/Qt6SvgVersionlessAliasTargets.cmake \
 	D:/Qt/6.8.2/mingw_64/lib/cmake/Qt6Widgets/Qt6QModernWindowsStylePluginAdditionalTargetInfo.cmake \
 	D:/Qt/6.8.2/mingw_64/lib/cmake/Qt6Widgets/Qt6QModernWindowsStylePluginConfig.cmake \
 	D:/Qt/6.8.2/mingw_64/lib/cmake/Qt6Widgets/Qt6QModernWindowsStylePluginTargets-relwithdebinfo.cmake \
@@ -842,6 +850,8 @@ vector-graphics-editor_autogen/timestamp: \
 	F:/program/claudegraph/src/ui/image_resizer.h \
 	F:/program/claudegraph/src/ui/main_window.cpp \
 	F:/program/claudegraph/src/ui/main_window.h \
+	F:/program/claudegraph/src/utils/file_format_manager.cpp \
+	F:/program/claudegraph/src/utils/file_format_manager.h \
 	F:/program/claudegraph/src/utils/graphics_utils.cpp \
 	F:/program/claudegraph/src/utils/graphics_utils.h \
 	F:/program/claudegraph/src/utils/logger.cpp \

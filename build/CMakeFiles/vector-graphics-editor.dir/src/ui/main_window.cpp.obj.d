@@ -644,4 +644,8 @@ CMakeFiles/vector-graphics-editor.dir/src/ui/main_window.cpp.obj: \
  D:/Qt/6.8.2/mingw_64/include/QtGui/qtextcursor.h \
  D:/Qt/6.8.2/mingw_64/include/QtGui/qtextformat.h \
  D:/Qt/6.8.2/mingw_64/include/QtWidgets/QCheckBox \
- D:/Qt/6.8.2/mingw_64/include/QtWidgets/qcheckbox.h
+ D:/Qt/6.8.2/mingw_64/include/QtWidgets/qcheckbox.h \
+ D:/Qt/6.8.2/mingw_64/include/QtGui/QDesktopServices \
+ D:/Qt/6.8.2/mingw_64/include/QtGui/qdesktopservices.h \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/QUrl \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/qurl.h

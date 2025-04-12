@@ -11,7 +11,7 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_AUTOUIC ON)
 
 # 查找 Qt6 组件
-find_package(Qt6 REQUIRED COMPONENTS Widgets)
+find_package(Qt6 REQUIRED COMPONENTS Widgets Svg)
 
 # 添加源文件 - 排除根目录的 main.cpp，只使用 src/main.cpp
 file(GLOB_RECURSE SOURCES 
@@ -32,6 +32,7 @@ target_include_directories(${PROJECT_NAME} PRIVATE include src)
 target_link_libraries(${PROJECT_NAME} 
     PRIVATE 
     Qt6::Widgets
+    Qt6::Svg
 )
 
 # 设置编译器选项

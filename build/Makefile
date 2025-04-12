@@ -898,6 +898,30 @@ src/ui/main_window.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\vector-graphics-editor.dir\build.make CMakeFiles/vector-graphics-editor.dir/src/ui/main_window.cpp.s
 .PHONY : src/ui/main_window.cpp.s
 
+src/utils/file_format_manager.obj: src/utils/file_format_manager.cpp.obj
+.PHONY : src/utils/file_format_manager.obj
+
+# target to build an object file
+src/utils/file_format_manager.cpp.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\vector-graphics-editor.dir\build.make CMakeFiles/vector-graphics-editor.dir/src/utils/file_format_manager.cpp.obj
+.PHONY : src/utils/file_format_manager.cpp.obj
+
+src/utils/file_format_manager.i: src/utils/file_format_manager.cpp.i
+.PHONY : src/utils/file_format_manager.i
+
+# target to preprocess a source file
+src/utils/file_format_manager.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\vector-graphics-editor.dir\build.make CMakeFiles/vector-graphics-editor.dir/src/utils/file_format_manager.cpp.i
+.PHONY : src/utils/file_format_manager.cpp.i
+
+src/utils/file_format_manager.s: src/utils/file_format_manager.cpp.s
+.PHONY : src/utils/file_format_manager.s
+
+# target to generate assembly for a file
+src/utils/file_format_manager.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\vector-graphics-editor.dir\build.make CMakeFiles/vector-graphics-editor.dir/src/utils/file_format_manager.cpp.s
+.PHONY : src/utils/file_format_manager.cpp.s
+
 src/utils/graphics_utils.obj: src/utils/graphics_utils.cpp.obj
 .PHONY : src/utils/graphics_utils.obj
 
@@ -1098,6 +1122,9 @@ help:
 	@echo ... src/ui/main_window.obj
 	@echo ... src/ui/main_window.i
 	@echo ... src/ui/main_window.s
+	@echo ... src/utils/file_format_manager.obj
+	@echo ... src/utils/file_format_manager.i
+	@echo ... src/utils/file_format_manager.s
 	@echo ... src/utils/graphics_utils.obj
 	@echo ... src/utils/graphics_utils.i
 	@echo ... src/utils/graphics_utils.s

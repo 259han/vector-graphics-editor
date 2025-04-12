@@ -42,7 +42,10 @@ static constexpr auto qt_meta_stringdata_ZN8DrawAreaE = QtMocHelpers::stringData
     "",
     "cachingStatusChanged",
     "enabled",
-    "clippingStatusChanged"
+    "clippingStatusChanged",
+    "statusMessageChanged",
+    "message",
+    "timeout"
 );
 #else  // !QT_MOC_HAS_STRINGDATA
 #error "qtmochelpers.h not found or too old."
@@ -54,22 +57,24 @@ Q_CONSTINIT static const uint qt_meta_data_ZN8DrawAreaE[] = {
       12,       // revision
        0,       // classname
        0,    0, // classinfo
-       3,   14, // methods
+       4,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
        0,       // flags
-       3,       // signalCount
+       4,       // signalCount
 
  // signals: name, argc, parameters, tag, flags, initial metatype offsets
-       1,    0,   32,    2, 0x06,    1 /* Public */,
-       3,    1,   33,    2, 0x06,    2 /* Public */,
-       5,    1,   36,    2, 0x06,    4 /* Public */,
+       1,    0,   38,    2, 0x06,    1 /* Public */,
+       3,    1,   39,    2, 0x06,    2 /* Public */,
+       5,    1,   42,    2, 0x06,    4 /* Public */,
+       6,    2,   45,    2, 0x06,    6 /* Public */,
 
  // signals: parameters
     QMetaType::Void,
     QMetaType::Void, QMetaType::Bool,    4,
     QMetaType::Void, QMetaType::Bool,    4,
+    QMetaType::Void, QMetaType::QString, QMetaType::Int,    7,    8,
 
        0        // eod
 };
@@ -90,7 +95,11 @@ Q_CONSTINIT const QMetaObject DrawArea::staticMetaObject = { {
         QtPrivate::TypeAndForceComplete<bool, std::false_type>,
         // method 'clippingStatusChanged'
         QtPrivate::TypeAndForceComplete<void, std::false_type>,
-        QtPrivate::TypeAndForceComplete<bool, std::false_type>
+        QtPrivate::TypeAndForceComplete<bool, std::false_type>,
+        // method 'statusMessageChanged'
+        QtPrivate::TypeAndForceComplete<void, std::false_type>,
+        QtPrivate::TypeAndForceComplete<const QString &, std::false_type>,
+        QtPrivate::TypeAndForceComplete<int, std::false_type>
     >,
     nullptr
 } };
@@ -103,6 +112,7 @@ void DrawArea::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, vo
         case 0: _t->selectionChanged(); break;
         case 1: _t->cachingStatusChanged((*reinterpret_cast< std::add_pointer_t<bool>>(_a[1]))); break;
         case 2: _t->clippingStatusChanged((*reinterpret_cast< std::add_pointer_t<bool>>(_a[1]))); break;
+        case 3: _t->statusMessageChanged((*reinterpret_cast< std::add_pointer_t<QString>>(_a[1])),(*reinterpret_cast< std::add_pointer_t<int>>(_a[2]))); break;
         default: ;
         }
     }
@@ -129,6 +139,13 @@ void DrawArea::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, vo
                 return;
             }
         }
+        {
+            using _q_method_type = void (DrawArea::*)(const QString & , int );
+            if (_q_method_type _q_method = &DrawArea::statusMessageChanged; *reinterpret_cast<_q_method_type *>(_a[1]) == _q_method) {
+                *result = 3;
+                return;
+            }
+        }
     }
 }
 
@@ -151,14 +168,14 @@ int DrawArea::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 3)
+        if (_id < 4)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 3;
+        _id -= 4;
     }
     if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 3)
+        if (_id < 4)
             *reinterpret_cast<QMetaType *>(_a[0]) = QMetaType();
-        _id -= 3;
+        _id -= 4;
     }
     return _id;
 }
@@ -181,5 +198,12 @@ void DrawArea::clippingStatusChanged(bool _t1)
 {
     void *_a[] = { nullptr, const_cast<void*>(reinterpret_cast<const void*>(std::addressof(_t1))) };
     QMetaObject::activate(this, &staticMetaObject, 2, _a);
+}
+
+// SIGNAL 3
+void DrawArea::statusMessageChanged(const QString & _t1, int _t2)
+{
+    void *_a[] = { nullptr, const_cast<void*>(reinterpret_cast<const void*>(std::addressof(_t1))), const_cast<void*>(reinterpret_cast<const void*>(std::addressof(_t2))) };
+    QMetaObject::activate(this, &staticMetaObject, 3, _a);
 }
 QT_WARNING_POP

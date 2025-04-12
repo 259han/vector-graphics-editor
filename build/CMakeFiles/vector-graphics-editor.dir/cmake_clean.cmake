@@ -61,6 +61,8 @@ file(REMOVE_RECURSE
   "CMakeFiles/vector-graphics-editor.dir/src/ui/image_resizer.cpp.obj.d"
   "CMakeFiles/vector-graphics-editor.dir/src/ui/main_window.cpp.obj"
   "CMakeFiles/vector-graphics-editor.dir/src/ui/main_window.cpp.obj.d"
+  "CMakeFiles/vector-graphics-editor.dir/src/utils/file_format_manager.cpp.obj"
+  "CMakeFiles/vector-graphics-editor.dir/src/utils/file_format_manager.cpp.obj.d"
   "CMakeFiles/vector-graphics-editor.dir/src/utils/graphics_utils.cpp.obj"
   "CMakeFiles/vector-graphics-editor.dir/src/utils/graphics_utils.cpp.obj.d"
   "CMakeFiles/vector-graphics-editor.dir/src/utils/logger.cpp.obj"

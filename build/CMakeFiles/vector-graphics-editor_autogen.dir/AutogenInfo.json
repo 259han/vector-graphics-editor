@@ -425,7 +425,16 @@
 		"D:/Qt/6.8.2/mingw_64/lib/cmake/Qt6Widgets/Qt6QModernWindowsStylePluginTargets.cmake",
 		"D:/Qt/6.8.2/mingw_64/lib/cmake/Qt6Widgets/Qt6QModernWindowsStylePluginTargets-relwithdebinfo.cmake",
 		"D:/Qt/6.8.2/mingw_64/lib/cmake/Qt6Widgets/Qt6QModernWindowsStylePluginAdditionalTargetInfo.cmake",
-		"D:/Qt/6.8.2/mingw_64/lib/cmake/Qt6Widgets/Qt6WidgetsVersionlessAliasTargets.cmake"
+		"D:/Qt/6.8.2/mingw_64/lib/cmake/Qt6Widgets/Qt6WidgetsVersionlessAliasTargets.cmake",
+		"D:/Qt/6.8.2/mingw_64/lib/cmake/Qt6Svg/Qt6SvgConfigVersion.cmake",
+		"D:/Qt/6.8.2/mingw_64/lib/cmake/Qt6Svg/Qt6SvgConfigVersionImpl.cmake",
+		"D:/Qt/6.8.2/mingw_64/lib/cmake/Qt6Svg/Qt6SvgConfig.cmake",
+		"D:/Qt/Tools/CMake_64/share/cmake-3.29/Modules/CMakeFindDependencyMacro.cmake",
+		"D:/Qt/6.8.2/mingw_64/lib/cmake/Qt6Svg/Qt6SvgDependencies.cmake",
+		"D:/Qt/6.8.2/mingw_64/lib/cmake/Qt6Svg/Qt6SvgTargets.cmake",
+		"D:/Qt/6.8.2/mingw_64/lib/cmake/Qt6Svg/Qt6SvgTargets-relwithdebinfo.cmake",
+		"D:/Qt/6.8.2/mingw_64/lib/cmake/Qt6Svg/Qt6SvgAdditionalTargetInfo.cmake",
+		"D:/Qt/6.8.2/mingw_64/lib/cmake/Qt6Svg/Qt6SvgVersionlessAliasTargets.cmake"
 	],
 	"CMAKE_SOURCE_DIR" : "F:/program/claudegraph",
 	"CROSS_CONFIG" : false,
@@ -614,6 +623,12 @@
 			null
 		],
 		[
+			"F:/program/claudegraph/src/utils/file_format_manager.h",
+			"MU",
+			"VSCBVMNR7M/moc_file_format_manager.cpp",
+			null
+		],
+		[
 			"F:/program/claudegraph/src/utils/graphics_utils.h",
 			"MU",
 			"VSCBVMNR7M/moc_graphics_utils.cpp",
@@ -640,6 +655,7 @@
 		"MINGW_HAS_SECURE_API=1",
 		"QT_CORE_LIB",
 		"QT_GUI_LIB",
+		"QT_SVG_LIB",
 		"QT_WIDGETS_LIB",
 		"UNICODE",
 		"WIN32",
@@ -664,6 +680,7 @@
 		"D:/Qt/6.8.2/mingw_64/include/QtCore",
 		"D:/Qt/6.8.2/mingw_64/mkspecs/win32-g++",
 		"D:/Qt/6.8.2/mingw_64/include/QtGui",
+		"D:/Qt/6.8.2/mingw_64/include/QtSvg",
 		"C:/msys64/mingw64/include/c++/14.2.0",
 		"C:/msys64/mingw64/include/c++/14.2.0/x86_64-w64-mingw32",
 		"C:/msys64/mingw64/include/c++/14.2.0/backward",
@@ -767,6 +784,11 @@
 		[ "F:/program/claudegraph/src/ui/draw_area.cpp", "MU", null ],
 		[ "F:/program/claudegraph/src/ui/image_resizer.cpp", "MU", null ],
 		[ "F:/program/claudegraph/src/ui/main_window.cpp", "MU", null ],
+		[
+			"F:/program/claudegraph/src/utils/file_format_manager.cpp",
+			"MU",
+			null
+		],
 		[ "F:/program/claudegraph/src/utils/graphics_utils.cpp", "MU", null ],
 		[ "F:/program/claudegraph/src/utils/logger.cpp", "MU", null ],
 		[

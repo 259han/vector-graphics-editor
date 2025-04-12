@@ -60,6 +60,16 @@ private slots:
     void onClippingOptimizationToggled(bool checked);
     void onExportImageWithOptions();
 
+    // 文件操作相关槽
+    void onNewFile();
+    void onOpenFile();
+    void onSaveFile();
+    void onSaveFileAs();
+    void onExportToSVG();
+    void onRecentFileTriggered();
+    void updateRecentFileActions();
+    void addToRecentFiles(const QString& filePath);
+
 private:
     void createActions();
     void createMenus();
@@ -70,6 +80,7 @@ private:
     void createPerformanceMenu();
     void createToolOptions();
     void setupConnections();
+    void updateWindowTitle();
 
     DrawArea* m_drawArea;
 
@@ -134,6 +145,7 @@ private:
     QAction* m_saveAction;
     QAction* m_saveAsAction;
     QAction* m_exportAction;
+    QAction* m_exportSVGAction; // 新增导出SVG动作
     QAction* m_aboutAction;
     QAction* m_aboutQtAction;
     
@@ -159,6 +171,17 @@ private:
     // 性能相关动作
     QAction* m_cachingAction;
     QAction* m_clippingOptimizationAction;
+
+    // 文件操作
+    QString m_currentFilePath;
+    bool m_isUntitled = true;
+    
+    // 最近文件列表
+    static const int MaxRecentFiles = 5;
+    QAction* m_recentFileActions[MaxRecentFiles];
+    QAction* m_recentFileSeparator;
+    QAction* m_clearRecentFilesAction;
+    QStringList m_recentFiles;
 };
 
 #endif // MAIN_WINDOW_H

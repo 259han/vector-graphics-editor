@@ -19,6 +19,7 @@
 #include "../command/selection_command.h"
 #include "../command/paste_command.h"
 #include "../utils/performance_monitor.h"
+#include "../utils/file_format_manager.h"
 
 #include <QPaintEvent>
 #include <QMouseEvent>
@@ -55,6 +56,32 @@
 #include <QSpinBox>
 #include <QCheckBox>
 #include <QDialogButtonBox>
+#include <QFileDialog>
+#include <QMessageBox>
+#include <QMimeData>
+#include <QClipboard>
+#include <QApplication>
+#include <QInputDialog>
+#include <QDesktopServices>
+#include <QImageWriter>
+#include <QImageReader>
+#include <QDragEnterEvent>
+#include <QDropEvent>
+#include <QUrl>
+#include <QPainterPath>
+#include <QScreen>
+#include <QGuiApplication>
+#include <QDialog>
+#include <QVBoxLayout>
+#include <QHBoxLayout>
+#include <QLabel>
+#include <QSpinBox>
+#include <QCheckBox>
+#include <QPushButton>
+#include <QComboBox>
+#include <algorithm>
+#include <random>
+#include <QSvgGenerator>
 
 // Define the static MIME type constant
 const QString DrawArea::MIME_GRAPHICITEMS = "application/x-claudegraph-items";
@@ -2530,5 +2557,201 @@ void DrawArea::saveImageOptimized() {
                   .arg(fileName)
                   .arg(image.width())
                   .arg(image.height()));
+    }
+}
+
+// 保存为自定义矢量格式
+bool DrawArea::saveToCustomFormat(const QString& filePath) {
+    try {
+        PERF_SCOPE(SaveToCustomFormat);
+        
+        FileFormatManager& formatManager = FileFormatManager::getInstance();
+        bool success = formatManager.saveToCustomFormat(filePath, m_scene);
+        
+        if (success) {
+            Logger::info(QString("成功保存文件到 %1").arg(filePath));
+            emit statusMessageChanged(tr("文件已保存: %1").arg(filePath), 3000);
+        } else {
+            Logger::error(QString("保存文件失败: %1").arg(filePath));
+            QMessageBox::critical(this, tr("保存失败"), tr("无法保存文件到 %1").arg(filePath));
+        }
+        
+        return success;
+    } catch (const std::exception& e) {
+        Logger::error(QString("保存文件时发生异常: %1").arg(e.what()));
+        QMessageBox::critical(this, tr("保存失败"), tr("保存文件时发生错误: %1").arg(e.what()));
+        return false;
+    }
+}
+
+// 从自定义矢量格式加载
+bool DrawArea::loadFromCustomFormat(const QString& filePath) {
+    try {
+        PERF_SCOPE(LoadFromCustomFormat);
+        
+        FileFormatManager& formatManager = FileFormatManager::getInstance();
+        
+        // 创建图形项的工厂函数
+        auto itemFactory = [this](Graphic::GraphicType type, const QPointF& pos, const QPen& pen, const QBrush& brush, 
+                                 const std::vector<QPointF>& points, double rotation, const QPointF& scale) {
+            // 使用图形工厂创建图形项
+            QGraphicsItem* item = nullptr;
+            if (points.empty()) {
+                item = m_graphicFactory->createItem(type, pos);
+            } else {
+                item = m_graphicFactory->createCustomItem(type, points);
+            }
+            
+            // 转换为GraphicItem设置属性
+            if (auto* graphicItem = dynamic_cast<GraphicItem*>(item)) {
+                // 设置图形属性
+                graphicItem->setPen(pen);
+                graphicItem->setBrush(brush);
+                graphicItem->setRotation(rotation);
+                graphicItem->setScale(scale);
+                
+                // 添加到场景
+                m_scene->addItem(item);
+            }
+        };
+        
+        bool success = formatManager.loadFromCustomFormat(filePath, m_scene, itemFactory);
+        
+        if (success) {
+            Logger::info(QString("成功加载文件: %1").arg(filePath));
+            emit statusMessageChanged(tr("文件已加载: %1").arg(filePath), 3000);
+            emit selectionChanged(); // 通知选择变化，更新界面
+        } else {
+            Logger::error(QString("加载文件失败: %1").arg(filePath));
+            QMessageBox::critical(this, tr("加载失败"), tr("无法加载文件 %1").arg(filePath));
+        }
+        
+        return success;
+    } catch (const std::exception& e) {
+        Logger::error(QString("加载文件时发生异常: %1").arg(e.what()));
+        QMessageBox::critical(this, tr("加载失败"), tr("加载文件时发生错误: %1").arg(e.what()));
+        return false;
+    }
+}
+
+// 导出为SVG格式
+bool DrawArea::exportToSVG(const QString& filePath, const QSize& size) {
+    try {
+        PERF_SCOPE(ExportToSVG);
+        
+        FileFormatManager& formatManager = FileFormatManager::getInstance();
+        bool success = formatManager.exportToSVG(filePath, m_scene, size);
+        
+        if (success) {
+            Logger::info(QString("成功导出SVG到 %1").arg(filePath));
+            emit statusMessageChanged(tr("SVG已导出: %1").arg(filePath), 3000);
+        } else {
+            Logger::error(QString("导出SVG失败: %1").arg(filePath));
+            QMessageBox::critical(this, tr("导出失败"), tr("无法导出SVG到 %1").arg(filePath));
+        }
+        
+        return success;
+    } catch (const std::exception& e) {
+        Logger::error(QString("导出SVG时发生异常: %1").arg(e.what()));
+        QMessageBox::critical(this, tr("导出失败"), tr("导出SVG时发生错误: %1").arg(e.what()));
+        return false;
+    }
+}
+
+// 带格式选择的保存对话框
+void DrawArea::saveAsWithFormatDialog() {
+    QFileDialog dialog(this, tr("保存文件"));
+    dialog.setAcceptMode(QFileDialog::AcceptSave);
+    dialog.setDefaultSuffix("cvg");
+    
+    QStringList filters;
+    filters << tr("自定义矢量格式 (*.cvg)") 
+            << tr("SVG矢量图 (*.svg)") 
+            << tr("PNG图像 (*.png)") 
+            << tr("JPEG图像 (*.jpg)") 
+            << tr("BMP图像 (*.bmp)") 
+            << tr("所有文件 (*)");
+    dialog.setNameFilters(filters);
+    
+    if (dialog.exec() != QDialog::Accepted) {
+        return;
+    }
+    
+    QString filePath = dialog.selectedFiles().first();
+    if (filePath.isEmpty()) {
+        return;
+    }
+    
+    QFileInfo fileInfo(filePath);
+    QString extension = fileInfo.suffix().toLower();
+    
+    bool success = false;
+    if (extension == "cvg") {
+        success = saveToCustomFormat(filePath);
+    } else if (extension == "svg") {
+        success = exportToSVG(filePath);
+    } else {
+        // 使用原有的图像保存功能处理其他格式
+        QPixmap pixmap(m_scene->sceneRect().size().toSize());
+        pixmap.fill(Qt::transparent);
+        QPainter painter(&pixmap);
+        painter.setRenderHint(QPainter::Antialiasing, true);
+        m_scene->render(&painter);
+        painter.end();
+        
+        success = pixmap.save(filePath);
+        
+        if (success) {
+            emit statusMessageChanged(tr("文件已保存: %1").arg(filePath), 3000);
+        } else {
+            QMessageBox::critical(this, tr("保存失败"), tr("无法保存文件到 %1").arg(filePath));
+        }
+    }
+}
+
+// 带格式选择的打开对话框
+void DrawArea::openWithFormatDialog() {
+    QFileDialog dialog(this, tr("打开文件"));
+    dialog.setFileMode(QFileDialog::ExistingFile);
+    
+    QStringList filters;
+    filters << tr("自定义矢量格式 (*.cvg)") 
+            << tr("PNG图像 (*.png)") 
+            << tr("JPEG图像 (*.jpg)") 
+            << tr("BMP图像 (*.bmp)") 
+            << tr("所有图像文件 (*.cvg *.png *.jpg *.jpeg *.bmp)") 
+            << tr("所有文件 (*)");
+    dialog.setNameFilters(filters);
+    
+    if (dialog.exec() != QDialog::Accepted) {
+        return;
+    }
+    
+    QString filePath = dialog.selectedFiles().first();
+    if (filePath.isEmpty()) {
+        return;
+    }
+    
+    QFileInfo fileInfo(filePath);
+    QString extension = fileInfo.suffix().toLower();
+    
+    if (extension == "cvg") {
+        loadFromCustomFormat(filePath);
+    } else {
+        // 使用原有的导入图像功能
+        QImage image(filePath);
+        if (image.isNull()) {
+            QMessageBox::critical(this, tr("打开失败"), tr("无法打开图像文件 %1").arg(filePath));
+            return;
+        }
+        
+        // 清空当前场景
+        m_scene->clear();
+        
+        // 导入图像到场景中心
+        QPointF center = m_scene->sceneRect().center() - QPointF(image.width() / 2, image.height() / 2);
+        importImageAt(image, center.toPoint());
+        
+        emit statusMessageChanged(tr("图像已加载: %1").arg(filePath), 3000);
     }
 }

@@ -169,6 +169,21 @@ public:
         MemoryUsage,        // 内存使用
         ThreadCount,        // 线程数量
         
+        // 文件格式操作相关指标
+        SaveToCustomFormat, // 保存自定义格式耗时
+        LoadFromCustomFormat, // 加载自定义格式耗时
+        ExportToSVG,        // 导出SVG耗时
+        
+        // 其他性能指标
+        CacheTime,          // 缓存操作耗时
+        ClipTime,           // 裁剪操作耗时
+        ResizeTime,         // 调整大小耗时
+        PaintTime,          // 绘制耗时
+        SelectionTime,      // 选择操作耗时
+        CommandTime,        // 命令执行耗时
+        NetworkTime,        // 网络操作耗时
+        IoTime,             // IO操作耗时
+        
         // 自定义指标
         CustomMetric1,      // 自定义指标1
         CustomMetric2,      // 自定义指标2
@@ -193,6 +208,34 @@ public:
         TopRight,       // 右上角
         BottomLeft,     // 左下角
         BottomRight     // 右下角
+    };
+
+    /**
+     * @brief 性能监控类别枚举
+     */
+    enum MonitorCategory {
+        DrawTimeCategory,
+        UpdateTimeCategory,
+        EventTimeCategory,
+        CacheTimeCategory,
+        ClipTimeCategory,
+        ResizeTimeCategory,
+        PaintTimeCategory,
+        SelectionTimeCategory,
+        CommandTimeCategory,
+        NetworkTimeCategory,
+        IoTimeCategory,
+        // 添加文件格式操作相关类别
+        SaveToCustomFormatCategory,
+        LoadFromCustomFormatCategory,
+        ExportToSVGCategory,
+        // ... 其他可能的类别
+        CpuUsageCategory,
+        GpuUsageCategory,
+        MemoryUsageCategory,
+        DiskUsageCategory,
+        NetworkUsageCategory,
+        TotalCategoriesCount
     };
 
     /**

@@ -590,6 +590,8 @@ CMakeFiles/vector-graphics-editor.dir/src/ui/draw_area.cpp.obj: \
  F:/program/claudegraph/src/command/style_change_command.h \
  F:/program/claudegraph/src/command/selection_command.h \
  F:/program/claudegraph/src/command/paste_command.h \
+ F:/program/claudegraph/src/utils/file_format_manager.h \
+ F:/program/claudegraph/src/core/graphic.h \
  D:/Qt/6.8.2/mingw_64/include/QtGui/QPaintEvent \
  D:/Qt/6.8.2/mingw_64/include/QtWidgets/QFileDialog \
  D:/Qt/6.8.2/mingw_64/include/QtWidgets/qfiledialog.h \
@@ -665,4 +667,25 @@ CMakeFiles/vector-graphics-editor.dir/src/ui/draw_area.cpp.obj: \
  D:/Qt/6.8.2/mingw_64/include/QtWidgets/qcheckbox.h \
  D:/Qt/6.8.2/mingw_64/include/QtWidgets/qabstractbutton.h \
  D:/Qt/6.8.2/mingw_64/include/QtWidgets/QDialogButtonBox \
- D:/Qt/6.8.2/mingw_64/include/QtWidgets/qdialogbuttonbox.h
+ D:/Qt/6.8.2/mingw_64/include/QtWidgets/qdialogbuttonbox.h \
+ D:/Qt/6.8.2/mingw_64/include/QtGui/QDesktopServices \
+ D:/Qt/6.8.2/mingw_64/include/QtGui/qdesktopservices.h \
+ D:/Qt/6.8.2/mingw_64/include/QtGui/QImageWriter \
+ D:/Qt/6.8.2/mingw_64/include/QtGui/qimagewriter.h \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/QUrl \
+ D:/Qt/6.8.2/mingw_64/include/QtCore/qurl.h \
+ D:/Qt/6.8.2/mingw_64/include/QtGui/QScreen \
+ D:/Qt/6.8.2/mingw_64/include/QtGui/qscreen.h \
+ D:/Qt/6.8.2/mingw_64/include/QtWidgets/QDialog \
+ D:/Qt/6.8.2/mingw_64/include/QtWidgets/qdialog.h \
+ D:/Qt/6.8.2/mingw_64/include/QtWidgets/QHBoxLayout \
+ D:/Qt/6.8.2/mingw_64/include/QtWidgets/QPushButton \
+ D:/Qt/6.8.2/mingw_64/include/QtWidgets/qpushbutton.h \
+ D:/Qt/6.8.2/mingw_64/include/QtWidgets/QComboBox \
+ D:/Qt/6.8.2/mingw_64/include/QtWidgets/qcombobox.h \
+ D:/Qt/6.8.2/mingw_64/include/QtWidgets/qabstractitemdelegate.h \
+ D:/Qt/6.8.2/mingw_64/include/QtWidgets/qstyleoption.h \
+ D:/Qt/6.8.2/mingw_64/include/QtSvg/QSvgGenerator \
+ D:/Qt/6.8.2/mingw_64/include/QtSvg/qsvggenerator.h \
+ D:/Qt/6.8.2/mingw_64/include/QtSvg/qtsvgglobal.h \
+ D:/Qt/6.8.2/mingw_64/include/QtSvg/qtsvgexports.h
