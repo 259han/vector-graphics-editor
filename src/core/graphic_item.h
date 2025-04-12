@@ -6,6 +6,7 @@
 #include <QGraphicsSceneMouseEvent>
 #include <QStyleOptionGraphicsItem>
 #include <memory>
+#include <QPixmapCache>
 #include "graphic.h"
 #include "draw_strategy.h"
 
@@ -83,6 +84,11 @@ public:
     // 获取控制点大小
     static int getHandleSize() { return HANDLE_SIZE; }
 
+    // 缓存相关方法
+    void enableCaching(bool enable);
+    bool isCachingEnabled() const { return m_cachingEnabled; }
+    void invalidateCache();
+
 protected:
     std::shared_ptr<DrawStrategy> m_drawStrategy;
     
@@ -104,6 +110,17 @@ protected:
     
     // 重写事件处理
     QVariant itemChange(GraphicsItemChange change, const QVariant &value) override;
+
+    // 缓存相关属性
+    bool m_cachingEnabled = false;
+    QString m_cacheKey;
+    bool m_cacheInvalid = true;
+    QPixmap m_cachedPixmap;
+    
+    // 创建用于缓存的键
+    QString createCacheKey() const;
+    // 更新缓存
+    void updateCache(QPainter *painter, const QStyleOptionGraphicsItem *option);
 };
 
 #endif // GRAPHIC_ITEM_H 

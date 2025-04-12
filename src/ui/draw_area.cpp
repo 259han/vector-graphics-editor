@@ -49,6 +49,12 @@
 #include <QContextMenuEvent>
 #include <QElapsedTimer>
 #include <QRandomGenerator>
+#include <QProgressDialog>
+#include <QGroupBox>
+#include <QGridLayout>
+#include <QSpinBox>
+#include <QCheckBox>
+#include <QDialogButtonBox>
 
 // Define the static MIME type constant
 const QString DrawArea::MIME_GRAPHICITEMS = "application/x-claudegraph-items";
@@ -1102,6 +1108,9 @@ void DrawArea::createContextMenu(const QPoint& pos)
     QAction* cutAction = menu.addAction("剪切");
     QAction* pasteAction = menu.addAction("粘贴");
     QAction* pasteHereAction = menu.addAction("粘贴到此处");
+    menu.addSeparator();
+    QAction* selectAllAction = menu.addAction("全选");
+    QAction* deleteAction = menu.addAction("删除");
     
     // 根据当前状态启用/禁用选项
     bool hasSelectedItems = !getSelectedItems().isEmpty();
@@ -1111,6 +1120,7 @@ void DrawArea::createContextMenu(const QPoint& pos)
     cutAction->setEnabled(hasSelectedItems);
     pasteAction->setEnabled(canPaste);
     pasteHereAction->setEnabled(canPaste);
+    deleteAction->setEnabled(hasSelectedItems);
     
     // 显示菜单并获取用户选择的操作
     QAction* selectedAction = menu.exec(mapToGlobal(pos));
@@ -1149,6 +1159,10 @@ void DrawArea::createContextMenu(const QPoint& pos)
             m_clipboardData = originalClipData;
             m_isClipboardFromCut = originalIsFromCut;
         }
+    } else if (selectedAction == selectAllAction) {
+        selectAllGraphics();
+    } else if (selectedAction == deleteAction) {
+        deleteSelectedGraphics();
     }
 }
 
@@ -2092,5 +2106,429 @@ void DrawArea::pasteItems() {
     catch (const std::exception& e) {
         Logger::error(QString("DrawArea::pasteItems: 异常 - %1").arg(e.what()));
         CommandManager::getInstance().endCommandGroup();
+    }
+}
+
+// 启用/禁用图形项缓存
+void DrawArea::enableGraphicsCaching(bool enable) {
+    if (m_graphicsCachingEnabled != enable) {
+        m_graphicsCachingEnabled = enable;
+        updateGraphicsCaching();
+        emit cachingStatusChanged(enable);
+        
+        Logger::info(QString("DrawArea: 图形缓存已%1").arg(enable ? "启用" : "禁用"));
+    }
+}
+
+// 更新所有图形项的缓存状态
+void DrawArea::updateGraphicsCaching() {
+    if (!m_scene) return;
+    
+    PERF_SCOPE(DrawTime); // 修复：使用已定义的性能计时类别
+    
+    QList<QGraphicsItem*> items = m_scene->items();
+    int count = 0;
+    
+    for (QGraphicsItem* item : items) {
+        if (GraphicItem* graphicItem = dynamic_cast<GraphicItem*>(item)) {
+            graphicItem->enableCaching(m_graphicsCachingEnabled);
+            count++;
+        }
+    }
+    
+    Logger::debug(QString("DrawArea: 已更新 %1 个图形项的缓存状态").arg(count));
+}
+
+// 启用/禁用视图裁剪优化
+void DrawArea::enableClippingOptimization(bool enable) {
+    if (m_clippingOptimizationEnabled != enable) {
+        m_clippingOptimizationEnabled = enable;
+        
+        // 裁剪优化设置
+        setViewportUpdateMode(enable ? QGraphicsView::BoundingRectViewportUpdate : QGraphicsView::FullViewportUpdate);
+        
+        // 如果启用了裁剪优化，应用项目可见性优化
+        if (enable) {
+            optimizeVisibleItems();
+        } else {
+            // 禁用时，确保所有项目可见
+            if (m_scene) {
+                for (QGraphicsItem* item : m_scene->items()) {
+                    item->setVisible(true);
+                }
+            }
+        }
+        
+        emit clippingStatusChanged(enable);
+        Logger::info(QString("DrawArea: 视图裁剪优化已%1").arg(enable ? "启用" : "禁用"));
+    }
+}
+
+// 优化可见项目
+void DrawArea::optimizeVisibleItems() {
+    if (!m_scene || !m_clippingOptimizationEnabled) return;
+    
+    PERF_SCOPE(DrawTime); // 修复：使用已定义的性能计时类别
+    
+    // 获取当前可见区域
+    QRectF visibleRect = mapToScene(viewport()->rect()).boundingRect();
+    
+    // 扩大可见区域，添加一定的边距，避免边缘物体突然消失
+    const qreal margin = 50.0; // 50像素的边距
+    visibleRect.adjust(-margin, -margin, margin, margin);
+    
+    // 优化项目可见性
+    QList<QGraphicsItem*> allItems = m_scene->items();
+    int hiddenCount = 0;
+    int visibleCount = 0;
+    
+    for (QGraphicsItem* item : allItems) {
+        // 计算物体是否在可见区域内
+        bool isVisible = visibleRect.intersects(item->sceneBoundingRect());
+        
+        // 更新可见性
+        if (item->isVisible() != isVisible) {
+            item->setVisible(isVisible);
+        }
+        
+        // 统计
+        if (isVisible) {
+            visibleCount++;
+        } else {
+            hiddenCount++;
+        }
+    }
+    
+    Logger::debug(QString("DrawArea: 可见项目优化 - 可见: %1, 隐藏: %2").arg(visibleCount).arg(hiddenCount));
+}
+
+// 带选项的保存图像
+void DrawArea::saveImageWithOptions() {
+    if (!m_scene) return;
+    
+    // 显示保存对话框
+    QString fileName = QFileDialog::getSaveFileName(this, tr("保存图像"),
+                                                  QDir::homePath(),
+                                                  tr("图像文件 (*.png *.jpg *.bmp)"));
+    if (fileName.isEmpty()) {
+        return;
+    }
+    
+    // 创建保存设置对话框
+    QDialog dialog(this);
+    dialog.setWindowTitle(tr("导出设置"));
+    
+    QVBoxLayout layout(&dialog);
+    
+    // 尺寸设置
+    QGroupBox sizeBox(tr("图像尺寸"), &dialog);
+    QGridLayout sizeLayout(&sizeBox);
+    
+    QLabel widthLabel(tr("宽度:"), &sizeBox);
+    QSpinBox widthSpin(&sizeBox);
+    widthSpin.setRange(100, 8000);
+    widthSpin.setValue(m_scene->width());
+    
+    QLabel heightLabel(tr("高度:"), &sizeBox);
+    QSpinBox heightSpin(&sizeBox);
+    heightSpin.setRange(100, 8000);
+    heightSpin.setValue(m_scene->height());
+    
+    QCheckBox maintainRatio(tr("保持比例"), &sizeBox);
+    maintainRatio.setChecked(true);
+    
+    sizeLayout.addWidget(&widthLabel, 0, 0);
+    sizeLayout.addWidget(&widthSpin, 0, 1);
+    sizeLayout.addWidget(&heightLabel, 1, 0);
+    sizeLayout.addWidget(&heightSpin, 1, 1);
+    sizeLayout.addWidget(&maintainRatio, 2, 0, 1, 2);
+    
+    // 连接宽高比保持
+    QObject::connect(&widthSpin, QOverload<int>::of(&QSpinBox::valueChanged), 
+                     [&](){
+                        if (maintainRatio.isChecked()) {
+                            double ratio = static_cast<double>(m_scene->height()) / m_scene->width();
+                            heightSpin.setValue(static_cast<int>(widthSpin.value() * ratio));
+                        }
+                     });
+    
+    QObject::connect(&heightSpin, QOverload<int>::of(&QSpinBox::valueChanged), 
+                     [&](){
+                        if (maintainRatio.isChecked()) {
+                            double ratio = static_cast<double>(m_scene->width()) / m_scene->height();
+                            widthSpin.setValue(static_cast<int>(heightSpin.value() * ratio));
+                        }
+                     });
+    
+    // 质量设置
+    QGroupBox qualityBox(tr("质量设置"), &dialog);
+    QVBoxLayout qualityLayout(&qualityBox);
+    
+    QCheckBox transparentBg(tr("透明背景"), &qualityBox);
+    QCheckBox highQuality(tr("高质量渲染"), &qualityBox);
+    highQuality.setChecked(true);
+    
+    qualityLayout.addWidget(&transparentBg);
+    qualityLayout.addWidget(&highQuality);
+    
+    // 添加组件到主布局
+    layout.addWidget(&sizeBox);
+    layout.addWidget(&qualityBox);
+    
+    // 添加按钮
+    QDialogButtonBox buttonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, 
+                               Qt::Horizontal, &dialog);
+    QObject::connect(&buttonBox, &QDialogButtonBox::accepted, &dialog, &QDialog::accept);
+    QObject::connect(&buttonBox, &QDialogButtonBox::rejected, &dialog, &QDialog::reject);
+    
+    layout.addWidget(&buttonBox);
+    
+    // 显示对话框
+    if (dialog.exec() == QDialog::Accepted) {
+        // 获取设置
+        QSize size(widthSpin.value(), heightSpin.value());
+        bool transparent = transparentBg.isChecked();
+        bool useHighQuality = highQuality.isChecked();
+        
+        // 检查导出大小，如果超过特定阈值使用分块导出
+        const int MAX_REGULAR_SIZE = 4000; // 像素，假设超过这个大小使用分块导出
+        if (size.width() > MAX_REGULAR_SIZE || size.height() > MAX_REGULAR_SIZE) {
+            // 使用分块导出
+            exportLargeImage(fileName, size, transparent);
+        } else {
+            // 正常导出
+            QImage image(size, transparent ? QImage::Format_ARGB32 : QImage::Format_RGB32);
+            
+            if (transparent) {
+                image.fill(Qt::transparent);
+            } else {
+                image.fill(Qt::white);
+            }
+            
+            QPainter painter(&image);
+            
+            // 设置渲染质量
+            if (useHighQuality) {
+                painter.setRenderHint(QPainter::Antialiasing, true);
+                painter.setRenderHint(QPainter::TextAntialiasing, true);
+                painter.setRenderHint(QPainter::SmoothPixmapTransform, true);
+                // 修复：移除不存在的渲染提示
+                // painter.setRenderHint(QPainter::HighQualityAntialiasing, true);
+            }
+            
+            // 渲染场景
+            m_scene->render(&painter);
+            
+            // 保存图像
+            if (!image.save(fileName)) {
+                QMessageBox::critical(this, tr("错误"), tr("保存图像失败!"));
+            } else {
+                Logger::info(QString("DrawArea: 图像已保存到 %1 (尺寸: %2x%3)")
+                          .arg(fileName)
+                          .arg(size.width())
+                          .arg(size.height()));
+            }
+        }
+    }
+}
+
+// 导出大尺寸图像（分块渲染，避免内存溢出）
+void DrawArea::exportLargeImage(const QString& filePath, const QSize& size, bool transparent) {
+    if (!m_scene) {
+        Logger::error("DrawArea::exportLargeImage: 场景为空");
+        return;
+    }
+    
+    // 使用分块渲染技术导出大图像
+    bool success = exportLargeImageTiled(filePath, size, transparent);
+    
+    if (!success) {
+        QMessageBox::critical(this, tr("错误"), tr("导出大尺寸图像失败!"));
+    } else {
+        Logger::info(QString("DrawArea: 大尺寸图像已成功导出到 %1 (尺寸: %2x%3)")
+                  .arg(filePath)
+                  .arg(size.width())
+                  .arg(size.height()));
+    }
+}
+
+// 分块渲染大图像
+bool DrawArea::exportLargeImageTiled(const QString& filePath, const QSize& size, bool transparent) {
+    if (!m_scene) return false;
+    
+    // 显示进度对话框
+    QProgressDialog progress(tr("正在导出大尺寸图像..."), tr("取消"), 0, 100, this);
+    progress.setWindowModality(Qt::WindowModal);
+    progress.show();
+    
+    // 计算最佳分块大小（根据内存限制）
+    const int MAX_TILE_SIZE = 2000; // 像素
+    
+    int tilesX = std::ceil(static_cast<double>(size.width()) / MAX_TILE_SIZE);
+    int tilesY = std::ceil(static_cast<double>(size.height()) / MAX_TILE_SIZE);
+    int totalTiles = tilesX * tilesY;
+    
+    // 创建最终图像
+    QImage finalImage(size, transparent ? QImage::Format_ARGB32 : QImage::Format_RGB32);
+    if (transparent) {
+        finalImage.fill(Qt::transparent);
+    } else {
+        finalImage.fill(Qt::white);
+    }
+    
+    QPainter finalPainter(&finalImage);
+    
+    // 计算每块大小
+    int tileWidth = std::ceil(static_cast<double>(size.width()) / tilesX);
+    int tileHeight = std::ceil(static_cast<double>(size.height()) / tilesY);
+    
+    // 获取场景边界
+    QRectF sceneBounds = m_scene->sceneRect();
+    
+    // 开始分块渲染
+    int currentTile = 0;
+    
+    for (int y = 0; y < tilesY; ++y) {
+        for (int x = 0; x < tilesX; ++x) {
+            // 更新进度
+            progress.setValue(static_cast<int>(static_cast<double>(currentTile) / totalTiles * 100));
+            if (progress.wasCanceled()) {
+                return false;
+            }
+            
+            // 计算当前块的位置和大小
+            int startX = x * tileWidth;
+            int startY = y * tileHeight;
+            int curTileWidth = std::min(tileWidth, size.width() - startX);
+            int curTileHeight = std::min(tileHeight, size.height() - startY);
+            
+            QRect tileRect(startX, startY, curTileWidth, curTileHeight);
+            
+            // 计算场景中对应的矩形
+            double sceneRatioX = sceneBounds.width() / size.width();
+            double sceneRatioY = sceneBounds.height() / size.height();
+            
+            QRectF sceneRect(
+                sceneBounds.x() + startX * sceneRatioX,
+                sceneBounds.y() + startY * sceneRatioY,
+                curTileWidth * sceneRatioX,
+                curTileHeight * sceneRatioY
+            );
+            
+            // 渲染这一块
+            renderScenePart(&finalPainter, tileRect, sceneRect);
+            
+            // 增加计数
+            currentTile++;
+        }
+    }
+    
+    // 完成绘制
+    finalPainter.end();
+    
+    // 保存最终图像
+    bool success = finalImage.save(filePath);
+    
+    // 完成进度对话框
+    progress.setValue(100);
+    
+    return success;
+}
+
+// 渲染场景的指定部分
+void DrawArea::renderScenePart(QPainter* painter, const QRectF& targetRect, const QRectF& sourceRect) {
+    if (!m_scene || !painter) return;
+    
+    // 创建临时图像以渲染单个部分
+    QImage tileImage(targetRect.width(), targetRect.height(), QImage::Format_ARGB32);
+    tileImage.fill(Qt::transparent);
+    
+    QPainter tilePainter(&tileImage);
+    tilePainter.setRenderHint(QPainter::Antialiasing, true);
+    tilePainter.setRenderHint(QPainter::SmoothPixmapTransform, true);
+    
+    // 调整转换以仅渲染所需部分
+    tilePainter.setTransform(QTransform()
+                           .scale(targetRect.width() / sourceRect.width(),
+                                  targetRect.height() / sourceRect.height())
+                           .translate(-sourceRect.left(), -sourceRect.top()));
+    
+    // 渲染场景的这一部分
+    m_scene->render(&tilePainter, QRectF(), sourceRect);
+    
+    // 将这一部分绘制到最终图像上
+    painter->drawImage(targetRect, tileImage);
+}
+
+// 渲染场景到图像
+QImage DrawArea::renderSceneToImage(const QRectF& sceneRect, bool transparent) {
+    if (!m_scene) {
+        Logger::error("DrawArea::renderSceneToImage: 场景为空");
+        return QImage();
+    }
+    
+    // 创建空白图像
+    QSizeF size = sceneRect.size();
+    QSize imageSize(static_cast<int>(size.width()), static_cast<int>(size.height()));
+    
+    if (imageSize.isEmpty()) {
+        Logger::error("DrawArea::renderSceneToImage: 图像大小为空");
+        return QImage();
+    }
+    
+    QImage image(imageSize, transparent ? QImage::Format_ARGB32 : QImage::Format_RGB32);
+    
+    if (transparent) {
+        image.fill(Qt::transparent);
+    } else {
+        image.fill(Qt::white);
+    }
+    
+    // 创建绘图器
+    QPainter painter(&image);
+    painter.setRenderHint(QPainter::Antialiasing, true);
+    painter.setRenderHint(QPainter::TextAntialiasing, true);
+    painter.setRenderHint(QPainter::SmoothPixmapTransform, true);
+    
+    // 调整坐标系
+    painter.translate(-sceneRect.topLeft());
+    
+    // 渲染场景
+    m_scene->render(&painter, QRectF(), sceneRect);
+    
+    return image;
+}
+
+// 优化版保存图像功能
+void DrawArea::saveImageOptimized() {
+    if (!m_scene) return;
+    
+    // 获取保存路径
+    QString fileName = QFileDialog::getSaveFileName(this, tr("保存图像"),
+                                                  QDir::homePath(),
+                                                  tr("图像文件 (*.png *.jpg *.bmp)"));
+    if (fileName.isEmpty()) {
+        return;
+    }
+    
+    // 绘制图形到图像
+    QRectF sceneRect = m_scene->sceneRect();
+    
+    // 使用优化的渲染方法
+    QImage image = renderSceneToImage(sceneRect, false);
+    
+    if (image.isNull()) {
+        QMessageBox::critical(this, tr("错误"), tr("创建图像失败!"));
+        return;
+    }
+    
+    // 保存图像
+    if (!image.save(fileName)) {
+        QMessageBox::critical(this, tr("错误"), tr("保存图像失败!"));
+    } else {
+        Logger::info(QString("DrawArea: 图像已优化保存到 %1 (尺寸: %2x%3)")
+                  .arg(fileName)
+                  .arg(image.width())
+                  .arg(image.height()));
     }
 }

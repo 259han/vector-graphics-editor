@@ -6,6 +6,7 @@
 #include <QDebug>
 #include <QTransform>
 #include <cmath>
+#include <QCryptographicHash>
 
 GraphicItem::GraphicItem()
 {
@@ -29,9 +30,26 @@ QRectF GraphicItem::boundingRect() const
 }
 
 void GraphicItem::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget) {
-    Q_UNUSED(option);
     Q_UNUSED(widget);
     
+    // 如果启用了缓存且缓存有效，则直接绘制缓存的图像
+    if (m_cachingEnabled && !m_cacheInvalid && !m_cachedPixmap.isNull()) {
+        painter->drawPixmap(boundingRect().toRect(), m_cachedPixmap);
+        
+        // 如果被选中，仍然需要绘制选中指示器（不缓存）
+        if (isSelected()) {
+            drawSelectionHandles(painter);
+        }
+        return;
+    }
+    
+    // 如果需要更新缓存
+    if (m_cachingEnabled) {
+        updateCache(painter, option);
+        return;
+    }
+    
+    // 如果没有启用缓存，使用原始绘制方法
     if (!m_drawStrategy) {
         // 如果没有绘制策略，使用默认绘制方法
         painter->setPen(m_pen);
@@ -215,18 +233,27 @@ void GraphicItem::setDrawStrategy(std::shared_ptr<DrawStrategy> strategy)
 void GraphicItem::moveBy(const QPointF &offset)
 {
     QGraphicsItem::moveBy(offset.x(), offset.y());
+    invalidateCache();
 }
 
 void GraphicItem::rotateBy(double angle)
 {
-    m_rotation += angle;
-    setRotation(rotation() + angle);
+    if (fabs(angle) > 0.01) {  // 使用一个小的阈值避免浮点误差
+        m_rotation += angle;
+        setRotation(m_rotation);
+        invalidateCache();
+    }
 }
 
 void GraphicItem::scaleBy(double factor)
 {
-    QPointF newScale = m_scale * factor;
-    setScale(newScale);
+    if (fabs(factor - 1.0) > 0.001) {  // 使用一个小的阈值避免浮点误差
+        m_scale.rx() *= factor;
+        m_scale.ry() *= factor;
+        
+        setScale(m_scale);
+        invalidateCache();
+    }
 }
 
 QPointF GraphicItem::getScale() const
@@ -236,48 +263,33 @@ QPointF GraphicItem::getScale() const
 
 void GraphicItem::setScale(const QPointF& scale)
 {
-    m_scale = scale;
-    
-    // 为了最大程度保持原始的外观，使用X和Y比例的平均值应用到QGraphicsItem
-    // 注意：这是一个折中方案，因为QGraphicsItem本身不支持非均匀缩放
-    qreal uniformScale = (scale.x() + scale.y()) / 2.0;
-    
-    // 确保缩放值合理
-    if (uniformScale > 0.001) {
-        QGraphicsItem::setScale(uniformScale);
+    if (m_scale != scale) {
+        m_scale = scale;
+        invalidateCache();
+        update();
     }
-    
-    update();
-    
-    Logger::debug(QString("GraphicItem::setScale - 设置缩放为 (%1, %2), 均匀缩放: %3")
-                 .arg(scale.x(), 0, 'f', 3)
-                 .arg(scale.y(), 0, 'f', 3)
-                 .arg(uniformScale, 0, 'f', 3));
 }
 
 void GraphicItem::setScale(qreal scale)
 {
-    // 确保维持一致的X和Y比例
-    m_scale = QPointF(scale, scale);
-    
-    // 调用基类实现
-    if (scale > 0.001) {
-        QGraphicsItem::setScale(scale);
+    // Default implementation sets scale uniformly
+    QPointF newScale(scale, scale);
+    if (m_scale != newScale) {
+        m_scale = newScale;
+        invalidateCache();
+        update();
     }
-    
-    update();
 }
 
 void GraphicItem::mirror(bool horizontal)
 {
-    // 实现水平或垂直镜像
-    QTransform transform;
     if (horizontal) {
-        transform.scale(-1, 1);
+        m_scale.rx() *= -1;
     } else {
-        transform.scale(1, -1);
+        m_scale.ry() *= -1;
     }
-    setTransform(transform, true);
+    setScale(m_scale);
+    invalidateCache();
 }
 
 std::vector<QPointF> GraphicItem::getConnectionPoints() const
@@ -305,34 +317,19 @@ void GraphicItem::removeConnectionPoint(const QPointF &point)
 
 void GraphicItem::setPen(const QPen &pen)
 {
-    m_pen = pen;
-    
-    // 同步更新DrawStrategy
-    if (m_drawStrategy) {
-        m_drawStrategy->setColor(pen.color());
-        m_drawStrategy->setLineWidth(pen.width());
+    if (m_pen != pen) {
+        m_pen = pen;
+        invalidateCache();
+        update();
     }
-    
-    // 触发重绘
-    update();
 }
 
 void GraphicItem::setBrush(const QBrush &brush)
 {
     if (m_brush != brush) {
-        // 保存旧值用于调试
-        QBrush oldBrush = m_brush;
-        
-        // 设置新的画刷
         m_brush = brush;
-        
-        // 打印调试信息
-        qDebug() << "GraphicItem::setBrush - 颜色从" << oldBrush.color().name() << "更改为" << brush.color().name();
-        
-        // 强制更新图形
+        invalidateCache();
         update();
-    } else {
-        qDebug() << "GraphicItem::setBrush - 忽略相同的画刷" << brush.color().name();
     }
 }
 
@@ -364,4 +361,113 @@ QVariant GraphicItem::itemChange(GraphicsItemChange change, const QVariant &valu
     }
     
     return QGraphicsItem::itemChange(change, value);
+}
+
+// 启用或禁用缓存
+void GraphicItem::enableCaching(bool enable) {
+    if (m_cachingEnabled != enable) {
+        m_cachingEnabled = enable;
+        m_cacheInvalid = true;
+        
+        if (!enable) {
+            // 清除现有缓存
+            m_cachedPixmap = QPixmap();
+            m_cacheKey.clear();
+        }
+        
+        update(); // 触发重绘
+    }
+}
+
+// 使缓存无效
+void GraphicItem::invalidateCache() {
+    if (m_cachingEnabled) {
+        m_cacheInvalid = true;
+        update(); // 触发重绘以更新缓存
+    }
+}
+
+// 创建用于缓存的键
+QString GraphicItem::createCacheKey() const {
+    // 使用图形项的属性创建唯一键
+    QRectF rect = boundingRect();
+    QString rectStr = QString("(%1,%2,%3,%4)").arg(rect.x()).arg(rect.y()).arg(rect.width()).arg(rect.height());
+    
+    QString key = QString("%1_%2_%3_%4_%5_%6_%7")
+                     .arg(QString::number(reinterpret_cast<qulonglong>(this)))
+                     .arg(rectStr)
+                     .arg(m_pen.color().name(QColor::HexArgb))
+                     .arg(m_pen.width())
+                     .arg(m_brush.color().name(QColor::HexArgb))
+                     .arg(m_rotation)
+                     .arg(m_scale.x() * 100).arg(m_scale.y() * 100);
+    
+    // 创建点集的哈希
+    QByteArray pointsData;
+    QDataStream stream(&pointsData, QIODevice::WriteOnly);
+    const auto points = getDrawPoints();
+    for (const auto& point : points) {
+        stream << point;
+    }
+    QByteArray hash = QCryptographicHash::hash(pointsData, QCryptographicHash::Md5).toHex();
+    
+    return key + "_" + QString::fromLatin1(hash);
+}
+
+// 更新缓存
+void GraphicItem::updateCache(QPainter* painter, const QStyleOptionGraphicsItem* option) {
+    // 对于基本图形，创建新缓存只在必要时进行
+    if (m_cacheInvalid || m_cachedPixmap.isNull()) {
+        // 创建缓存键
+        m_cacheKey = createCacheKey();
+        
+        // 确定要缓存的大小
+        QRect rect = boundingRect().toRect();
+        if (rect.isEmpty()) {
+            rect = QRect(0, 0, 1, 1); // 防止创建空的缓存图像
+        }
+        
+        // 创建适合大小的pixmap
+        m_cachedPixmap = QPixmap(rect.width(), rect.height());
+        m_cachedPixmap.fill(Qt::transparent);
+        
+        // 在缓存上绘制图形内容
+        QPainter cachePainter(&m_cachedPixmap);
+        
+        // 为平滑绘制设置抗锯齿
+        cachePainter.setRenderHint(QPainter::Antialiasing, painter->renderHints() & QPainter::Antialiasing);
+        cachePainter.setRenderHint(QPainter::SmoothPixmapTransform, painter->renderHints() & QPainter::SmoothPixmapTransform);
+        
+        // 应用必要的变换
+        cachePainter.translate(-rect.topLeft());
+        
+        // 执行实际绘制（不包括选择处理）
+        if (m_drawStrategy) {
+            m_drawStrategy->setColor(m_pen.color());
+            m_drawStrategy->setLineWidth(m_pen.width());
+            
+            std::vector<QPointF> points = getDrawPoints();
+            if (!points.empty()) {
+                cachePainter.setPen(m_pen);
+                cachePainter.setBrush(m_brush);
+                m_drawStrategy->draw(&cachePainter, points);
+            }
+        } else {
+            // 没有策略时的默认绘制
+            cachePainter.setPen(m_pen);
+            cachePainter.setBrush(m_brush);
+            cachePainter.drawPoint(0, 0);
+        }
+        
+        // 标记缓存为有效
+        m_cacheInvalid = false;
+    }
+    
+    // 绘制缓存的pixmap
+    painter->drawPixmap(boundingRect().toRect(), m_cachedPixmap);
+    
+    // 如果被选中，仍然需要绘制选中指示器（不缓存）
+    if (isSelected()) {
+        drawSelectionHandles(painter);
+    }
 } 

@@ -403,6 +403,8 @@ CMakeFiles/vector-graphics-editor.dir/src/command/create_graphic_command.cpp.obj
  D:/Qt/6.8.2/mingw_64/include/QtWidgets/qrubberband.h \
  D:/Qt/6.8.2/mingw_64/include/QtWidgets/qframe.h \
  D:/Qt/6.8.2/mingw_64/include/QtCore/qabstractitemmodel.h \
+ D:/Qt/6.8.2/mingw_64/include/QtGui/QPixmapCache \
+ D:/Qt/6.8.2/mingw_64/include/QtGui/qpixmapcache.h \
  F:/program/claudegraph/src/core/graphic.h \
  F:/program/claudegraph/src/core/draw_strategy.h \
  D:/Qt/6.8.2/mingw_64/include/QtGui/QPainterPath \

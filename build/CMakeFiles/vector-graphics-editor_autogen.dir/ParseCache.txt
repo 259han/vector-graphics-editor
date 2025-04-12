@@ -1048,6 +1048,7 @@ F:/program/claudegraph/src/core/selection_manager.h
  mdp:D:/Qt/6.8.2/mingw_64/include/QtGui/QPainter
  mdp:D:/Qt/6.8.2/mingw_64/include/QtGui/QPainterPath
  mdp:D:/Qt/6.8.2/mingw_64/include/QtGui/QPen
+ mdp:D:/Qt/6.8.2/mingw_64/include/QtGui/QPixmapCache
  mdp:D:/Qt/6.8.2/mingw_64/include/QtGui/qaction.h
  mdp:D:/Qt/6.8.2/mingw_64/include/QtGui/qbitmap.h
  mdp:D:/Qt/6.8.2/mingw_64/include/QtGui/qbrush.h
@@ -1066,6 +1067,7 @@ F:/program/claudegraph/src/core/selection_manager.h
  mdp:D:/Qt/6.8.2/mingw_64/include/QtGui/qpen.h
  mdp:D:/Qt/6.8.2/mingw_64/include/QtGui/qpixelformat.h
  mdp:D:/Qt/6.8.2/mingw_64/include/QtGui/qpixmap.h
+ mdp:D:/Qt/6.8.2/mingw_64/include/QtGui/qpixmapcache.h
  mdp:D:/Qt/6.8.2/mingw_64/include/QtGui/qpolygon.h
  mdp:D:/Qt/6.8.2/mingw_64/include/QtGui/qregion.h
  mdp:D:/Qt/6.8.2/mingw_64/include/QtGui/qrgb.h
@@ -1502,6 +1504,7 @@ F:/program/claudegraph/src/ui/draw_area.h
  mdp:D:/Qt/6.8.2/mingw_64/include/QtGui/QPainter
  mdp:D:/Qt/6.8.2/mingw_64/include/QtGui/QPainterPath
  mdp:D:/Qt/6.8.2/mingw_64/include/QtGui/QPen
+ mdp:D:/Qt/6.8.2/mingw_64/include/QtGui/QPixmapCache
  mdp:D:/Qt/6.8.2/mingw_64/include/QtGui/QTransform
  mdp:D:/Qt/6.8.2/mingw_64/include/QtGui/QWheelEvent
  mdp:D:/Qt/6.8.2/mingw_64/include/QtGui/qaction.h
@@ -1528,6 +1531,7 @@ F:/program/claudegraph/src/ui/draw_area.h
  mdp:D:/Qt/6.8.2/mingw_64/include/QtGui/qpen.h
  mdp:D:/Qt/6.8.2/mingw_64/include/QtGui/qpixelformat.h
  mdp:D:/Qt/6.8.2/mingw_64/include/QtGui/qpixmap.h
+ mdp:D:/Qt/6.8.2/mingw_64/include/QtGui/qpixmapcache.h
  mdp:D:/Qt/6.8.2/mingw_64/include/QtGui/qpointingdevice.h
  mdp:D:/Qt/6.8.2/mingw_64/include/QtGui/qpolygon.h
  mdp:D:/Qt/6.8.2/mingw_64/include/QtGui/qregion.h
@@ -2350,6 +2354,7 @@ F:/program/claudegraph/src/ui/main_window.h
  mdp:D:/Qt/6.8.2/mingw_64/include/QtGui/QPainter
  mdp:D:/Qt/6.8.2/mingw_64/include/QtGui/QPainterPath
  mdp:D:/Qt/6.8.2/mingw_64/include/QtGui/QPen
+ mdp:D:/Qt/6.8.2/mingw_64/include/QtGui/QPixmapCache
  mdp:D:/Qt/6.8.2/mingw_64/include/QtGui/QTransform
  mdp:D:/Qt/6.8.2/mingw_64/include/QtGui/QWheelEvent
  mdp:D:/Qt/6.8.2/mingw_64/include/QtGui/qaction.h
@@ -2378,6 +2383,7 @@ F:/program/claudegraph/src/ui/main_window.h
  mdp:D:/Qt/6.8.2/mingw_64/include/QtGui/qpicture.h
  mdp:D:/Qt/6.8.2/mingw_64/include/QtGui/qpixelformat.h
  mdp:D:/Qt/6.8.2/mingw_64/include/QtGui/qpixmap.h
+ mdp:D:/Qt/6.8.2/mingw_64/include/QtGui/qpixmapcache.h
  mdp:D:/Qt/6.8.2/mingw_64/include/QtGui/qpointingdevice.h
  mdp:D:/Qt/6.8.2/mingw_64/include/QtGui/qpolygon.h
  mdp:D:/Qt/6.8.2/mingw_64/include/QtGui/qregion.h

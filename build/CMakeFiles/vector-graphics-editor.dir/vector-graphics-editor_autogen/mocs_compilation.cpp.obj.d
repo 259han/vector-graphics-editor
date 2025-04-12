@@ -431,6 +431,8 @@ CMakeFiles/vector-graphics-editor.dir/vector-graphics-editor_autogen/mocs_compil
  D:/Qt/6.8.2/mingw_64/include/QtWidgets/qtabwidget.h \
  D:/Qt/6.8.2/mingw_64/include/QtWidgets/qrubberband.h \
  D:/Qt/6.8.2/mingw_64/include/QtCore/qabstractitemmodel.h \
+ D:/Qt/6.8.2/mingw_64/include/QtGui/QPixmapCache \
+ D:/Qt/6.8.2/mingw_64/include/QtGui/qpixmapcache.h \
  F:/program/claudegraph/src/core/graphic.h \
  D:/Qt/6.8.2/mingw_64/include/QtGui/QPen \
  D:/Qt/6.8.2/mingw_64/include/QtGui/qpen.h \

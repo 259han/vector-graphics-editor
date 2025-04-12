@@ -24,6 +24,7 @@
 #include <QElapsedTimer>
 #include "../utils/performance_monitor.h"
 #include <QInputDialog>
+#include <QCheckBox>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -41,7 +42,6 @@ MainWindow::MainWindow(QWidget *parent)
     createActions();
     createMenus();
     createToolbars();
-    createFillSettingsDialog();
     createToolOptions();
     
     // 设置窗口标题和大小
@@ -235,7 +235,7 @@ void MainWindow::createActions() {
     connect(m_rectAction, &QAction::triggered, this, [this]() { onDrawActionTriggered(m_rectAction); });
     connect(m_ellipseAction, &QAction::triggered, this, [this]() { onDrawActionTriggered(m_ellipseAction); });
     connect(m_bezierAction, &QAction::triggered, this, [this]() { onDrawActionTriggered(m_bezierAction); });
-    connect(m_fillToolAction, &QAction::triggered, this, [this]() { onDrawActionTriggered(m_fillToolAction); });
+    connect(m_fillToolAction, &QAction::triggered, this, [this]() { onFillToolTriggered(); });
     
     // 文件操作信号槽
     connect(m_importImageAction, &QAction::triggered, m_drawArea, &DrawArea::importImage);
@@ -255,15 +255,6 @@ void MainWindow::createActions() {
     connect(m_bringForwardAction, &QAction::triggered, this, [this]() { onLayerActionTriggered(m_bringForwardAction); });
     connect(m_sendBackwardAction, &QAction::triggered, this, [this]() { onLayerActionTriggered(m_sendBackwardAction); });
 
-    // 编辑工具信号槽
-    connect(m_copyAction, &QAction::triggered, this, [this]() { onEditActionTriggered(m_copyAction); });
-    connect(m_pasteAction, &QAction::triggered, this, [this]() { onEditActionTriggered(m_pasteAction); });
-    connect(m_cutAction, &QAction::triggered, this, [this]() { onEditActionTriggered(m_cutAction); });
-
-    // 连接撤销/重做信号槽
-    connect(m_undoAction, &QAction::triggered, this, &MainWindow::undo);
-    connect(m_redoAction, &QAction::triggered, this, &MainWindow::redo);
-    
     // 连接CommandManager信号到更新UI状态的槽
     connect(&CommandManager::getInstance(), &CommandManager::commandExecuted, 
             this, &MainWindow::updateUndoRedoActions);
@@ -317,6 +308,23 @@ void MainWindow::createActions() {
     
     m_aboutQtAction = new QAction(tr("关于Qt..."), this);
     connect(m_aboutQtAction, &QAction::triggered, qApp, &QApplication::aboutQt);
+
+    // 添加导出大图像动作
+    m_exportAction = new QAction(QIcon(":/icons/export.png"), tr("导出图像..."), this);
+    m_exportAction->setShortcut(QKeySequence("Ctrl+E"));
+    m_exportAction->setStatusTip(tr("导出图像并设置尺寸和质量"));
+    connect(m_exportAction, &QAction::triggered, this, &MainWindow::onExportImageWithOptions);
+
+    // 添加性能优化相关动作
+    m_cachingAction = new QAction(tr("启用图形缓存"), this);
+    m_cachingAction->setCheckable(true);
+    m_cachingAction->setChecked(false);
+    connect(m_cachingAction, &QAction::toggled, this, &MainWindow::onCachingToggled);
+    
+    m_clippingOptimizationAction = new QAction(tr("启用视图裁剪优化"), this);
+    m_clippingOptimizationAction->setCheckable(true);
+    m_clippingOptimizationAction->setChecked(true);
+    connect(m_clippingOptimizationAction, &QAction::toggled, this, &MainWindow::onClippingOptimizationToggled);
 }
 
 void MainWindow::createMenus() {
@@ -340,13 +348,24 @@ void MainWindow::createMenus() {
     viewMenu->addAction(m_gridAction);
     viewMenu->addAction(m_snapAction);
     
-    // 添加性能监控相关选项
+    // 添加性能优化相关选项
     viewMenu->addSeparator();
     viewMenu->addAction(m_highQualityRenderingAction);
+    viewMenu->addAction(m_cachingAction);
+    viewMenu->addAction(m_clippingOptimizationAction);
     viewMenu->addSeparator();
     viewMenu->addAction(m_performanceMonitorAction);
     viewMenu->addAction(m_performanceOverlayAction);
     viewMenu->addAction(m_showPerformanceReportAction);
+
+    // 创建文件菜单
+    QMenu* fileMenu = menuBar()->addMenu(tr("文件"));
+    fileMenu->addAction(m_saveImageAction);
+    fileMenu->addAction(m_exportAction);
+    fileMenu->addSeparator();
+    fileMenu->addAction(m_importImageAction);
+    fileMenu->addSeparator();
+    fileMenu->addAction(m_clearAction);
 
     // 创建帮助菜单
     QMenu* helpMenu = menuBar()->addMenu(tr("帮助"));
@@ -355,349 +374,87 @@ void MainWindow::createMenus() {
 }
 
 void MainWindow::createToolbars() {
-    // 创建绘图工具栏
-    m_drawToolBar = addToolBar(tr("绘图工具"));
-    m_drawToolBar->addAction(m_selectAction);
-    m_drawToolBar->addSeparator();
-    m_drawToolBar->addAction(m_lineAction);
-    m_drawToolBar->addAction(m_rectAction);
-    m_drawToolBar->addAction(m_ellipseAction);
-    m_drawToolBar->addSeparator();
-    m_drawToolBar->addAction(m_bezierAction);
-    m_drawToolBar->addSeparator();
-    m_drawToolBar->addAction(m_fillToolAction);
-    m_drawToolBar->addSeparator();
+    // 创建主工具栏，整合绘图、编辑和文件操作
+    m_drawToolBar = addToolBar(tr("主工具栏"));
+    m_drawToolBar->setObjectName("mainToolBar");
+    
+    // 添加文件操作按钮
     m_drawToolBar->addAction(m_importImageAction);
     m_drawToolBar->addAction(m_saveImageAction);
     m_drawToolBar->addAction(m_clearAction);
+    m_drawToolBar->addSeparator();
+    
+    // 添加绘图工具
+    m_drawToolBar->addAction(m_selectAction);
+    m_drawToolBar->addAction(m_lineAction);
+    m_drawToolBar->addAction(m_rectAction);
+    m_drawToolBar->addAction(m_ellipseAction);
+    m_drawToolBar->addAction(m_bezierAction);
+    m_drawToolBar->addAction(m_fillToolAction);
+    m_drawToolBar->addSeparator();
+    
+    // 添加编辑工具
+    m_drawToolBar->addAction(m_undoAction);
+    m_drawToolBar->addAction(m_redoAction);
+    m_drawToolBar->addSeparator();
+    m_drawToolBar->addAction(m_copyAction);
+    m_drawToolBar->addAction(m_pasteAction);
+    m_drawToolBar->addAction(m_cutAction);
 
-    // 创建变换工具栏
-    m_transformToolBar = addToolBar(tr("变换工具"));
-    m_transformToolBar->addAction(m_rotateAction);
-    m_transformToolBar->addAction(m_scaleAction);
-    m_transformToolBar->addAction(m_deleteAction);
-    m_transformToolBar->addSeparator();
-    m_transformToolBar->addAction(m_flipHorizontalAction);
-    m_transformToolBar->addAction(m_flipVerticalAction);
-
-    // 创建图层工具栏
-    m_layerToolBar = addToolBar(tr("图层工具"));
-    m_layerToolBar->addAction(m_bringToFrontAction);
-    m_layerToolBar->addAction(m_sendToBackAction);
-    m_layerToolBar->addAction(m_bringForwardAction);
-    m_layerToolBar->addAction(m_sendBackwardAction);
-
-    // 创建填充设置工具栏
-    createFillSettingsDialog();
-
-    // 样式设置工具栏
-    m_styleToolBar = addToolBar(tr("样式设置"));
+    // 创建格式工具栏，整合变换和样式
+    m_styleToolBar = addToolBar(tr("格式工具栏"));
+    m_styleToolBar->setObjectName("formatToolBar");
+    
+    // 添加变换工具
+    m_styleToolBar->addAction(m_rotateAction);
+    m_styleToolBar->addAction(m_scaleAction);
+    m_styleToolBar->addAction(m_flipHorizontalAction);
+    m_styleToolBar->addAction(m_flipVerticalAction);
+    m_styleToolBar->addAction(m_deleteAction);
+    m_styleToolBar->addSeparator();
     
     // 添加线条颜色选择按钮
-    QLabel* lineColorLabel = new QLabel(tr("线条颜色:"), this);
+    QLabel* lineColorLabel = new QLabel(tr("线条:"), this);
     m_lineColorButton = new QPushButton(this);
     m_lineColorButton->setFixedSize(24, 24);
     m_lineColorButton->setStyleSheet(QString("background-color: %1").arg(m_currentLineColor.name(QColor::HexArgb)));
     connect(m_lineColorButton, &QPushButton::clicked, this, &MainWindow::onSelectLineColor);
     
     // 添加线条宽度选择
-    QLabel* lineWidthLabel = new QLabel(tr("线条宽度:"), this);
     m_lineWidthSpinBox = new QSpinBox(this);
     m_lineWidthSpinBox->setRange(1, 20);
-    m_lineWidthSpinBox->setValue(m_lineWidth); // 使用成员变量
+    m_lineWidthSpinBox->setValue(m_lineWidth);
+    m_lineWidthSpinBox->setMaximumWidth(50);
     connect(m_lineWidthSpinBox, QOverload<int>::of(&QSpinBox::valueChanged), 
             this, &MainWindow::onLineWidthChanged);
+    
+    // 添加填充颜色选择按钮
+    QLabel* fillColorLabel = new QLabel(tr("填充:"), this);
+    m_colorButton = new QPushButton(this);
+    m_colorButton->setFixedSize(24, 24);
+    m_colorButton->setStyleSheet(QString("background-color: %1").arg(m_currentFillColor.name(QColor::HexArgb)));
+    connect(m_colorButton, &QPushButton::clicked, this, &MainWindow::onSelectFillColor);
     
     // 添加到工具栏
     m_styleToolBar->addWidget(lineColorLabel);
     m_styleToolBar->addWidget(m_lineColorButton);
-    m_styleToolBar->addSeparator();
-    m_styleToolBar->addWidget(lineWidthLabel);
     m_styleToolBar->addWidget(m_lineWidthSpinBox);
-
-    // 创建编辑工具栏
-    m_editToolBar = addToolBar(tr("编辑工具"));
-    m_editToolBar->addAction(m_undoAction);
-    m_editToolBar->addAction(m_redoAction);
-    m_editToolBar->addSeparator();
-    m_editToolBar->addAction(m_copyAction);
-    m_editToolBar->addAction(m_pasteAction);
-    m_editToolBar->addAction(m_cutAction);
-}
-
-void MainWindow::createFillSettingsDialog() {
-    // 创建填充设置小部件
-    m_fillSettingsWidget = new QWidget(this);
-    m_fillToolBar = addToolBar(tr("填充设置"));
+    m_styleToolBar->addSeparator();
+    m_styleToolBar->addWidget(fillColorLabel);
+    m_styleToolBar->addWidget(m_colorButton);
+    m_styleToolBar->addSeparator();
     
-    // 创建填充颜色选择按钮 - 添加到填充工具栏
-    QLabel* fillColorToolbarLabel = new QLabel(tr("填充颜色:"), m_fillSettingsWidget);
-    QPushButton* colorToolbarButton = new QPushButton(m_fillSettingsWidget);
-    colorToolbarButton->setFixedSize(24, 24);
-    colorToolbarButton->setStyleSheet(QString("background-color: %1").arg(m_currentFillColor.name()));
-    connect(colorToolbarButton, &QPushButton::clicked, this, &MainWindow::onSelectFillColor);
+    // 添加图层工具
+    m_styleToolBar->addAction(m_bringToFrontAction);
+    m_styleToolBar->addAction(m_sendToBackAction);
+    m_styleToolBar->addAction(m_bringForwardAction);
+    m_styleToolBar->addAction(m_sendBackwardAction);
     
-    // 创建布局
-    QHBoxLayout* layout = new QHBoxLayout(m_fillSettingsWidget);
-    layout->addWidget(fillColorToolbarLabel);
-    layout->addWidget(colorToolbarButton);
-    layout->setContentsMargins(5, 0, 5, 0);
-    
-    // 添加到工具栏
-    m_fillToolBar->addWidget(m_fillSettingsWidget);
-    
-    // 默认隐藏填充设置工具栏
-    m_fillToolBar->setVisible(false);
-}
-
-void MainWindow::onDrawActionTriggered(QAction* action) {
-    // 隐藏/显示工具栏
-    m_fillToolBar->setVisible(action == m_fillToolAction);
-    m_styleToolBar->setVisible(action == m_selectAction);
-    
-    if (action == m_selectAction) {
-        // 取消其他工具按钮的选中状态
-        QList<QAction*> drawTools = {
-            m_lineAction, m_rectAction, m_ellipseAction, m_bezierAction, m_fillToolAction
-        };
-        
-        for (QAction* tool : drawTools) {
-            tool->setChecked(false);
-        }
-        
-        m_drawArea->setEditState();
-        statusBar()->showMessage(tr("选择工具: 点击图形进行选择和编辑"));
-    } else if (action == m_lineAction) {
-        m_drawArea->setDrawState(Graphic::LINE);
-        m_selectAction->setChecked(false);
-        statusBar()->showMessage(tr("直线工具: 拖动鼠标绘制直线"));
-    } else if (action == m_rectAction) {
-        m_drawArea->setDrawState(Graphic::RECTANGLE);
-        m_selectAction->setChecked(false);
-        statusBar()->showMessage(tr("矩形工具: 拖动鼠标绘制矩形"));
-    } else if (action == m_ellipseAction) {
-        m_drawArea->setDrawState(Graphic::ELLIPSE);
-        m_selectAction->setChecked(false);
-        statusBar()->showMessage(tr("椭圆工具: 拖动鼠标绘制椭圆"));
-    } else if (action == m_bezierAction) {
-        m_drawArea->setDrawState(Graphic::BEZIER);
-        m_selectAction->setChecked(false);
-        statusBar()->showMessage(tr("贝塞尔曲线工具: 左键点击添加控制点, 右键点击完成曲线,ESC键取消"));
-    } else if (action == m_fillToolAction) {
-        // 填充工具的处理在 onFillToolTriggered 中进行
-        onFillToolTriggered();
-        return;
-    }
-}
-
-void MainWindow::onTransformActionTriggered(QAction* action) {
-    auto selectedItems = m_drawArea->getSelectedItems();
-    if (selectedItems.isEmpty()) {
-        QMessageBox::warning(this, tr("警告"), tr("请先选择图形"));
-        return;
-    }
-
-    if (action == m_rotateAction) {
-        // 创建一个菜单提供多种旋转选项
-        QMenu rotateMenu;
-        QAction* rotate45Action = rotateMenu.addAction(tr("旋转45度"));
-        QAction* rotate90Action = rotateMenu.addAction(tr("旋转90度"));
-        QAction* rotate180Action = rotateMenu.addAction(tr("旋转180度"));
-        rotateMenu.addSeparator();
-        QAction* customRotateAction = rotateMenu.addAction(tr("自定义角度..."));
-        
-        QAction* selectedAction = rotateMenu.exec(QCursor::pos());
-        
-        if (selectedAction == rotate45Action) {
-            m_drawArea->rotateSelectedGraphics(45.0);
-            statusBar()->showMessage(tr("已旋转选中图形 45 度"), 3000);
-        } else if (selectedAction == rotate90Action) {
-            m_drawArea->rotateSelectedGraphics(90.0);
-            statusBar()->showMessage(tr("已旋转选中图形 90 度"), 3000);
-        } else if (selectedAction == rotate180Action) {
-            m_drawArea->rotateSelectedGraphics(180.0);
-            statusBar()->showMessage(tr("已旋转选中图形 180 度"), 3000);
-        } else if (selectedAction == customRotateAction) {
-            // 使用输入对话框获取旋转角度
-            bool ok;
-            double angle = QInputDialog::getDouble(this, tr("旋转"),
-                                              tr("请输入旋转角度（顺时针为正，逆时针为负）:"),
-                                              45.0, -360.0, 360.0, 1, &ok);
-            if (ok && angle != 0.0) {
-                m_drawArea->rotateSelectedGraphics(angle);
-                statusBar()->showMessage(tr("已旋转选中图形 %.1f 度").arg(angle), 3000);
-            }
-        }
-    } else if (action == m_scaleAction) {
-        // 创建一个菜单提供多种缩放选项
-        QMenu scaleMenu;
-        QAction* enlargeAction = scaleMenu.addAction(tr("放大 (×1.2)"));
-        QAction* shrinkAction = scaleMenu.addAction(tr("缩小 (×0.8)"));
-        QAction* doubleAction = scaleMenu.addAction(tr("放大一倍 (×2)"));
-        QAction* halfAction = scaleMenu.addAction(tr("缩小一半 (×0.5)"));
-        scaleMenu.addSeparator();
-        QAction* customScaleAction = scaleMenu.addAction(tr("自定义比例..."));
-        
-        QAction* selectedAction = scaleMenu.exec(QCursor::pos());
-        
-        if (selectedAction == enlargeAction) {
-            m_drawArea->scaleSelectedGraphics(1.2);
-            statusBar()->showMessage(tr("已放大选中图形 1.2 倍"), 3000);
-        } else if (selectedAction == shrinkAction) {
-            m_drawArea->scaleSelectedGraphics(0.8);
-            statusBar()->showMessage(tr("已缩小选中图形 0.8 倍"), 3000);
-        } else if (selectedAction == doubleAction) {
-            m_drawArea->scaleSelectedGraphics(2.0);
-            statusBar()->showMessage(tr("已放大选中图形 2 倍"), 3000);
-        } else if (selectedAction == halfAction) {
-            m_drawArea->scaleSelectedGraphics(0.5);
-            statusBar()->showMessage(tr("已缩小选中图形 0.5 倍"), 3000);
-        } else if (selectedAction == customScaleAction) {
-            // 使用输入对话框获取缩放比例
-            bool ok;
-            double factor = QInputDialog::getDouble(this, tr("缩放"),
-                                              tr("请输入缩放比例（大于1放大，小于1缩小）:"),
-                                              1.2, 0.1, 10.0, 2, &ok);
-            if (ok && factor != 1.0) {
-                m_drawArea->scaleSelectedGraphics(factor);
-                statusBar()->showMessage(tr("已缩放选中图形 %.2f 倍").arg(factor), 3000);
-            }
-        }
-    } else if (action == m_deleteAction) {
-        m_drawArea->deleteSelectedGraphics();
-        statusBar()->showMessage(tr("已删除选中图形"), 3000);
-    } else if (action == m_flipHorizontalAction) {
-        m_drawArea->flipSelectedGraphics(true); // 水平翻转
-        statusBar()->showMessage(tr("已水平翻转选中图形"), 3000);
-    } else if (action == m_flipVerticalAction) {
-        m_drawArea->flipSelectedGraphics(false); // 垂直翻转
-        statusBar()->showMessage(tr("已垂直翻转选中图形"), 3000);
-    }
-}
-
-void MainWindow::onLayerActionTriggered(QAction* action) {
-    auto selectedItems = m_drawArea->getSelectedItems();
-    if (selectedItems.isEmpty()) {
-        QMessageBox::warning(this, tr("警告"), tr("请先选择图形"));
-        return;
-    }
-
-    for (auto item : selectedItems) {
-        if (action == m_bringToFrontAction) {
-            m_drawArea->bringToFront(item);
-        } else if (action == m_sendToBackAction) {
-            m_drawArea->sendToBack(item);
-        } else if (action == m_bringForwardAction) {
-            m_drawArea->bringForward(item);
-        } else if (action == m_sendBackwardAction) {
-            m_drawArea->sendBackward(item);
-        }
-    }
-    m_drawArea->update();
-}
-
-void MainWindow::onEditActionTriggered(QAction* action) {
-    auto selectedItems = m_drawArea->getSelectedItems();
-
-    if (action == m_copyAction || action == m_cutAction) {
-        if (selectedItems.isEmpty()) {
-            QMessageBox::warning(this, tr("警告"), tr("请先选择图形"));
-            return;
-        }
-        
-        if (action == m_copyAction) {
-            m_drawArea->copySelectedItems();
-        } else { // m_cutAction
-            m_drawArea->cutSelectedItems();
-        }
-    } else if (action == m_pasteAction) {
-        m_drawArea->pasteItems();
-        m_drawArea->update();
-    }
-}
-
-void MainWindow::onFillToolTriggered() {
-    // 关闭其他工具的选中状态
-    if (m_selectAction->isChecked()) m_selectAction->setChecked(false);
-    if (m_lineAction->isChecked()) m_lineAction->setChecked(false);
-    if (m_rectAction->isChecked()) m_rectAction->setChecked(false);
-    if (m_ellipseAction->isChecked()) m_ellipseAction->setChecked(false);
-    if (m_bezierAction->isChecked()) m_bezierAction->setChecked(false);
-    
-    // 激活填充工具
-    m_fillToolAction->setChecked(true);
-    
-    // 设置绘图区域状态为填充
-    m_drawArea->setFillState(m_currentFillColor);
-    
-    // 显示填充工具设置
-    m_fillToolBar->setVisible(true);
-    
-    // 更新状态栏
-    statusBar()->showMessage(tr("填充工具: 点击要填充的区域"));
-}
-
-void MainWindow::onSelectFillColor() {
-    // 使用颜色对话框获取颜色
-    QColor currentColor = m_currentFillColor;
-    QColor newColor = QColorDialog::getColor(currentColor, this, tr("选择填充颜色"), 
-                                       QColorDialog::ShowAlphaChannel);
-    
-    if (newColor.isValid() && newColor != currentColor) {
-        // 保存新选择的填充颜色
-        m_currentFillColor = newColor;
-        
-        // 更新按钮颜色
-        QString styleSheet = QString("background-color: %1").arg(newColor.name(QColor::HexArgb));
-        m_colorButton->setStyleSheet(styleSheet);
-        
-        // 检查当前是否为编辑模式，如果是则应用到选中图形
-        if (m_selectAction->isChecked() && m_drawArea) {
-            // 如果是编辑状态，则应用到选中的图形
-            EditState* editState = dynamic_cast<EditState*>(m_drawArea->getCurrentState());
-            if (editState) {
-                editState->applyBrushColorChange(newColor);
-                statusBar()->showMessage(tr("已更改填充颜色为 %1").arg(newColor.name(QColor::HexArgb)));
-            }
-        } else {
-            // 更新绘图区域的填充颜色
-            m_drawArea->setFillColor(m_currentFillColor);
-            
-            // 如果当前正在使用填充工具，更新状态栏
-            if (m_fillToolAction->isChecked()) {
-                statusBar()->showMessage(tr("填充工具: 点击要填充的区域 (颜色已更新为 %1)").arg(m_currentFillColor.name(QColor::HexArgb)));
-            }
-        }
-    }
-}
-
-void MainWindow::onGridToggled(bool enabled) {
-    // Enable or disable grid in the draw area
-    m_drawArea->enableGrid(enabled);
-    
-    // Update the status bar
-    if (enabled) {
-        statusBar()->showMessage(tr("网格已启用"));
-    } else {
-        statusBar()->showMessage(tr("网格已禁用"));
-    }
-}
-
-void MainWindow::onGridSizeChanged(int size) {
-    // Set the grid size in the draw area
-    m_drawArea->setGridSize(size);
-    
-    // Update the status bar
-    statusBar()->showMessage(tr("网格大小已设置为: %1").arg(size));
-}
-
-void MainWindow::onSnapToGridToggled(bool enabled) {
-    // This would enable or disable snap-to-grid functionality
-    if (enabled) {
-        statusBar()->showMessage(tr("吸附到网格已启用"));
-    } else {
-        statusBar()->showMessage(tr("吸附到网格已禁用"));
-    }
+    // 移除不再需要的工具栏成员变量
+    m_transformToolBar = nullptr;
+    m_layerToolBar = nullptr;
+    m_editToolBar = nullptr;
+    m_fillToolBar = nullptr;
 }
 
 void MainWindow::createToolOptions() {
@@ -710,76 +467,105 @@ void MainWindow::createToolOptions() {
     // 首先添加DrawArea
     mainLayout->addWidget(m_drawArea);
     
-    // 创建工具选项区域
+    // 创建状态栏上方的紧凑工具选项区域
     QWidget* optionsWidget = new QWidget(container);
+    optionsWidget->setMaximumHeight(40); // 限制最大高度，保持紧凑
     QHBoxLayout* optionsLayout = new QHBoxLayout(optionsWidget);
-    optionsLayout->setContentsMargins(5, 5, 5, 5);
+    optionsLayout->setContentsMargins(5, 2, 5, 2);
     
-    // 创建线条颜色和宽度控制
-    QLabel* lineColorLabel = new QLabel(tr("线条颜色:"), optionsWidget);
-    QPushButton* styleLineColorButton = new QPushButton(optionsWidget);
-    styleLineColorButton->setFixedSize(24, 24);
-    styleLineColorButton->setStyleSheet(QString("background-color: %1").arg(m_currentLineColor.name(QColor::HexArgb)));
-    styleLineColorButton->setProperty("type", "lineColorButton");
-    connect(styleLineColorButton, &QPushButton::clicked, this, &MainWindow::onSelectLineColor);
+    // 1. 添加视图缩放控制
+    QLabel* zoomLabel = new QLabel(tr("缩放:"), optionsWidget);
+    zoomLabel->setToolTip(tr("调整视图缩放比例"));
     
-    QLabel* lineWidthLabel = new QLabel(tr("线条宽度:"), optionsWidget);
-    QSpinBox* styleLineWidthSpinBox = new QSpinBox(optionsWidget);
-    styleLineWidthSpinBox->setRange(1, 20);
-    styleLineWidthSpinBox->setValue(m_lineWidth);
-    styleLineWidthSpinBox->setProperty("type", "lineWidthSpinBox");
-    connect(styleLineWidthSpinBox, QOverload<int>::of(&QSpinBox::valueChanged), 
-            this, &MainWindow::onLineWidthChanged);
-    
-    // 添加到布局
-    optionsLayout->addWidget(lineColorLabel);
-    optionsLayout->addWidget(styleLineColorButton);
-    optionsLayout->addSpacing(5);
-    optionsLayout->addWidget(lineWidthLabel);
-    optionsLayout->addWidget(styleLineWidthSpinBox);
-    optionsLayout->addSpacing(15);
-    
-    // 创建填充颜色选择按钮
-    QLabel* fillColorLabel = new QLabel(tr("填充颜色:"), optionsWidget);
-    m_colorButton = new QPushButton(optionsWidget);
-    m_colorButton->setFixedSize(24, 24);
-    m_colorButton->setStyleSheet(QString("background-color: %1").arg(m_currentFillColor.name(QColor::HexArgb)));
-    connect(m_colorButton, &QPushButton::clicked, this, &MainWindow::onSelectFillColor);
-    
-    // 添加填充工具状态提示
-    QLabel* fillStatusLabel = new QLabel(tr("填充工具:"), optionsWidget);
-    QPushButton* fillToolButton = new QPushButton(tr("启用"), optionsWidget);
-    fillToolButton->setCheckable(true);
-    fillToolButton->setChecked(false);
-    connect(fillToolButton, &QPushButton::clicked, this, [this, fillToolButton](bool checked) {
-        if (checked) {
-            // 直接调用onFillToolTriggered而不是触发action的triggered信号
-            onFillToolTriggered();
-            fillToolButton->setText(tr("已启用"));
-        } else {
-            m_selectAction->trigger(); // 切换到选择工具
-            fillToolButton->setText(tr("启用"));
+    QSlider* zoomSlider = new QSlider(Qt::Horizontal, optionsWidget);
+    zoomSlider->setRange(50, 200);
+    zoomSlider->setValue(100);
+    zoomSlider->setMaximumWidth(100);
+    zoomSlider->setToolTip(tr("拖动调整缩放比例"));
+    connect(zoomSlider, &QSlider::valueChanged, this, [this](int value){
+        if (m_drawArea) {
+            // 将滑块值转换为缩放因子
+            qreal factor = value / 100.0;
+            // 设置视图变换
+            m_drawArea->resetTransform();
+            m_drawArea->scale(factor, factor);
+            
+            // 更新状态栏显示
+            statusBar()->showMessage(tr("缩放比例: %1%").arg(value), 2000);
         }
     });
     
-    // 添加工具状态连接，当填充工具状态改变时
-    connect(m_fillToolAction, &QAction::toggled, fillToolButton, &QPushButton::setChecked);
-    connect(m_fillToolAction, &QAction::toggled, [fillToolButton](bool checked) {
-        fillToolButton->setText(checked ? tr("已启用") : tr("启用"));
+    // 2. 添加网格控制
+    QCheckBox* gridCheckBox = new QCheckBox(tr("网格"), optionsWidget);
+    gridCheckBox->setChecked(false);
+    gridCheckBox->setToolTip(tr("显示/隐藏网格"));
+    connect(gridCheckBox, &QCheckBox::toggled, this, &MainWindow::onGridToggled);
+    
+    // 3. 添加高质量渲染切换
+    QCheckBox* qualityCheckBox = new QCheckBox(tr("高质量"), optionsWidget);
+    qualityCheckBox->setChecked(true);
+    qualityCheckBox->setToolTip(tr("切换高质量渲染"));
+    connect(qualityCheckBox, &QCheckBox::toggled, m_highQualityRenderingAction, &QAction::setChecked);
+    
+    // 4. 添加性能优化切换
+    QCheckBox* cachingCheckBox = new QCheckBox(tr("缓存"), optionsWidget);
+    cachingCheckBox->setChecked(false);
+    cachingCheckBox->setToolTip(tr("启用图形缓存以提高性能"));
+    connect(cachingCheckBox, &QCheckBox::toggled, m_cachingAction, &QAction::setChecked);
+    
+    // 将控件添加到布局
+    optionsLayout->addWidget(zoomLabel);
+    optionsLayout->addWidget(zoomSlider);
+    optionsLayout->addSpacing(15);
+    optionsLayout->addWidget(gridCheckBox);
+    optionsLayout->addSpacing(15);
+    optionsLayout->addWidget(qualityCheckBox);
+    optionsLayout->addWidget(cachingCheckBox);
+    optionsLayout->addStretch(1);
+    
+    // 添加状态指示器
+    QLabel* statusLabel = new QLabel(tr("状态:"), optionsWidget);
+    QLabel* currentToolLabel = new QLabel(tr("选择工具"), optionsWidget);
+    currentToolLabel->setStyleSheet("font-weight: bold;");
+    
+    // 更新当前工具指示器
+    auto updateToolIndicator = [currentToolLabel](QAction* action, const QString& name) {
+        if (action && action->isChecked()) {
+            currentToolLabel->setText(name);
+        }
+    };
+    
+    connect(m_selectAction, &QAction::toggled, this, [=](bool checked) {
+        if (checked) updateToolIndicator(m_selectAction, tr("选择工具"));
+    });
+    connect(m_lineAction, &QAction::toggled, this, [=](bool checked) {
+        if (checked) updateToolIndicator(m_lineAction, tr("直线工具"));
+    });
+    connect(m_rectAction, &QAction::toggled, this, [=](bool checked) {
+        if (checked) updateToolIndicator(m_rectAction, tr("矩形工具"));
+    });
+    connect(m_ellipseAction, &QAction::toggled, this, [=](bool checked) {
+        if (checked) updateToolIndicator(m_ellipseAction, tr("椭圆工具"));
+    });
+    connect(m_bezierAction, &QAction::toggled, this, [=](bool checked) {
+        if (checked) updateToolIndicator(m_bezierAction, tr("贝塞尔工具"));
+    });
+    connect(m_fillToolAction, &QAction::toggled, this, [=](bool checked) {
+        if (checked) updateToolIndicator(m_fillToolAction, tr("填充工具"));
     });
     
-    optionsLayout->addWidget(fillColorLabel);
-    optionsLayout->addWidget(m_colorButton);
-    optionsLayout->addSpacing(10);
-    optionsLayout->addWidget(fillStatusLabel);
-    optionsLayout->addWidget(fillToolButton);
-    optionsLayout->addStretch(1);
+    optionsLayout->addWidget(statusLabel);
+    optionsLayout->addWidget(currentToolLabel);
     
     // 添加工具选项区域到主布局
     mainLayout->addWidget(optionsWidget);
     
     // 设置容器为中央部件
     setCentralWidget(container);
+    
+    // 连接高质量渲染动作和复选框的同步
+    connect(m_highQualityRenderingAction, &QAction::toggled, qualityCheckBox, &QCheckBox::setChecked);
+    connect(m_cachingAction, &QAction::toggled, cachingCheckBox, &QCheckBox::setChecked);
 }
 
 // 添加线条颜色选择处理函数
@@ -949,6 +735,213 @@ void MainWindow::updateUndoRedoActions() {
     }
 }
 
+void MainWindow::onFillToolTriggered() {
+    // 关闭其他工具的选中状态
+    if (m_selectAction->isChecked()) m_selectAction->setChecked(false);
+    if (m_lineAction->isChecked()) m_lineAction->setChecked(false);
+    if (m_rectAction->isChecked()) m_rectAction->setChecked(false);
+    if (m_ellipseAction->isChecked()) m_ellipseAction->setChecked(false);
+    if (m_bezierAction->isChecked()) m_bezierAction->setChecked(false);
+    
+    // 激活填充工具
+    m_fillToolAction->setChecked(true);
+    
+    // 设置绘图区域状态为填充
+    m_drawArea->setFillState(m_currentFillColor);
+    
+    // 更新状态栏
+    statusBar()->showMessage(tr("填充工具: 点击要填充的区域"));
+}
+
+void MainWindow::onSelectFillColor() {
+    // 使用颜色对话框获取颜色
+    QColor currentColor = m_currentFillColor;
+    QColor newColor = QColorDialog::getColor(currentColor, this, tr("选择填充颜色"), 
+                                       QColorDialog::ShowAlphaChannel);
+    
+    if (newColor.isValid() && newColor != currentColor) {
+        // 保存新选择的填充颜色
+        m_currentFillColor = newColor;
+        
+        // 更新按钮颜色
+        QString styleSheet = QString("background-color: %1").arg(newColor.name(QColor::HexArgb));
+        m_colorButton->setStyleSheet(styleSheet);
+        
+        // 检查当前是否为编辑模式，如果是则应用到选中图形
+        if (m_selectAction->isChecked() && m_drawArea) {
+            // 如果是编辑状态，则应用到选中的图形
+            EditState* editState = dynamic_cast<EditState*>(m_drawArea->getCurrentState());
+            if (editState) {
+                editState->applyBrushColorChange(newColor);
+                statusBar()->showMessage(tr("已更改填充颜色为 %1").arg(newColor.name(QColor::HexArgb)));
+            }
+        } else {
+            // 更新绘图区域的填充颜色
+            m_drawArea->setFillColor(m_currentFillColor);
+            
+            // 如果当前正在使用填充工具，更新状态栏
+            if (m_fillToolAction->isChecked()) {
+                statusBar()->showMessage(tr("填充工具: 点击要填充的区域 (颜色已更新为 %1)").arg(m_currentFillColor.name(QColor::HexArgb)));
+            }
+        }
+    }
+}
+
+void MainWindow::onGridToggled(bool enabled) {
+    // Enable or disable grid in the draw area
+    m_drawArea->enableGrid(enabled);
+    
+    // Update the status bar
+    if (enabled) {
+        statusBar()->showMessage(tr("网格已启用"));
+    } else {
+        statusBar()->showMessage(tr("网格已禁用"));
+    }
+}
+
+void MainWindow::onGridSizeChanged(int size) {
+    // Set the grid size in the draw area
+    m_drawArea->setGridSize(size);
+    
+    // Update the status bar
+    statusBar()->showMessage(tr("网格大小已设置为: %1").arg(size));
+}
+
+void MainWindow::onSnapToGridToggled(bool enabled) {
+    // This would enable or disable snap-to-grid functionality
+    if (enabled) {
+        statusBar()->showMessage(tr("吸附到网格已启用"));
+    } else {
+        statusBar()->showMessage(tr("吸附到网格已禁用"));
+    }
+}
+
+void MainWindow::onEditActionTriggered(QAction* action) {
+    auto selectedItems = m_drawArea->getSelectedItems();
+
+    if (action == m_copyAction || action == m_cutAction) {
+        if (selectedItems.isEmpty()) {
+            QMessageBox::warning(this, tr("警告"), tr("请先选择图形"));
+            return;
+        }
+        
+        if (action == m_copyAction) {
+            m_drawArea->copySelectedItems();
+        } else { // m_cutAction
+            m_drawArea->cutSelectedItems();
+        }
+    } else if (action == m_pasteAction) {
+        m_drawArea->pasteItems();
+        m_drawArea->update();
+    }
+}
+
+void MainWindow::onLayerActionTriggered(QAction* action) {
+    auto selectedItems = m_drawArea->getSelectedItems();
+    if (selectedItems.isEmpty()) {
+        QMessageBox::warning(this, tr("警告"), tr("请先选择图形"));
+        return;
+    }
+
+    for (auto item : selectedItems) {
+        if (action == m_bringToFrontAction) {
+            m_drawArea->bringToFront(item);
+        } else if (action == m_sendToBackAction) {
+            m_drawArea->sendToBack(item);
+        } else if (action == m_bringForwardAction) {
+            m_drawArea->bringForward(item);
+        } else if (action == m_sendBackwardAction) {
+            m_drawArea->sendBackward(item);
+        }
+    }
+    m_drawArea->update();
+}
+
+void MainWindow::onTransformActionTriggered(QAction* action) {
+    auto selectedItems = m_drawArea->getSelectedItems();
+    if (selectedItems.isEmpty()) {
+        QMessageBox::warning(this, tr("警告"), tr("请先选择图形"));
+        return;
+    }
+
+    if (action == m_rotateAction) {
+        // 创建一个菜单提供多种旋转选项
+        QMenu rotateMenu;
+        QAction* rotate45Action = rotateMenu.addAction(tr("旋转45度"));
+        QAction* rotate90Action = rotateMenu.addAction(tr("旋转90度"));
+        QAction* rotate180Action = rotateMenu.addAction(tr("旋转180度"));
+        rotateMenu.addSeparator();
+        QAction* customRotateAction = rotateMenu.addAction(tr("自定义角度..."));
+        
+        QAction* selectedAction = rotateMenu.exec(QCursor::pos());
+        
+        if (selectedAction == rotate45Action) {
+            m_drawArea->rotateSelectedGraphics(45.0);
+            statusBar()->showMessage(tr("已旋转选中图形 45 度"), 3000);
+        } else if (selectedAction == rotate90Action) {
+            m_drawArea->rotateSelectedGraphics(90.0);
+            statusBar()->showMessage(tr("已旋转选中图形 90 度"), 3000);
+        } else if (selectedAction == rotate180Action) {
+            m_drawArea->rotateSelectedGraphics(180.0);
+            statusBar()->showMessage(tr("已旋转选中图形 180 度"), 3000);
+        } else if (selectedAction == customRotateAction) {
+            // 使用输入对话框获取旋转角度
+            bool ok;
+            double angle = QInputDialog::getDouble(this, tr("旋转"),
+                                              tr("请输入旋转角度（顺时针为正，逆时针为负）:"),
+                                              45.0, -360.0, 360.0, 1, &ok);
+            if (ok && angle != 0.0) {
+                m_drawArea->rotateSelectedGraphics(angle);
+                statusBar()->showMessage(tr("已旋转选中图形 %.1f 度").arg(angle), 3000);
+            }
+        }
+    } else if (action == m_scaleAction) {
+        // 创建一个菜单提供多种缩放选项
+        QMenu scaleMenu;
+        QAction* enlargeAction = scaleMenu.addAction(tr("放大 (×1.2)"));
+        QAction* shrinkAction = scaleMenu.addAction(tr("缩小 (×0.8)"));
+        QAction* doubleAction = scaleMenu.addAction(tr("放大一倍 (×2)"));
+        QAction* halfAction = scaleMenu.addAction(tr("缩小一半 (×0.5)"));
+        scaleMenu.addSeparator();
+        QAction* customScaleAction = scaleMenu.addAction(tr("自定义比例..."));
+        
+        QAction* selectedAction = scaleMenu.exec(QCursor::pos());
+        
+        if (selectedAction == enlargeAction) {
+            m_drawArea->scaleSelectedGraphics(1.2);
+            statusBar()->showMessage(tr("已放大选中图形 1.2 倍"), 3000);
+        } else if (selectedAction == shrinkAction) {
+            m_drawArea->scaleSelectedGraphics(0.8);
+            statusBar()->showMessage(tr("已缩小选中图形 0.8 倍"), 3000);
+        } else if (selectedAction == doubleAction) {
+            m_drawArea->scaleSelectedGraphics(2.0);
+            statusBar()->showMessage(tr("已放大选中图形 2 倍"), 3000);
+        } else if (selectedAction == halfAction) {
+            m_drawArea->scaleSelectedGraphics(0.5);
+            statusBar()->showMessage(tr("已缩小选中图形 0.5 倍"), 3000);
+        } else if (selectedAction == customScaleAction) {
+            // 使用输入对话框获取缩放比例
+            bool ok;
+            double factor = QInputDialog::getDouble(this, tr("缩放"),
+                                              tr("请输入缩放比例（大于1放大，小于1缩小）:"),
+                                              1.2, 0.1, 10.0, 2, &ok);
+            if (ok && factor != 1.0) {
+                m_drawArea->scaleSelectedGraphics(factor);
+                statusBar()->showMessage(tr("已缩放选中图形 %.2f 倍").arg(factor), 3000);
+            }
+        }
+    } else if (action == m_deleteAction) {
+        m_drawArea->deleteSelectedGraphics();
+        statusBar()->showMessage(tr("已删除选中图形"), 3000);
+    } else if (action == m_flipHorizontalAction) {
+        m_drawArea->flipSelectedGraphics(true); // 水平翻转
+        statusBar()->showMessage(tr("已水平翻转选中图形"), 3000);
+    } else if (action == m_flipVerticalAction) {
+        m_drawArea->flipSelectedGraphics(false); // 垂直翻转
+        statusBar()->showMessage(tr("已垂直翻转选中图形"), 3000);
+    }
+}
+
 void MainWindow::onFillColorTriggered()
 {
     QColor color = QColorDialog::getColor(m_currentFillColor, this, tr("选择填充颜色"));
@@ -1077,4 +1070,66 @@ void MainWindow::setupPerformanceMonitoring()
                     }
                 }
             });
+}
+
+// 添加性能优化相关槽函数实现
+void MainWindow::onCachingToggled(bool checked)
+{
+    if (m_drawArea) {
+        m_drawArea->enableGraphicsCaching(checked);
+        
+        // 更新状态栏信息
+        QString message = checked ? "已启用图形缓存，性能将提升" : "已禁用图形缓存";
+        statusBar()->showMessage(message, 3000);
+    }
+}
+
+void MainWindow::onClippingOptimizationToggled(bool checked)
+{
+    if (m_drawArea) {
+        m_drawArea->enableClippingOptimization(checked);
+        
+        // 更新状态栏信息
+        QString message = checked ? "已启用视图裁剪优化，仅渲染可见图形" : "已禁用视图裁剪优化";
+        statusBar()->showMessage(message, 3000);
+    }
+}
+
+void MainWindow::onExportImageWithOptions()
+{
+    if (m_drawArea) {
+        m_drawArea->saveImageWithOptions();
+    }
+}
+
+void MainWindow::onDrawActionTriggered(QAction* action) {
+    // 根据不同的工具设置不同的绘图状态
+    if (action == m_selectAction) {
+        m_drawArea->setEditState();
+        statusBar()->showMessage(tr("选择工具: 点击选择图形，拖动移动图形"));
+    } else if (action == m_lineAction) {
+        m_drawArea->setDrawState(Graphic::LINE);
+        m_drawArea->setLineColor(m_currentLineColor);
+        m_drawArea->setLineWidth(m_lineWidth);
+        m_drawArea->setFillColor(m_currentFillColor);
+        statusBar()->showMessage(tr("直线工具: 点击并拖动绘制直线"));
+    } else if (action == m_rectAction) {
+        m_drawArea->setDrawState(Graphic::RECTANGLE);
+        m_drawArea->setLineColor(m_currentLineColor);
+        m_drawArea->setLineWidth(m_lineWidth);
+        m_drawArea->setFillColor(m_currentFillColor);
+        statusBar()->showMessage(tr("矩形工具: 点击并拖动绘制矩形"));
+    } else if (action == m_ellipseAction) {
+        m_drawArea->setDrawState(Graphic::ELLIPSE);
+        m_drawArea->setLineColor(m_currentLineColor);
+        m_drawArea->setLineWidth(m_lineWidth);
+        m_drawArea->setFillColor(m_currentFillColor);
+        statusBar()->showMessage(tr("椭圆工具: 点击并拖动绘制椭圆"));
+    } else if (action == m_bezierAction) {
+        m_drawArea->setDrawState(Graphic::BEZIER);
+        m_drawArea->setLineColor(m_currentLineColor);
+        m_drawArea->setLineWidth(m_lineWidth);
+        m_drawArea->setFillColor(m_currentFillColor);
+        statusBar()->showMessage(tr("贝塞尔曲线工具: 点击创建控制点，双击结束"));
+    }
 }

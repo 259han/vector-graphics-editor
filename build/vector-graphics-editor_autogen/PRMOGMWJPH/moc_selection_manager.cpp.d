@@ -340,6 +340,7 @@ F:/program/claudegraph/build/vector-graphics-editor_autogen/PRMOGMWJPH/moc_selec
   D:/Qt/6.8.2/mingw_64/include/QtGui/QPainter \
   D:/Qt/6.8.2/mingw_64/include/QtGui/QPainterPath \
   D:/Qt/6.8.2/mingw_64/include/QtGui/QPen \
+  D:/Qt/6.8.2/mingw_64/include/QtGui/QPixmapCache \
   D:/Qt/6.8.2/mingw_64/include/QtGui/qaction.h \
   D:/Qt/6.8.2/mingw_64/include/QtGui/qbitmap.h \
   D:/Qt/6.8.2/mingw_64/include/QtGui/qbrush.h \
@@ -358,6 +359,7 @@ F:/program/claudegraph/build/vector-graphics-editor_autogen/PRMOGMWJPH/moc_selec
   D:/Qt/6.8.2/mingw_64/include/QtGui/qpen.h \
   D:/Qt/6.8.2/mingw_64/include/QtGui/qpixelformat.h \
   D:/Qt/6.8.2/mingw_64/include/QtGui/qpixmap.h \
+  D:/Qt/6.8.2/mingw_64/include/QtGui/qpixmapcache.h \
   D:/Qt/6.8.2/mingw_64/include/QtGui/qpolygon.h \
   D:/Qt/6.8.2/mingw_64/include/QtGui/qregion.h \
   D:/Qt/6.8.2/mingw_64/include/QtGui/qrgb.h \

@@ -55,6 +55,11 @@ private slots:
     void onShowPerformanceReport();
     void onHighQualityRendering(bool checked);
 
+    // 性能优化相关槽函数
+    void onCachingToggled(bool checked);
+    void onClippingOptimizationToggled(bool checked);
+    void onExportImageWithOptions();
+
 private:
     void createActions();
     void createMenus();
@@ -63,7 +68,6 @@ private:
     void createStatusBar();
     void createDockWindows();
     void createPerformanceMenu();
-    void createFillSettingsDialog();
     void createToolOptions();
     void setupConnections();
 
@@ -151,6 +155,10 @@ private:
 
     // 性能监控相关
     void setupPerformanceMonitoring();
+
+    // 性能相关动作
+    QAction* m_cachingAction;
+    QAction* m_clippingOptimizationAction;
 };
 
 #endif // MAIN_WINDOW_H

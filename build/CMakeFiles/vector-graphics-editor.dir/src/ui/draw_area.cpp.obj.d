@@ -421,6 +421,8 @@ CMakeFiles/vector-graphics-editor.dir/src/ui/draw_area.cpp.obj: \
  D:/Qt/6.8.2/mingw_64/include/QtWidgets/qtabwidget.h \
  D:/Qt/6.8.2/mingw_64/include/QtWidgets/qrubberband.h \
  D:/Qt/6.8.2/mingw_64/include/QtCore/qabstractitemmodel.h \
+ D:/Qt/6.8.2/mingw_64/include/QtGui/QPixmapCache \
+ D:/Qt/6.8.2/mingw_64/include/QtGui/qpixmapcache.h \
  F:/program/claudegraph/src/core/draw_strategy.h \
  F:/program/claudegraph/src/state/editor_state.h \
  D:/Qt/6.8.2/mingw_64/include/QtGui/QMouseEvent \
@@ -650,4 +652,17 @@ CMakeFiles/vector-graphics-editor.dir/src/ui/draw_area.cpp.obj: \
  C:/msys64/mingw64/lib/gcc/x86_64-w64-mingw32/14.2.0/include/xmmintrin.h \
  C:/msys64/mingw64/lib/gcc/x86_64-w64-mingw32/14.2.0/include/mmintrin.h \
  C:/msys64/mingw64/lib/gcc/x86_64-w64-mingw32/14.2.0/include/mwaitintrin.h \
- C:/msys64/mingw64/include/c++/14.2.0/bits/random.tcc
+ C:/msys64/mingw64/include/c++/14.2.0/bits/random.tcc \
+ D:/Qt/6.8.2/mingw_64/include/QtWidgets/QProgressDialog \
+ D:/Qt/6.8.2/mingw_64/include/QtWidgets/qprogressdialog.h \
+ D:/Qt/6.8.2/mingw_64/include/QtWidgets/QGroupBox \
+ D:/Qt/6.8.2/mingw_64/include/QtWidgets/qgroupbox.h \
+ D:/Qt/6.8.2/mingw_64/include/QtWidgets/QGridLayout \
+ D:/Qt/6.8.2/mingw_64/include/QtWidgets/qgridlayout.h \
+ D:/Qt/6.8.2/mingw_64/include/QtWidgets/QSpinBox \
+ D:/Qt/6.8.2/mingw_64/include/QtWidgets/qspinbox.h \
+ D:/Qt/6.8.2/mingw_64/include/QtWidgets/QCheckBox \
+ D:/Qt/6.8.2/mingw_64/include/QtWidgets/qcheckbox.h \
+ D:/Qt/6.8.2/mingw_64/include/QtWidgets/qabstractbutton.h \
+ D:/Qt/6.8.2/mingw_64/include/QtWidgets/QDialogButtonBox \
+ D:/Qt/6.8.2/mingw_64/include/QtWidgets/qdialogbuttonbox.h

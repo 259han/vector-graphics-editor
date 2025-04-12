@@ -449,6 +449,8 @@ CMakeFiles/vector-graphics-editor.dir/src/main.cpp.obj: \
  D:/Qt/6.8.2/mingw_64/include/QtCore/qcoreevent.h \
  D:/Qt/6.8.2/mingw_64/include/QtWidgets/QStyleOptionGraphicsItem \
  D:/Qt/6.8.2/mingw_64/include/QtWidgets/qstyleoption.h \
+ D:/Qt/6.8.2/mingw_64/include/QtGui/QPixmapCache \
+ D:/Qt/6.8.2/mingw_64/include/QtGui/qpixmapcache.h \
  F:/program/claudegraph/src/core/draw_strategy.h \
  F:/program/claudegraph/src/state/editor_state.h \
  D:/Qt/6.8.2/mingw_64/include/QtGui/QMouseEvent \

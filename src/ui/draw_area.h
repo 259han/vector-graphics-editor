@@ -112,9 +112,26 @@ public:
     // 清除当前选择
     void clearSelection();
 
+    // 缓存控制方法
+    void enableGraphicsCaching(bool enable);
+    bool isGraphicsCachingEnabled() const { return m_graphicsCachingEnabled; }
+    
+    // 裁剪优化方法
+    void enableClippingOptimization(bool enable);
+    bool isClippingOptimizationEnabled() const { return m_clippingOptimizationEnabled; }
+    
+    // 增强的图像导出功能
+    void saveImageOptimized();
+    void saveImageWithOptions();
+    void exportLargeImage(const QString& filePath, const QSize& size, bool transparent = false);
+
 signals:
     // 选择变更信号
     void selectionChanged();
+    
+    // 性能相关信号
+    void cachingStatusChanged(bool enabled);
+    void clippingStatusChanged(bool enabled);
 
 protected:
     void mousePressEvent(QMouseEvent *event) override;
@@ -191,6 +208,19 @@ private:
     
     // 控制键状态
     bool m_ctrlKeyPressed = false;
+
+    // 缓存和裁剪优化属性
+    bool m_graphicsCachingEnabled = false;
+    bool m_clippingOptimizationEnabled = true;
+    
+    // 内部辅助方法
+    void updateGraphicsCaching();
+    void optimizeVisibleItems();
+    QImage renderSceneToImage(const QRectF& sceneRect, bool transparent = false);
+    void renderScenePart(QPainter* painter, const QRectF& targetRect, const QRectF& sourceRect);
+    
+    // 分块渲染大图像的辅助方法
+    bool exportLargeImageTiled(const QString& filePath, const QSize& size, bool transparent = false);
 };
 
 #endif // DRAW_AREA_H

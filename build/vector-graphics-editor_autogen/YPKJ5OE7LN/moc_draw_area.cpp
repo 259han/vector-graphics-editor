@@ -39,7 +39,10 @@ struct qt_meta_tag_ZN8DrawAreaE_t {};
 static constexpr auto qt_meta_stringdata_ZN8DrawAreaE = QtMocHelpers::stringData(
     "DrawArea",
     "selectionChanged",
-    ""
+    "",
+    "cachingStatusChanged",
+    "enabled",
+    "clippingStatusChanged"
 );
 #else  // !QT_MOC_HAS_STRINGDATA
 #error "qtmochelpers.h not found or too old."
@@ -51,18 +54,22 @@ Q_CONSTINIT static const uint qt_meta_data_ZN8DrawAreaE[] = {
       12,       // revision
        0,       // classname
        0,    0, // classinfo
-       1,   14, // methods
+       3,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
        0,       // flags
-       1,       // signalCount
+       3,       // signalCount
 
  // signals: name, argc, parameters, tag, flags, initial metatype offsets
-       1,    0,   20,    2, 0x06,    1 /* Public */,
+       1,    0,   32,    2, 0x06,    1 /* Public */,
+       3,    1,   33,    2, 0x06,    2 /* Public */,
+       5,    1,   36,    2, 0x06,    4 /* Public */,
 
  // signals: parameters
     QMetaType::Void,
+    QMetaType::Void, QMetaType::Bool,    4,
+    QMetaType::Void, QMetaType::Bool,    4,
 
        0        // eod
 };
@@ -77,7 +84,13 @@ Q_CONSTINIT const QMetaObject DrawArea::staticMetaObject = { {
         // Q_OBJECT / Q_GADGET
         QtPrivate::TypeAndForceComplete<DrawArea, std::true_type>,
         // method 'selectionChanged'
-        QtPrivate::TypeAndForceComplete<void, std::false_type>
+        QtPrivate::TypeAndForceComplete<void, std::false_type>,
+        // method 'cachingStatusChanged'
+        QtPrivate::TypeAndForceComplete<void, std::false_type>,
+        QtPrivate::TypeAndForceComplete<bool, std::false_type>,
+        // method 'clippingStatusChanged'
+        QtPrivate::TypeAndForceComplete<void, std::false_type>,
+        QtPrivate::TypeAndForceComplete<bool, std::false_type>
     >,
     nullptr
 } };
@@ -88,6 +101,8 @@ void DrawArea::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, vo
     if (_c == QMetaObject::InvokeMetaMethod) {
         switch (_id) {
         case 0: _t->selectionChanged(); break;
+        case 1: _t->cachingStatusChanged((*reinterpret_cast< std::add_pointer_t<bool>>(_a[1]))); break;
+        case 2: _t->clippingStatusChanged((*reinterpret_cast< std::add_pointer_t<bool>>(_a[1]))); break;
         default: ;
         }
     }
@@ -97,6 +112,20 @@ void DrawArea::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, vo
             using _q_method_type = void (DrawArea::*)();
             if (_q_method_type _q_method = &DrawArea::selectionChanged; *reinterpret_cast<_q_method_type *>(_a[1]) == _q_method) {
                 *result = 0;
+                return;
+            }
+        }
+        {
+            using _q_method_type = void (DrawArea::*)(bool );
+            if (_q_method_type _q_method = &DrawArea::cachingStatusChanged; *reinterpret_cast<_q_method_type *>(_a[1]) == _q_method) {
+                *result = 1;
+                return;
+            }
+        }
+        {
+            using _q_method_type = void (DrawArea::*)(bool );
+            if (_q_method_type _q_method = &DrawArea::clippingStatusChanged; *reinterpret_cast<_q_method_type *>(_a[1]) == _q_method) {
+                *result = 2;
                 return;
             }
         }
@@ -122,14 +151,14 @@ int DrawArea::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 1)
+        if (_id < 3)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 1;
+        _id -= 3;
     }
     if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 1)
+        if (_id < 3)
             *reinterpret_cast<QMetaType *>(_a[0]) = QMetaType();
-        _id -= 1;
+        _id -= 3;
     }
     return _id;
 }
@@ -138,5 +167,19 @@ int DrawArea::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
 void DrawArea::selectionChanged()
 {
     QMetaObject::activate(this, &staticMetaObject, 0, nullptr);
+}
+
+// SIGNAL 1
+void DrawArea::cachingStatusChanged(bool _t1)
+{
+    void *_a[] = { nullptr, const_cast<void*>(reinterpret_cast<const void*>(std::addressof(_t1))) };
+    QMetaObject::activate(this, &staticMetaObject, 1, _a);
+}
+
+// SIGNAL 2
+void DrawArea::clippingStatusChanged(bool _t1)
+{
+    void *_a[] = { nullptr, const_cast<void*>(reinterpret_cast<const void*>(std::addressof(_t1))) };
+    QMetaObject::activate(this, &staticMetaObject, 2, _a);
 }
 QT_WARNING_POP
