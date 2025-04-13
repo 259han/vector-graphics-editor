@@ -1,5 +1,4 @@
-#!/bin/bash
-set -euo pipefail
+#!/bin/bashset -euo pipefail
 
 # 定义项目路径
 PROJECT_PATH="/f/program/claudegraph"

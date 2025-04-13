@@ -1,0 +1,8 @@
+bd.sh
+.vscode/
+build/
+logs/
+
+CMakeUserPresets.json
+
+

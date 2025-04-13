@@ -1,3 +1,0 @@
-# Hashes of file build rules.
-73a36665d1e6a1bf5fda49865022abd7 CMakeFiles/vector-graphics-editor_autogen
-3466d95e4247bfee872995bed10f0c3d vector-graphics-editor_autogen/timestamp
