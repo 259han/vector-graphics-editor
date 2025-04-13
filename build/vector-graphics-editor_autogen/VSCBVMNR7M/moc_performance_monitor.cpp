@@ -42,11 +42,9 @@ static constexpr auto qt_meta_stringdata_ZN17PerformanceWorkerE = QtMocHelpers::
     "",
     "statusChanged",
     "enabled",
-    "overlayToggled",
     "processEvent",
     "PerformanceEvent",
     "event",
-    "processEvents",
     "stop"
 );
 #else  // !QT_MOC_HAS_STRINGDATA
@@ -59,31 +57,27 @@ Q_CONSTINIT static const uint qt_meta_data_ZN17PerformanceWorkerE[] = {
       12,       // revision
        0,       // classname
        0,    0, // classinfo
-       6,   14, // methods
+       4,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
        0,       // flags
-       3,       // signalCount
+       2,       // signalCount
 
  // signals: name, argc, parameters, tag, flags, initial metatype offsets
-       1,    0,   50,    2, 0x06,    1 /* Public */,
-       3,    1,   51,    2, 0x06,    2 /* Public */,
-       5,    1,   54,    2, 0x06,    4 /* Public */,
+       1,    0,   38,    2, 0x06,    1 /* Public */,
+       3,    1,   39,    2, 0x06,    2 /* Public */,
 
  // slots: name, argc, parameters, tag, flags, initial metatype offsets
-       6,    1,   57,    2, 0x0a,    6 /* Public */,
-       9,    0,   60,    2, 0x0a,    8 /* Public */,
-      10,    0,   61,    2, 0x0a,    9 /* Public */,
+       5,    1,   42,    2, 0x0a,    4 /* Public */,
+       8,    0,   45,    2, 0x0a,    6 /* Public */,
 
  // signals: parameters
     QMetaType::Void,
     QMetaType::Void, QMetaType::Bool,    4,
-    QMetaType::Void, QMetaType::Bool,    4,
 
  // slots: parameters
-    QMetaType::Void, 0x80000000 | 7,    8,
-    QMetaType::Void,
+    QMetaType::Void, 0x80000000 | 6,    7,
     QMetaType::Void,
 
        0        // eod
@@ -103,14 +97,9 @@ Q_CONSTINIT const QMetaObject PerformanceWorker::staticMetaObject = { {
         // method 'statusChanged'
         QtPrivate::TypeAndForceComplete<void, std::false_type>,
         QtPrivate::TypeAndForceComplete<bool, std::false_type>,
-        // method 'overlayToggled'
-        QtPrivate::TypeAndForceComplete<void, std::false_type>,
-        QtPrivate::TypeAndForceComplete<bool, std::false_type>,
         // method 'processEvent'
         QtPrivate::TypeAndForceComplete<void, std::false_type>,
         QtPrivate::TypeAndForceComplete<const PerformanceEvent &, std::false_type>,
-        // method 'processEvents'
-        QtPrivate::TypeAndForceComplete<void, std::false_type>,
         // method 'stop'
         QtPrivate::TypeAndForceComplete<void, std::false_type>
     >,
@@ -124,10 +113,8 @@ void PerformanceWorker::qt_static_metacall(QObject *_o, QMetaObject::Call _c, in
         switch (_id) {
         case 0: _t->measurementsUpdated(); break;
         case 1: _t->statusChanged((*reinterpret_cast< std::add_pointer_t<bool>>(_a[1]))); break;
-        case 2: _t->overlayToggled((*reinterpret_cast< std::add_pointer_t<bool>>(_a[1]))); break;
-        case 3: _t->processEvent((*reinterpret_cast< std::add_pointer_t<PerformanceEvent>>(_a[1]))); break;
-        case 4: _t->processEvents(); break;
-        case 5: _t->stop(); break;
+        case 2: _t->processEvent((*reinterpret_cast< std::add_pointer_t<PerformanceEvent>>(_a[1]))); break;
+        case 3: _t->stop(); break;
         default: ;
         }
     }
@@ -144,13 +131,6 @@ void PerformanceWorker::qt_static_metacall(QObject *_o, QMetaObject::Call _c, in
             using _q_method_type = void (PerformanceWorker::*)(bool );
             if (_q_method_type _q_method = &PerformanceWorker::statusChanged; *reinterpret_cast<_q_method_type *>(_a[1]) == _q_method) {
                 *result = 1;
-                return;
-            }
-        }
-        {
-            using _q_method_type = void (PerformanceWorker::*)(bool );
-            if (_q_method_type _q_method = &PerformanceWorker::overlayToggled; *reinterpret_cast<_q_method_type *>(_a[1]) == _q_method) {
-                *result = 2;
                 return;
             }
         }
@@ -176,14 +156,14 @@ int PerformanceWorker::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 6)
+        if (_id < 4)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 6;
+        _id -= 4;
     }
     if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 6)
+        if (_id < 4)
             *reinterpret_cast<QMetaType *>(_a[0]) = QMetaType();
-        _id -= 6;
+        _id -= 4;
     }
     return _id;
 }
@@ -200,13 +180,6 @@ void PerformanceWorker::statusChanged(bool _t1)
     void *_a[] = { nullptr, const_cast<void*>(reinterpret_cast<const void*>(std::addressof(_t1))) };
     QMetaObject::activate(this, &staticMetaObject, 1, _a);
 }
-
-// SIGNAL 2
-void PerformanceWorker::overlayToggled(bool _t1)
-{
-    void *_a[] = { nullptr, const_cast<void*>(reinterpret_cast<const void*>(std::addressof(_t1))) };
-    QMetaObject::activate(this, &staticMetaObject, 2, _a);
-}
 namespace {
 struct qt_meta_tag_ZN18PerformanceMonitorE_t {};
 } // unnamed namespace
@@ -218,7 +191,6 @@ static constexpr auto qt_meta_stringdata_ZN18PerformanceMonitorE = QtMocHelpers:
     "enabledChanged",
     "",
     "enabled",
-    "overlayEnabledChanged",
     "dataUpdated",
     "sendEvent",
     "PerformanceEvent",
@@ -234,24 +206,22 @@ Q_CONSTINIT static const uint qt_meta_data_ZN18PerformanceMonitorE[] = {
       12,       // revision
        0,       // classname
        0,    0, // classinfo
-       4,   14, // methods
+       3,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
        0,       // flags
-       4,       // signalCount
+       3,       // signalCount
 
  // signals: name, argc, parameters, tag, flags, initial metatype offsets
-       1,    1,   38,    2, 0x06,    1 /* Public */,
-       4,    1,   41,    2, 0x06,    3 /* Public */,
-       5,    0,   44,    2, 0x06,    5 /* Public */,
-       6,    1,   45,    2, 0x06,    6 /* Public */,
+       1,    1,   32,    2, 0x06,    1 /* Public */,
+       4,    0,   35,    2, 0x06,    3 /* Public */,
+       5,    1,   36,    2, 0x06,    4 /* Public */,
 
  // signals: parameters
     QMetaType::Void, QMetaType::Bool,    3,
-    QMetaType::Void, QMetaType::Bool,    3,
     QMetaType::Void,
-    QMetaType::Void, 0x80000000 | 7,    8,
+    QMetaType::Void, 0x80000000 | 6,    7,
 
        0        // eod
 };
@@ -266,9 +236,6 @@ Q_CONSTINIT const QMetaObject PerformanceMonitor::staticMetaObject = { {
         // Q_OBJECT / Q_GADGET
         QtPrivate::TypeAndForceComplete<PerformanceMonitor, std::true_type>,
         // method 'enabledChanged'
-        QtPrivate::TypeAndForceComplete<void, std::false_type>,
-        QtPrivate::TypeAndForceComplete<bool, std::false_type>,
-        // method 'overlayEnabledChanged'
         QtPrivate::TypeAndForceComplete<void, std::false_type>,
         QtPrivate::TypeAndForceComplete<bool, std::false_type>,
         // method 'dataUpdated'
@@ -286,9 +253,8 @@ void PerformanceMonitor::qt_static_metacall(QObject *_o, QMetaObject::Call _c, i
     if (_c == QMetaObject::InvokeMetaMethod) {
         switch (_id) {
         case 0: _t->enabledChanged((*reinterpret_cast< std::add_pointer_t<bool>>(_a[1]))); break;
-        case 1: _t->overlayEnabledChanged((*reinterpret_cast< std::add_pointer_t<bool>>(_a[1]))); break;
-        case 2: _t->dataUpdated(); break;
-        case 3: _t->sendEvent((*reinterpret_cast< std::add_pointer_t<PerformanceEvent>>(_a[1]))); break;
+        case 1: _t->dataUpdated(); break;
+        case 2: _t->sendEvent((*reinterpret_cast< std::add_pointer_t<PerformanceEvent>>(_a[1]))); break;
         default: ;
         }
     }
@@ -302,23 +268,16 @@ void PerformanceMonitor::qt_static_metacall(QObject *_o, QMetaObject::Call _c, i
             }
         }
         {
-            using _q_method_type = void (PerformanceMonitor::*)(bool );
-            if (_q_method_type _q_method = &PerformanceMonitor::overlayEnabledChanged; *reinterpret_cast<_q_method_type *>(_a[1]) == _q_method) {
-                *result = 1;
-                return;
-            }
-        }
-        {
             using _q_method_type = void (PerformanceMonitor::*)();
             if (_q_method_type _q_method = &PerformanceMonitor::dataUpdated; *reinterpret_cast<_q_method_type *>(_a[1]) == _q_method) {
-                *result = 2;
+                *result = 1;
                 return;
             }
         }
         {
             using _q_method_type = void (PerformanceMonitor::*)(const PerformanceEvent & );
             if (_q_method_type _q_method = &PerformanceMonitor::sendEvent; *reinterpret_cast<_q_method_type *>(_a[1]) == _q_method) {
-                *result = 3;
+                *result = 2;
                 return;
             }
         }
@@ -344,14 +303,14 @@ int PerformanceMonitor::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 4)
+        if (_id < 3)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 4;
+        _id -= 3;
     }
     if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 4)
+        if (_id < 3)
             *reinterpret_cast<QMetaType *>(_a[0]) = QMetaType();
-        _id -= 4;
+        _id -= 3;
     }
     return _id;
 }
@@ -364,22 +323,15 @@ void PerformanceMonitor::enabledChanged(bool _t1)
 }
 
 // SIGNAL 1
-void PerformanceMonitor::overlayEnabledChanged(bool _t1)
+void PerformanceMonitor::dataUpdated()
 {
-    void *_a[] = { nullptr, const_cast<void*>(reinterpret_cast<const void*>(std::addressof(_t1))) };
-    QMetaObject::activate(this, &staticMetaObject, 1, _a);
+    QMetaObject::activate(this, &staticMetaObject, 1, nullptr);
 }
 
 // SIGNAL 2
-void PerformanceMonitor::dataUpdated()
-{
-    QMetaObject::activate(this, &staticMetaObject, 2, nullptr);
-}
-
-// SIGNAL 3
 void PerformanceMonitor::sendEvent(const PerformanceEvent & _t1)
 {
     void *_a[] = { nullptr, const_cast<void*>(reinterpret_cast<const void*>(std::addressof(_t1))) };
-    QMetaObject::activate(this, &staticMetaObject, 3, _a);
+    QMetaObject::activate(this, &staticMetaObject, 2, _a);
 }
 QT_WARNING_POP

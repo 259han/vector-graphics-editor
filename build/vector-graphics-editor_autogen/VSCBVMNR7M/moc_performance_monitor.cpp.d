@@ -102,7 +102,6 @@ F:/program/claudegraph/build/vector-graphics-editor_autogen/VSCBVMNR7M/moc_perfo
   C:/msys64/mingw64/include/c++/14.2.0/bits/utility.h \
   C:/msys64/mingw64/include/c++/14.2.0/bits/vector.tcc \
   C:/msys64/mingw64/include/c++/14.2.0/bits/version.h \
-  C:/msys64/mingw64/include/c++/14.2.0/cassert \
   C:/msys64/mingw64/include/c++/14.2.0/cctype \
   C:/msys64/mingw64/include/c++/14.2.0/cerrno \
   C:/msys64/mingw64/include/c++/14.2.0/chrono \
@@ -228,7 +227,6 @@ F:/program/claudegraph/build/vector-graphics-editor_autogen/VSCBVMNR7M/moc_perfo
   D:/Qt/6.8.2/mingw_64/include/QtCore/QTimer \
   D:/Qt/6.8.2/mingw_64/include/QtCore/QWaitCondition \
   D:/Qt/6.8.2/mingw_64/include/QtCore/q20functional.h \
-  D:/Qt/6.8.2/mingw_64/include/QtCore/q20iterator.h \
   D:/Qt/6.8.2/mingw_64/include/QtCore/q20memory.h \
   D:/Qt/6.8.2/mingw_64/include/QtCore/q20type_traits.h \
   D:/Qt/6.8.2/mingw_64/include/QtCore/q23utility.h \
@@ -281,13 +279,11 @@ F:/program/claudegraph/build/vector-graphics-editor_autogen/VSCBVMNR7M/moc_perfo
   D:/Qt/6.8.2/mingw_64/include/QtCore/qiterable.h \
   D:/Qt/6.8.2/mingw_64/include/QtCore/qiterator.h \
   D:/Qt/6.8.2/mingw_64/include/QtCore/qlatin1stringview.h \
-  D:/Qt/6.8.2/mingw_64/include/QtCore/qline.h \
   D:/Qt/6.8.2/mingw_64/include/QtCore/qlist.h \
   D:/Qt/6.8.2/mingw_64/include/QtCore/qlocale.h \
   D:/Qt/6.8.2/mingw_64/include/QtCore/qlogging.h \
   D:/Qt/6.8.2/mingw_64/include/QtCore/qmalloc.h \
   D:/Qt/6.8.2/mingw_64/include/QtCore/qmap.h \
-  D:/Qt/6.8.2/mingw_64/include/QtCore/qmargins.h \
   D:/Qt/6.8.2/mingw_64/include/QtCore/qmath.h \
   D:/Qt/6.8.2/mingw_64/include/QtCore/qmetacontainer.h \
   D:/Qt/6.8.2/mingw_64/include/QtCore/qmetatype.h \
@@ -301,11 +297,9 @@ F:/program/claudegraph/build/vector-graphics-editor_autogen/VSCBVMNR7M/moc_perfo
   D:/Qt/6.8.2/mingw_64/include/QtCore/qobjectdefs_impl.h \
   D:/Qt/6.8.2/mingw_64/include/QtCore/qoverload.h \
   D:/Qt/6.8.2/mingw_64/include/QtCore/qpair.h \
-  D:/Qt/6.8.2/mingw_64/include/QtCore/qpoint.h \
   D:/Qt/6.8.2/mingw_64/include/QtCore/qprocessordetection.h \
   D:/Qt/6.8.2/mingw_64/include/QtCore/qqueue.h \
   D:/Qt/6.8.2/mingw_64/include/QtCore/qreadwritelock.h \
-  D:/Qt/6.8.2/mingw_64/include/QtCore/qrect.h \
   D:/Qt/6.8.2/mingw_64/include/QtCore/qrefcount.h \
   D:/Qt/6.8.2/mingw_64/include/QtCore/qscopedpointer.h \
   D:/Qt/6.8.2/mingw_64/include/QtCore/qscopeguard.h \
@@ -314,8 +308,6 @@ F:/program/claudegraph/build/vector-graphics-editor_autogen/VSCBVMNR7M/moc_perfo
   D:/Qt/6.8.2/mingw_64/include/QtCore/qshareddata_impl.h \
   D:/Qt/6.8.2/mingw_64/include/QtCore/qsharedpointer.h \
   D:/Qt/6.8.2/mingw_64/include/QtCore/qsharedpointer_impl.h \
-  D:/Qt/6.8.2/mingw_64/include/QtCore/qsize.h \
-  D:/Qt/6.8.2/mingw_64/include/QtCore/qspan.h \
   D:/Qt/6.8.2/mingw_64/include/QtCore/qstring.h \
   D:/Qt/6.8.2/mingw_64/include/QtCore/qstringalgorithms.h \
   D:/Qt/6.8.2/mingw_64/include/QtCore/qstringbuilder.h \
@@ -362,28 +354,12 @@ F:/program/claudegraph/build/vector-graphics-editor_autogen/VSCBVMNR7M/moc_perfo
   D:/Qt/6.8.2/mingw_64/include/QtCore/qyieldcpu.h \
   D:/Qt/6.8.2/mingw_64/include/QtGui/QColor \
   D:/Qt/6.8.2/mingw_64/include/QtGui/QFont \
-  D:/Qt/6.8.2/mingw_64/include/QtGui/QPainter \
-  D:/Qt/6.8.2/mingw_64/include/QtGui/QPainterPath \
-  D:/Qt/6.8.2/mingw_64/include/QtGui/qbrush.h \
   D:/Qt/6.8.2/mingw_64/include/QtGui/qcolor.h \
   D:/Qt/6.8.2/mingw_64/include/QtGui/qfont.h \
-  D:/Qt/6.8.2/mingw_64/include/QtGui/qfontinfo.h \
-  D:/Qt/6.8.2/mingw_64/include/QtGui/qfontmetrics.h \
-  D:/Qt/6.8.2/mingw_64/include/QtGui/qimage.h \
-  D:/Qt/6.8.2/mingw_64/include/QtGui/qpaintdevice.h \
-  D:/Qt/6.8.2/mingw_64/include/QtGui/qpainter.h \
-  D:/Qt/6.8.2/mingw_64/include/QtGui/qpainterpath.h \
-  D:/Qt/6.8.2/mingw_64/include/QtGui/qpen.h \
-  D:/Qt/6.8.2/mingw_64/include/QtGui/qpixelformat.h \
-  D:/Qt/6.8.2/mingw_64/include/QtGui/qpixmap.h \
-  D:/Qt/6.8.2/mingw_64/include/QtGui/qpolygon.h \
-  D:/Qt/6.8.2/mingw_64/include/QtGui/qregion.h \
   D:/Qt/6.8.2/mingw_64/include/QtGui/qrgb.h \
   D:/Qt/6.8.2/mingw_64/include/QtGui/qrgba64.h \
-  D:/Qt/6.8.2/mingw_64/include/QtGui/qtextoption.h \
   D:/Qt/6.8.2/mingw_64/include/QtGui/qtgui-config.h \
   D:/Qt/6.8.2/mingw_64/include/QtGui/qtguiexports.h \
   D:/Qt/6.8.2/mingw_64/include/QtGui/qtguiglobal.h \
-  D:/Qt/6.8.2/mingw_64/include/QtGui/qtransform.h \
   D:/Qt/6.8.2/mingw_64/include/QtGui/qwindowdefs.h \
   D:/Qt/6.8.2/mingw_64/include/QtGui/qwindowdefs_win.h

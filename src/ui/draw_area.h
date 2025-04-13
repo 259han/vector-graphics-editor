@@ -31,8 +31,6 @@ public:
     // 性能监控相关方法
     void enablePerformanceMonitor(bool enable);
     bool isPerformanceMonitorEnabled() const;
-    void showPerformanceOverlay(bool show);
-    bool isPerformanceOverlayShown() const;
     QString getPerformanceReport() const;
     
     // 工厂访问

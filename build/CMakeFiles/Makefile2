@@ -79,8 +79,8 @@ clean: CMakeFiles/vector-graphics-editor_autogen.dir/clean
 # Target rules for target CMakeFiles/vector-graphics-editor.dir
 
 # All Build rule for target.
-CMakeFiles/vector-graphics-editor.dir/all: CMakeFiles/vector-graphics-editor_autogen_timestamp_deps.dir/all
 CMakeFiles/vector-graphics-editor.dir/all: CMakeFiles/vector-graphics-editor_autogen.dir/all
+CMakeFiles/vector-graphics-editor.dir/all: CMakeFiles/vector-graphics-editor_autogen_timestamp_deps.dir/all
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\vector-graphics-editor.dir\build.make CMakeFiles/vector-graphics-editor.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\vector-graphics-editor.dir\build.make CMakeFiles/vector-graphics-editor.dir/build
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=F:\program\claudegraph\build\CMakeFiles --progress-num=1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38 "Built target vector-graphics-editor"

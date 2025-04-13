@@ -51,7 +51,6 @@ private slots:
     
     // 性能监控相关
     void onTogglePerformanceMonitor(bool checked);
-    void onTogglePerformanceOverlay(bool checked);
     void onShowPerformanceReport();
     void onHighQualityRendering(bool checked);
 
@@ -154,7 +153,6 @@ private:
     
     // 性能监控相关
     QAction* m_performanceMonitorAction;
-    QAction* m_performanceOverlayAction;
     QAction* m_showPerformanceReportAction;
     QAction* m_highQualityRenderingAction;
     

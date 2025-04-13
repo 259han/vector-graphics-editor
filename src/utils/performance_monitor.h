@@ -7,10 +7,8 @@
 #include <QString>
 #include <QList>
 #include <QMutex>
-#include <QPainter>
 #include <QColor>
 #include <QFont>
-#include <QPainterPath>
 #include <memory>
 #include <QThread>
 #include <QQueue>
@@ -21,6 +19,7 @@
 #include <QReadWriteLock>
 #include <QSharedPointer>
 #include <functional>
+#include <atomic>
 
 /**
  * @brief 性能事件类型
@@ -30,7 +29,6 @@ enum PerformanceEventType {
     EVENT_END_MEASURE,      // 结束测量
     EVENT_FRAME_COMPLETED,  // 帧完成
     EVENT_RESET_DATA,       // 重置数据
-    EVENT_OVERLAY_TOGGLE,   // 覆盖层开关
     EVENT_CHANGE_ENABLED,   // 启用状态变更
     EVENT_CUSTOM_METRIC     // 自定义指标事件
 };
@@ -68,43 +66,48 @@ class PerformanceWorker : public QObject {
     
 public:
     explicit PerformanceWorker(QObject* parent = nullptr);
-    ~PerformanceWorker() override;
+    ~PerformanceWorker();
     
-    // 安全获取测量数据的副本
+    // 禁用复制
+    PerformanceWorker(const PerformanceWorker&) = delete;
+    PerformanceWorker& operator=(const PerformanceWorker&) = delete;
+    
+    void processEvents(); // 处理事件队列
+    int getCurrentFPS() const; // 获取当前帧率
+    
+    // 数据访问方法
     QMap<int, QList<qint64>> getMeasurementsCopy() const;
-    
-    // 安全获取帧率
-    int getCurrentFPS() const;
-    
-    // 安全获取单个指标的数据
     QList<qint64> getMeasurementData(int type) const;
-    
-    // 安全获取自定义名称
     QString getCustomName(int type) const;
     
-    // 获取最大样本数
-    int getMaxSamples() const { return m_maxSamples; }
-    
-    // 设置最大样本数并裁剪现有数据
+    // 设置最大采样数
     void setMaxSamples(int samplesCount);
-    
-    // 记录自定义事件
-    void recordCustomEvent(const QString& name, qint64 value);
+    int getMaxSamples() const { return m_maxSamples; }
     
     // 获取自定义事件数据
     QMap<QString, QList<qint64>> getCustomEventData() const;
     
 public slots:
-    void processEvent(const PerformanceEvent& event);
-    void processEvents();
-    void stop();
-    
+    void processEvent(const PerformanceEvent& event); // 处理单个事件
+    void stop(); // 停止工作
+
 signals:
     void measurementsUpdated();
     void statusChanged(bool enabled);
-    void overlayToggled(bool enabled);
-    
+
 private:
+    // 内部测量方法
+    void startMeasure(int type, const QString& customName = QString());
+    void endMeasure(int type);
+    void frameCompleted();
+    void resetMeasurements();
+    void recordMeasurement(int type, qint64 elapsedMs);
+    void recordCustomMeasurement(const QString& name, qint64 value);
+    
+    // 工具方法
+    double calculateAverage(const QList<qint64>& measurements) const;
+    qint64 calculateMax(const QList<qint64>& measurements) const;
+    
     // 计时器和测量数据
     mutable QReadWriteLock m_dataLock;     // 数据读写锁，保护测量数据
     QMap<int, QElapsedTimer> m_timers;
@@ -114,25 +117,12 @@ private:
     
     // 帧率计算
     QElapsedTimer m_fpsTimer;
-    int m_frameCount = 0;
+    std::atomic<int> m_frameCount; 
     std::atomic<int> m_currentFPS{0};
     
     // 内部状态
     int m_maxSamples = 100;
     std::atomic<bool> m_enabled{false};
-    std::atomic<bool> m_overlayEnabled{false};
-    
-    // 内部处理方法
-    void startMeasure(int type, const QString& customName);
-    void endMeasure(int type);
-    void frameCompleted();
-    void resetMeasurements();
-    void recordMeasurement(int type, qint64 elapsedMs);
-    void recordCustomMeasurement(const QString& name, qint64 value);
-    
-    // 计算方法
-    double calculateAverage(const QList<qint64>& measurements) const;
-    qint64 calculateMax(const QList<qint64>& measurements) const;
     
     friend class PerformanceMonitor;
 };
@@ -164,11 +154,6 @@ public:
         PathProcessTime,    // 路径处理时间
         RenderPrepTime,     // 渲染准备时间
         
-        // 系统资源指标
-        CpuUsage,           // CPU使用率
-        MemoryUsage,        // 内存使用
-        ThreadCount,        // 线程数量
-        
         // 文件格式操作相关指标
         SaveToCustomFormat, // 保存自定义格式耗时
         LoadFromCustomFormat, // 加载自定义格式耗时
@@ -190,26 +175,6 @@ public:
         MetricTypeCount     // 指标类型总数
     };
     
-    /**
-     * @brief 性能图表显示模式
-     */
-    enum ChartDisplayMode {
-        LineChart,      // 折线图模式
-        BarChart,       // 柱状图模式
-        AreaChart,      // 面积图模式
-        DotChart        // 点状图模式
-    };
-    
-    /**
-     * @brief 覆盖层位置
-     */
-    enum OverlayPosition {
-        TopLeft,        // 左上角
-        TopRight,       // 右上角
-        BottomLeft,     // 左下角
-        BottomRight     // 右下角
-    };
-
     /**
      * @brief 性能监控类别枚举
      */
@@ -262,17 +227,6 @@ public:
      */
     bool isEnabled() const;
 
-    /**
-     * @brief 启用或禁用性能覆盖层
-     * @param enable 是否启用
-     */
-    void setOverlayEnabled(bool enable);
-
-    /**
-     * @brief 检查性能覆盖层是否启用
-     * @return 是否启用
-     */
-    bool isOverlayEnabled() const;
 
     /**
      * @brief 开始测量指定类型的性能指标
@@ -331,33 +285,16 @@ public:
     QMap<QString, QList<qint64>> getCustomEventData() const;
 
     /**
-     * @brief 渲染性能覆盖层
-     * @param painter QPainter对象
-     * @param rect 渲染区域
-     */
-    void renderOverlay(QPainter* painter, const QRectF& rect);
-
-    /**
      * @brief 生成性能报告文本
      * @return 性能报告文本
      */
     QString getPerformanceReport() const;
 
     /**
-     * @brief 重置性能数据
-     */
-    void resetData();
-
-    /**
      * @brief 设置可见的指标类型
      * @param metrics 要显示的指标类型列表
      */
     void setVisibleMetrics(const QVector<MetricType>& metrics);
-    
-    /**
-     * @brief 重置所有测量数据
-     */
-    void resetMeasurements();
     
     /**
      * @brief 设置性能采样数量
@@ -394,182 +331,121 @@ public:
     };
 
     /**
-     * @brief 设置图表显示模式
-     * @param mode 显示模式枚举值
-     */
-    void setChartDisplayMode(ChartDisplayMode mode);
-    
-    /**
-     * @brief 获取图表显示模式
-     * @return 当前模式
-     */
-    ChartDisplayMode getChartDisplayMode() const;
-    
-    /**
-     * @brief 设置覆盖层位置
-     * @param position 位置枚举值
-     */
-    void setOverlayPosition(OverlayPosition position);
-    
-    /**
-     * @brief 获取覆盖层位置
-     * @return 当前位置
-     */
-    OverlayPosition getOverlayPosition() const;
-    
-    /**
-     * @brief 设置覆盖层透明度
-     * @param opacity 透明度值(0.0-1.0)
-     */
-    void setOverlayOpacity(double opacity);
-    
-    /**
-     * @brief 获取覆盖层透明度
-     * @return 当前透明度
-     */
-    double getOverlayOpacity() const;
-    
-    /**
-     * @brief 设置覆盖层大小
-     * @param width 宽度
-     * @param height 高度
-     */
-    void setOverlaySize(int width, int height);
-    
-    /**
-     * @brief 计算覆盖层在指定视口中的位置
-     * @param viewportRect 视口矩形
-     * @return 覆盖层的位置
-     */
-    QRectF calculateOverlayRect(const QRectF& viewportRect) const;
-
-    /**
-     * @brief 注册自定义数据回调函数
+     * @brief 注册指标回调函数，用于收集自定义指标
      * @param name 回调名称
-     * @param callback 回调函数，接收指标映射并填充数据
+     * @param callback 回调函数
      */
     void registerMetricCallback(const QString& name, std::function<void(QMap<QString, QVariant>&)> callback);
 
 signals:
     /**
-     * @brief 状态变更信号
-     * @param enabled 新状态
+     * @brief 性能监控启用状态变更信号
+     * @param enabled 是否启用
      */
     void enabledChanged(bool enabled);
-
-    /**
-     * @brief 覆盖层状态变更信号
-     * @param enabled 新状态
-     */
-    void overlayEnabledChanged(bool enabled);
-
+    
     /**
      * @brief 数据更新信号
      */
     void dataUpdated();
-
+    
     /**
-     * @brief 向工作线程发送事件的信号
-     * @param event 性能事件
+     * @brief 内部用，向工作线程发送事件的信号
      */
     void sendEvent(const PerformanceEvent& event);
 
 private:
-    // 单例模式实现
-    PerformanceMonitor(QObject* parent = nullptr);
-    ~PerformanceMonitor();
+    // 私有构造函数，实现单例模式
+    explicit PerformanceMonitor(QObject* parent = nullptr);
+    ~PerformanceMonitor() override;
+    
+    // 禁止拷贝
     PerformanceMonitor(const PerformanceMonitor&) = delete;
     PerformanceMonitor& operator=(const PerformanceMonitor&) = delete;
-
-    // 实例指针，用于isInstanceCreated方法
+    
+    // 单例实例指针
     static PerformanceMonitor* s_instancePtr;
-
-    // 获取指标的可读名称
-    QString getMetricName(MetricType type) const;
     
-    // 获取指标的颜色
-    QColor getMetricColor(MetricType type) const;
-
-    // 渲染性能图表
-    void renderPerformanceGraph(QPainter* painter, const QRectF& rect, const QMap<MetricType, QList<qint64>>& data);
-
-    // 渲染文本信息
-    void renderTextInfo(QPainter* painter, const QRectF& rect);
-    
-    // 将事件添加到队列
-    void enqueueEvent(const PerformanceEvent& event);
-    
-    // 检查是否需要处理事件队列
-    void checkQueue();
-    
-    // 立即处理队列中的所有事件
-    void flushEvents();
-    
-    // 系统资源监控相关
-    void monitorCpuUsage();
-    void monitorMemoryUsage();
-    void monitorThreadCount();
-    void initializeResourceMonitoring();
-    double calculateAverage(const QList<qint64>& measurements) const;
-
-    // 覆盖层配置
-    ChartDisplayMode m_chartMode = LineChart;
-    OverlayPosition m_overlayPosition = TopRight;
-    double m_overlayOpacity = 0.85;
-    int m_overlayWidth = 350;
-    int m_overlayHeight = 300;
-    
-    // 根据显示模式绘制图表
-    void renderChartByMode(QPainter* painter, const QRectF& rect, const QMap<MetricType, QList<qint64>>& data);
-    void renderLineChart(QPainter* painter, const QRectF& rect, const QMap<MetricType, QList<qint64>>& data, qint64 maxVal);
-    void renderBarChart(QPainter* painter, const QRectF& rect, const QMap<MetricType, QList<qint64>>& data, qint64 maxVal);
-    void renderAreaChart(QPainter* painter, const QRectF& rect, const QMap<MetricType, QList<qint64>>& data, qint64 maxVal);
-    void renderDotChart(QPainter* painter, const QRectF& rect, const QMap<MetricType, QList<qint64>>& data, qint64 maxVal);
-    
-    // 辅助绘图方法
-    void drawChartGrid(QPainter* painter, const QRectF& rect, qint64 maxVal);
-    void drawChartLegend(QPainter* painter, const QRectF& rect, const QMap<MetricType, QList<qint64>>& data);
-
-private:
-    // 状态缓存（避免频繁的线程同步）
-    std::atomic<bool> m_enabled{false};
-    std::atomic<bool> m_overlayEnabled{false};
-    
-    // 事件队列和同步
-    QMutex m_queueMutex;
-    QQueue<PerformanceEvent> m_eventQueue;
-    QWaitCondition m_queueCondition;
-    
-    // 工作线程和对象
+    // 工作线程
     QThread* m_workerThread;
     PerformanceWorker* m_worker;
     
-    // 处理定时器
+    // 性能指标颜色映射
+    QMap<MetricType, QColor> m_metricColors;
+    
+    // 性能指标名称映射
+    QMap<MetricType, QString> m_metricNames;
+    
+    // 可见的指标类型
+    QSet<MetricType> m_visibleMetrics;
+    
+    // 事件队列和互斥锁
+    QQueue<PerformanceEvent> m_eventQueue;
+    QMutex m_queueMutex;
+    QWaitCondition m_queueCondition;
+    
+    // 处理队列的定时器
     QTimer* m_processTimer;
     int m_processingInterval = 50; // ms
+    
+    // 内部状态
+    std::atomic<bool> m_initialized{false};
+    std::atomic<bool> m_isShuttingDown{false};
+    std::atomic<bool> m_enabled{false};
 
-    // 图形数据大小设置
-    float m_graphHeight = 120.0f;
-    int m_graphUpdateInterval = 500; // ms
+    // 监控开始时间
+    QDateTime m_startTime;
+
+    // 注册的指标回调函数映射
+    QMap<QString, std::function<void(QMap<QString, QVariant>&)>> m_metricCallbacks;
     
-    // 显示选项
-    QSet<MetricType> m_visibleMetrics;
-    QFont m_overlayFont;
-    
-    // 渲染缓存
+    // 渲染相关成员
     mutable QMutex m_renderLock;
     mutable QMap<MetricType, QList<qint64>> m_renderData;
     mutable QDateTime m_lastDataSync;
     
-    // 自定义指标回调
-    QMap<QString, std::function<void(QMap<QString, QVariant>&)>> m_metricCallbacks;
+    // 获取指标名称
+    QString getMetricName(MetricType type) const;
+    
+    // 内部方法 - 将事件放入队列
+    void enqueueEvent(const PerformanceEvent& event);
+    
+    // 定时处理队列的槽
+    void checkQueue();
+    
+    // 处理队列中的所有事件（清空队列）
+    void flushEvents();
+    
+    // 格式化持续时间为可读字符串
+    QString formatDuration(qint64 msecs) const;
+    
+    // 计算平均值的辅助方法
+    double calculateAverage(const QList<qint64>& measurements) const;
 };
 
-// 轻量级性能监控宏定义
-#define PERF_START(category) PerformanceMonitor::instance().startMeasure(PerformanceMonitor::category)
-#define PERF_END(category) PerformanceMonitor::instance().endMeasure(PerformanceMonitor::category)
-#define PERF_SCOPE(category) PerformanceMonitor::ScopedTimer __perf_guard##__LINE__(PerformanceMonitor::category)
-#define PERF_FRAME_COMPLETED() PerformanceMonitor::instance().frameCompleted()
-#define PERF_EVENT(name, value) PerformanceMonitor::instance().recordEvent(name, value)
+// 便捷宏 - 启用条件编译
+#ifdef QT_DEBUG
+    // 作用域性能测量
+    #define PERF_SCOPE(type) PerformanceMonitor::ScopedTimer scopedTimer##__LINE__(PerformanceMonitor::type)
+    
+    // 开始测量
+    #define PERF_START(type) PerformanceMonitor::instance().startMeasure(PerformanceMonitor::type)
+    
+    // 结束测量
+    #define PERF_END(type) PerformanceMonitor::instance().endMeasure(PerformanceMonitor::type)
+    
+    // 记录自定义事件
+    #define PERF_EVENT(name, value) PerformanceMonitor::instance().recordEvent(name, value)
+    
+    // 帧完成通知
+    #define PERF_FRAME_COMPLETED() PerformanceMonitor::instance().frameCompleted()
+#else
+    // 在非调试版本中，禁用所有宏
+    #define PERF_SCOPE(type)
+    #define PERF_START(type)
+    #define PERF_END(type)
+    #define PERF_EVENT(name, value)
+    #define PERF_FRAME_COMPLETED()
+#endif
 
 #endif // PERFORMANCE_MONITOR_H 

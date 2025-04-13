@@ -35,6 +35,11 @@ target_link_libraries(${PROJECT_NAME}
     Qt6::Svg
 )
 
+# 在Windows平台下链接PDH库（用于CPU性能监控）
+if(WIN32)
+    target_link_libraries(${PROJECT_NAME} PRIVATE pdh)
+endif()
+
 # 设置编译器选项
 if(MSVC)
     # 为 MSVC 添加 /utf-8 和 /Zc:__cplusplus 选项

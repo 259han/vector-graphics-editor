@@ -472,161 +472,57 @@ void DrawArea::mouseReleaseEvent(QMouseEvent *event)
 
 void DrawArea::keyPressEvent(QKeyEvent *event)
 {
-    // 检查性能监控是否启用
-    bool perfEnabled = isPerformanceMonitorEnabled();
-    bool overlayShown = isPerformanceOverlayShown();
+    // 检查是否启用了性能监控
+    bool perfEnabled = PerformanceMonitor::isInstanceCreated() && PerformanceMonitor::instance().isEnabled();
     
-    // 处理Ctrl键
-    if (event->key() == Qt::Key_Control) {
-        m_ctrlKeyPressed = true;
-        if (m_selectionManager) {
-            m_selectionManager->setSelectionMode(SelectionManager::MultiSelection);
-        }
-    }
-    
-    // 处理复制、剪切、粘贴的快捷键
-    if (event->modifiers() & Qt::ControlModifier) {
+    // 根据按键处理不同的操作
+    if (event->modifiers() == Qt::ControlModifier) {
         switch (event->key()) {
             case Qt::Key_C: // 复制
-                copySelectedItems();
-                copyToSystemClipboard();
-                event->accept();
-                return;
-                
-            case Qt::Key_X: // 剪切
-                cutSelectedItems();
+                if (m_selectionManager && !m_selectionManager->getSelectedItems().isEmpty()) {
+                    QGraphicsScene* scene = m_selectionManager->scene();
+                    if (!scene) {
+                        Logger::warning("没有场景可用于复制");
+                        break;
+                    }
+                    
+                    QList<QGraphicsItem*> selectedItems = scene->selectedItems();
+                    if (selectedItems.isEmpty()) {
+                        break;
+                    }
+                    
+                    copySelectedItems();
+                }
                 event->accept();
                 return;
                 
             case Qt::Key_V: // 粘贴
-                // 注释掉这部分代码，让 EditState 类处理粘贴操作
-                // if (!m_clipboardData.isEmpty()) {
-                //     pasteItems();
-                // } else if (canPasteFromClipboard()) {
-                //     pasteFromSystemClipboard();
-                // }
-                // event->accept();
-                // return;
-                // 不处理粘贴事件，传递给当前状态处理
-                break;
+                pasteFromSystemClipboard();
+                event->accept();
+                return;
                 
-            case Qt::Key_A: // 全选
-                if (m_currentState && m_currentState->getStateType() == EditorState::EditState) {
-                    selectAllGraphics();
-                    event->accept();
-                    return;
+            case Qt::Key_X: // 剪切
+                if (m_selectionManager && !m_selectionManager->getSelectedItems().isEmpty()) {
+                    copySelectedItems();
+                    deleteSelectedGraphics();
                 }
-                break;
+                event->accept();
+                return;
+                
+            case Qt::Key_F9: // 切换性能监控开关
+                if (PerformanceMonitor::isInstanceCreated()) {
+                    bool isEnabled = PerformanceMonitor::instance().isEnabled();
+                    enablePerformanceMonitor(!isEnabled);
+                }
+                event->accept();
+                update();
+                return;
+                
+            // 其他快捷键...
         }
     }
     
-    // 组合键: Ctrl+Shift+P 切换性能监控
-    if (event->modifiers() == (Qt::ControlModifier | Qt::ShiftModifier) && event->key() == Qt::Key_P) {
-        enablePerformanceMonitor(!perfEnabled);
-        event->accept();
-        return;
-    }
-    
-    // 组合键: Ctrl+Shift+O 切换性能覆盖层
-    if (event->modifiers() == (Qt::ControlModifier | Qt::ShiftModifier) && event->key() == Qt::Key_O) {
-        showPerformanceOverlay(!overlayShown);
-        event->accept();
-        return;
-    }
-    
-    // 以下快捷键仅在性能覆盖层显示时有效
-    if (perfEnabled && overlayShown) {
-        // 组合键: Ctrl+Shift+1/2/3/4 切换图表模式
-        if (event->modifiers() == (Qt::ControlModifier | Qt::ShiftModifier)) {
-            auto& monitor = PerformanceMonitor::instance();
-            
-            switch (event->key()) {
-                case Qt::Key_1:
-                    // 切换为折线图
-                    monitor.setChartDisplayMode(PerformanceMonitor::LineChart);
-                    Logger::info("性能监控图表模式已切换为: 折线图");
-                    viewport()->update();
-                    event->accept();
-                    return;
-                    
-                case Qt::Key_2:
-                    // 切换为柱状图
-                    monitor.setChartDisplayMode(PerformanceMonitor::BarChart);
-                    Logger::info("性能监控图表模式已切换为: 柱状图");
-                    viewport()->update();
-                    event->accept();
-                    return;
-                    
-                case Qt::Key_3:
-                    // 切换为面积图
-                    monitor.setChartDisplayMode(PerformanceMonitor::AreaChart);
-                    Logger::info("性能监控图表模式已切换为: 面积图");
-                    viewport()->update();
-                    event->accept();
-                    return;
-                    
-                case Qt::Key_4:
-                    // 切换为散点图
-                    monitor.setChartDisplayMode(PerformanceMonitor::DotChart);
-                    Logger::info("性能监控图表模式已切换为: 散点图");
-                    viewport()->update();
-                    event->accept();
-                    return;
-                    
-                case Qt::Key_Up:
-                    // 增加透明度
-                    {
-                        double opacity = monitor.getOverlayOpacity();
-                        monitor.setOverlayOpacity(opacity + 0.05);
-                        viewport()->update();
-                        event->accept();
-                        return;
-                    }
-                    
-                case Qt::Key_Down:
-                    // 减少透明度
-                    {
-                        double opacity = monitor.getOverlayOpacity();
-                        monitor.setOverlayOpacity(opacity - 0.05);
-                        viewport()->update();
-                        event->accept();
-                        return;
-                    }
-                    
-                case Qt::Key_M:
-                    // 切换位置
-                    {
-                        auto position = monitor.getOverlayPosition();
-                        // 循环切换位置
-                        position = static_cast<PerformanceMonitor::OverlayPosition>((position + 1) % 4);
-                        monitor.setOverlayPosition(position);
-                        
-                        QString posText;
-                        switch (position) {
-                            case PerformanceMonitor::TopLeft:
-                                posText = "左上角";
-                                break;
-                            case PerformanceMonitor::TopRight:
-                                posText = "右上角";
-                                break;
-                            case PerformanceMonitor::BottomLeft:
-                                posText = "左下角";
-                                break;
-                            case PerformanceMonitor::BottomRight:
-                                posText = "右下角";
-                                break;
-                        }
-                        
-                        Logger::info(QString("性能监控覆盖层位置已切换为: %1").arg(posText));
-                        viewport()->update();
-                        event->accept();
-                        return;
-                    }
-            }
-        }
-    }
-    
-    // 如果没有处理，传递给基类
+    // 继续默认处理
     QGraphicsView::keyPressEvent(event);
 }
 
@@ -1506,76 +1402,77 @@ void DrawArea::setHighQualityRendering(bool enable)
 // 实现性能监控相关方法
 void DrawArea::enablePerformanceMonitor(bool enable)
 {
-    // 防止重入，避免死锁
-    static bool isProcessing = false;
-    if (isProcessing) {
-        Logger::warning("性能监控状态切换正在进行中，忽略重复请求");
-        return;
-    }
-    isProcessing = true;
+    Logger::info(QString("DrawArea::enablePerformanceMonitor: 设置性能监控状态为 %1").arg(enable ? "启用" : "禁用"));
     
-    try {
-        // 获取性能监控实例并设置状态
-        PerformanceMonitor& monitor = PerformanceMonitor::instance();
-        monitor.setEnabled(enable);
+    if (!PerformanceMonitor::isInstanceCreated()) {
+        Logger::warning("DrawArea::enablePerformanceMonitor: 性能监控实例尚未创建");
         
-        // 断开之前可能存在的连接，避免重复连接
-        disconnect(&monitor, &PerformanceMonitor::enabledChanged, this, nullptr);
-        disconnect(&monitor, &PerformanceMonitor::overlayEnabledChanged, this, nullptr);
-        
-        // 连接状态变更信号到视图更新
-        connect(&monitor, &PerformanceMonitor::enabledChanged,
-                this, [this](bool enabled) {
-                    viewport()->update();
-                    Logger::info(QString("性能监控状态已变更为%1").arg(enabled ? "启用" : "禁用"));
-                });
-        
-        connect(&monitor, &PerformanceMonitor::overlayEnabledChanged,
-                this, [this](bool enabled) {
-                    viewport()->update();
-                });
-        
-        // 如果启用，生成一些示例数据
-        if (enable) {
-            // 使用轻量级宏产生示例数据
-            for (int i = 0; i < 5; i++) {
-                // 模拟各种操作的性能数据
-                PERF_START(UpdateTime);
-                QThread::msleep(5);
-                PERF_END(UpdateTime);
-                
-                PERF_START(EventTime);
-                QThread::msleep(3);
-                PERF_END(EventTime);
-                
-                PERF_START(DrawTime);
-                QThread::msleep(7);
-                PERF_END(DrawTime);
-                
-                PERF_START(LogicTime);
-                QThread::msleep(4);
-                PERF_END(LogicTime);
-                
-                // 记录一些自定义事件
-                PERF_EVENT("InitSample", i);
-                
-                // 通知帧完成
-                PERF_FRAME_COMPLETED();
-            }
-            
-            Logger::info("性能监控已启用，并生成了初始示例数据");
-        } else {
-            Logger::info("性能监控已禁用");
+        // 尝试初始化实例
+        try {
+            // 首次尝试访问时会触发实例创建
+            PerformanceMonitor::instance();
+            Logger::info("DrawArea::enablePerformanceMonitor: 已成功创建性能监控实例");
+        } catch (const std::exception& e) {
+            Logger::error(QString("DrawArea::enablePerformanceMonitor: 创建性能监控实例失败 - %1").arg(e.what()));
+            return;
+        } catch (...) {
+            Logger::error("DrawArea::enablePerformanceMonitor: 创建性能监控实例失败 - 未知错误");
+            return;
         }
     }
-    catch (const std::exception& e) {
-        Logger::error(QString("请求启用性能监控时发生异常: %1").arg(e.what()));
-    }
-    catch (...) {
-        Logger::error("请求启用性能监控时发生未知异常");
+    
+    PerformanceMonitor& monitor = PerformanceMonitor::instance();
+    
+    // 如果已经处于目标状态，则不需要进一步操作
+    if (monitor.isEnabled() == enable) {
+        Logger::info(QString("DrawArea::enablePerformanceMonitor: 性能监控已经%1，无需变更").arg(enable ? "启用" : "禁用"));
+        return;
     }
     
-    isProcessing = false;
+    // 设置监控状态
+    monitor.setEnabled(enable);
+    
+    // 断开所有旧连接
+    disconnect(&monitor, &PerformanceMonitor::enabledChanged, this, nullptr);
+    disconnect(&monitor, &PerformanceMonitor::dataUpdated, this, nullptr);
+    
+    // 如果启用，添加新连接
+    if (enable) {
+        // 状态变更时更新
+        connect(&monitor, &PerformanceMonitor::enabledChanged, 
+                this, [this](bool enabled) {
+                    Logger::info(QString("DrawArea: 性能监控状态变更为 %1").arg(enabled ? "启用" : "禁用"));
+                    update(); // 刷新视图
+                });
+        
+        // 数据更新时刷新视图
+        connect(&monitor, &PerformanceMonitor::dataUpdated,
+                this, [this]() {
+                    // 仅当显示性能数据时才刷新
+                    if (PerformanceMonitor::instance().isEnabled()) {
+                        update();
+                    }
+                });
+        
+        // 设置可见指标
+        QVector<PerformanceMonitor::MetricType> visibleMetrics = {
+            PerformanceMonitor::FrameTime,
+            PerformanceMonitor::DrawTime, 
+            PerformanceMonitor::UpdateTime,
+            PerformanceMonitor::ShapesDrawTime
+        };
+        monitor.setVisibleMetrics(visibleMetrics);
+        
+        // 设置样本数
+        monitor.setSamplesCount(150);
+        
+        Logger::info("DrawArea::enablePerformanceMonitor: 性能监控已启用并配置");
+    } else {
+        Logger::info("DrawArea::enablePerformanceMonitor: 性能监控已禁用");
+    }
+    
+    // 更新场景
+    update();
 }
 
 bool DrawArea::isPerformanceMonitorEnabled() const
@@ -1588,63 +1485,6 @@ bool DrawArea::isPerformanceMonitorEnabled() const
     try {
         // 实例已创建，获取启用状态
         return PerformanceMonitor::instance().isEnabled();
-    } catch (...) {
-        // 如果发生异常，则认为未启用
-        return false;
-    }
-}
-
-void DrawArea::showPerformanceOverlay(bool show)
-{
-    // 防止重入，避免死锁
-    static bool isProcessing = false;
-    if (isProcessing) {
-        Logger::warning("性能覆盖层状态切换正在进行中，忽略重复请求");
-        return;
-    }
-    isProcessing = true;
-    
-    try {
-        // 检查性能监控是否已初始化且已启用
-        bool monitorEnabled = isPerformanceMonitorEnabled();
-        
-        // 如果要显示覆盖层但性能监控未启用，先启用性能监控
-        if (show && !monitorEnabled) {
-            Logger::info("需要先启用性能监控才能显示覆盖层");
-            // 先启用性能监控 - 这会初始化PerformanceMonitor实例
-            enablePerformanceMonitor(true);
-        }
-        
-        // 使用引用获取单例实例
-        try {
-            // 设置覆盖层状态 - 在异步设计中这是非阻塞操作
-            PerformanceMonitor::instance().setOverlayEnabled(show);
-            // 记录请求日志
-            Logger::info(QString("性能覆盖层%1请求已发送").arg(show ? "显示" : "隐藏"));
-        } catch (const std::exception& e) {
-            Logger::error(QString("设置性能覆盖层状态失败: %1").arg(e.what()));
-        }
-    }
-    catch (const std::exception& e) {
-        Logger::error(QString("请求设置性能覆盖层时发生异常: %1").arg(e.what()));
-    }
-    catch (...) {
-        Logger::error("请求设置性能覆盖层时发生未知异常");
-    }
-    
-    isProcessing = false;
-}
-
-bool DrawArea::isPerformanceOverlayShown() const
-{
-    // 首先检查实例是否已创建
-    if (!PerformanceMonitor::isInstanceCreated()) {
-        return false;
-    }
-    
-    try {
-        // 实例已创建，获取覆盖层状态
-        return PerformanceMonitor::instance().isOverlayEnabled();
     } catch (...) {
         // 如果发生异常，则认为未启用
         return false;
@@ -1665,7 +1505,7 @@ QString DrawArea::getPerformanceReport() const
     }
 }
 
-// 添加paintEvent实现，以支持性能覆盖层
+// 添加paintEvent实现，以支持性能数据收集
 void DrawArea::paintEvent(QPaintEvent *event)
 {
     // 整体绘制时间测量
@@ -1712,12 +1552,7 @@ void DrawArea::paintEvent(QPaintEvent *event)
         // 此处可添加额外的路径处理代码
     }
     
-    // 渲染性能覆盖层（如果启用）
-    if (isPerformanceMonitorEnabled() && isPerformanceOverlayShown()) {
-        QPainter painter(viewport());
-        QRectF viewRect = QRectF(0, 0, viewport()->width(), viewport()->height());
-        PerformanceMonitor::instance().renderOverlay(&painter, viewRect);
-    }
+    // 移除性能覆盖层渲染代码
     
     // 记录可见区域统计信息
     if (m_scene) {
