@@ -1,8 +1,16 @@
-bd.sh
+# 忽略所有 .sh 脚本文件
+*.sh
+
+# 忽略 .vscode 目录及其所有内容
 .vscode/
+
+# 忽略 build 目录及其所有内容
 build/
+
+# 忽略 logs 目录及其所有内容
 logs/
 
-CMakeUserPresets.json
+CMakePresets.json
 
-
+# 忽略所有 .gitignore 文件
+*.gitignore
