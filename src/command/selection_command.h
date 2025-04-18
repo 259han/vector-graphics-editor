@@ -16,7 +16,6 @@ public:
     enum SelectionCommandType {
         MoveSelection,   // 移动选择区域
         DeleteSelection  // 删除选择区域
-        // 裁剪功能已移至future/clip目录
     };
 
     // 构造函数
@@ -43,9 +42,6 @@ public:
     // 设置删除选择区域的信息
     void setDeleteInfo(const QList<QGraphicsItem*>& items);
     
-    // 裁剪功能已移至future/clip目录
-    // void setClipInfo(const QList<QGraphicsItem*>& originalItems, 
-    //                  const QList<QGraphicsItem*>& clippedItems);
 
 private:
     DrawArea* m_drawArea;
@@ -64,9 +60,6 @@ private:
     };
     QList<ItemState> m_itemStates;
     
-    // 裁剪功能已移至future/clip目录
-    // QList<QGraphicsItem*> m_originalItems;
-    // QList<QGraphicsItem*> m_clippedItems;
     
     // 保存图形项的状态
     void saveItemStates();

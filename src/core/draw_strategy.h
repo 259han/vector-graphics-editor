@@ -5,6 +5,8 @@
 #include <QPointF>
 #include <vector>
 #include <QPainterPath>
+#include <map>
+#include <utility> 
 
 class DrawStrategy {
 public:
@@ -52,11 +54,11 @@ public:
     void setColor(const QColor& color) override { m_color = color; }
     void setLineWidth(int width) override { m_lineWidth = width; }
     
-private:
     // 计算n阶Bezier曲线上的点
     QPointF calculateBezierPoint(const std::vector<QPointF>& controlPoints, double t) const;
-    // 计算二项式系数C(n,k)
-    double binomialCoefficient(int n, int k) const;
+private:
+    
+
 };
 
 #endif // DRAW_STRATEGY_H

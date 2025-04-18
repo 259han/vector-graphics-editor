@@ -295,7 +295,6 @@ void GraphicItem::setScale(const QPointF& scale)
 
 void GraphicItem::setScale(qreal scale)
 {
-    // Default implementation sets scale uniformly
     QPointF newScale(scale, scale);
     if (m_scale != newScale) {
         m_scale = newScale;

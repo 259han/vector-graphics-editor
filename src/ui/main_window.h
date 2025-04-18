@@ -28,7 +28,7 @@ protected:
 private slots:
     void onDrawActionTriggered(QAction* action);
     void onTransformActionTriggered(QAction* action);
-    void onLayerActionTriggered(QAction* action);
+    void onLayerActionTriggered(QAction* action);//图层控制
     void onEditActionTriggered(QAction* action);
     void onFillColorTriggered();
     void onFillToolTriggered();

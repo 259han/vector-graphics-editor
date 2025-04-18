@@ -433,64 +433,47 @@ void DrawState::updatePreviewItem(DrawArea* drawArea)
         case Graphic::BEZIER: {
             // 贝塞尔曲线预览
             if (m_bezierControlPoints.size() >= 2) {
-                // 创建Path但不自己计算曲线点，只添加moveTo和控制点
                 QPainterPath path;
-                // 对于两个点是直线
+
+                // 使用策略类统一算法
+                BezierDrawStrategy strategy;  // 创建策略对象复用逻辑
+                strategy.setColor(m_lineColor);  // 颜色/线宽参数可忽略，预览时仅需计算路径
+                strategy.setLineWidth(m_lineWidth);
+
+                // 直接调用策略类的绘制逻辑生成路径
                 if (m_bezierControlPoints.size() == 2) {
+                    // 两点直线
                     path.moveTo(m_bezierControlPoints[0]);
                     path.lineTo(m_bezierControlPoints[1]);
-                } else if (m_bezierControlPoints.size() == 3) {
-                    // 2阶贝塞尔曲线
-                    path.moveTo(m_bezierControlPoints[0]);
-                    path.quadTo(m_bezierControlPoints[1], m_bezierControlPoints[2]);
-                } else if (m_bezierControlPoints.size() == 4) {
-                    // 3阶贝塞尔曲线
-                    path.moveTo(m_bezierControlPoints[0]);
-                    path.cubicTo(m_bezierControlPoints[1], m_bezierControlPoints[2], m_bezierControlPoints[3]);
                 } else {
-                    // 高阶贝塞尔曲线，使用与BezierDrawStrategy相同的算法
+                    // 高阶贝塞尔：复用优化算法
                     path.moveTo(m_bezierControlPoints[0]);
-                    const int steps = 100;
-                    for (int i = 1; i <= steps; ++i) {
-                        double t = static_cast<double>(i) / steps;
-                        
-                        // 使用伯恩斯坦公式计算贝塞尔曲线点，与BezierDrawStrategy保持一致
-                        int n = m_bezierControlPoints.size() - 1;
-                        double x = 0.0, y = 0.0;
-                        
-                        for (int j = 0; j <= n; j++) {
-                            // 二项式系数 * t^j * (1-t)^(n-j)
-                            double coef = 1.0;
-                            // 简化计算二项式系数，只处理最常见的情况
-                            if (j == 0 || j == n) {
-                                coef = 1.0;
-                            } else {
-                                // 计算二项式系数C(n,j)
-                                coef = 1.0;
-                                for (int k = 1; k <= j; k++) {
-                                    coef *= (n - k + 1);
-                                    coef /= k;
-                                }
-                            }
-                            
-                            double bern = coef * pow(t, j) * pow(1 - t, n - j);
-                            x += bern * m_bezierControlPoints[j].x();
-                            y += bern * m_bezierControlPoints[j].y();
-                        }
-                        
-                        path.lineTo(QPointF(x, y));
+                    
+                    // 1. 动态计算步长（直接复用策略类中的逻辑）
+                    double totalPolylineLength = 0.0;
+                    for (size_t i = 1; i < m_bezierControlPoints.size(); ++i) {
+                        totalPolylineLength += QLineF(m_bezierControlPoints[i-1], m_bezierControlPoints[i]).length();
+                    }
+                    const double densityFactor = 5.0;
+                    const int minSteps = 20, maxSteps = 500;
+                    int numSteps = std::clamp(static_cast<int>(totalPolylineLength * densityFactor), minSteps, maxSteps);
+
+                    // 2. 使用策略类计算曲线点
+                    for (int step = 1; step <= numSteps; ++step) {
+                        double t = static_cast<double>(step) / numSteps;
+                        QPointF p = strategy.calculateBezierPoint(m_bezierControlPoints, t); 
+                        path.lineTo(p);
                     }
                 }
 
-                // 如果预览项不存在，创建新的
+                // 更新预览图形项
                 if (!m_previewItem) {
                     m_previewItem = new QGraphicsPathItem(path);
                     QPen pen(m_lineColor, m_lineWidth);
-                    pen.setStyle(Qt::DashLine); // 使用虚线作为预览
+                    pen.setStyle(Qt::DashLine);
                     static_cast<QGraphicsPathItem*>(m_previewItem)->setPen(pen);
                     drawArea->scene()->addItem(m_previewItem);
                 } else {
-                    // 如果预览项已存在，直接更新路径
                     static_cast<QGraphicsPathItem*>(m_previewItem)->setPath(path);
                 }
             }

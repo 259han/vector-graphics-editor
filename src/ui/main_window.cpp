@@ -88,6 +88,7 @@ MainWindow::MainWindow(QWidget *parent)
         m_showPerformanceReportAction->setEnabled(false);
     }
 
+
     // 设置性能监控
     setupPerformanceMonitoring();
 }
@@ -279,7 +280,7 @@ void MainWindow::createActions() {
     m_performanceMonitorAction->setChecked(false);
     connect(m_performanceMonitorAction, &QAction::toggled, this, &MainWindow::onTogglePerformanceMonitor);
     
-    // 移除性能覆盖层动作，保留性能报告动作
+    // 性能报告
     m_showPerformanceReportAction = new QAction("显示性能报告", this);
     m_showPerformanceReportAction->setEnabled(false); // 初始禁用，直到启用性能监控
     connect(m_showPerformanceReportAction, &QAction::triggered, this, &MainWindow::onShowPerformanceReport);
@@ -303,11 +304,20 @@ void MainWindow::createActions() {
     // 初始化关于动作
     m_aboutAction = new QAction(tr("关于..."), this);
     connect(m_aboutAction, &QAction::triggered, this, [this]() {
-        QMessageBox::about(this, tr("关于矢量图形编辑器"),
-                           tr("版本 1.0\n\n"
-                              "矢量图形编辑器是一个简单的2D绘图工具，"
-                              "支持基本图形绘制、编辑和变换。"));
+    QMessageBox::about(this, tr("关于矢量图形编辑器"),
+                    tr("版本 1.0\n\n"
+                        "矢量图形编辑器是一个2D绘图工具，"
+                        "支持多种基本图形（如直线、矩形、圆形、椭圆、Bezier曲线等）的绘制、编辑和变换。\n\n"
+                        "主要功能：\n"
+                        "1. 基本图形绘制：支持直线、矩形、圆形、椭圆、贝塞尔曲线等图形。\n"
+                        "2. 图形编辑：提供图形的平移、旋转、缩放、镜像等操作。\n"
+                        "3. 控制点操作：支持图形的控制点操作，便于精准调整。\n"
+                        "4. 支持撤销重做，支持图层管理，支持图形导出为SVG格式以及自定义CVG格式。\n"
+                        "5. 支持图片导入导出，图形缓存，渲染。\n\n"
+                        "作者：韩中飞\n"
+                        "感谢您的使用！"));
     });
+
     
     m_aboutQtAction = new QAction(tr("关于Qt..."), this);
     connect(m_aboutQtAction, &QAction::triggered, qApp, &QApplication::aboutQt);
@@ -903,6 +913,7 @@ void MainWindow::onEditActionTriggered(QAction* action) {
     }
 }
 
+//图层控制
 void MainWindow::onLayerActionTriggered(QAction* action) {
     auto selectedItems = m_drawArea->getSelectedItems();
     if (selectedItems.isEmpty()) {

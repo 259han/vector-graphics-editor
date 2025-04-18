@@ -1,5 +1,6 @@
 #include "draw_strategy.h"
 #include <cmath>
+#include <QThread>
 
 void LineDrawStrategy::draw(QPainter* painter, const std::vector<QPointF>& points) {
     if (points.size() < 2) {
@@ -104,9 +105,20 @@ void EllipseDrawStrategy::draw(QPainter* painter, const std::vector<QPointF>& po
 }
 
 void BezierDrawStrategy::draw(QPainter* painter, const std::vector<QPointF>& points) {
-    if (points.size() < 2) {
-        return;
+    if (points.size() < 2) return;
+
+    // 计算控制点折线总长度
+    double totalPolylineLength = 0.0;
+    for (size_t i = 1; i < points.size(); ++i) {
+        totalPolylineLength += QLineF(points[i-1], points[i]).length();
     }
+
+    // 动态步长计算
+    const double densityFactor = 5.0;  // 每单位长度5个点
+    const int minSteps = 20;           // 最小步数
+    const int maxSteps = 500;          // 最大步数
+    int numSteps = static_cast<int>(totalPolylineLength * densityFactor);
+    numSteps = std::clamp(numSteps, minSteps, maxSteps);    //clamp限制范围小于min，大于max改为min，max
     
     // 保存原始画笔
     QPen originalPen = painter->pen();
@@ -117,18 +129,17 @@ void BezierDrawStrategy::draw(QPainter* painter, const std::vector<QPointF>& poi
     pen.setWidthF(m_lineWidth);
     painter->setPen(pen);
 
-    // 通用贝塞尔曲线绘制逻辑
+    // 贝塞尔曲线绘制逻辑
     QPainterPath path;
     if (points.size() == 2) {
         // 两个点退化为直线
         path.moveTo(points[0]);
         path.lineTo(points[1]);
     } else {
-        // 使用伯恩斯坦公式计算贝塞尔曲线路径
+        // 伯恩斯坦公式
         path.moveTo(points[0]);
-        const int numSteps = 100; // 控制曲线平滑度的步数
         for (int step = 1; step <= numSteps; ++step) {
-            double t = static_cast<double>(step) / numSteps;
+            double t = static_cast<double>(step) / numSteps;//t为插值参数
             QPointF p = calculateBezierPoint(points, t);
             path.lineTo(p);
         }
@@ -141,29 +152,15 @@ void BezierDrawStrategy::draw(QPainter* painter, const std::vector<QPointF>& poi
     painter->setPen(originalPen);
 }
 
+//贝塞尔曲线点计算(递推)
 QPointF BezierDrawStrategy::calculateBezierPoint(const std::vector<QPointF>& controlPoints, double t) const {
-    int n = controlPoints.size() - 1; // 曲线阶数 = 控制点数 - 1
-    double x = 0.0, y = 0.0;
+    std::vector<QPointF> tempPoints = controlPoints;
+    int n = tempPoints.size();
     
-    for (int i = 0; i <= n; i++) {
-        double coefficient = binomialCoefficient(n, i) * pow(t, i) * pow(1 - t, n - i);
-        x += coefficient * controlPoints[i].x();
-        y += coefficient * controlPoints[i].y();
+    for (int k = 1; k < n; ++k) {
+        for (int i = 0; i < n - k; ++i) {
+            tempPoints[i] = (1 - t) * tempPoints[i] + t * tempPoints[i + 1];
+        }
     }
-    
-    return QPointF(x, y);
-}
-
-double BezierDrawStrategy::binomialCoefficient(int n, int k) const {
-    if (k < 0 || k > n) return 0.0;
-    if (k == 0 || k == n) return 1.0;
-    
-    // 优化计算：利用组合数的对称性（C(n,k) = C(n, n-k)）
-    k = std::min(k, n - k);
-    double result = 1.0;
-    for (int i = 1; i <= k; i++) {
-        result *= (n - k + i);
-        result /= i;
-    }
-    return result;
+    return tempPoints[0];
 }
