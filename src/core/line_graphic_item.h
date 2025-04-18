@@ -12,7 +12,7 @@ public:
     
     // 实现GraphicItem的虚函数
     QRectF boundingRect() const override;
-    Graphic::GraphicType getGraphicType() const override { return Graphic::LINE; }
+    GraphicType getGraphicType() const override { return LINE; }
     
     // 直线特有的方法
     QPointF getStartPoint() const;

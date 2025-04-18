@@ -12,7 +12,7 @@ public:
     
     // 实现GraphicItem的虚函数
     QRectF boundingRect() const override;
-    Graphic::GraphicType getGraphicType() const override { return Graphic::CIRCLE; }
+    GraphicType getGraphicType() const override { return CIRCLE; }
     
     // 圆形特有的方法
     QPointF getCenter() const;

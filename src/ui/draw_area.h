@@ -38,7 +38,7 @@ public:
     
     // 状态管理
     EditorState* getCurrentState() const { return m_currentState.get(); }
-    void setDrawState(Graphic::GraphicType type);
+    void setDrawState(GraphicItem::GraphicType type);
     void setEditState();
     void setFillState();
     void setFillState(const QColor& color);
@@ -186,7 +186,7 @@ private:
     // 剪贴板相关
     // 内部剪贴板
     struct ClipboardItem {
-        Graphic::GraphicType type;
+        GraphicItem::GraphicType type;
         QPen pen;
         QBrush brush;
         std::vector<QPointF> points;

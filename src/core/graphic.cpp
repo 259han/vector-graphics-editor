@@ -1,7 +1,5 @@
 #include "graphic.h"
 
-Graphic::Graphic() {
-    m_pen = QPen(Qt::black, 2);
-    m_brush = QBrush(Qt::NoBrush);
-}
+// 所有Graphic功能已经合并到GraphicItem类中
+// 此文件保留用于兼容性，不需要任何实现
 

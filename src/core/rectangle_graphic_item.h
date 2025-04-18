@@ -12,7 +12,7 @@ public:
     
     // 实现GraphicItem的虚函数
     QRectF boundingRect() const override;
-    Graphic::GraphicType getGraphicType() const override { return Graphic::RECTANGLE; }
+    GraphicType getGraphicType() const override { return RECTANGLE; }
     
     // 重写缩放方法，以确保矩形特有的非均匀缩放处理
     void setScale(const QPointF& scale) override;

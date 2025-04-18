@@ -7,12 +7,48 @@
 #include <QStyleOptionGraphicsItem>
 #include <memory>
 #include <QPixmapCache>
-#include "graphic.h"
-#include "draw_strategy.h"
+#include <QPointF>
+#include <QPen>
+#include <QBrush>
+#include <vector>
+#include <QDataStream>
+#include <QString>
 
-// 自定义图形项基类，继承QGraphicsItem，同时使用原有的DrawStrategy
+class DrawStrategy;
+
+// 合并了Graphic和GraphicItem的功能
 class GraphicItem : public QGraphicsItem {
 public:
+    // 从Graphic类迁移的图形类型枚举
+    enum GraphicType {
+        NONE = 0,       // 未指定
+        LINE = 1,       // 直线
+        RECTANGLE = 2,  // 矩形
+        ELLIPSE = 3,    // 椭圆
+        CIRCLE = 4,     // 圆形
+        BEZIER = 5,     // Bezier曲线
+        TRIANGLE = 6,   // 三角形
+        FILL = 7,       // 填充
+        // 后续添加更多图形...
+        CONNECTION = 8  // 连接线
+    };
+
+    // 将图形类型转换为可读字符串
+    static QString graphicTypeToString(GraphicType type) {
+        switch (type) {
+            case NONE: return "未指定";
+            case LINE: return "直线";
+            case RECTANGLE: return "矩形";
+            case ELLIPSE: return "椭圆";
+            case CIRCLE: return "圆形";
+            case BEZIER: return "贝塞尔曲线";
+            case TRIANGLE: return "三角形";
+            case FILL: return "填充";
+            case CONNECTION: return "连接线";
+            default: return "未知类型";
+        }
+    }
+
     GraphicItem();
     virtual ~GraphicItem() = default;
     
@@ -20,15 +56,19 @@ public:
     QRectF boundingRect() const override;
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;
     
-    // 设置绘制策略
-    void setDrawStrategy(std::shared_ptr<DrawStrategy> strategy);
-    std::shared_ptr<DrawStrategy> getDrawStrategy() const { return m_drawStrategy; }
+    // 从Graphic继承的核心绘制方法
+    virtual void draw(QPainter& painter) const;
     
     // 几何变换方法（提供一致的API）
     virtual void moveBy(const QPointF& offset);
     virtual void rotateBy(double angle);
     virtual void scaleBy(double factor);
     virtual void mirror(bool horizontal);
+    
+    // 从Graphic继承的几何变换方法别名，保持API兼容性
+    virtual void move(const QPointF& offset) { moveBy(offset); }
+    virtual void rotate(double angle) { rotateBy(angle); }
+    virtual void scale(double factor) { scaleBy(factor); }
     
     // 缩放相关方法
     virtual QPointF getScale() const;
@@ -41,7 +81,16 @@ public:
     virtual void setMovable(bool movable) { m_isMovable = movable; }
     
     // 类型相关
-    virtual Graphic::GraphicType getGraphicType() const = 0;
+    virtual GraphicType getGraphicType() const = 0;
+    GraphicType getType() const { return getGraphicType(); } // 为保持兼容性
+
+    // 从Graphic继承的方法
+    virtual QPointF getCenter() const;
+    virtual QRectF getBoundingBox() const { return boundingRect(); }
+
+    // 从Graphic继承的碰撞检测方法
+    virtual bool intersects(const QRectF& rect) const;
+    virtual bool contains(const QPointF& point) const;
     
     // 连接点管理
     virtual std::vector<QPointF> getConnectionPoints() const;
@@ -57,6 +106,14 @@ public:
     // 自定义用户数据
     QVariant itemData(int key) const;
     void setItemData(int key, const QVariant& value);
+    
+    // 设置绘制策略
+    void setDrawStrategy(std::shared_ptr<DrawStrategy> strategy);
+    std::shared_ptr<DrawStrategy> getDrawStrategy() const { return m_drawStrategy; }
+    
+    // 序列化和反序列化 (从Graphic接口)
+    virtual void serialize(QDataStream& out) const;
+    virtual void deserialize(QDataStream& in);
     
     // 控制点相关
     enum ControlHandle {
@@ -122,5 +179,8 @@ protected:
     // 更新缓存
     void updateCache(QPainter *painter, const QStyleOptionGraphicsItem *option);
 };
+
+// 为保持兼容性，是GraphicItem的别名
+typedef GraphicItem Graphic;
 
 #endif // GRAPHIC_ITEM_H 

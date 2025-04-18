@@ -13,7 +13,7 @@ public:
     
     // 实现GraphicItem的虚函数
     QRectF boundingRect() const override;
-    Graphic::GraphicType getGraphicType() const override { return Graphic::BEZIER; }
+    GraphicType getGraphicType() const override { return BEZIER; }
     
     // Bezier曲线特有的方法
     const std::vector<QPointF>& getControlPoints() const { return m_controlPoints; }

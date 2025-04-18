@@ -33,10 +33,11 @@
 
 ## 核心层 (Core)
 
-### Graphic 类
+
+### GraphicItem 类
 
 ```cpp
-class Graphic {
+class GraphicItem {
 public:
   void draw(QPainter& painter);
   void move(const QPointF& offset);
@@ -48,9 +49,15 @@ public:
   QRectF getBoundingBox() const;
   Graphic* clone() const;
   bool contains(const QPointF& point) const;
+  QRectF getHandleRect(ControlHandle handle) const;
+  void moveHandleTo(ControlHandle handle, const QPointF& pos);
+  QCursor getCursorForHandle(ControlHandle handle) const;
+  void updateControlPoints();
+  bool isHandleVisible(ControlHandle handle) const;
+  void setHandlesVisible(bool visible);
+  int handleCount() const;
 };
 ```
-
 - **draw(QPainter& painter)**
 
   - 描述：在激活的绘图区域中绘制图形；空画笔至少绘制轮廓。
@@ -84,21 +91,6 @@ public:
 >
 > - 参数校验失败时记录警告日志。
 > - 空画笔时仅绘制轮廓。
-
-### GraphicItem 类
-
-```cpp
-class GraphicItem {
-public:
-  QRectF getHandleRect(ControlHandle handle) const;
-  void moveHandleTo(ControlHandle handle, const QPointF& pos);
-  QCursor getCursorForHandle(ControlHandle handle) const;
-  void updateControlPoints();
-  bool isHandleVisible(ControlHandle handle) const;
-  void setHandlesVisible(bool visible);
-  int handleCount() const;
-};
-```
 
 - **控制点接口**：
 

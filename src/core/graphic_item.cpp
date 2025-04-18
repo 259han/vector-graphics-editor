@@ -7,6 +7,7 @@
 #include <QTransform>
 #include <cmath>
 #include <QCryptographicHash>
+#include "draw_strategy.h"
 
 GraphicItem::GraphicItem()
 {
@@ -19,8 +20,30 @@ GraphicItem::GraphicItem()
     setAcceptHoverEvents(true);
     
     // 设置默认画笔和画刷
-    m_pen = QPen(Qt::black, 1);
+    m_pen = QPen(Qt::black, 2); // 调整默认线宽与原Graphic一致
     m_brush = QBrush(Qt::transparent);
+}
+
+// 从Graphic类迁移的绘制方法
+void GraphicItem::draw(QPainter& painter) const
+{
+    // 如果有绘制策略，使用策略进行绘制
+    if (m_drawStrategy) {
+        m_drawStrategy->setColor(m_pen.color());
+        m_drawStrategy->setLineWidth(m_pen.width());
+        
+        std::vector<QPointF> points = getDrawPoints();
+        if (!points.empty()) {
+            painter.setPen(m_pen);
+            painter.setBrush(m_brush);
+            m_drawStrategy->draw(&painter, points);
+        }
+    } else {
+        // 如果没有绘制策略，基本绘制
+        painter.setPen(m_pen);
+        painter.setBrush(m_brush);
+        painter.drawPoint(0, 0);
+    }
 }
 
 QRectF GraphicItem::boundingRect() const
@@ -469,5 +492,87 @@ void GraphicItem::updateCache(QPainter* painter, const QStyleOptionGraphicsItem*
     // 如果被选中，仍然需要绘制选中指示器（不缓存）
     if (isSelected()) {
         drawSelectionHandles(painter);
+    }
+}
+
+// 获取中心点
+QPointF GraphicItem::getCenter() const
+{
+    return boundingRect().center();
+}
+
+// 判断图形是否与矩形相交
+bool GraphicItem::intersects(const QRectF& rect) const
+{
+    return boundingRect().intersects(rect);
+}
+
+// 判断点是否在图形内
+bool GraphicItem::contains(const QPointF& point) const
+{
+    return QGraphicsItem::contains(mapFromScene(point));
+}
+
+// 序列化方法
+void GraphicItem::serialize(QDataStream& out) const
+{
+    // 保存图形类型
+    out << static_cast<int>(getGraphicType());
+    
+    // 保存位置
+    out << pos();
+    
+    // 保存画笔和画刷
+    out << m_pen;
+    out << m_brush;
+    
+    // 保存旋转角度和缩放
+    out << m_rotation;
+    out << m_scale;
+    
+    // 保存绘图点
+    std::vector<QPointF> points = getDrawPoints();
+    out << static_cast<qint32>(points.size());
+    for (const auto& point : points) {
+        out << point;
+    }
+    
+    // 保存连接点
+    out << static_cast<qint32>(m_connectionPoints.size());
+    for (const auto& point : m_connectionPoints) {
+        out << point;
+    }
+}
+
+// 反序列化方法
+void GraphicItem::deserialize(QDataStream& in)
+{
+    // 图形类型已经确定，跳过
+    int type;
+    in >> type;
+    
+    // 读取位置
+    QPointF position;
+    in >> position;
+    setPos(position);
+    
+    // 读取画笔和画刷
+    in >> m_pen;
+    in >> m_brush;
+    
+    // 读取旋转角度和缩放
+    in >> m_rotation;
+    in >> m_scale;
+    setRotation(m_rotation);
+    setScale(m_scale);
+    
+    // 读取连接点
+    qint32 connectionPointCount;
+    in >> connectionPointCount;
+    m_connectionPoints.clear();
+    for (qint32 i = 0; i < connectionPointCount; ++i) {
+        QPointF point;
+        in >> point;
+        m_connectionPoints.push_back(point);
     }
 } 

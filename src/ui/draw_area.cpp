@@ -164,7 +164,7 @@ DrawArea::~DrawArea()
     }
 }
 
-void DrawArea::setDrawState(Graphic::GraphicType graphicType)
+void DrawArea::setDrawState(GraphicItem::GraphicType graphicType)
 {
     // 先保存当前状态，以便于在切换状态时通知
     auto oldState = m_currentState.get();
@@ -1193,7 +1193,7 @@ QGraphicsItem* DrawArea::createItemFromClipboardData(const ClipboardItem& data, 
         graphicItem->setFlag(QGraphicsItem::ItemIsMovable, true);
         
         Logger::debug(QString("创建图形项，类型:%1, 缩放:(%2,%3), 位置:(%4,%5)")
-                     .arg(Graphic::graphicTypeToString(data.type))
+                     .arg(GraphicItem::graphicTypeToString(data.type))
                      .arg(scale.x(), 0, 'f', 3)
                      .arg(scale.y(), 0, 'f', 3)
                      .arg(pastePosition.x())
@@ -1278,7 +1278,7 @@ QList<DrawArea::ClipboardItem> DrawArea::deserializeGraphicItems(const QByteArra
         // 读取图形类型
         qint32 type;
         stream >> type;
-        item.type = static_cast<Graphic::GraphicType>(type);
+        item.type = static_cast<GraphicItem::GraphicType>(type);
         
         // 读取画笔
         stream >> item.pen;
@@ -2415,7 +2415,7 @@ bool DrawArea::loadFromCustomFormat(const QString& filePath) {
         FileFormatManager& formatManager = FileFormatManager::getInstance();
         
         // 创建图形项的工厂函数
-        auto itemFactory = [this](Graphic::GraphicType type, const QPointF& pos, const QPen& pen, const QBrush& brush, 
+        auto itemFactory = [this](GraphicItem::GraphicType type, const QPointF& pos, const QPen& pen, const QBrush& brush, 
                                  const std::vector<QPointF>& points, double rotation, const QPointF& scale) {
             // 使用图形工厂创建图形项
             QGraphicsItem* item = nullptr;

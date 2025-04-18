@@ -6,28 +6,28 @@
 #include "bezier_graphic_item.h"
 // 后续可导入其他图形项类
 
-QGraphicsItem* DefaultGraphicsItemFactory::createItem(Graphic::GraphicType type, const QPointF& position)
+QGraphicsItem* DefaultGraphicsItemFactory::createItem(GraphicItem::GraphicType type, const QPointF& position)
 {
     switch (type) {
-        case Graphic::CIRCLE:
+        case GraphicItem::CIRCLE:
             return new CircleGraphicItem(position, 50.0);
         
-        case Graphic::RECTANGLE:
+        case GraphicItem::RECTANGLE:
             return new RectangleGraphicItem(position, QSizeF(100, 60));
             
-        case Graphic::LINE:
+        case GraphicItem::LINE:
             return new LineGraphicItem(position, position + QPointF(100, 0));
         
-        case Graphic::ELLIPSE:
+        case GraphicItem::ELLIPSE:
             return new EllipseGraphicItem(position, 100.0, 60.0);
             
-        case Graphic::BEZIER:
+        case GraphicItem::BEZIER:
             // 创建默认的Bezier曲线，具有两个控制点
             return new BezierGraphicItem({position, position + QPointF(100, 0)});
             
         // 其他类型图形的创建，后续实现
         /*
-        case Graphic::TRIANGLE:
+        case GraphicItem::TRIANGLE:
             return new TriangleGraphicItem(position);
         */
             
@@ -37,7 +37,7 @@ QGraphicsItem* DefaultGraphicsItemFactory::createItem(Graphic::GraphicType type,
     }
 }
 
-QGraphicsItem* DefaultGraphicsItemFactory::createCustomItem(Graphic::GraphicType type, const std::vector<QPointF>& points)
+QGraphicsItem* DefaultGraphicsItemFactory::createCustomItem(GraphicItem::GraphicType type, const std::vector<QPointF>& points)
 {
     if (points.empty()) {
         qDebug() << "创建图形失败: 点集为空";
@@ -45,7 +45,7 @@ QGraphicsItem* DefaultGraphicsItemFactory::createCustomItem(Graphic::GraphicType
     }
     
     switch (type) {
-        case Graphic::CIRCLE:
+        case GraphicItem::CIRCLE:
             if (points.size() >= 2) {
                 // 计算半径
                 QPointF center = points[0];
@@ -54,14 +54,14 @@ QGraphicsItem* DefaultGraphicsItemFactory::createCustomItem(Graphic::GraphicType
             }
             break;
             
-        case Graphic::LINE:
+        case GraphicItem::LINE:
             if (points.size() >= 2) {
                 // 直接使用起点和终点创建线段
                 return new LineGraphicItem(points[0], points[1]);
             }
             break;
             
-        case Graphic::RECTANGLE:
+        case GraphicItem::RECTANGLE:
             if (points.size() >= 2) {
                 // 使用两点确定矩形，确保是标准化的矩形
                 QRectF rect = QRectF(points[0], points[1]).normalized();
@@ -69,7 +69,7 @@ QGraphicsItem* DefaultGraphicsItemFactory::createCustomItem(Graphic::GraphicType
             }
             break;
             
-        case Graphic::ELLIPSE:
+        case GraphicItem::ELLIPSE:
             if (points.size() >= 2) {
                 // 创建标准化矩形，匹配预览椭圆的方式
                 QRectF rect = QRectF(points[0], points[1]).normalized();
@@ -87,7 +87,7 @@ QGraphicsItem* DefaultGraphicsItemFactory::createCustomItem(Graphic::GraphicType
             }
             break;
             
-        case Graphic::BEZIER:
+        case GraphicItem::BEZIER:
             // 直接使用提供的控制点创建Bezier曲线
             if (points.size() >= 2) {
                 return new BezierGraphicItem(points);
@@ -96,7 +96,7 @@ QGraphicsItem* DefaultGraphicsItemFactory::createCustomItem(Graphic::GraphicType
             
         // 其他类型图形的自定义创建，后续实现
         /*
-        case Graphic::TRIANGLE:
+        case GraphicItem::TRIANGLE:
             // 处理三角形
             break;
         */
