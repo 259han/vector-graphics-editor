@@ -11,6 +11,7 @@
 #include "../core/graphics_item_factory.h"
 #include "image_resizer.h"
 #include "../utils/logger.h"
+#include "../utils/graphics_utils.h"
 #include "../command/command_manager.h"
 #include "../command/create_graphic_command.h"
 #include "../command/transform_command.h"
@@ -638,17 +639,18 @@ void DrawArea::saveImage()
     
     // 获取当前场景内容
     QRectF sceneRect = m_scene->itemsBoundingRect();
-    QPixmap pixmap(sceneRect.size().toSize());
-    pixmap.fill(Qt::white);
     
-    QPainter painter(&pixmap);
-    painter.setRenderHint(QPainter::Antialiasing);
-    m_scene->render(&painter, QRectF(), sceneRect);
-    painter.end();
+    // 使用GraphicsUtils渲染场景到图像
+    QImage image = GraphicsUtils::renderSceneRectToImage(m_scene, sceneRect, false, true);
     
     // 保存图像
-    if (!pixmap.save(fileName)) {
+    if (!image.save(fileName)) {
         QMessageBox::warning(this, tr("保存失败"), tr("无法保存图像到文件: %1").arg(fileName));
+    } else {
+        Logger::info(QString("DrawArea: 图像已保存到 %1 (尺寸: %2x%3)")
+                  .arg(fileName)
+                  .arg(image.width())
+                  .arg(image.height()));
     }
 }
 
@@ -744,24 +746,34 @@ void DrawArea::deleteSelectedGraphics()
     // 性能监控
     PERF_SCOPE(LogicTime);
     
-    if (!m_selectionManager) {
+    if (!m_selectionManager || !m_scene) {
+        Logger::warning("DrawArea::deleteSelectedGraphics: SelectionManager或场景无效");
         return;
     }
     
     // 获取选中的图形项
     QList<QGraphicsItem*> selectedItems = m_selectionManager->getSelectedItems();
     
-    // 从场景中移除图形项
-    for (QGraphicsItem* item : selectedItems) {
-        m_scene->removeItem(item);
-        delete item;
+    // 如果没有选中的图形项，则不执行任何操作
+    if (selectedItems.isEmpty()) {
+        Logger::debug("DrawArea::deleteSelectedGraphics: 没有选中的图形项");
+        return;
     }
     
-    // 清除选择
+    // 创建删除命令并执行
+    SelectionCommand* deleteCommand = new SelectionCommand(this, SelectionCommand::DeleteSelection);
+    deleteCommand->setDeleteInfo(selectedItems);
+    
+    // 使用命令管理器执行命令，确保可以撤销和重做
+    CommandManager::getInstance().executeCommand(deleteCommand);
+    
+    // 清除选择状态（命令执行后会移除项目，但选择状态需要单独清除）
     m_selectionManager->clearSelection();
     
     // 更新视图
     viewport()->update();
+    
+    Logger::info(QString("DrawArea::deleteSelectedGraphics: 已删除 %1 个图形项").arg(selectedItems.size()));
 }
 
 // 选择所有图形
@@ -923,14 +935,35 @@ void DrawArea::copySelectedItems() {
 
 // 剪切选中的图形项
 void DrawArea::cutSelectedItems() {
+    auto selectedItems = getSelectedItems();
+    if (selectedItems.isEmpty()) {
+        Logger::debug("DrawArea::cutSelectedItems: 没有选中的图形项");
+        return;
+    }
+    
+    // 首先复制图形项到剪贴板
     copySelectedItems();
     copyToSystemClipboard(); // 同时复制到系统剪贴板
     
     // 设置剪贴板标志，此为剪切操作
     m_isClipboardFromCut = true;
     
-    deleteSelectedGraphics();
-    Logger::info("已剪切图形项");
+    // 创建删除命令并执行，确保操作可撤销
+    SelectionCommand* deleteCommand = new SelectionCommand(this, SelectionCommand::DeleteSelection);
+    deleteCommand->setDeleteInfo(selectedItems);
+    
+    // 使用命令管理器执行命令
+    CommandManager::getInstance().executeCommand(deleteCommand);
+    
+    // 清除选择状态
+    if (m_selectionManager) {
+        m_selectionManager->clearSelection();
+    }
+    
+    // 更新视图
+    viewport()->update();
+    
+    Logger::info(QString("DrawArea::cutSelectedItems: 已剪切 %1 个图形项").arg(selectedItems.size()));
 }
 
 // 复制到系统剪贴板
@@ -2301,25 +2334,8 @@ bool DrawArea::exportLargeImageTiled(const QString& filePath, const QSize& size,
 void DrawArea::renderScenePart(QPainter* painter, const QRectF& targetRect, const QRectF& sourceRect) {
     if (!m_scene || !painter) return;
     
-    // 创建临时图像以渲染单个部分
-    QImage tileImage(targetRect.width(), targetRect.height(), QImage::Format_ARGB32);
-    tileImage.fill(Qt::transparent);
-    
-    QPainter tilePainter(&tileImage);
-    tilePainter.setRenderHint(QPainter::Antialiasing, true);
-    tilePainter.setRenderHint(QPainter::SmoothPixmapTransform, true);
-    
-    // 调整转换以仅渲染所需部分
-    tilePainter.setTransform(QTransform()
-                           .scale(targetRect.width() / sourceRect.width(),
-                                  targetRect.height() / sourceRect.height())
-                           .translate(-sourceRect.left(), -sourceRect.top()));
-    
-    // 渲染场景的这一部分
-    m_scene->render(&tilePainter, QRectF(), sourceRect);
-    
-    // 将这一部分绘制到最终图像上
-    painter->drawImage(targetRect, tileImage);
+    // 使用GraphicsUtils中的工具方法渲染场景的一部分
+    GraphicsUtils::renderScenePart(painter, targetRect, sourceRect, m_scene, true);
 }
 
 // 渲染场景到图像
@@ -2329,36 +2345,8 @@ QImage DrawArea::renderSceneToImage(const QRectF& sceneRect, bool transparent) {
         return QImage();
     }
     
-    // 创建空白图像
-    QSizeF size = sceneRect.size();
-    QSize imageSize(static_cast<int>(size.width()), static_cast<int>(size.height()));
-    
-    if (imageSize.isEmpty()) {
-        Logger::error("DrawArea::renderSceneToImage: 图像大小为空");
-        return QImage();
-    }
-    
-    QImage image(imageSize, transparent ? QImage::Format_ARGB32 : QImage::Format_RGB32);
-    
-    if (transparent) {
-        image.fill(Qt::transparent);
-    } else {
-        image.fill(Qt::white);
-    }
-    
-    // 创建绘图器
-    QPainter painter(&image);
-    painter.setRenderHint(QPainter::Antialiasing, true);
-    painter.setRenderHint(QPainter::TextAntialiasing, true);
-    painter.setRenderHint(QPainter::SmoothPixmapTransform, true);
-    
-    // 调整坐标系
-    painter.translate(-sceneRect.topLeft());
-    
-    // 渲染场景
-    m_scene->render(&painter, QRectF(), sceneRect);
-    
-    return image;
+    // 使用GraphicsUtils中的工具方法渲染场景到图像
+    return GraphicsUtils::renderSceneRectToImage(m_scene, sceneRect, transparent, true);
 }
 
 // 优化版保存图像功能

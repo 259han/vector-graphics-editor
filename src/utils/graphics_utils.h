@@ -28,6 +28,29 @@ public:
     static QImage renderSceneToImage(QGraphicsScene* scene, bool disableAntialiasing = true);
     
     /**
+     * @brief 将场景的指定矩形区域渲染到图像
+     * @param scene 要渲染的场景
+     * @param sceneRect 场景中要渲染的矩形区域
+     * @param transparent 是否使用透明背景
+     * @param enableAntialiasing 是否启用抗锯齿
+     * @return 渲染后的图像
+     */
+    static QImage renderSceneRectToImage(QGraphicsScene* scene, const QRectF& sceneRect, 
+                                      bool transparent = true, bool enableAntialiasing = true);
+    
+    /**
+     * @brief 渲染场景的指定部分到指定的绘图器上
+     * @param painter 目标绘图器
+     * @param targetRect 目标矩形（绘图器上的位置）
+     * @param sourceRect 源矩形（场景中的区域）
+     * @param scene 要渲染的场景
+     * @param enableAntialiasing 是否启用抗锯齿
+     */
+    static void renderScenePart(QPainter* painter, const QRectF& targetRect, 
+                             const QRectF& sourceRect, QGraphicsScene* scene,
+                             bool enableAntialiasing = true);
+    
+    /**
      * @brief 使用扫描线填充算法对图像区域进行填充
      * @param image 要填充的图像
      * @param seedPoint 种子点（开始填充的位置）

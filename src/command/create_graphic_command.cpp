@@ -134,12 +134,26 @@ void CreateGraphicCommand::execute()
 void CreateGraphicCommand::undo()
 {
     if (!m_executed || !m_createdItem) {
+        Logger::debug("CreateGraphicCommand::undo: 命令未执行或图形项为空");
         return;
     }
     
-    // 从场景中移除图形项
+    // 获取场景
     QGraphicsScene* scene = m_directCreation ? m_scene : m_drawArea->scene();
-    if (scene) {
+    if (!scene) {
+        Logger::warning("CreateGraphicCommand::undo: 场景无效");
+        return;
+    }
+    
+    // 检查图形项是否在场景中，避免操作已删除的项目
+    if (!m_createdItem->scene() || m_createdItem->scene() != scene) {
+        Logger::warning("CreateGraphicCommand::undo: 图形项不在当前场景中，可能已被删除");
+        m_executed = false;
+        return;
+    }
+    
+    try {
+        // 从场景中移除图形项
         scene->removeItem(m_createdItem);
         
         // 强制更新场景和视图
@@ -148,12 +162,18 @@ void CreateGraphicCommand::undo()
             m_drawArea->viewport()->update();
             QApplication::processEvents();
         }
+        
+        m_executed = false;
+        
+        Logger::info(QString("CreateGraphicCommand: 撤销创建图形命令 - 类型: %1")
+            .arg(static_cast<int>(m_type)));
+    } catch (const std::exception& e) {
+        Logger::error(QString("CreateGraphicCommand::undo: 异常 - %1").arg(e.what()));
+        m_executed = false;
+    } catch (...) {
+        Logger::error("CreateGraphicCommand::undo: 未知异常");
+        m_executed = false;
     }
-    
-    m_executed = false;
-    
-    Logger::info(QString("CreateGraphicCommand: 撤销创建图形命令 - 类型: %1")
-        .arg(static_cast<int>(m_type)));
 }
 
 QString CreateGraphicCommand::getDescription() const

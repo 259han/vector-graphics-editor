@@ -33,6 +33,54 @@ QImage GraphicsUtils::renderSceneToImage(QGraphicsScene* scene, bool disableAnti
     return image;
 }
 
+QImage GraphicsUtils::renderSceneRectToImage(QGraphicsScene* scene, const QRectF& sceneRect, 
+                                          bool transparent, bool enableAntialiasing) {
+    if (!scene) {
+        Logger::error("GraphicsUtils::renderSceneRectToImage: 场景为空");
+        return QImage();
+    }
+    
+    if (sceneRect.isEmpty()) {
+        Logger::error("GraphicsUtils::renderSceneRectToImage: 场景矩形为空");
+        return QImage();
+    }
+    
+    // 创建空白图像
+    QSizeF size = sceneRect.size();
+    QSize imageSize(static_cast<int>(size.width()), static_cast<int>(size.height()));
+    
+    if (imageSize.isEmpty()) {
+        Logger::error("GraphicsUtils::renderSceneRectToImage: 图像大小为空");
+        return QImage();
+    }
+    
+    QImage image(imageSize, transparent ? QImage::Format_ARGB32 : QImage::Format_RGB32);
+    
+    if (transparent) {
+        image.fill(Qt::transparent);
+    } else {
+        image.fill(Qt::white);
+    }
+    
+    // 创建绘图器
+    QPainter painter(&image);
+    
+    // 设置渲染选项
+    if (enableAntialiasing) {
+        painter.setRenderHint(QPainter::Antialiasing, true);
+        painter.setRenderHint(QPainter::TextAntialiasing, true);
+        painter.setRenderHint(QPainter::SmoothPixmapTransform, true);
+    }
+    
+    // 调整坐标系
+    painter.translate(-sceneRect.topLeft());
+    
+    // 渲染场景
+    scene->render(&painter, QRectF(), sceneRect);
+    
+    return image;
+}
+
 int GraphicsUtils::fillImageRegion(QImage& image, const QPoint& seedPoint, 
                                  const QColor& targetColor, const QColor& fillColor) {
     if (image.isNull() || !isPointInImageBounds(seedPoint, image.width(), image.height())) {
@@ -189,4 +237,34 @@ void GraphicsUtils::logFillAreaStats(int filledPixels, int minX, int minY, int m
     // 使用新的Logger类记录日志，替代直接的qDebug
     Logger::debug(QString("GraphicsUtils: 填充区域大小: %1 x %2, 填充了 %3 个像素")
                  .arg(areaWidth).arg(areaHeight).arg(filledPixels));
+}
+
+void GraphicsUtils::renderScenePart(QPainter* painter, const QRectF& targetRect, 
+                               const QRectF& sourceRect, QGraphicsScene* scene,
+                               bool enableAntialiasing) {
+    if (!scene || !painter) return;
+    
+    // 创建临时图像以渲染单个部分
+    QImage tileImage(targetRect.width(), targetRect.height(), QImage::Format_ARGB32);
+    tileImage.fill(Qt::transparent);
+    
+    QPainter tilePainter(&tileImage);
+    
+    // 设置渲染选项
+    if (enableAntialiasing) {
+        tilePainter.setRenderHint(QPainter::Antialiasing, true);
+        tilePainter.setRenderHint(QPainter::SmoothPixmapTransform, true);
+    }
+    
+    // 调整转换以仅渲染所需部分
+    tilePainter.setTransform(QTransform()
+                          .scale(targetRect.width() / sourceRect.width(),
+                                 targetRect.height() / sourceRect.height())
+                          .translate(-sourceRect.left(), -sourceRect.top()));
+    
+    // 渲染场景的这一部分
+    scene->render(&tilePainter, QRectF(), sourceRect);
+    
+    // 将这一部分绘制到最终图像上
+    painter->drawImage(targetRect, tileImage);
 } 

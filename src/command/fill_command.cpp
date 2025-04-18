@@ -1,6 +1,7 @@
 #include "fill_command.h"
 #include "../ui/draw_area.h"
 #include "../utils/logger.h"
+#include "../utils/graphics_utils.h"
 #include <QGraphicsScene>
 #include <QPainter>
 #include <QImage>
@@ -55,30 +56,14 @@ void FillCommand::doFill()
     // 获取场景矩形
     QRectF sceneRect = m_drawArea->scene()->sceneRect();
     
-    // 将整个场景渲染到图像中进行填充
-    QImage image(qCeil(sceneRect.width()), qCeil(sceneRect.height()), QImage::Format_ARGB32);
-    image.fill(Qt::transparent);  // 使用透明背景
-    
-    QPainter painter(&image);
-    // 禁用抗锯齿，这样边界更明确
-    painter.setRenderHint(QPainter::Antialiasing, false);
-    
-    // 调整坐标系，使场景左上角对应图像的(0,0)
-    painter.translate(-sceneRect.topLeft());
-    
-    // 渲染场景到图像 - 确保渲染所有图层
-    m_drawArea->scene()->render(&painter, sceneRect, sceneRect, Qt::KeepAspectRatio);
-    painter.end();
+    // 使用GraphicsUtils渲染场景到图像，禁用抗锯齿以获得更清晰的边界
+    QImage image = GraphicsUtils::renderSceneToImage(m_drawArea->scene(), true);
     
     // 将场景坐标转换为图像坐标
-    QPoint imagePoint(
-        static_cast<int>(m_position.x() - sceneRect.left()),
-        static_cast<int>(m_position.y() - sceneRect.top())
-    );
+    QPoint imagePoint = GraphicsUtils::sceneToImageCoordinates(m_position, sceneRect);
     
     // 检查图像坐标是否在有效范围内
-    if (imagePoint.x() < 0 || imagePoint.y() < 0 || 
-        imagePoint.x() >= image.width() || imagePoint.y() >= image.height()) {
+    if (!GraphicsUtils::isPointInImageBounds(imagePoint, image.width(), image.height())) {
         Logger::debug("FillCommand: 填充点不在有效图像范围内");
         return;
     }
@@ -95,92 +80,12 @@ void FillCommand::doFill()
     // 创建一个副本用于填充，保留原始图像
     QImage fillImage = image;
     
-    // 执行填充算法
-    QStack<QPoint> stack;
-    stack.push(imagePoint);
-    
-    int width = image.width();
-    int height = image.height();
-    QVector<QVector<bool>> visited(width, QVector<bool>(height, false));
-    
-    m_filledPixelsCount = 0;
-    
-    while (!stack.isEmpty()) {
-        QPoint point = stack.pop();
-        int x = point.x();
-        int y = point.y();
-        
-        // 如果点已访问过或颜色不匹配，跳过
-        if (x < 0 || x >= width || y < 0 || y >= height || 
-            visited[x][y] || image.pixelColor(x, y) != targetColor) {
-            continue;
-        }
-        
-        // 向左找到边界
-        int left = x;
-        while (left >= 0 && image.pixelColor(left, y) == targetColor && !visited[left][y]) {
-            left--;
-        }
-        left++;
-        
-        // 向右找到边界
-        int right = x;
-        while (right < width && image.pixelColor(right, y) == targetColor && !visited[right][y]) {
-            right++;
-        }
-        right--;
-        
-        // 填充当前行
-        bool spanAbove = false;
-        bool spanBelow = false;
-        
-        for (int i = left; i <= right; i++) {
-            visited[i][y] = true;
-            fillImage.setPixelColor(i, y, m_color);
-            m_filledPixelsCount++;
-            
-            // 检查上一行
-            if (y > 0) {
-                QColor aboveColor = image.pixelColor(i, y - 1);
-                bool aboveMatch = aboveColor == targetColor && !visited[i][y-1];
-                
-                if (!spanAbove && aboveMatch) {
-                    stack.push(QPoint(i, y - 1));
-                    spanAbove = true;
-                } else if (spanAbove && !aboveMatch) {
-                    spanAbove = false;
-                }
-            }
-            
-            // 检查下一行
-            if (y < height - 1) {
-                QColor belowColor = image.pixelColor(i, y + 1);
-                bool belowMatch = belowColor == targetColor && !visited[i][y+1];
-                
-                if (!spanBelow && belowMatch) {
-                    stack.push(QPoint(i, y + 1));
-                    spanBelow = true;
-                } else if (spanBelow && !belowMatch) {
-                    spanBelow = false;
-                }
-            }
-        }
-    }
+    // 使用GraphicsUtils中的填充方法执行填充算法
+    m_filledPixelsCount = GraphicsUtils::fillImageRegion(fillImage, imagePoint, targetColor, m_color);
     
     if (m_filledPixelsCount > 0) {
-        // 创建新的图层，仅包含填充的像素
-        QImage resultImage(image.size(), QImage::Format_ARGB32);
-        resultImage.fill(Qt::transparent);
-        
-        // 只复制被填充的像素
-        for (int y = 0; y < image.height(); y++) {
-            for (int x = 0; x < image.width(); x++) {
-                if (fillImage.pixelColor(x, y) == m_color &&
-                    image.pixelColor(x, y) != m_color) {
-                    resultImage.setPixelColor(x, y, m_color);
-                }
-            }
-        }
+        // 使用GraphicsUtils创建填充结果图层
+        QImage resultImage = GraphicsUtils::createFillResultLayer(image, fillImage, m_color);
         
         // 创建填充结果的图像项
         QPixmap fillResult = QPixmap::fromImage(resultImage);

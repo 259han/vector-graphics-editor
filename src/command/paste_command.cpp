@@ -75,23 +75,35 @@ void PasteGraphicCommand::undo()
         return;
     }
     
-    // 从场景中移除所有粘贴的项目
-    for (auto item : m_pastedItems) {
-        if (item->scene()) {
-            Logger::debug(QString("PasteGraphicCommand::undo: 移除项目 %1").arg(reinterpret_cast<quintptr>(item)));
-            scene->removeItem(item);
+    try {
+        // 从场景中移除所有粘贴的项目
+        for (auto item : m_pastedItems) {
+            // 检查项目是否仍在场景中
+            if (item && item->scene() == scene) {
+                Logger::debug(QString("PasteGraphicCommand::undo: 移除项目 %1").arg(reinterpret_cast<quintptr>(item)));
+                scene->removeItem(item);
+            } else if (item) {
+                Logger::warning(QString("PasteGraphicCommand::undo: 项目 %1 不在当前场景中，可能已被删除")
+                                .arg(reinterpret_cast<quintptr>(item)));
+            }
         }
+        
+        m_executed = false;
+        
+        // 更新场景
+        scene->update();
+        if (m_drawArea) {
+            m_drawArea->viewport()->update();
+        }
+        
+        Logger::info(QString("PasteGraphicCommand::undo: 撤销粘贴命令成功 - 项目数: %1").arg(m_pastedItems.size()));
+    } catch (const std::exception& e) {
+        Logger::error(QString("PasteGraphicCommand::undo: 异常 - %1").arg(e.what()));
+        m_executed = false;
+    } catch (...) {
+        Logger::error("PasteGraphicCommand::undo: 未知异常");
+        m_executed = false;
     }
-    
-    m_executed = false;
-    
-    // 更新场景
-    scene->update();
-    if (m_drawArea) {
-        m_drawArea->viewport()->update();
-    }
-    
-    Logger::info(QString("PasteGraphicCommand::undo: 撤销粘贴命令成功 - 项目数: %1").arg(m_pastedItems.size()));
 }
 
 QString PasteGraphicCommand::getDescription() const
