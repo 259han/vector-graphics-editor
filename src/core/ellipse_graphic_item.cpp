@@ -32,6 +32,53 @@ QRectF EllipseGraphicItem::boundingRect() const
     );
 }
 
+// 添加shape方法实现准确的椭圆碰撞检测
+QPainterPath EllipseGraphicItem::shape() const
+{
+    // 应用缩放因子计算实际尺寸
+    double scaledWidth = m_width * m_scale.x();
+    double scaledHeight = m_height * m_scale.y();
+    
+    // 创建一个椭圆形状的路径
+    QPainterPath path;
+    path.addEllipse(QRectF(
+        -scaledWidth/2, 
+        -scaledHeight/2,
+        scaledWidth,
+        scaledHeight
+    ));
+    
+    // 考虑画笔宽度的影响，使用strokePath扩展路径
+    QPainterPathStroker stroker;
+    stroker.setWidth(m_pen.width());
+    return path.united(stroker.createStroke(path));
+}
+
+// 重写contains方法，实现更准确的椭圆内部检测
+bool EllipseGraphicItem::contains(const QPointF& point) const
+{
+    // 将点从场景坐标转换为图形项的本地坐标
+    QPointF localPoint = mapFromScene(point);
+    
+    // 应用缩放因子计算实际尺寸
+    double scaledWidth = m_width * m_scale.x();
+    double scaledHeight = m_height * m_scale.y();
+    
+    // 椭圆方程: (x/a)² + (y/b)² <= 1 表示点在椭圆内部
+    double a = scaledWidth / 2.0;
+    double b = scaledHeight / 2.0;
+    
+    // 计算点到椭圆中心的归一化距离
+    double normalizedDistance = (localPoint.x() * localPoint.x()) / (a * a) + 
+                               (localPoint.y() * localPoint.y()) / (b * b);
+    
+    // 如果距离小于等于1，点在椭圆内部
+    // 为了考虑画笔宽度，增加一个较大的容差
+    double tolerance = (m_pen.width() / qMin(a, b)) + 0.1;
+    
+    return normalizedDistance <= (1.0 + tolerance);
+}
+
 std::vector<QPointF> EllipseGraphicItem::getDrawPoints() const
 {
     // 应用缩放因子计算实际尺寸

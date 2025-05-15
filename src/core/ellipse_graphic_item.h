@@ -14,6 +14,12 @@ public:
     QRectF boundingRect() const override;
     GraphicType getGraphicType() const override { return ELLIPSE; }
     
+    // 添加shape方法实现正确的碰撞检测
+    QPainterPath shape() const override;
+    
+    // 重写contains方法，提供更准确的椭圆内部检测
+    bool contains(const QPointF& point) const override;
+    
     // 重写缩放方法
     void setScale(const QPointF& scale) override;
     void setScale(qreal scale) override;

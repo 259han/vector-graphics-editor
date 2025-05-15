@@ -436,6 +436,16 @@ void EditState::mouseReleaseEvent(DrawArea* drawArea, QMouseEvent* event)
                 CommandManager::getInstance().executeCommand(moveCommand);
             }
         }
+        
+        // 确保所有选中的图形项仍然可移动
+        for (QGraphicsItem* item : selectionManager->getSelectedItems()) {
+            if (GraphicItem* graphicItem = dynamic_cast<GraphicItem*>(item)) {
+                graphicItem->setMovable(true);
+                graphicItem->setFlag(QGraphicsItem::ItemIsMovable, true);
+            } else {
+                item->setFlag(QGraphicsItem::ItemIsMovable, true);
+            }
+        }
     } else if (m_isScaling) {
         // 结束缩放
         m_isScaling = false;

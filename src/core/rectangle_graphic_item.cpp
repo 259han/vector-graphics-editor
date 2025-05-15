@@ -46,6 +46,31 @@ QRectF RectangleGraphicItem::boundingRect() const
     );
 }
 
+// 添加shape方法实现准确的矩形碰撞检测
+QPainterPath RectangleGraphicItem::shape() const
+{
+    // 应用缩放因子计算实际尺寸
+    double scaledWidth = m_size.width() * m_scale.x();
+    double scaledHeight = m_size.height() * m_scale.y();
+    
+    // 基于缩放后的尺寸计算左上角相对位置
+    QPointF scaledTopLeft = QPointF(-scaledWidth/2, -scaledHeight/2);
+    
+    // 创建矩形路径
+    QPainterPath path;
+    path.addRect(QRectF(
+        scaledTopLeft.x(),
+        scaledTopLeft.y(),
+        scaledWidth,
+        scaledHeight
+    ));
+    
+    // 考虑画笔宽度的影响，使用strokePath扩展路径
+    QPainterPathStroker stroker;
+    stroker.setWidth(m_pen.width());
+    return path.united(stroker.createStroke(path));
+}
+
 std::vector<QPointF> RectangleGraphicItem::getDrawPoints() const
 {
     // 应用缩放因子计算实际尺寸
@@ -124,4 +149,29 @@ void RectangleGraphicItem::setScale(qreal scale)
 {
     // 使用相同的x和y缩放
     setScale(QPointF(scale, scale));
+}
+
+// 实现contains方法，判断点是否在矩形内
+bool RectangleGraphicItem::contains(const QPointF& point) const
+{
+    // 将点从场景坐标转换为图形项的本地坐标
+    QPointF localPoint = mapFromScene(point);
+    
+    // 应用缩放因子计算实际尺寸
+    double scaledWidth = m_size.width() * m_scale.x();
+    double scaledHeight = m_size.height() * m_scale.y();
+    
+    // 计算矩形边界（相对于图形项中心）
+    double halfWidth = scaledWidth / 2.0;
+    double halfHeight = scaledHeight / 2.0;
+    
+    // 扩展边界以包含画笔宽度
+    double penWidth = m_pen.width();
+    double tolerance = penWidth + 2.0; // 增加额外的容差
+    
+    // 检查点是否在扩展的矩形内
+    return (localPoint.x() >= -halfWidth - tolerance && 
+            localPoint.x() <= halfWidth + tolerance &&
+            localPoint.y() >= -halfHeight - tolerance && 
+            localPoint.y() <= halfHeight + tolerance);
 } 

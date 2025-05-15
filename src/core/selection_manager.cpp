@@ -738,6 +738,16 @@ void SelectionManager::applySelectionToScene()
             
             // 确保调用setSelected不会导致崩溃
             try {
+                // 确保选中项是可移动的
+                if (GraphicItem* graphicItem = dynamic_cast<GraphicItem*>(item)) {
+                    graphicItem->setMovable(true);
+                    graphicItem->setFlag(QGraphicsItem::ItemIsMovable, true);
+                } else {
+                    // 对于非GraphicItem的其他项，也确保可移动标志
+                    item->setFlag(QGraphicsItem::ItemIsMovable, true);
+                }
+                
+                // 设置选中状态
                 item->setSelected(true);
             } catch (const std::exception& e) {
                 qWarning() << "SelectionManager::applySelectionToScene: 设置项选中状态时异常:" << e.what();

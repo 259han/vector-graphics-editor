@@ -2422,7 +2422,13 @@ bool DrawArea::loadFromCustomFormat(const QString& filePath) {
             if (points.empty()) {
                 item = m_graphicFactory->createItem(type, pos);
             } else {
+                // 先创建自定义图形
                 item = m_graphicFactory->createCustomItem(type, points);
+                
+                // 然后显式设置位置，确保位置与保存时一致
+                if (item) {
+                    item->setPos(pos);
+                }
             }
             
             // 转换为GraphicItem设置属性
