@@ -10,6 +10,9 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 set(CMAKE_AUTOUIC ON)
 
+# 添加选项，控制是否构建为Windows GUI应用（无控制台窗口）
+option(WIN32_APPLICATION "Build as Windows GUI application (no console window)" OFF)
+
 # 查找 Qt6 组件
 find_package(Qt6 REQUIRED COMPONENTS Widgets Svg)
 
@@ -41,13 +44,26 @@ set(FLOWCHART_SOURCES
     src/core/flowchart_connector_item.cpp
 )
 
-# 添加可执行文件，使用 WIN32 选项来隐藏控制台窗口
-add_executable(${PROJECT_NAME}
-    src/main.cpp 
-    ${SOURCES}
-    ${CLIP_ALGORITHM_SOURCES}
-    ${FLOWCHART_SOURCES}
-)
+# 根据WIN32_APPLICATION选项决定是否添加WIN32标志
+if(WIN32 AND WIN32_APPLICATION)
+    add_executable(${PROJECT_NAME} WIN32
+        src/main.cpp 
+        ${SOURCES}
+        ${CLIP_ALGORITHM_SOURCES}
+        ${FLOWCHART_SOURCES}
+    )
+    message(STATUS "Building as Windows GUI application (no console window)")
+else()
+    add_executable(${PROJECT_NAME}
+        src/main.cpp 
+        ${SOURCES}
+        ${CLIP_ALGORITHM_SOURCES}
+        ${FLOWCHART_SOURCES}
+    )
+    if(WIN32)
+        message(STATUS "Building as console application (console window will show)")
+    endif()
+endif()
 
 # 设置目标包含目录
 target_include_directories(${PROJECT_NAME} PRIVATE include src)
