@@ -227,6 +227,9 @@ bool RectangleGraphicItem::clip(const QPainterPath& clipPath)
     std::vector<QPointF> clipPoints = ClipAlgorithms::pathToPoints(clipPath, 0.5);
     Logger::debug(QString("pathToPoints: 通过toFillPolygon提取了 %1 个点").arg(clipPoints.size()));
 
+    // 保存当前可移动状态
+    bool wasMovable = isMovable();
+
     // 是否是自由形状裁剪（需要用通用算法）
     if (clipPoints.size() > 4) {
         Logger::debug("RectangleGraphicItem::clip: 使用通用裁剪算法(自由形状裁剪)");
@@ -350,6 +353,16 @@ bool RectangleGraphicItem::clip(const QPainterPath& clipPath)
                         .arg(detailedPoints.size()));
         }
     }
+    
+    // 确保裁剪后保持可移动状态
+    setMovable(wasMovable);
+    
+    // 手动设置图形项标志，确保可以接收鼠标事件和移动
+    setFlag(QGraphicsItem::ItemIsMovable, wasMovable);
+    setFlag(QGraphicsItem::ItemIsSelectable, true);
+    setFlag(QGraphicsItem::ItemSendsGeometryChanges, true);
+    
+    Logger::debug(QString("RectangleGraphicItem::clip: 设置可移动状态为 %1").arg(wasMovable ? "可移动" : "不可移动"));
     
     return true;
 }
