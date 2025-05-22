@@ -178,6 +178,17 @@ void MainWindow::createActions() {
     m_fillToolAction->setCheckable(true);
     toolsGroup->addAction(m_fillToolAction);
 
+    // 创建裁剪工具
+    m_clipRectAction = new QAction(QIcon(":/icons/clip_rect.png"), tr("矩形裁剪"), this);
+    m_clipRectAction->setCheckable(true);
+    m_clipRectAction->setStatusTip(tr("使用矩形区域裁剪选中的图形"));
+    toolsGroup->addAction(m_clipRectAction);
+    
+    m_clipFreehandAction = new QAction(QIcon(":/icons/clip_freehand.png"), tr("自由形状裁剪"), this);
+    m_clipFreehandAction->setCheckable(true);
+    m_clipFreehandAction->setStatusTip(tr("使用自由形状区域裁剪选中的图形"));
+    toolsGroup->addAction(m_clipFreehandAction);
+
     // 创建文件操作
     m_importImageAction = new QAction(QIcon(":/icons/import.png"), tr("导入图片"), this);
     m_saveImageAction = new QAction(QIcon(":/icons/save.png"), tr("保存图片"), this);
@@ -464,6 +475,11 @@ void MainWindow::createToolbars() {
     m_drawToolBar->addAction(m_fillToolAction);
     m_drawToolBar->addSeparator();
     
+    // 添加裁剪工具
+    m_drawToolBar->addSeparator();
+    m_drawToolBar->addAction(m_clipRectAction);
+    m_drawToolBar->addAction(m_clipFreehandAction);
+    
     // 添加编辑工具
     m_drawToolBar->addAction(m_undoAction);
     m_drawToolBar->addAction(m_redoAction);
@@ -738,6 +754,15 @@ void MainWindow::setupConnections() {
     
     // 监听系统剪贴板变化
     connect(QApplication::clipboard(), &QClipboard::dataChanged, this, &MainWindow::updateClipboardActions);
+    
+    // 裁剪工具连接
+    connect(m_clipRectAction, &QAction::toggled, this, [=](bool checked) {
+        if (checked) onClipToolTriggered(false); // 矩形裁剪
+    });
+    
+    connect(m_clipFreehandAction, &QAction::toggled, this, [=](bool checked) {
+        if (checked) onClipToolTriggered(true); // 自由形状裁剪
+    });
     
     // 初始化动作状态
     updateActionStates();
@@ -1551,4 +1576,14 @@ void MainWindow::updateWindowTitle() {
     } else {
         setWindowTitle(tr("%1 - 矢量图形编辑器").arg(QFileInfo(m_currentFilePath).fileName()));
     }
+}
+
+// 添加onClipToolTriggered函数的实现
+void MainWindow::onClipToolTriggered(bool freehandMode)
+{
+    // 更新状态栏
+    statusBar()->showMessage(freehandMode ? tr("自由形状裁剪模式") : tr("矩形裁剪模式"));
+    
+    // 设置裁剪状态
+    m_drawArea->setClipState(freehandMode);
 }

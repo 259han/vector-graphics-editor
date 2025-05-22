@@ -13,6 +13,7 @@
 #include <vector>
 #include <QDataStream>
 #include <QString>
+#include <QPainterPath>
 
 class DrawStrategy;
 
@@ -30,7 +31,8 @@ public:
         TRIANGLE = 6,   // 三角形
         FILL = 7,       // 填充
         // 后续添加更多图形...
-        CONNECTION = 8  // 连接线
+        CONNECTION = 8, // 连接线
+        CLIP = 9        // 裁剪操作
     };
 
     // 将图形类型转换为可读字符串
@@ -45,6 +47,7 @@ public:
             case TRIANGLE: return "三角形";
             case FILL: return "填充";
             case CONNECTION: return "连接线";
+            case CLIP: return "裁剪";
             default: return "未知类型";
         }
     }
@@ -145,6 +148,15 @@ public:
     void enableCaching(bool enable);
     bool isCachingEnabled() const { return m_cachingEnabled; }
     void invalidateCache();
+    
+    // 裁剪相关方法
+    virtual bool clip(const QPainterPath& clipPath);
+    
+    // 获取图形的路径表示（用于裁剪）
+    virtual QPainterPath toPath() const;
+    
+    // 从点集合恢复图形（用于撤销裁剪）
+    virtual void restoreFromPoints(const std::vector<QPointF>& points);
 
 protected:
     std::shared_ptr<DrawStrategy> m_drawStrategy;
@@ -158,6 +170,10 @@ protected:
     double m_rotation = 0.0;
     QPointF m_scale = QPointF(1.0, 1.0);
     bool m_isMovable = true;
+    
+    // 裁剪相关成员
+    bool m_useCustomPath = false;
+    QPainterPath m_customClipPath;
     
     // 用户数据
     QMap<int, QVariant> m_itemData;

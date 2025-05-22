@@ -52,53 +52,55 @@ QRectF GraphicItem::boundingRect() const
     return QRectF();
 }
 
-void GraphicItem::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget) {
-    Q_UNUSED(widget);
+void GraphicItem::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget)
+{
+    // 设置抗锯齿和高质量渲染
+    painter->setRenderHint(QPainter::Antialiasing);
+    painter->setRenderHint(QPainter::SmoothPixmapTransform);
     
-    // 如果启用了缓存且缓存有效，则直接绘制缓存的图像
-    if (m_cachingEnabled && !m_cacheInvalid && !m_cachedPixmap.isNull()) {
-        painter->drawPixmap(boundingRect().toRect(), m_cachedPixmap);
+    // 优先使用自定义裁剪路径（用于非矩形形状）
+    if (m_useCustomPath && !m_customClipPath.isEmpty()) {
+        // 保存当前的画笔和画刷
+        QPen oldPen = painter->pen();
+        QBrush oldBrush = painter->brush();
         
-        // 如果被选中，仍然需要绘制选中指示器（不缓存）
+        // 设置画笔和画刷 - 确保只绘制轮廓
+        painter->setPen(m_pen);
+        painter->setBrush(Qt::NoBrush);
+        
+        // 明确禁用填充，仅绘制轮廓
+        m_customClipPath.setFillRule(Qt::WindingFill);
+        painter->drawPath(m_customClipPath);
+        
+        // 恢复原来的画笔和画刷
+        painter->setPen(oldPen);
+        painter->setBrush(oldBrush);
+        
+        // 如果选中，绘制控制柄
         if (isSelected()) {
             drawSelectionHandles(painter);
         }
         return;
     }
     
-    // 如果需要更新缓存
-    if (m_cachingEnabled) {
-        updateCache(painter, option);
-        return;
-    }
-    
-    // 如果没有启用缓存，使用原始绘制方法
-    if (!m_drawStrategy) {
-        // 如果没有绘制策略，使用默认绘制方法
+    // 默认绘制方法
+    if (m_drawStrategy) {
+        // 获取绘制点并使用绘制策略
+        std::vector<QPointF> points = getDrawPoints();
         painter->setPen(m_pen);
         painter->setBrush(m_brush);
-        
-        // 默认简单绘制一个点
-        painter->drawPoint(0, 0);
-        return;
-    }
-    
-    // 应用当前画笔和画刷设置到绘制策略
-    m_drawStrategy->setColor(m_pen.color());
-    m_drawStrategy->setLineWidth(m_pen.width());
-    
-    // 使用绘制策略绘制图形
-    std::vector<QPointF> points = getDrawPoints();
-    if (!points.empty()) {
-        // 设置画笔和画刷
-        painter->setPen(m_pen);
-        painter->setBrush(m_brush);
-        
-        // 使用策略绘制图形
         m_drawStrategy->draw(painter, points);
+    } else {
+        // 基本绘制 - 使用图形项的标准设置
+        painter->setPen(m_pen);
+        painter->setBrush(m_brush);
+        
+        // 获取图形路径并绘制
+        QPainterPath path = toPath();
+        painter->drawPath(path);
     }
     
-    // 如果被选中，绘制选中指示器
+    // 绘制选择框（如果被选中）
     if (isSelected()) {
         drawSelectionHandles(painter);
     }
@@ -574,4 +576,24 @@ void GraphicItem::deserialize(QDataStream& in)
         in >> point;
         m_connectionPoints.push_back(point);
     }
+}
+
+bool GraphicItem::clip(const QPainterPath& clipPath)
+{
+    // 基类默认实现，子类应该重写以提供实际裁剪逻辑
+    Logger::warning("GraphicItem::clip: 基类默认实现被调用，未执行实际裁剪");
+    return false;
+}
+
+QPainterPath GraphicItem::toPath() const
+{
+    // 基类默认实现，子类应该重写以提供正确的路径表示
+    Logger::warning("GraphicItem::toPath: 基类默认实现被调用，返回空路径");
+    return QPainterPath();
+}
+
+void GraphicItem::restoreFromPoints(const std::vector<QPointF>& points)
+{
+    // 基类默认实现，子类应该重写以支持从点集恢复图形
+    Logger::warning("GraphicItem::restoreFromPoints: 基类默认实现被调用，未执行实际恢复");
 } 

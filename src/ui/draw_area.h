@@ -38,10 +38,7 @@ public:
     
     // 状态管理
     EditorState* getCurrentState() const { return m_currentState.get(); }
-    void setDrawState(GraphicItem::GraphicType type);
-    void setEditState();
-    void setFillState();
-    void setFillState(const QColor& color);
+            void setDrawState(GraphicItem::GraphicType type);    void setEditState();    void setFillState();    void setFillState(const QColor& color);    void setClipState();    void setClipState(bool freehandMode);
 
     // 填充相关
     void setFillColor(const QColor& color);

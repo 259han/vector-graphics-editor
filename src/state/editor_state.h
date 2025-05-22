@@ -25,7 +25,8 @@ public:
         BaseState,
         DrawState,
         EditState,
-        FillState
+        FillState,
+        ClipState
     };
     
     EditorState();
@@ -58,6 +59,7 @@ public:
     bool isEditState() const { return getStateType() == EditState; }
     bool isDrawState() const { return getStateType() == DrawState; }
     bool isFillState() const { return getStateType() == FillState; }
+    bool isClipState() const { return getStateType() == ClipState; }
     
     // 状态名称
     virtual QString getStateName() const = 0;

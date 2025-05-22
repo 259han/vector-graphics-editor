@@ -8,6 +8,7 @@
 #include "../state/draw_state.h"
 #include "../state/edit_state.h"
 #include "../state/fill_state.h"
+#include "../state/clip_state.h"
 #include "../core/graphics_item_factory.h"
 #include "image_resizer.h"
 #include "../utils/logger.h"
@@ -2583,4 +2584,69 @@ void DrawArea::openWithFormatDialog() {
         
         emit statusMessageChanged(tr("图像已加载: %1").arg(filePath), 3000);
     }
+}
+
+void DrawArea::setClipState()
+{
+    Logger::debug("DrawArea::setClipState: 开始切换到裁剪状态（矩形裁剪）");
+    
+    // 先保存当前状态，以便于在切换状态时通知
+    auto oldState = m_currentState.get();
+    
+    // 在切换前通知当前状态即将退出
+    if (oldState) {
+        Logger::debug("DrawArea::setClipState: 通知当前状态即将退出");
+        oldState->onExitState(this);
+        Logger::debug("DrawArea::setClipState: 当前状态已退出");
+    }
+    
+    // 清理之前的状态
+    m_currentState.reset();
+    
+    // 创建新的裁剪状态（默认为矩形裁剪）
+    m_currentState = std::make_unique<ClipState>();
+    
+    // 通知新状态已经进入
+    m_currentState->onEnterState(this);
+    
+    // 更新视图
+    viewport()->update();
+    
+    Logger::debug("DrawArea::setClipState: 已切换到裁剪状态");
+}
+
+void DrawArea::setClipState(bool freehandMode)
+{
+    Logger::debug(QString("DrawArea::setClipState: 开始切换到裁剪状态（%1）")
+                 .arg(freehandMode ? "自由形状裁剪" : "矩形裁剪"));
+    
+    // 先保存当前状态，以便于在切换状态时通知
+    auto oldState = m_currentState.get();
+    
+    // 在切换前通知当前状态即将退出
+    if (oldState) {
+        Logger::debug("DrawArea::setClipState: 通知当前状态即将退出");
+        oldState->onExitState(this);
+        Logger::debug("DrawArea::setClipState: 当前状态已退出");
+    }
+    
+    // 清理之前的状态
+    m_currentState.reset();
+    
+    // 创建新的裁剪状态
+    auto clipState = std::make_unique<ClipState>();
+    
+    // 设置裁剪模式
+    clipState->setClipAreaMode(freehandMode ? ClipState::FreehandClip : ClipState::RectangleClip);
+    
+    // 设置为当前状态
+    m_currentState = std::move(clipState);
+    
+    // 通知新状态已经进入
+    m_currentState->onEnterState(this);
+    
+    // 更新视图
+    viewport()->update();
+    
+    Logger::debug("DrawArea::setClipState: 已切换到裁剪状态");
 }

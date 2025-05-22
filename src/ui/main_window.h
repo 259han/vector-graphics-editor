@@ -35,6 +35,7 @@ private slots:
     void onSelectFillColor();
     void onSelectLineColor();
     void onLineWidthChanged(int width);
+    void onClipToolTriggered(bool freehandMode = false);
     
     void onGridToggled(bool enabled);
     void onGridSizeChanged(int size);
@@ -98,6 +99,8 @@ private:
     QAction* m_ellipseAction;
     QAction* m_bezierAction;
     QAction* m_fillToolAction;
+    QAction* m_clipRectAction;     // 矩形裁剪工具
+    QAction* m_clipFreehandAction; // 自由形状裁剪工具
     
     // 文件操作
     QAction* m_importImageAction;

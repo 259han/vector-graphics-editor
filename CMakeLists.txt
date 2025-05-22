@@ -19,10 +19,17 @@ file(GLOB_RECURSE SOURCES
     "src/*.h"
 )
 
+# 显式添加裁剪算法源文件
+set(CLIP_ALGORITHM_SOURCES
+    src/utils/clip_algorithms.cpp
+    src/utils/clip_algorithms.h
+)
+
 # 添加可执行文件，使用 WIN32 选项来隐藏控制台窗口
 add_executable(${PROJECT_NAME}
     src/main.cpp 
     ${SOURCES}
+    ${CLIP_ALGORITHM_SOURCES}
 )
 
 # 设置目标包含目录
