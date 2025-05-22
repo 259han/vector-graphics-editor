@@ -10,6 +10,7 @@
 
 ### 最新功能
 
+- **流程图交互优化**：大幅增强小尺寸流程图元素的选择和移动功能，提升用户体验
 - **高级裁剪功能**：支持矩形裁剪和自由形状裁剪，可处理复杂形状
 - **非规则图形处理**：裁剪后的非规则图形仍可自由移动、旋转和缩放
 - **边缘智能检测**：优化的边缘检测算法，使操作更加精准
@@ -82,9 +83,29 @@ cmake --build . --config Release
 ./bd.sh clean debug run
 ```
 
+#### 启动项目
+构建完成后，可以通过以下方式启动程序：
+```bash
+# Windows
+./build/vector-graphics-editor.exe
+
+# Linux/macOS
+./build/vector-graphics-editor
+```
+
+也可以使用构建脚本直接构建并运行：
+```bash
+# 构建后运行
+./bd.sh run
+```
+
 ### 功能特性
 
 - **基本形状绘制**：矩形、椭圆、多边形、线条等
+- **流程图绘制**：
+  - 完整流程图元素：处理框、决策框、输入/输出框、开始/结束框
+  - 增强的交互体验：优化的容差系统使小尺寸图形也能轻松选中和移动
+  - 智能连接点：自动计算最佳连接位置
 - **高级裁剪工具**：
   - 矩形裁剪：使用矩形区域裁剪任意图形
   - 自由形状裁剪：使用自定义路径裁剪图形，支持复杂形状
@@ -102,6 +123,12 @@ cmake --build . --config Release
 - UTF-8编码支持（MSVC编译器使用/utf-8选项）
 - 支持MinGW和MSVC编译环境
 
+### 更新日志
+
+#### 2023-06-01
+- 优化流程图元素交互：将图形选择容差参数调整为1500，解决小尺寸图形难以选择和移动的问题
+- 统一所有流程图元素（处理框、决策框、输入/输出框、开始/结束框）的交互行为
+
 ---
 
 ## English
@@ -112,6 +139,7 @@ A cross-platform vector graphics editor developed with Qt6, featuring an intuiti
 
 ### Latest Features
 
+- **Flowchart Interaction Enhancement**: Significantly improved selection and movement of small-sized flowchart elements for better user experience
 - **Advanced Clipping**: Support for rectangular and freeform clipping, handling complex shapes
 - **Irregular Shape Handling**: Clipped irregular shapes remain fully movable, rotatable, and scalable
 - **Smart Edge Detection**: Optimized edge detection algorithm for more precise operations
@@ -184,9 +212,29 @@ cmake --build . --config Release
 ./bd.sh clean debug run
 ```
 
+#### Running the Application
+After building, you can start the application using:
+```bash
+# Windows
+./build/vector-graphics-editor.exe
+
+# Linux/macOS
+./build/vector-graphics-editor
+```
+
+You can also build and run in one step using the build script:
+```bash
+# Build and run
+./bd.sh run
+```
+
 ### Features
 
 - **Basic shape drawing**: rectangles, ellipses, polygons, lines, etc.
+- **Flowchart drawing**:
+  - Complete flowchart elements: process boxes, decision diamonds, input/output parallelograms, start/end capsules
+  - Enhanced interaction: optimized tolerance system for easy selection and movement of small-sized shapes
+  - Smart connection points: automatic calculation of optimal connection positions
 - **Advanced clipping tools**:
   - Rectangle clipping: Clip any shape with a rectangular region
   - Freeform clipping: Clip shapes with custom paths, supporting complex shapes
@@ -203,3 +251,9 @@ cmake --build . --config Release
 - Recommended IDE: Visual Studio Code (with preconfigured debugging and task settings)
 - UTF-8 encoding support (MSVC compiler with /utf-8 option)
 - Support for both MinGW and MSVC build environments 
+
+### Update Log
+
+#### 2023-06-01
+- Enhanced flowchart element interaction: Adjusted shape selection tolerance parameter to 1500, resolving issues with selecting and moving small-sized shapes
+- Unified interaction behavior across all flowchart elements (process boxes, decision diamonds, input/output parallelograms, start/end capsules) 

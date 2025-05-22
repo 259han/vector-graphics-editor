@@ -107,6 +107,17 @@ void DrawState::mouseMoveEvent(DrawArea* drawArea, QMouseEvent* event)
                     statusMsg = QString("正在绘制矩形: %1 x %2").arg(width, 0, 'f', 1).arg(height, 0, 'f', 1);
                 } else if (m_graphicType == Graphic::ELLIPSE) {
                     statusMsg = QString("正在绘制椭圆: %1 x %2").arg(width, 0, 'f', 1).arg(height, 0, 'f', 1);
+                } else if (m_graphicType == Graphic::FLOWCHART_PROCESS) {
+                    statusMsg = QString("正在绘制流程图处理框: %1 x %2").arg(width, 0, 'f', 1).arg(height, 0, 'f', 1);
+                } else if (m_graphicType == Graphic::FLOWCHART_DECISION) {
+                    statusMsg = QString("正在绘制流程图判断框: %1 x %2").arg(width, 0, 'f', 1).arg(height, 0, 'f', 1);
+                } else if (m_graphicType == Graphic::FLOWCHART_START_END) {
+                    statusMsg = QString("正在绘制流程图开始/结束框: %1 x %2").arg(width, 0, 'f', 1).arg(height, 0, 'f', 1);
+                } else if (m_graphicType == Graphic::FLOWCHART_IO) {
+                    statusMsg = QString("正在绘制流程图输入/输出框: %1 x %2").arg(width, 0, 'f', 1).arg(height, 0, 'f', 1);
+                } else if (m_graphicType == Graphic::FLOWCHART_CONNECTOR) {
+                    double length = QLineF(m_startPoint, m_currentPoint).length();
+                    statusMsg = QString("正在绘制流程图连接器: 长度 %1").arg(length, 0, 'f', 1);
                 }
             }
             updateStatusMessage(drawArea, statusMsg);
@@ -149,14 +160,37 @@ void DrawState::mouseReleaseEvent(DrawArea* drawArea, QMouseEvent* event)
             
             // 更新状态栏消息
             QString statusMsg;
-            if (m_graphicType == Graphic::LINE) {
-                statusMsg = "直线工具: 按住左键并拖动鼠标绘制直线";
-            } else if (m_graphicType == Graphic::RECTANGLE) {
-                statusMsg = "矩形工具: 按住左键并拖动鼠标绘制矩形";
-            } else if (m_graphicType == Graphic::ELLIPSE) {
-                statusMsg = "椭圆工具: 按住左键并拖动鼠标绘制椭圆";
-            } else if (m_graphicType == Graphic::BEZIER) {
-                statusMsg = "贝塞尔曲线工具: 点击添加控制点, 右键点击完成曲线";
+            switch (m_graphicType) {
+                case Graphic::LINE:
+                    statusMsg = "直线工具: 按住左键并拖动鼠标绘制直线";
+                    break;
+                case Graphic::RECTANGLE:
+                    statusMsg = "矩形工具: 按住左键并拖动鼠标绘制矩形";
+                    break;
+                case Graphic::ELLIPSE:
+                    statusMsg = "椭圆工具: 按住左键并拖动鼠标绘制椭圆";
+                    break;
+                case Graphic::BEZIER:
+                    statusMsg = "贝塞尔曲线工具: 点击添加控制点, 右键点击完成曲线";
+                    break;
+                case Graphic::FLOWCHART_PROCESS:
+                    statusMsg = "流程图处理框: 按住左键并拖动鼠标绘制处理框（矩形）";
+                    break;
+                case Graphic::FLOWCHART_DECISION:
+                    statusMsg = "流程图判断框: 按住左键并拖动鼠标绘制判断框（菱形）";
+                    break;
+                case Graphic::FLOWCHART_START_END:
+                    statusMsg = "流程图开始/结束框: 按住左键并拖动鼠标绘制开始/结束框（圆角矩形）";
+                    break;
+                case Graphic::FLOWCHART_IO:
+                    statusMsg = "流程图输入/输出框: 按住左键并拖动鼠标绘制输入/输出框（平行四边形）";
+                    break;
+                case Graphic::FLOWCHART_CONNECTOR:
+                    statusMsg = "流程图连接器: 按住左键并拖动鼠标绘制连接线（带箭头）";
+                    break;
+                default:
+                    statusMsg = "绘图工具: 点击并拖动鼠标进行绘制";
+                    break;
             }
             updateStatusMessage(drawArea, statusMsg);
         }
@@ -262,7 +296,27 @@ QGraphicsItem* DrawState::createFinalItem(DrawArea* drawArea)
     
     // 准备画笔和画刷
     QPen pen(m_lineColor, m_lineWidth);
-    QBrush brush = m_fillMode ? QBrush(m_fillColor) : QBrush(Qt::transparent);
+    QBrush brush;
+    
+    // 为流程图元素设置默认的白色填充，除非已经设置了填充色
+    if (m_graphicType == Graphic::FLOWCHART_PROCESS || 
+        m_graphicType == Graphic::FLOWCHART_DECISION || 
+        m_graphicType == Graphic::FLOWCHART_START_END || 
+        m_graphicType == Graphic::FLOWCHART_IO) {
+        if (m_fillMode) {
+            brush = QBrush(m_fillColor);
+        } else {
+            brush = QBrush(Qt::white); // 默认白色填充
+        }
+        Logger::debug(QString("DrawState::createFinalItem: 设置流程图元素填充色: %1").arg(brush.color().name()));
+    } else if (m_graphicType == Graphic::FLOWCHART_CONNECTOR) {
+        // 对于连接器，画刷用于箭头填充，应与线条颜色一致
+        brush = QBrush(m_lineColor);
+        Logger::debug(QString("DrawState::createFinalItem: 设置流程图连接器箭头填充色: %1").arg(brush.color().name()));
+    } else {
+        // 其他图形类型使用原有的填充规则
+        brush = m_fillMode ? QBrush(m_fillColor) : QBrush(Qt::transparent);
+    }
     
     // 创建命令
     std::vector<QPointF> points;
@@ -279,14 +333,54 @@ QGraphicsItem* DrawState::createFinalItem(DrawArea* drawArea)
         points.push_back(m_startPoint);
         points.push_back(m_currentPoint);
         
+        // 对于流程图连接器，确保起点和终点顺序正确
+        if (m_graphicType == Graphic::FLOWCHART_CONNECTOR) {
+            // 清除之前添加的点
+            points.clear();
+            // 确保连接器的起点和终点与预览一致
+            points.push_back(m_startPoint);
+            points.push_back(m_currentPoint);
+            
+            Logger::debug(QString("DrawState::createFinalItem: 流程图连接器: (%1,%2)-(%3,%4)")
+                         .arg(m_startPoint.x()).arg(m_startPoint.y())
+                         .arg(m_currentPoint.x()).arg(m_currentPoint.y()));
+        }
+        // 对于基于矩形的流程图元素，需要特殊处理
+        else if (m_graphicType == Graphic::FLOWCHART_PROCESS || 
+                 m_graphicType == Graphic::FLOWCHART_DECISION || 
+                 m_graphicType == Graphic::FLOWCHART_START_END || 
+                 m_graphicType == Graphic::FLOWCHART_IO) {
+            // 清除之前添加的点
+            points.clear();
+            
+            // 计算标准化矩形
+            QRectF rect = QRectF(m_startPoint, m_currentPoint).normalized();
+            
+            // 流程图元素使用矩形中心点，这里我们只保留中心点
+            points.push_back(rect.center());
+            
+            // 为了保留矩形大小，添加边长信息
+            // 注意：作为工厂函数的第二个参数，这只用于传递大小信息
+            // 我们使用右下角点来保存大小信息
+            QPointF sizePoint = rect.center() + QPointF(rect.width()/2, rect.height()/2);
+            points.push_back(sizePoint);
+            
+            Logger::debug(QString("DrawState::createFinalItem: 流程图元素: 中心点(%1,%2) 大小(%3x%4)")
+                         .arg(rect.center().x()).arg(rect.center().y())
+                         .arg(rect.width()).arg(rect.height()));
+        }
         // 对于椭圆类型，确保使用与预览相同的标准化矩形
-        if (m_graphicType == Graphic::ELLIPSE) {
+        else if (m_graphicType == Graphic::ELLIPSE) {
             // 清除之前添加的点
             points.clear();
             // 使用标准化矩形的左上角和右下角点，与预览完全匹配
             QRectF rect = QRectF(m_startPoint, m_currentPoint).normalized();
             points.push_back(rect.topLeft());
             points.push_back(rect.bottomRight());
+            
+            Logger::debug(QString("DrawState::createFinalItem: 标准化矩形: (%1,%2)-(%3,%4)")
+                         .arg(rect.left()).arg(rect.top())
+                         .arg(rect.right()).arg(rect.bottom()));
         }
     }
     
@@ -479,6 +573,315 @@ void DrawState::updatePreviewItem(DrawArea* drawArea)
             }
             break;
         }
+        
+        // 流程图元素预览
+        case Graphic::FLOWCHART_PROCESS: {
+            // 处理框（矩形）预览
+            QRectF rect = QRectF(m_startPoint, m_currentPoint).normalized();
+            
+            if (!m_previewItem) {
+                // 创建新的矩形预览
+                m_previewItem = new QGraphicsRectItem(rect);
+                QPen pen(m_lineColor, m_lineWidth);
+                pen.setStyle(Qt::DashLine); // 使用虚线表示预览
+                static_cast<QGraphicsRectItem*>(m_previewItem)->setPen(pen);
+                
+                // 如果设置了填充，则应用填充
+                if (m_fillMode) {
+                    static_cast<QGraphicsRectItem*>(m_previewItem)->setBrush(QBrush(m_fillColor));
+                } else {
+                    static_cast<QGraphicsRectItem*>(m_previewItem)->setBrush(QBrush(Qt::white));
+                }
+                
+                drawArea->scene()->addItem(m_previewItem);
+            } else {
+                // 更新现有矩形
+                static_cast<QGraphicsRectItem*>(m_previewItem)->setRect(rect);
+            }
+            break;
+        }
+        
+        case Graphic::FLOWCHART_DECISION: {
+            // 判断框（菱形）预览
+            QRectF rect = QRectF(m_startPoint, m_currentPoint).normalized();
+            
+            if (!m_previewItem) {
+                // 创建新的路径项
+                QPainterPath path;
+                path.moveTo(rect.center().x(), rect.top());          // 上
+                path.lineTo(rect.right(), rect.center().y());        // 右
+                path.lineTo(rect.center().x(), rect.bottom());       // 下
+                path.lineTo(rect.left(), rect.center().y());         // 左
+                path.closeSubpath();
+                
+                m_previewItem = new QGraphicsPathItem(path);
+                QPen pen(m_lineColor, m_lineWidth);
+                pen.setStyle(Qt::DashLine); // 使用虚线表示预览
+                static_cast<QGraphicsPathItem*>(m_previewItem)->setPen(pen);
+                
+                // 如果设置了填充，则应用填充
+                if (m_fillMode) {
+                    static_cast<QGraphicsPathItem*>(m_previewItem)->setBrush(QBrush(m_fillColor));
+                } else {
+                    static_cast<QGraphicsPathItem*>(m_previewItem)->setBrush(QBrush(Qt::white));
+                }
+                
+                drawArea->scene()->addItem(m_previewItem);
+            } else {
+                // 更新现有菱形
+                QRectF rect = QRectF(m_startPoint, m_currentPoint).normalized();
+                QPainterPath path;
+                path.moveTo(rect.center().x(), rect.top());          // 上
+                path.lineTo(rect.right(), rect.center().y());        // 右
+                path.lineTo(rect.center().x(), rect.bottom());       // 下
+                path.lineTo(rect.left(), rect.center().y());         // 左
+                path.closeSubpath();
+                
+                static_cast<QGraphicsPathItem*>(m_previewItem)->setPath(path);
+            }
+            break;
+        }
+        
+        case Graphic::FLOWCHART_START_END: {
+            // 开始/结束框（圆角矩形）预览
+            QRectF rect = QRectF(m_startPoint, m_currentPoint).normalized();
+            
+            if (!m_previewItem) {
+                // 创建新的路径项
+                QPainterPath path;
+                path.addRoundedRect(rect, 15, 15); // 15像素的圆角
+                
+                m_previewItem = new QGraphicsPathItem(path);
+                QPen pen(m_lineColor, m_lineWidth);
+                pen.setStyle(Qt::DashLine); // 使用虚线表示预览
+                static_cast<QGraphicsPathItem*>(m_previewItem)->setPen(pen);
+                
+                // 如果设置了填充，则应用填充
+                if (m_fillMode) {
+                    static_cast<QGraphicsPathItem*>(m_previewItem)->setBrush(QBrush(m_fillColor));
+                } else {
+                    static_cast<QGraphicsPathItem*>(m_previewItem)->setBrush(QBrush(Qt::white));
+                }
+                
+                drawArea->scene()->addItem(m_previewItem);
+            } else {
+                // 更新现有圆角矩形
+                QPainterPath path;
+                path.addRoundedRect(rect, 15, 15);
+                static_cast<QGraphicsPathItem*>(m_previewItem)->setPath(path);
+            }
+            break;
+        }
+        
+        case Graphic::FLOWCHART_IO: {
+            // 输入/输出框（平行四边形）预览
+            QRectF rect = QRectF(m_startPoint, m_currentPoint).normalized();
+            
+            if (!m_previewItem) {
+                // 创建新的路径项
+                QPainterPath path;
+                // 计算倾斜量，使用宽度和高度的比例来确定合适的值
+                // 新的计算方式确保即使在矩形很窄时左边的线也能显示
+                qreal skewOffset = qMin(rect.height() * 0.2, rect.width() * 0.3);
+                
+                QPolygonF parallelogram;
+                parallelogram << QPointF(rect.left() + skewOffset, rect.top())    // 左上
+                             << QPointF(rect.right(), rect.top())                // 右上
+                             << QPointF(rect.right() - skewOffset, rect.bottom()) // 右下
+                             << QPointF(rect.left(), rect.bottom());             // 左下
+                
+                path.addPolygon(parallelogram);
+                path.closeSubpath(); // 确保路径闭合
+                
+                m_previewItem = new QGraphicsPathItem(path);
+                QPen pen(m_lineColor, m_lineWidth);
+                pen.setStyle(Qt::DashLine); // 使用虚线表示预览
+                static_cast<QGraphicsPathItem*>(m_previewItem)->setPen(pen);
+                
+                // 如果设置了填充，则应用填充
+                if (m_fillMode) {
+                    static_cast<QGraphicsPathItem*>(m_previewItem)->setBrush(QBrush(m_fillColor));
+                } else {
+                    static_cast<QGraphicsPathItem*>(m_previewItem)->setBrush(QBrush(Qt::white));
+                }
+                
+                drawArea->scene()->addItem(m_previewItem);
+            } else {
+                // 更新现有平行四边形
+                QPainterPath path;
+                // 使用相同的改进计算方式
+                qreal skewOffset = qMin(rect.height() * 0.2, rect.width() * 0.3);
+                
+                QPolygonF parallelogram;
+                parallelogram << QPointF(rect.left() + skewOffset, rect.top())    // 左上
+                             << QPointF(rect.right(), rect.top())                // 右上
+                             << QPointF(rect.right() - skewOffset, rect.bottom()) // 右下
+                             << QPointF(rect.left(), rect.bottom());             // 左下
+                
+                path.addPolygon(parallelogram);
+                path.closeSubpath(); // 确保路径闭合
+                static_cast<QGraphicsPathItem*>(m_previewItem)->setPath(path);
+            }
+            break;
+        }
+        
+        case Graphic::FLOWCHART_CONNECTOR: {
+            // 连接器（带箭头的线）预览
+            if (!m_previewItem) {
+                // 创建新的路径预览（使用QPainterPath而不是简单线段）
+                QPainterPath path;
+                path.moveTo(m_startPoint);
+                path.lineTo(m_currentPoint);
+                
+                m_previewItem = new QGraphicsPathItem(path);
+                QPen pen(m_lineColor, m_lineWidth);
+                pen.setStyle(Qt::DashLine); // 使用虚线表示预览
+                static_cast<QGraphicsPathItem*>(m_previewItem)->setPen(pen);
+                
+                // 从DrawArea获取当前设置的箭头类型
+                FlowchartConnectorItem::ArrowType arrowType = FlowchartConnectorItem::SingleArrow; // 默认单箭头
+                
+                // 如果DrawArea可用，获取其设置的箭头类型
+                if (drawArea) {
+                    arrowType = drawArea->getArrowType();
+                }
+                
+                // 根据箭头类型，添加相应的箭头图形
+                // 1. 起点箭头（仅在双箭头模式下添加）
+                if (arrowType == FlowchartConnectorItem::DoubleArrow) {
+                    QGraphicsPolygonItem* startArrowHead = new QGraphicsPolygonItem(m_previewItem);
+                    
+                    // 计算箭头角度 - 从终点指向起点
+                    double startAngle = std::atan2(m_startPoint.y() - m_currentPoint.y(), 
+                                              m_startPoint.x() - m_currentPoint.x());
+                    
+                    // 计算垂直于线条的方向
+                    double startPerpAngle = startAngle + M_PI/2;
+                    
+                    // 设置箭头大小
+                    double arrowWidth = 8.0;
+                    double arrowHeight = 12.0;
+                    
+                    // 计算箭头点
+                    QPointF startBaseCenter = m_startPoint - QPointF(cos(startAngle) * arrowHeight/2, sin(startAngle) * arrowHeight/2);
+                    QPointF startBaseLeft = startBaseCenter + QPointF(cos(startPerpAngle) * arrowWidth/2, sin(startPerpAngle) * arrowWidth/2);
+                    QPointF startBaseRight = startBaseCenter - QPointF(cos(startPerpAngle) * arrowWidth/2, sin(startPerpAngle) * arrowWidth/2);
+                    QPointF startTip = startBaseCenter + QPointF(cos(startAngle) * arrowHeight, sin(startAngle) * arrowHeight);
+                    
+                    QPolygonF startArrowShape;
+                    startArrowShape << startTip << startBaseLeft << startBaseRight;
+                    startArrowHead->setPolygon(startArrowShape);
+                    startArrowHead->setBrush(QBrush(m_lineColor));
+                }
+                
+                // 2. 终点箭头（在单箭头和双箭头模式下添加）
+                if (arrowType != FlowchartConnectorItem::NoArrow) {
+                    QGraphicsPolygonItem* endArrowHead = new QGraphicsPolygonItem(m_previewItem);
+                    
+                    // 计算箭头角度 - 从起点指向终点
+                    double endAngle = std::atan2(m_currentPoint.y() - m_startPoint.y(), 
+                                            m_currentPoint.x() - m_startPoint.x());
+                    
+                    // 计算垂直于线条的方向
+                    double endPerpAngle = endAngle + M_PI/2;
+                    
+                    // 设置箭头大小
+                    double arrowWidth = 8.0;
+                    double arrowHeight = 12.0;
+                    
+                    // 计算箭头点
+                    QPointF endBaseCenter = m_currentPoint - QPointF(cos(endAngle) * arrowHeight/2, sin(endAngle) * arrowHeight/2);
+                    QPointF endBaseLeft = endBaseCenter + QPointF(cos(endPerpAngle) * arrowWidth/2, sin(endPerpAngle) * arrowWidth/2);
+                    QPointF endBaseRight = endBaseCenter - QPointF(cos(endPerpAngle) * arrowWidth/2, sin(endPerpAngle) * arrowWidth/2);
+                    QPointF endTip = endBaseCenter + QPointF(cos(endAngle) * arrowHeight, sin(endAngle) * arrowHeight);
+                    
+                    QPolygonF endArrowShape;
+                    endArrowShape << endTip << endBaseLeft << endBaseRight;
+                    endArrowHead->setPolygon(endArrowShape);
+                    endArrowHead->setBrush(QBrush(m_lineColor));
+                }
+                
+                drawArea->scene()->addItem(m_previewItem);
+            } else {
+                // 更新现有路径
+                QPainterPath path;
+                path.moveTo(m_startPoint);
+                path.lineTo(m_currentPoint);
+                static_cast<QGraphicsPathItem*>(m_previewItem)->setPath(path);
+                
+                // 从DrawArea获取当前设置的箭头类型
+                FlowchartConnectorItem::ArrowType arrowType = FlowchartConnectorItem::SingleArrow; // 默认单箭头
+                
+                // 如果DrawArea可用，获取其设置的箭头类型
+                if (drawArea) {
+                    arrowType = drawArea->getArrowType();
+                }
+                
+                // 移除所有现有的箭头
+                QList<QGraphicsItem*> children = m_previewItem->childItems();
+                for (QGraphicsItem* child : children) {
+                    m_previewItem->scene()->removeItem(child);
+                    delete child;
+                }
+                
+                // 根据箭头类型，添加相应的箭头图形
+                // 1. 起点箭头（仅在双箭头模式下添加）
+                if (arrowType == FlowchartConnectorItem::DoubleArrow) {
+                    QGraphicsPolygonItem* startArrowHead = new QGraphicsPolygonItem(m_previewItem);
+                    
+                    // 计算箭头角度 - 从终点指向起点
+                    double startAngle = std::atan2(m_startPoint.y() - m_currentPoint.y(), 
+                                              m_startPoint.x() - m_currentPoint.x());
+                    
+                    // 计算垂直于线条的方向
+                    double startPerpAngle = startAngle + M_PI/2;
+                    
+                    // 设置箭头大小
+                    double arrowWidth = 8.0;
+                    double arrowHeight = 12.0;
+                    
+                    // 计算箭头点
+                    QPointF startBaseCenter = m_startPoint - QPointF(cos(startAngle) * arrowHeight/2, sin(startAngle) * arrowHeight/2);
+                    QPointF startBaseLeft = startBaseCenter + QPointF(cos(startPerpAngle) * arrowWidth/2, sin(startPerpAngle) * arrowWidth/2);
+                    QPointF startBaseRight = startBaseCenter - QPointF(cos(startPerpAngle) * arrowWidth/2, sin(startPerpAngle) * arrowWidth/2);
+                    QPointF startTip = startBaseCenter + QPointF(cos(startAngle) * arrowHeight, sin(startAngle) * arrowHeight);
+                    
+                    QPolygonF startArrowShape;
+                    startArrowShape << startTip << startBaseLeft << startBaseRight;
+                    startArrowHead->setPolygon(startArrowShape);
+                    startArrowHead->setBrush(QBrush(m_lineColor));
+                }
+                
+                // 2. 终点箭头（在单箭头和双箭头模式下添加）
+                if (arrowType != FlowchartConnectorItem::NoArrow) {
+                    QGraphicsPolygonItem* endArrowHead = new QGraphicsPolygonItem(m_previewItem);
+                    
+                    // 计算箭头角度 - 从起点指向终点
+                    double endAngle = std::atan2(m_currentPoint.y() - m_startPoint.y(), 
+                                            m_currentPoint.x() - m_startPoint.x());
+                    
+                    // 计算垂直于线条的方向
+                    double endPerpAngle = endAngle + M_PI/2;
+                    
+                    // 设置箭头大小
+                    double arrowWidth = 8.0;
+                    double arrowHeight = 12.0;
+                    
+                    // 计算箭头点
+                    QPointF endBaseCenter = m_currentPoint - QPointF(cos(endAngle) * arrowHeight/2, sin(endAngle) * arrowHeight/2);
+                    QPointF endBaseLeft = endBaseCenter + QPointF(cos(endPerpAngle) * arrowWidth/2, sin(endPerpAngle) * arrowWidth/2);
+                    QPointF endBaseRight = endBaseCenter - QPointF(cos(endPerpAngle) * arrowWidth/2, sin(endPerpAngle) * arrowWidth/2);
+                    QPointF endTip = endBaseCenter + QPointF(cos(endAngle) * arrowHeight, sin(endAngle) * arrowHeight);
+                    
+                    QPolygonF endArrowShape;
+                    endArrowShape << endTip << endBaseLeft << endBaseRight;
+                    endArrowHead->setPolygon(endArrowShape);
+                    endArrowHead->setBrush(QBrush(m_lineColor));
+                }
+            }
+            break;
+        }
+        
         default:
             break;
     }
@@ -648,8 +1051,23 @@ void DrawState::onEnterState(DrawArea* drawArea)
         case Graphic::BEZIER:
             statusMsg = "贝塞尔曲线工具: 点击添加控制点, 右键点击完成曲线";
             break;
+        case Graphic::FLOWCHART_PROCESS:
+            statusMsg = "流程图处理框: 按住左键并拖动鼠标绘制处理框（矩形）";
+            break;
+        case Graphic::FLOWCHART_DECISION:
+            statusMsg = "流程图判断框: 按住左键并拖动鼠标绘制判断框（菱形）";
+            break;
+        case Graphic::FLOWCHART_START_END:
+            statusMsg = "流程图开始/结束框: 按住左键并拖动鼠标绘制开始/结束框（圆角矩形）";
+            break;
+        case Graphic::FLOWCHART_IO:
+            statusMsg = "流程图输入/输出框: 按住左键并拖动鼠标绘制输入/输出框（平行四边形）";
+            break;
+        case Graphic::FLOWCHART_CONNECTOR:
+            statusMsg = "流程图连接器: 按住左键并拖动鼠标绘制连接线（带箭头）";
+            break;
         default:
-            statusMsg = "绘制工具: 选择绘制工具并开始绘制";
+            statusMsg = "绘图工具: 点击并拖动鼠标进行绘制";
             break;
     }
     

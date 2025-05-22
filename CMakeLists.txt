@@ -25,11 +25,28 @@ set(CLIP_ALGORITHM_SOURCES
     src/utils/clip_algorithms.h
 )
 
+# 显式添加流程图相关源文件
+set(FLOWCHART_SOURCES
+    src/core/flowchart_base_item.h
+    src/core/flowchart_base_item.cpp
+    src/core/flowchart_process_item.h
+    src/core/flowchart_process_item.cpp
+    src/core/flowchart_decision_item.h
+    src/core/flowchart_decision_item.cpp
+    src/core/flowchart_start_end_item.h
+    src/core/flowchart_start_end_item.cpp
+    src/core/flowchart_io_item.h
+    src/core/flowchart_io_item.cpp
+    src/core/flowchart_connector_item.h
+    src/core/flowchart_connector_item.cpp
+)
+
 # 添加可执行文件，使用 WIN32 选项来隐藏控制台窗口
 add_executable(${PROJECT_NAME}
     src/main.cpp 
     ${SOURCES}
     ${CLIP_ALGORITHM_SOURCES}
+    ${FLOWCHART_SOURCES}
 )
 
 # 设置目标包含目录

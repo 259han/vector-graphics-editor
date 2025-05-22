@@ -2650,3 +2650,129 @@ void DrawArea::setClipState(bool freehandMode)
     
     Logger::debug("DrawArea::setClipState: 已切换到裁剪状态");
 }
+
+// 在文件末尾添加这两个方法
+
+void DrawArea::setConnectorType(FlowchartConnectorItem::ConnectorType type)
+{
+    m_connectorType = type;
+    
+    // 同步设置到图形工厂
+    if (m_graphicFactory) {
+        m_graphicFactory->setConnectorType(type);
+    }
+    
+    // 如果当前状态是绘制状态且正在绘制连接器，则更新预览
+    if (m_currentState && m_currentState->getStateType() == EditorState::StateType::DrawState) {
+        DrawState* drawState = dynamic_cast<DrawState*>(m_currentState.get());
+        if (drawState && drawState->getCurrentGraphicType() == GraphicItem::FLOWCHART_CONNECTOR) {
+            // 更新状态栏
+            QString typeStr;
+            switch (type) {
+                case FlowchartConnectorItem::StraightLine:
+                    typeStr = "直线";
+                    break;
+                case FlowchartConnectorItem::OrthogonalLine:
+                    typeStr = "折线";
+                    break;
+                case FlowchartConnectorItem::CurveLine:
+                    typeStr = "曲线";
+                    break;
+            }
+            emit statusMessageChanged(QString("连接器类型: %1").arg(typeStr), 3000);
+            
+            // 更新预览
+            viewport()->update();
+        }
+    }
+    // 如果当前选中了连接器，则应用样式更改
+    else if (m_selectionManager && !m_selectionManager->getSelectedItems().isEmpty()) {
+        bool updated = false;
+        for (auto item : m_selectionManager->getSelectedItems()) {
+            FlowchartConnectorItem* connector = dynamic_cast<FlowchartConnectorItem*>(item);
+            if (connector) {
+                connector->setConnectorType(type);
+                updated = true;
+            }
+        }
+        
+        if (updated) {
+            viewport()->update();
+            QString typeStr;
+            switch (type) {
+                case FlowchartConnectorItem::StraightLine:
+                    typeStr = "直线";
+                    break;
+                case FlowchartConnectorItem::OrthogonalLine:
+                    typeStr = "折线";
+                    break;
+                case FlowchartConnectorItem::CurveLine:
+                    typeStr = "曲线";
+                    break;
+            }
+            emit statusMessageChanged(QString("已将选中连接器更改为: %1").arg(typeStr), 3000);
+        }
+    }
+}
+
+void DrawArea::setArrowType(FlowchartConnectorItem::ArrowType type)
+{
+    m_arrowType = type;
+    
+    // 同步设置到图形工厂
+    if (m_graphicFactory) {
+        m_graphicFactory->setArrowType(type);
+    }
+    
+    // 如果当前状态是绘制状态且正在绘制连接器，则更新预览
+    if (m_currentState && m_currentState->getStateType() == EditorState::StateType::DrawState) {
+        DrawState* drawState = dynamic_cast<DrawState*>(m_currentState.get());
+        if (drawState && drawState->getCurrentGraphicType() == GraphicItem::FLOWCHART_CONNECTOR) {
+            // 更新状态栏
+            QString typeStr;
+            switch (type) {
+                case FlowchartConnectorItem::NoArrow:
+                    typeStr = "无箭头";
+                    break;
+                case FlowchartConnectorItem::SingleArrow:
+                    typeStr = "单箭头";
+                    break;
+                case FlowchartConnectorItem::DoubleArrow:
+                    typeStr = "双箭头";
+                    break;
+            }
+            emit statusMessageChanged(QString("箭头类型: %1").arg(typeStr), 3000);
+            
+            // 更新预览
+            viewport()->update();
+        }
+    }
+    // 如果当前选中了连接器，则应用样式更改
+    else if (m_selectionManager && !m_selectionManager->getSelectedItems().isEmpty()) {
+        bool updated = false;
+        for (auto item : m_selectionManager->getSelectedItems()) {
+            FlowchartConnectorItem* connector = dynamic_cast<FlowchartConnectorItem*>(item);
+            if (connector) {
+                connector->setArrowType(type);
+                updated = true;
+            }
+        }
+        
+        if (updated) {
+            viewport()->update();
+            QString typeStr;
+            switch (type) {
+                case FlowchartConnectorItem::NoArrow:
+                    typeStr = "无箭头";
+                    break;
+                case FlowchartConnectorItem::SingleArrow:
+                    typeStr = "单箭头";
+                    break;
+                case FlowchartConnectorItem::DoubleArrow:
+                    typeStr = "双箭头";
+                    break;
+            }
+            emit statusMessageChanged(QString("已将选中连接器更改为: %1").arg(typeStr), 3000);
+        }
+    }
+}

@@ -79,6 +79,7 @@ private:
     void createDockWindows();
     void createPerformanceMenu();
     void createToolOptions();
+    void createFlowchartToolbar();
     void setupConnections();
     void updateWindowTitle();
 
@@ -91,6 +92,7 @@ private:
     QToolBar* m_fillToolBar;
     QToolBar* m_styleToolBar;
     QToolBar* m_editToolBar;
+    QToolBar* m_flowchartToolBar;
     
     // 绘图和选择工具
     QAction* m_selectAction;
@@ -183,6 +185,17 @@ private:
     QAction* m_recentFileSeparator;
     QAction* m_clearRecentFilesAction;
     QStringList m_recentFiles;
+
+    // 流程图工具
+    QAction* m_flowchartProcessAction;
+    QAction* m_flowchartDecisionAction;
+    QAction* m_flowchartStartEndAction;
+    QAction* m_flowchartIOAction;
+    QAction* m_flowchartConnectorAction;
+    
+    // 连接器样式选择
+    QComboBox* m_connectorTypeComboBox;
+    QComboBox* m_arrowTypeComboBox;
 };
 
 #endif // MAIN_WINDOW_H

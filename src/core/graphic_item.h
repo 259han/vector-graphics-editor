@@ -32,7 +32,13 @@ public:
         FILL = 7,       // 填充
         // 后续添加更多图形...
         CONNECTION = 8, // 连接线
-        CLIP = 9        // 裁剪操作
+        CLIP = 9,       // 裁剪操作
+        // 流程图图元
+        FLOWCHART_PROCESS = 10,    // 流程图处理框（矩形）
+        FLOWCHART_DECISION = 11,   // 流程图判断框（菱形）
+        FLOWCHART_START_END = 12,  // 流程图开始/结束框（圆角矩形）
+        FLOWCHART_IO = 13,         // 流程图输入/输出框（平行四边形）
+        FLOWCHART_CONNECTOR = 14   // 流程图连接器（带箭头的线）
     };
 
     // 将图形类型转换为可读字符串
@@ -48,6 +54,11 @@ public:
             case FILL: return "填充";
             case CONNECTION: return "连接线";
             case CLIP: return "裁剪";
+            case FLOWCHART_PROCESS: return "流程图处理框（矩形）";
+            case FLOWCHART_DECISION: return "流程图判断框（菱形）";
+            case FLOWCHART_START_END: return "流程图开始/结束框（圆角矩形）";
+            case FLOWCHART_IO: return "流程图输入/输出框（平行四边形）";
+            case FLOWCHART_CONNECTOR: return "流程图连接器（带箭头的线）";
             default: return "未知类型";
         }
     }
@@ -183,6 +194,10 @@ protected:
     
     // 重写事件处理
     QVariant itemChange(GraphicsItemChange change, const QVariant &value) override;
+    
+    // 悬停事件处理
+    void hoverEnterEvent(QGraphicsSceneHoverEvent *event) override;
+    void hoverLeaveEvent(QGraphicsSceneHoverEvent *event) override;
 
     // 缓存相关属性
     bool m_cachingEnabled = false;

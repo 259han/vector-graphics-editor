@@ -8,6 +8,7 @@
 #include <cmath>
 #include <QCryptographicHash>
 #include "draw_strategy.h"
+#include <QApplication>
 
 GraphicItem::GraphicItem()
 {
@@ -383,6 +384,21 @@ QVariant GraphicItem::itemChange(GraphicsItemChange change, const QVariant &valu
     if (change == ItemSelectedHasChanged) {
         update(); // 更新绘制以显示/隐藏控制点
     }
+    // 处理位置变化
+    else if (change == ItemPositionChange) {
+        // 如果图形项被设置为不可移动，则阻止移动
+        if (!m_isMovable) {
+            return pos(); // 返回当前位置，不允许更改
+        }
+        
+        // 返回新位置值，允许移动
+        return value;
+    }
+    else if (change == ItemPositionHasChanged) {
+        // 位置已经改变，更新相关状态
+        invalidateCache();
+        // 这里可以添加任何在位置变化后需要执行的逻辑
+    }
     
     return QGraphicsItem::itemChange(change, value);
 }
@@ -409,6 +425,27 @@ void GraphicItem::invalidateCache() {
         m_cacheInvalid = true;
         update(); // 触发重绘以更新缓存
     }
+}
+
+// 悬停进入事件处理
+void GraphicItem::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
+{
+    // 只有在可移动状态下才改变光标
+    if (m_isMovable && (flags() & ItemIsMovable)) {
+        // 设置鼠标光标为移动光标
+        QApplication::setOverrideCursor(Qt::SizeAllCursor);
+    }
+    QGraphicsItem::hoverEnterEvent(event);
+}
+
+// 悬停离开事件处理
+void GraphicItem::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
+{
+    // 恢复默认光标
+    while (QApplication::overrideCursor()) {
+        QApplication::restoreOverrideCursor();
+    }
+    QGraphicsItem::hoverLeaveEvent(event);
 }
 
 // 创建用于缓存的键

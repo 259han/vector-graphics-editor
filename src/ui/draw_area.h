@@ -10,6 +10,7 @@
 #include "../state/editor_state.h"
 #include "../utils/performance_monitor.h"
 #include "image_resizer.h"
+#include "../core/flowchart_connector_item.h"
 
 class GraphicItem;
 class ImageResizer;
@@ -47,6 +48,12 @@ public:
     QColor getLineColor() const { return m_lineColor; }
     void setLineWidth(int width);
     int getLineWidth() const { return m_lineWidth; }
+    
+    // 流程图连接器样式设置
+    void setConnectorType(FlowchartConnectorItem::ConnectorType type);
+    FlowchartConnectorItem::ConnectorType getConnectorType() const { return m_connectorType; }
+    void setArrowType(FlowchartConnectorItem::ArrowType type);
+    FlowchartConnectorItem::ArrowType getArrowType() const { return m_arrowType; }
 
     // 图像操作
     void setImage(const QImage& image);
@@ -179,6 +186,10 @@ private:
     QColor m_fillColor = Qt::black;
     QColor m_lineColor = Qt::black;
     int m_lineWidth = 2;
+    
+    // 流程图连接器样式
+    FlowchartConnectorItem::ConnectorType m_connectorType = FlowchartConnectorItem::StraightLine;
+    FlowchartConnectorItem::ArrowType m_arrowType = FlowchartConnectorItem::SingleArrow;
     
     // 剪贴板相关
     // 内部剪贴板

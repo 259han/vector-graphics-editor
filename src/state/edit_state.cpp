@@ -395,9 +395,26 @@ void EditState::mouseMoveEvent(DrawArea* drawArea, QMouseEvent* event)
         // 4. 如果不在控制点上，但在其他选中图形上
         if (!cursorSet) {
             QGraphicsItem* item = drawArea->scene()->itemAt(scenePos, drawArea->transform());
-            if (item && selectionManager->isSelected(item)) {
-                QApplication::setOverrideCursor(Qt::SizeAllCursor);
-                cursorSet = true;
+            if (item) {
+                // 检测到任何GraphicItem类型的项，无论是否被选中，都显示移动光标
+                if (dynamic_cast<GraphicItem*>(item)) {
+                    QApplication::setOverrideCursor(Qt::SizeAllCursor);
+                    cursorSet = true;
+                    
+                    // 确保图形项的移动标志设置正确
+                    GraphicItem* graphicItem = dynamic_cast<GraphicItem*>(item);
+                    if (graphicItem) {
+                        graphicItem->setMovable(true);
+                        graphicItem->setFlag(QGraphicsItem::ItemIsMovable, true);
+                    }
+                    
+                    // 如果图形项尚未被选择，选择它
+                    if (!selectionManager->isSelected(item)) {
+                        Logger::debug("EditState: 自动选择鼠标下方的图形项");
+                        selectionManager->clearSelection();
+                        selectionManager->addToSelection(item);
+                    }
+                }
             }
         }
         

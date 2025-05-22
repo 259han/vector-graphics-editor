@@ -55,6 +55,11 @@ public:
             case Graphic::CIRCLE: return "绘制圆形";
             case Graphic::BEZIER: return "绘制贝塞尔曲线";
             case Graphic::TRIANGLE: return "绘制三角形";
+            case Graphic::FLOWCHART_PROCESS: return "绘制流程图处理框";
+            case Graphic::FLOWCHART_DECISION: return "绘制流程图判断框";
+            case Graphic::FLOWCHART_START_END: return "绘制流程图开始/结束框";
+            case Graphic::FLOWCHART_IO: return "绘制流程图输入/输出框";
+            case Graphic::FLOWCHART_CONNECTOR: return "绘制流程图连接器";
             default: return "绘制模式";
         }
     }

@@ -34,6 +34,7 @@
 #include <QFile>
 #include <QTextStream>
 #include <QDateTime>
+#include <QComboBox>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -52,7 +53,7 @@ MainWindow::MainWindow(QWidget *parent)
     // 创建动作和菜单
     createActions();
     createMenus();
-    createToolbars();
+    createToolBars();
     createToolOptions();
     
     // 设置窗口标题和大小
@@ -455,7 +456,8 @@ void MainWindow::createMenus() {
     helpMenu->addAction(m_aboutQtAction);
 }
 
-void MainWindow::createToolbars() {
+void MainWindow::createToolBars()
+{
     // 创建主工具栏，整合绘图、编辑和文件操作
     m_drawToolBar = addToolBar(tr("主工具栏"));
     m_drawToolBar->setObjectName("mainToolBar");
@@ -465,7 +467,7 @@ void MainWindow::createToolbars() {
     m_drawToolBar->addAction(m_saveImageAction);
     m_drawToolBar->addAction(m_clearAction);
     m_drawToolBar->addSeparator();
-    
+
     // 添加绘图工具
     m_drawToolBar->addAction(m_selectAction);
     m_drawToolBar->addAction(m_lineAction);
@@ -474,31 +476,50 @@ void MainWindow::createToolbars() {
     m_drawToolBar->addAction(m_bezierAction);
     m_drawToolBar->addAction(m_fillToolAction);
     m_drawToolBar->addSeparator();
-    
+
     // 添加裁剪工具
     m_drawToolBar->addSeparator();
     m_drawToolBar->addAction(m_clipRectAction);
     m_drawToolBar->addAction(m_clipFreehandAction);
     
-    // 添加编辑工具
-    m_drawToolBar->addAction(m_undoAction);
-    m_drawToolBar->addAction(m_redoAction);
-    m_drawToolBar->addSeparator();
-    m_drawToolBar->addAction(m_copyAction);
-    m_drawToolBar->addAction(m_pasteAction);
-    m_drawToolBar->addAction(m_cutAction);
-
-    // 创建格式工具栏，整合变换和样式
-    m_styleToolBar = addToolBar(tr("格式工具栏"));
-    m_styleToolBar->setObjectName("formatToolBar");
+    // 创建变换工具栏
+    m_transformToolBar = addToolBar(tr("变换工具栏"));
+    m_transformToolBar->setObjectName("transformToolBar");
     
     // 添加变换工具
-    m_styleToolBar->addAction(m_rotateAction);
-    m_styleToolBar->addAction(m_scaleAction);
-    m_styleToolBar->addAction(m_flipHorizontalAction);
-    m_styleToolBar->addAction(m_flipVerticalAction);
-    m_styleToolBar->addAction(m_deleteAction);
-    m_styleToolBar->addSeparator();
+    m_transformToolBar->addAction(m_rotateAction);
+    m_transformToolBar->addAction(m_scaleAction);
+    m_transformToolBar->addAction(m_flipHorizontalAction);
+    m_transformToolBar->addAction(m_flipVerticalAction);
+    m_transformToolBar->addAction(m_deleteAction);
+    
+    // 创建图层工具栏
+    m_layerToolBar = addToolBar(tr("图层工具栏"));
+    m_layerToolBar->setObjectName("layerToolBar");
+    
+    // 添加图层工具
+    m_layerToolBar->addAction(m_bringToFrontAction);
+    m_layerToolBar->addAction(m_sendToBackAction);
+    m_layerToolBar->addAction(m_bringForwardAction);
+    m_layerToolBar->addAction(m_sendBackwardAction);
+    
+    // 创建填充工具栏
+    m_fillToolBar = addToolBar(tr("填充工具栏"));
+    m_fillToolBar->setObjectName("fillToolBar");
+    
+    // 添加填充工具
+    QLabel* fillColorLabel = new QLabel(tr("填充:"), this);
+    m_colorButton = new QPushButton(this);
+    m_colorButton->setFixedSize(24, 24);
+    m_colorButton->setStyleSheet(QString("background-color: %1").arg(m_currentFillColor.name(QColor::HexArgb)));
+    connect(m_colorButton, &QPushButton::clicked, this, &MainWindow::onSelectFillColor);
+    
+    m_fillToolBar->addWidget(fillColorLabel);
+    m_fillToolBar->addWidget(m_colorButton);
+    
+    // 创建样式工具栏
+    m_styleToolBar = addToolBar(tr("样式工具栏"));
+    m_styleToolBar->setObjectName("styleToolBar");
     
     // 添加线条颜色选择按钮
     QLabel* lineColorLabel = new QLabel(tr("线条:"), this);
@@ -515,33 +536,25 @@ void MainWindow::createToolbars() {
     connect(m_lineWidthSpinBox, QOverload<int>::of(&QSpinBox::valueChanged), 
             this, &MainWindow::onLineWidthChanged);
     
-    // 添加填充颜色选择按钮
-    QLabel* fillColorLabel = new QLabel(tr("填充:"), this);
-    m_colorButton = new QPushButton(this);
-    m_colorButton->setFixedSize(24, 24);
-    m_colorButton->setStyleSheet(QString("background-color: %1").arg(m_currentFillColor.name(QColor::HexArgb)));
-    connect(m_colorButton, &QPushButton::clicked, this, &MainWindow::onSelectFillColor);
-    
     // 添加到工具栏
     m_styleToolBar->addWidget(lineColorLabel);
     m_styleToolBar->addWidget(m_lineColorButton);
     m_styleToolBar->addWidget(m_lineWidthSpinBox);
-    m_styleToolBar->addSeparator();
-    m_styleToolBar->addWidget(fillColorLabel);
-    m_styleToolBar->addWidget(m_colorButton);
-    m_styleToolBar->addSeparator();
     
-    // 添加图层工具
-    m_styleToolBar->addAction(m_bringToFrontAction);
-    m_styleToolBar->addAction(m_sendToBackAction);
-    m_styleToolBar->addAction(m_bringForwardAction);
-    m_styleToolBar->addAction(m_sendBackwardAction);
+    // 创建编辑工具栏
+    m_editToolBar = addToolBar(tr("编辑工具栏"));
+    m_editToolBar->setObjectName("editToolBar");
     
-    // 移除不再需要的工具栏成员变量
-    m_transformToolBar = nullptr;
-    m_layerToolBar = nullptr;
-    m_editToolBar = nullptr;
-    m_fillToolBar = nullptr;
+    // 添加编辑工具
+    m_editToolBar->addAction(m_undoAction);
+    m_editToolBar->addAction(m_redoAction);
+    m_editToolBar->addSeparator();
+    m_editToolBar->addAction(m_copyAction);
+    m_editToolBar->addAction(m_pasteAction);
+    m_editToolBar->addAction(m_cutAction);
+    
+    // 创建流程图工具栏
+    createFlowchartToolbar();
 }
 
 void MainWindow::createToolOptions() {
@@ -766,6 +779,45 @@ void MainWindow::setupConnections() {
     
     // 初始化动作状态
     updateActionStates();
+    
+    // 流程图工具连接
+    connect(m_flowchartProcessAction, &QAction::triggered, this, [this]() {
+        m_drawArea->setDrawState(GraphicItem::FLOWCHART_PROCESS);
+        statusBar()->showMessage("已选择流程图处理框工具", 3000);
+    });
+    
+    connect(m_flowchartDecisionAction, &QAction::triggered, this, [this]() {
+        m_drawArea->setDrawState(GraphicItem::FLOWCHART_DECISION);
+        statusBar()->showMessage("已选择流程图判断框工具", 3000);
+    });
+    
+    connect(m_flowchartStartEndAction, &QAction::triggered, this, [this]() {
+        m_drawArea->setDrawState(GraphicItem::FLOWCHART_START_END);
+        statusBar()->showMessage("已选择流程图开始/结束框工具", 3000);
+    });
+    
+    connect(m_flowchartIOAction, &QAction::triggered, this, [this]() {
+        m_drawArea->setDrawState(GraphicItem::FLOWCHART_IO);
+        statusBar()->showMessage("已选择流程图输入/输出框工具", 3000);
+    });
+    
+    connect(m_flowchartConnectorAction, &QAction::triggered, this, [this]() {
+        m_drawArea->setDrawState(GraphicItem::FLOWCHART_CONNECTOR);
+        statusBar()->showMessage("已选择流程图连接器工具", 3000);
+    });
+    
+    // 连接器样式选择连接
+    connect(m_connectorTypeComboBox, QOverload<int>::of(&QComboBox::currentIndexChanged), 
+            this, [this](int index) {
+        // 在绘图区域保存当前选择的连接器类型
+        m_drawArea->setConnectorType(static_cast<FlowchartConnectorItem::ConnectorType>(index));
+    });
+    
+    connect(m_arrowTypeComboBox, QOverload<int>::of(&QComboBox::currentIndexChanged), 
+            this, [this](int index) {
+        // 在绘图区域保存当前选择的箭头类型
+        m_drawArea->setArrowType(static_cast<FlowchartConnectorItem::ArrowType>(index));
+    });
 }
 
 // Add this method before updateUndoRedoActions
@@ -1586,4 +1638,65 @@ void MainWindow::onClipToolTriggered(bool freehandMode)
     
     // 设置裁剪状态
     m_drawArea->setClipState(freehandMode);
+}
+
+// 在合适的位置添加createFlowchartToolbar实现
+void MainWindow::createFlowchartToolbar()
+{
+    m_flowchartToolBar = new QToolBar("流程图工具", this);
+    m_flowchartToolBar->setIconSize(QSize(24, 24));
+    
+    // 创建流程图工具按钮
+    m_flowchartProcessAction = m_flowchartToolBar->addAction("处理框");
+    m_flowchartProcessAction->setCheckable(true);
+    m_flowchartProcessAction->setToolTip("绘制处理框（矩形）");
+    
+    m_flowchartDecisionAction = m_flowchartToolBar->addAction("判断框");
+    m_flowchartDecisionAction->setCheckable(true);
+    m_flowchartDecisionAction->setToolTip("绘制判断框（菱形）");
+    
+    m_flowchartStartEndAction = m_flowchartToolBar->addAction("开始/结束框");
+    m_flowchartStartEndAction->setCheckable(true);
+    m_flowchartStartEndAction->setToolTip("绘制开始/结束框（圆角矩形）");
+    
+    m_flowchartIOAction = m_flowchartToolBar->addAction("输入/输出框");
+    m_flowchartIOAction->setCheckable(true);
+    m_flowchartIOAction->setToolTip("绘制输入/输出框（平行四边形）");
+    
+    m_flowchartConnectorAction = m_flowchartToolBar->addAction("连接器");
+    m_flowchartConnectorAction->setCheckable(true);
+    m_flowchartConnectorAction->setToolTip("绘制连接线（带箭头）");
+    
+    // 添加分隔符
+    m_flowchartToolBar->addSeparator();
+    
+    // 添加连接器样式选择
+    QLabel* connectorTypeLabel = new QLabel("连接线类型: ");
+    m_flowchartToolBar->addWidget(connectorTypeLabel);
+    
+    m_connectorTypeComboBox = new QComboBox();
+    m_connectorTypeComboBox->addItem("直线", 0);
+    m_connectorTypeComboBox->addItem("折线", 1);
+    m_connectorTypeComboBox->addItem("曲线", 2);
+    m_flowchartToolBar->addWidget(m_connectorTypeComboBox);
+    
+    // 添加箭头样式选择
+    QLabel* arrowTypeLabel = new QLabel("箭头类型: ");
+    m_flowchartToolBar->addWidget(arrowTypeLabel);
+    
+    m_arrowTypeComboBox = new QComboBox();
+    m_arrowTypeComboBox->addItem("无箭头", 0);
+    m_arrowTypeComboBox->addItem("单箭头", 1);
+    m_arrowTypeComboBox->addItem("双箭头", 2);
+    m_flowchartToolBar->addWidget(m_arrowTypeComboBox);
+    
+    // 添加到工具组
+    toolsGroup->addAction(m_flowchartProcessAction);
+    toolsGroup->addAction(m_flowchartDecisionAction);
+    toolsGroup->addAction(m_flowchartStartEndAction);
+    toolsGroup->addAction(m_flowchartIOAction);
+    toolsGroup->addAction(m_flowchartConnectorAction);
+    
+    // 添加到主窗口
+    addToolBar(Qt::LeftToolBarArea, m_flowchartToolBar);
 }
