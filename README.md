@@ -125,6 +125,9 @@ cmake --build . --config Release
 
 ### 更新日志
 
+#### 2025-05-28
+- **Flowchart automatic connection optimization**: Fixed connection point highlight lag, improved interaction smoothness, resolved blank rectangle selection interference
+
 #### 2023-06-01
 - 优化流程图元素交互：将图形选择容差参数调整为1500，解决小尺寸图形难以选择和移动的问题
 - 统一所有流程图元素（处理框、决策框、输入/输出框、开始/结束框）的交互行为
@@ -254,6 +257,9 @@ You can also build and run in one step using the build script:
 
 ### Update Log
 
-#### 2023-06-01
+#### 2025-05-28
+- **Flowchart automatic connection optimization**: Fixed connection point highlight lag, improved interaction smoothness, resolved blank rectangle selection interference
+
+#### 2025-05-26
 - Enhanced flowchart element interaction: Adjusted shape selection tolerance parameter to 1500, resolving issues with selecting and moving small-sized shapes
 - Unified interaction behavior across all flowchart elements (process boxes, decision diamonds, input/output parallelograms, start/end capsules) 

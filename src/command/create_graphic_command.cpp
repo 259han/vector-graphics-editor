@@ -5,6 +5,7 @@
 #include "../core/graphic_item.h"
 #include <QGraphicsScene>
 #include <QApplication>
+#include <QTimer>
 
 CreateGraphicCommand::CreateGraphicCommand(DrawArea* drawArea, 
                                          Graphic::GraphicType type,
@@ -59,8 +60,10 @@ void CreateGraphicCommand::execute()
         m_scene->addItem(m_createdItem);
         m_executed = true;
         
-        // 强制更新场景
-        m_scene->update();
+        // 直接更新场景
+        if (m_scene) {
+            m_scene->update();
+        }
         
         Logger::info(QString("CreateGraphicCommand::execute: 直接创建图形命令执行成功 - 类型: %1")
             .arg(static_cast<int>(m_type)));
@@ -116,12 +119,15 @@ void CreateGraphicCommand::execute()
         scene->addItem(m_createdItem);
         m_executed = true;
         
-        // 强制更新场景，但不立即处理事件
-        // 这避免了在图形创建过程中可能出现的递归事件处理
+        // 直接处理新图形项（包括自动注册流程图元素）
+        if (m_drawArea && m_createdItem) {
+            m_drawArea->handleNewGraphicItem(m_createdItem);
+        }
+        
+        // 直接更新场景和视图
         scene->update();
         if (m_drawArea && m_drawArea->viewport()) {
             m_drawArea->viewport()->update();
-            // 不在这里调用processEvents，让事件循环自然处理更新
         }
         
         Logger::info(QString("CreateGraphicCommand::execute: 创建图形命令执行成功 - 类型: %1")

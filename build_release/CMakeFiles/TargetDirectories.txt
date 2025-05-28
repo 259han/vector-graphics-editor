@@ -1,5 +1,0 @@
-F:/program/claudegraph/build_release/CMakeFiles/vector-graphics-editor.dir
-F:/program/claudegraph/build_release/CMakeFiles/edit_cache.dir
-F:/program/claudegraph/build_release/CMakeFiles/rebuild_cache.dir
-F:/program/claudegraph/build_release/CMakeFiles/vector-graphics-editor_autogen_timestamp_deps.dir
-F:/program/claudegraph/build_release/CMakeFiles/vector-graphics-editor_autogen.dir

@@ -1,6 +1,7 @@
 #include "command/selection_command.h"
 #include "ui/draw_area.h"
 #include "../utils/logger.h"
+#include "../core/flowchart_base_item.h"
 #include <QGraphicsScene>
 #include <QException>
 
@@ -34,9 +35,16 @@ void SelectionCommand::execute()
             // 保存当前项的状态以备撤销
             saveItemStates();
             
-            // 从场景中移除所有选中的图形项
+            // 从场景中移除所有选中的图形项，并从ConnectionManager注销流程图元素
             for (QGraphicsItem* item : m_items) {
                 if (item->scene()) {
+                    // 如果是流程图元素，先从ConnectionManager注销
+                    FlowchartBaseItem* flowchartItem = dynamic_cast<FlowchartBaseItem*>(item);
+                    if (flowchartItem && m_drawArea && m_drawArea->getConnectionManager()) {
+                        m_drawArea->getConnectionManager()->unregisterFlowchartItem(flowchartItem);
+                        Logger::debug(QString("从ConnectionManager注销流程图元素: %1").arg(flowchartItem->getGraphicType()));
+                    }
+                    
                     item->scene()->removeItem(item);
                 }
             }
@@ -175,6 +183,13 @@ void SelectionCommand::restoreItemStates()
             // 设置位置和选择状态
             state.item->setPos(state.position);
             state.item->setSelected(state.isSelected);
+            
+            // 如果是流程图元素，重新注册到ConnectionManager
+            FlowchartBaseItem* flowchartItem = dynamic_cast<FlowchartBaseItem*>(state.item);
+            if (flowchartItem && m_drawArea && m_drawArea->getConnectionManager()) {
+                m_drawArea->getConnectionManager()->registerFlowchartItem(flowchartItem);
+                Logger::debug(QString("重新注册流程图元素到ConnectionManager: %1").arg(flowchartItem->getGraphicType()));
+            }
         } catch (const std::exception& e) {
             Logger::error(QString("SelectionCommand::restoreItemStates: 恢复项目状态时出错 - %1").arg(e.what()));
         } catch (...) {

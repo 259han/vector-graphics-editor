@@ -192,6 +192,7 @@ private:
     QAction* m_flowchartStartEndAction;
     QAction* m_flowchartIOAction;
     QAction* m_flowchartConnectorAction;
+    QAction* m_autoConnectAction;
     
     // 连接器样式选择
     QComboBox* m_connectorTypeComboBox;

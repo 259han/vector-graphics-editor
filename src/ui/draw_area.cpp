@@ -9,6 +9,7 @@
 #include "../state/edit_state.h"
 #include "../state/fill_state.h"
 #include "../state/clip_state.h"
+#include "../state/auto_connect_state.h"
 #include "../core/graphics_item_factory.h"
 #include "image_resizer.h"
 #include "../utils/logger.h"
@@ -20,6 +21,8 @@
 #include "../command/style_change_command.h"
 #include "../command/selection_command.h"
 #include "../command/paste_command.h"
+#include "../command/connection_delete_command.h"
+#include "../core/flowchart_connector_item.h"
 #include "../utils/performance_monitor.h"
 #include "../utils/file_format_manager.h"
 
@@ -94,6 +97,8 @@ DrawArea::DrawArea(QWidget *parent)
     , m_currentState(nullptr)
     , m_graphicFactory(std::make_unique<DefaultGraphicsItemFactory>())
     , m_selectionManager(std::make_unique<SelectionManager>(m_scene))
+    , m_connectionManager(std::make_unique<ConnectionManager>(m_scene, this))
+    , m_connectionOverlay(nullptr)
 {
     // 创建场景
     setScene(m_scene);
@@ -107,6 +112,10 @@ DrawArea::DrawArea(QWidget *parent)
     
     // 设置场景大小为更合理的尺寸（从-5000,-5000,10000,10000改为-1000,-1000,2000,2000）
     m_scene->setSceneRect(-1000, -1000, 2000, 2000);
+    
+    // 初始化连接点覆盖层
+    m_connectionOverlay = new ConnectionPointOverlay(m_connectionManager.get());
+    m_scene->addItem(m_connectionOverlay);
     
     // 设置初始编辑状态
     setEditState();
@@ -122,6 +131,19 @@ DrawArea::DrawArea(QWidget *parent)
         viewport()->update();
         emit selectionChanged();
     });
+    
+    // 连接连接管理器信号
+    connect(m_connectionManager.get(), &ConnectionManager::connectionCreated,
+            this, [this](FlowchartBaseItem* from, FlowchartBaseItem* to, FlowchartConnectorItem* connector) {
+                Logger::info(QString("连接已创建: %1 -> %2").arg(from->getText()).arg(to->getText()));
+            });
+            
+    connect(m_connectionManager.get(), &ConnectionManager::connectionPointHovered,
+            this, [this](const ConnectionManager::ConnectionPoint& point) {
+                if (m_connectionOverlay) {
+                    m_connectionOverlay->setHighlightedPoint(point);
+                }
+            });
 }
 
 DrawArea::~DrawArea()
@@ -135,6 +157,12 @@ DrawArea::~DrawArea()
         // 安全地清理图像调整器
         qDeleteAll(m_imageResizers);
         m_imageResizers.clear();
+        
+        // 安全地清理连接管理器
+        if (m_connectionManager) {
+            m_connectionManager->disconnect();
+            m_connectionManager->clearAllConnectionPoints();
+        }
         
         // 安全地清除选择，防止在对象析构过程中引用已释放对象
         if (m_selectionManager) {
@@ -420,6 +448,33 @@ void DrawArea::mouseMoveEvent(QMouseEvent *event)
     
     // 3. 调用状态的鼠标移动处理
     m_currentState->mouseMoveEvent(this, event);
+    
+    // 优化：只在特定情况下更新连接管理器，避免每次鼠标移动都触发
+    // 只有在以下情况下才需要更新：
+    // 1. 当前状态是编辑状态且有选中的流程图元素正在移动
+    // 2. 当前状态是自动连接状态
+    bool needUpdateConnections = false;
+    
+    if (m_currentState->getStateType() == EditorState::EditState) {
+        // 编辑状态：只有在有选中的流程图元素时才更新
+        if (m_selectionManager && !m_selectionManager->getSelectedItems().isEmpty()) {
+            // 检查是否有流程图元素在选中项中
+            for (QGraphicsItem* item : m_selectionManager->getSelectedItems()) {
+                if (dynamic_cast<FlowchartBaseItem*>(item)) {
+                    needUpdateConnections = true;
+                    break;
+                }
+            }
+        }
+    } else if (m_currentState->getStateType() == EditorState::StateType::AutoConnectState) {
+        // 自动连接状态：总是需要更新
+        needUpdateConnections = true;
+    }
+    
+    // 只在需要时更新连接管理器
+    if (needUpdateConnections) {
+        updateConnectionManager();
+    }
     
     // 安排一次更新
     scheduleUpdate();
@@ -761,20 +816,48 @@ void DrawArea::deleteSelectedGraphics()
         return;
     }
     
-    // 创建删除命令并执行
-    SelectionCommand* deleteCommand = new SelectionCommand(this, SelectionCommand::DeleteSelection);
-    deleteCommand->setDeleteInfo(selectedItems);
+    // 分离连接器和普通图形项
+    QList<QGraphicsItem*> normalItems;
+    QList<FlowchartConnectorItem*> connectors;
     
-    // 使用命令管理器执行命令，确保可以撤销和重做
-    CommandManager::getInstance().executeCommand(deleteCommand);
+    for (QGraphicsItem* item : selectedItems) {
+        FlowchartConnectorItem* connector = dynamic_cast<FlowchartConnectorItem*>(item);
+        if (connector) {
+            connectors.append(connector);
+        } else {
+            normalItems.append(item);
+        }
+    }
     
-    // 清除选择状态（命令执行后会移除项目，但选择状态需要单独清除）
+    // 开始命令组，将所有删除操作作为一个整体
+    CommandManager& cmdManager = CommandManager::getInstance();
+    cmdManager.beginCommandGroup();
+    
+    // 先删除连接器（使用连接删除命令）
+    for (FlowchartConnectorItem* connector : connectors) {
+        ConnectionDeleteCommand* connDeleteCmd = new ConnectionDeleteCommand(m_connectionManager.get(), connector);
+        cmdManager.addCommandToGroup(connDeleteCmd);
+    }
+    
+    // 再删除普通图形项（使用选择删除命令）
+    if (!normalItems.isEmpty()) {
+        SelectionCommand* deleteCommand = new SelectionCommand(this, SelectionCommand::DeleteSelection);
+        deleteCommand->setDeleteInfo(normalItems);
+        cmdManager.addCommandToGroup(deleteCommand);
+    }
+    
+    // 提交命令组
+    cmdManager.commitCommandGroup();
+    
+    // 清除选择状态
     m_selectionManager->clearSelection();
     
     // 更新视图
     viewport()->update();
     
-    Logger::info(QString("DrawArea::deleteSelectedGraphics: 已删除 %1 个图形项").arg(selectedItems.size()));
+    Logger::info(QString("DrawArea::deleteSelectedGraphics: 已删除 %1 个图形项（其中 %2 个连接器）")
+        .arg(selectedItems.size())
+        .arg(connectors.size()));
 }
 
 // 选择所有图形
@@ -2651,6 +2734,42 @@ void DrawArea::setClipState(bool freehandMode)
     Logger::debug("DrawArea::setClipState: 已切换到裁剪状态");
 }
 
+void DrawArea::setAutoConnectState()
+{
+    Logger::debug("DrawArea::setAutoConnectState: 开始切换到自动连接状态");
+    
+    // 先保存当前状态，以便于在切换状态时通知
+    auto oldState = m_currentState.get();
+    
+    // 在切换前通知当前状态即将退出
+    if (oldState) {
+        Logger::debug("DrawArea::setAutoConnectState: 通知当前状态即将退出");
+        oldState->onExitState(this);
+        Logger::debug("DrawArea::setAutoConnectState: 当前状态已退出");
+    }
+    
+    // 清理之前的状态
+    m_currentState.reset();
+    
+    // 创建新的自动连接状态
+    auto autoConnectState = std::make_unique<AutoConnectState>();
+    
+    // 设置连接器样式
+    autoConnectState->setConnectorType(m_connectorType);
+    autoConnectState->setArrowType(m_arrowType);
+    
+    // 设置为当前状态
+    m_currentState = std::move(autoConnectState);
+    
+    // 通知新状态已经进入
+    m_currentState->onEnterState(this);
+    
+    // 更新视图
+    viewport()->update();
+    
+    Logger::debug("DrawArea::setAutoConnectState: 已切换到自动连接状态");
+}
+
 // 在文件末尾添加这两个方法
 
 void DrawArea::setConnectorType(FlowchartConnectorItem::ConnectorType type)
@@ -2773,6 +2892,48 @@ void DrawArea::setArrowType(FlowchartConnectorItem::ArrowType type)
                     break;
             }
             emit statusMessageChanged(QString("已将选中连接器更改为: %1").arg(typeStr), 3000);
+        }
+    }
+}
+
+void DrawArea::handleNewGraphicItem(QGraphicsItem* item)
+{
+    if (!item || !m_connectionManager) {
+        return;
+    }
+    
+    // 检查是否是流程图元素
+    FlowchartBaseItem* flowchartItem = dynamic_cast<FlowchartBaseItem*>(item);
+    if (flowchartItem) {
+        // 直接注册到连接管理器
+        m_connectionManager->registerFlowchartItem(flowchartItem);
+        Logger::debug(QString("注册流程图元素: %1").arg(flowchartItem->getGraphicType()));
+    }
+}
+
+void DrawArea::updateConnectionManager()
+{
+    if (!m_connectionManager || !m_scene) {
+        return;
+    }
+    
+    // 优化：避免在每次鼠标移动时都更新所有连接
+    // 只在选中项发生移动时才更新相关连接
+    if (!m_selectionManager) {
+        return;
+    }
+    
+    // 只更新当前选中的流程图元素的连接
+    QList<QGraphicsItem*> selectedItems = m_selectionManager->getSelectedItems();
+    for (QGraphicsItem* item : selectedItems) {
+        FlowchartBaseItem* flowchartItem = dynamic_cast<FlowchartBaseItem*>(item);
+        if (flowchartItem) {
+            // 检查是否真的需要更新（例如，项目是否正在移动）
+            if (item->flags() & QGraphicsItem::ItemIsMovable && 
+                (item->pos() != item->data(0).toPointF())) { // 使用data()存储上次位置
+                m_connectionManager->updateConnections(flowchartItem);
+                item->setData(0, item->pos()); // 记录当前位置
+            }
         }
     }
 }

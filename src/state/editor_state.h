@@ -26,7 +26,8 @@ public:
         DrawState,
         EditState,
         FillState,
-        ClipState
+        ClipState,
+        AutoConnectState
     };
     
     EditorState();

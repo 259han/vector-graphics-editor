@@ -399,21 +399,16 @@ QGraphicsItem* DrawState::createFinalItem(DrawArea* drawArea)
     }
     
     try {
-        // 开始命令分组，确保这个绘图操作是独立的一个命令
-        CommandManager::getInstance().beginCommandGroup();
-        
-        // 创建命令对象并执行命令
-        Logger::debug(QString("DrawState::createFinalItem: 创建命令对象，图形类型: %1").arg(static_cast<int>(m_graphicType)));
-        
         // 检查点集合是否合理
         for (const auto& p : points) {
             if (!std::isfinite(p.x()) || !std::isfinite(p.y())) {
                 Logger::error("DrawState::createFinalItem: 点位置包含无效值");
                 isCreating = false;
-                CommandManager::getInstance().endCommandGroup();
                 return nullptr;
             }
         }
+        
+        Logger::debug(QString("DrawState::createFinalItem: 创建命令对象，图形类型: %1").arg(static_cast<int>(m_graphicType)));
         
         CreateGraphicCommand* command = new CreateGraphicCommand(
             drawArea, m_graphicType, points, pen, brush);
@@ -428,20 +423,23 @@ QGraphicsItem* DrawState::createFinalItem(DrawArea* drawArea)
             Logger::debug(QString("DrawState::createFinalItem: 图形项创建成功，指针: %1")
                         .arg(reinterpret_cast<quintptr>(item)));
             Logger::info(QString("DrawState: 创建了 %1 图形").arg(Graphic::graphicTypeToString(m_graphicType)));
+            
+            // 立即通知DrawArea处理新创建的流程图元素
+            if (m_graphicType == Graphic::FLOWCHART_PROCESS || 
+                m_graphicType == Graphic::FLOWCHART_DECISION || 
+                m_graphicType == Graphic::FLOWCHART_START_END || 
+                m_graphicType == Graphic::FLOWCHART_IO) {
+                drawArea->handleNewGraphicItem(item);
+            }
         } else {
             Logger::warning("DrawState::createFinalItem: 图形项创建失败");
         }
-        
-        // 结束命令分组
-        CommandManager::getInstance().endCommandGroup();
     }
     catch (const std::exception& e) {
         Logger::error(QString("DrawState::createFinalItem: 异常 - %1").arg(e.what()));
-        CommandManager::getInstance().endCommandGroup(); // 确保结束分组
     }
     catch (...) {
         Logger::error("DrawState::createFinalItem: 未知异常");
-        CommandManager::getInstance().endCommandGroup(); // 确保结束分组
     }
     
     // 重置创建标志

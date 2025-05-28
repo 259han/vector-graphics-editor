@@ -805,6 +805,11 @@ void MainWindow::setupConnections() {
         statusBar()->showMessage("已选择流程图连接器工具", 3000);
     });
     
+    connect(m_autoConnectAction, &QAction::triggered, this, [this]() {
+        m_drawArea->setAutoConnectState();
+        statusBar()->showMessage("已进入自动连接模式 - 点击流程图元素的连接点来创建连接", 3000);
+    });
+    
     // 连接器样式选择连接
     connect(m_connectorTypeComboBox, QOverload<int>::of(&QComboBox::currentIndexChanged), 
             this, [this](int index) {
@@ -1666,6 +1671,11 @@ void MainWindow::createFlowchartToolbar()
     m_flowchartConnectorAction->setCheckable(true);
     m_flowchartConnectorAction->setToolTip("绘制连接线（带箭头）");
     
+    // 添加自动连接工具
+    m_autoConnectAction = m_flowchartToolBar->addAction("自动连接");
+    m_autoConnectAction->setCheckable(true);
+    m_autoConnectAction->setToolTip("自动连接模式：点击流程图元素的连接点来创建连接");
+    
     // 添加分隔符
     m_flowchartToolBar->addSeparator();
     
@@ -1695,6 +1705,7 @@ void MainWindow::createFlowchartToolbar()
     toolsGroup->addAction(m_flowchartStartEndAction);
     toolsGroup->addAction(m_flowchartIOAction);
     toolsGroup->addAction(m_flowchartConnectorAction);
+    toolsGroup->addAction(m_autoConnectAction);
     
     // 添加到主窗口
     addToolBar(Qt::LeftToolBarArea, m_flowchartToolBar);

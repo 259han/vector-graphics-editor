@@ -7,6 +7,8 @@
 #include <memory>
 #include "../core/graphics_item_factory.h"
 #include "../core/selection_manager.h"
+#include "../core/connection_manager.h"
+#include "../core/connection_point_overlay.h"
 #include "../state/editor_state.h"
 #include "../utils/performance_monitor.h"
 #include "image_resizer.h"
@@ -39,7 +41,13 @@ public:
     
     // 状态管理
     EditorState* getCurrentState() const { return m_currentState.get(); }
-            void setDrawState(GraphicItem::GraphicType type);    void setEditState();    void setFillState();    void setFillState(const QColor& color);    void setClipState();    void setClipState(bool freehandMode);
+    void setDrawState(GraphicItem::GraphicType type);
+    void setEditState();
+    void setFillState();
+    void setFillState(const QColor& color);
+    void setClipState();
+    void setClipState(bool freehandMode);
+    void setAutoConnectState();
 
     // 填充相关
     void setFillColor(const QColor& color);
@@ -116,6 +124,16 @@ public:
     // 获取选择管理器
     SelectionManager* getSelectionManager() const { return m_selectionManager.get(); }
     
+    // 获取连接管理器
+    ConnectionManager* getConnectionManager() const { return m_connectionManager.get(); }
+    ConnectionPointOverlay* getConnectionOverlay() const { return m_connectionOverlay; }
+    
+    // 处理新创建的图形项（包括自动注册流程图元素）
+    void handleNewGraphicItem(QGraphicsItem* item);
+    
+    // 更新连接管理器
+    void updateConnectionManager();
+    
     // 设置选择模式
     void setSelectionMode(SelectionManager::SelectionMode mode);
     
@@ -165,6 +183,8 @@ private:
     std::unique_ptr<DefaultGraphicsItemFactory> m_graphicFactory;
     std::unique_ptr<EditorState> m_currentState;
     std::unique_ptr<SelectionManager> m_selectionManager;
+    std::unique_ptr<ConnectionManager> m_connectionManager;
+    ConnectionPointOverlay* m_connectionOverlay;
     
     // 更新控制
     bool m_updatePending = false;
