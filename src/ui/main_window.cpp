@@ -22,7 +22,6 @@
 #include <QTimer>
 #include <QClipboard>
 #include <QElapsedTimer>
-#include "../utils/performance_monitor.h"
 #include <QInputDialog>
 #include <QCheckBox>
 #include <QDesktopServices>
@@ -79,19 +78,7 @@ MainWindow::MainWindow(QWidget *parent)
         m_undoAction->setEnabled(manager.canUndo());
         m_redoAction->setEnabled(manager.canRedo());
     });
-    
-    // 确保性能监控选项最初是禁用的
-    if (m_performanceMonitorAction) {
-        m_performanceMonitorAction->setChecked(false);
-    }
-    // 确保性能报告按钮最初是禁用的
-    if (m_showPerformanceReportAction) {
-        m_showPerformanceReportAction->setEnabled(false);
-    }
 
-
-    // 设置性能监控
-    setupPerformanceMonitoring();
 }
 
 MainWindow::~MainWindow()
@@ -286,16 +273,6 @@ void MainWindow::createActions() {
     connect(&CommandManager::getInstance(), &CommandManager::stackCleared, 
             this, &MainWindow::updateUndoRedoActions);
 
-    // 添加性能监控相关的动作
-    m_performanceMonitorAction = new QAction("启用性能监控", this);
-    m_performanceMonitorAction->setCheckable(true);
-    m_performanceMonitorAction->setChecked(false);
-    connect(m_performanceMonitorAction, &QAction::toggled, this, &MainWindow::onTogglePerformanceMonitor);
-    
-    // 性能报告
-    m_showPerformanceReportAction = new QAction("显示性能报告", this);
-    m_showPerformanceReportAction->setEnabled(false); // 初始禁用，直到启用性能监控
-    connect(m_showPerformanceReportAction, &QAction::triggered, this, &MainWindow::onShowPerformanceReport);
     
     m_highQualityRenderingAction = new QAction("高质量渲染", this);
     m_highQualityRenderingAction->setCheckable(true);
@@ -325,7 +302,8 @@ void MainWindow::createActions() {
                         "2. 图形编辑：提供图形的平移、旋转、缩放、镜像等操作。\n"
                         "3. 控制点操作：支持图形的控制点操作，便于精准调整。\n"
                         "4. 支持撤销重做，支持图层管理，支持图形导出为SVG格式以及自定义CVG格式。\n"
-                        "5. 支持图片导入导出，图形缓存，渲染。\n\n"
+                        "5. 支持图片导入导出，图形缓存，渲染。\n"
+                        "5. 支持流程图设计，自动连接.\n\n"
                         "感谢您的使用！"));
     });
 
@@ -422,8 +400,6 @@ void MainWindow::createMenus() {
     viewMenu->addAction(m_cachingAction);
     viewMenu->addAction(m_clippingOptimizationAction);
     viewMenu->addSeparator();
-    viewMenu->addAction(m_performanceMonitorAction);
-    viewMenu->addAction(m_showPerformanceReportAction);
 
     // 创建文件菜单
     QMenu* fileMenu = menuBar()->addMenu(tr("文件"));
@@ -1111,175 +1087,10 @@ void MainWindow::onFillColorTriggered()
     }
 }
 
-// 性能监控相关槽函数实现
-void MainWindow::onTogglePerformanceMonitor(bool checked)
-{
-    // 更新性能报告按钮状态
-    m_showPerformanceReportAction->setEnabled(checked);
-    
-    // 立即给用户反馈
-    statusBar()->showMessage(checked ? "正在启用性能监控..." : "正在禁用性能监控...");
-    
-    try {
-        // 调用异步的 enablePerformanceMonitor 方法，传递 checked 状态
-        m_drawArea->enablePerformanceMonitor(checked);
-        
-        // 更新状态栏消息，成功时显示 3 秒
-        statusBar()->showMessage(checked ? "性能监控已启用" : "性能监控已禁用", 3000);
-    }
-    catch (const std::exception& e) {
-        // 出现异常时恢复 UI 状态
-        m_performanceMonitorAction->setChecked(!checked); // 恢复到之前的状态
-        m_showPerformanceReportAction->setEnabled(!checked);
-        
-        // 根据 checked 值动态生成错误消息
-        QString errorMsg = QString("%1性能监控时发生错误: %2")
-                           .arg(checked ? "启用" : "禁用")
-                           .arg(e.what());
-        statusBar()->showMessage(errorMsg, 5000);
-        Logger::error(errorMsg);
-        
-        QMessageBox::critical(this, "错误", errorMsg);
-    }
-    catch (...) {
-        // 处理未知异常
-        m_performanceMonitorAction->setChecked(!checked);
-        m_showPerformanceReportAction->setEnabled(!checked);
-        
-        QString errorMsg = QString("%1性能监控时发生未知错误")
-                           .arg(checked ? "启用" : "禁用");
-        statusBar()->showMessage(errorMsg, 5000);
-        Logger::error(errorMsg);
-        
-        QMessageBox::critical(this, "错误", errorMsg);
-    }
-}
-
-void MainWindow::onShowPerformanceReport()
-{
-    QString report = m_drawArea->getPerformanceReport();
-    
-    // 创建自定义对话框
-    QDialog reportDialog(this);
-    reportDialog.setWindowTitle("性能报告");
-    reportDialog.setMinimumSize(800, 600);
-    
-    // 创建文本编辑器和布局
-    QVBoxLayout* layout = new QVBoxLayout(&reportDialog);
-    QTextEdit* textEdit = new QTextEdit(&reportDialog);
-    textEdit->setReadOnly(true);
-    textEdit->setFont(QFont("Consolas, Courier New, Monospace", 10));
-    textEdit->setText(report);
-    
-    // 添加保存按钮
-    QHBoxLayout* btnLayout = new QHBoxLayout();
-    QPushButton* saveButton = new QPushButton("保存报告", &reportDialog);
-    QPushButton* copyButton = new QPushButton("复制到剪贴板", &reportDialog);
-    QPushButton* closeButton = new QPushButton("关闭", &reportDialog);
-    
-    connect(saveButton, &QPushButton::clicked, [&]() {
-        QString filePath = QFileDialog::getSaveFileName(
-            this, "保存性能报告", 
-            QDir::homePath() + "/performance_report_" + 
-            QDateTime::currentDateTime().toString("yyyyMMdd_hhmmss") + ".txt",
-            "文本文件 (*.txt);;所有文件 (*)");
-            
-        if (!filePath.isEmpty()) {
-            QFile file(filePath);
-            if (file.open(QIODevice::WriteOnly | QIODevice::Text)) {
-                QTextStream stream(&file);
-                stream << report;
-                file.close();
-                QMessageBox::information(this, "保存成功", "性能报告已保存到：" + filePath);
-            } else {
-                QMessageBox::critical(this, "保存失败", "无法写入文件：" + filePath);
-            }
-        }
-    });
-    
-    connect(copyButton, &QPushButton::clicked, [&]() {
-        QApplication::clipboard()->setText(report);
-        QMessageBox::information(this, "复制成功", "性能报告已复制到剪贴板");
-    });
-    
-    connect(closeButton, &QPushButton::clicked, &reportDialog, &QDialog::accept);
-    
-    btnLayout->addWidget(saveButton);
-    btnLayout->addWidget(copyButton);
-    btnLayout->addStretch();
-    btnLayout->addWidget(closeButton);
-    
-    layout->addWidget(textEdit);
-    layout->addLayout(btnLayout);
-    
-    // 显示对话框
-    reportDialog.exec();
-}
-
 void MainWindow::onHighQualityRendering(bool checked)
 {
-    // 使用作用域计时器测量整个函数执行时间
-    PERF_SCOPE(LogicTime);
-    
     // 设置高质量渲染
     m_drawArea->setHighQualityRendering(checked);
-    
-    // 记录自定义事件
-    PERF_EVENT("QualityChanged", checked ? 1 : 0);
-}
-
-// 实现createPerformanceMenu方法，由于已在createMenus中直接实现，此处留空
-void MainWindow::createPerformanceMenu()
-{
-    // 性能菜单已在createMenus()方法中创建
-    // 此处仅为了解决链接错误而保留空实现
-}
-
-// 实现在MainWindow中使用轻量级性能监控的示例函数
-void MainWindow::setupPerformanceMonitoring()
-{
-    // 注册自定义指标回调 - 监控应用内存使用
-    PerformanceMonitor::instance().registerMetricCallback("MainWindowMetrics", [](QMap<QString, QVariant>& metrics) {
-        // 可以在这里添加应用特定的指标收集
-        // 例如：当前打开的文件数、图形对象数等
-        QApplication* app = qApp;
-        if (app) {
-            // 获取活跃的窗口数
-            metrics["ActiveWindows"] = app->topLevelWindows().size();
-            
-            // 获取窗口小部件数量
-            metrics["WidgetCount"] = app->allWidgets().size();
-        }
-    });
-    
-    // 连接数据更新信号，当性能数据更新时可以做其他操作
-    connect(&PerformanceMonitor::instance(), &PerformanceMonitor::dataUpdated, 
-            this, [this]() {
-                // 仅在性能监控启用时执行
-                if (!PerformanceMonitor::instance().isEnabled()) {
-                    return;
-                }
-                
-                try {
-                    // 性能指标合格性检查
-                    int fps = PerformanceMonitor::instance().getFPS();
-                    double drawTime = PerformanceMonitor::instance().getAverageTime(PerformanceMonitor::DrawTime);
-                    
-                    // 帧率过低警告
-                    if (fps < 30) {
-                        statusBar()->showMessage("警告: 帧率较低 (" + QString::number(fps) + " FPS)", 2000);
-                    }
-                    
-                    
-                    // 绘制时间过长警告
-                    if (drawTime > 16.0) {  // 16ms对应60fps
-                        statusBar()->showMessage("警告: 绘制时间较长 (" + QString::number(drawTime, 'f', 1) + "ms)", 2000);
-                    }
-                } catch (const std::exception& e) {
-                    // 捕获异常，防止崩溃
-                    qDebug() << "性能数据处理异常:" << e.what();
-                }
-            });
 }
 
 // 添加性能优化相关槽函数实现

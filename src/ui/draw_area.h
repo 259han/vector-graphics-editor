@@ -10,7 +10,7 @@
 #include "../core/connection_manager.h"
 #include "../core/connection_point_overlay.h"
 #include "../state/editor_state.h"
-#include "../utils/performance_monitor.h"
+
 #include "image_resizer.h"
 #include "../core/flowchart_connector_item.h"
 
@@ -30,11 +30,6 @@ public:
     // 性能优化相关方法
     void setHighQualityRendering(bool enable);
     bool isHighQualityRendering() const { return m_highQualityRendering; }
-    
-    // 性能监控相关方法
-    void enablePerformanceMonitor(bool enable);
-    bool isPerformanceMonitorEnabled() const;
-    QString getPerformanceReport() const;
     
     // 工厂访问
     DefaultGraphicsItemFactory* getGraphicFactory();

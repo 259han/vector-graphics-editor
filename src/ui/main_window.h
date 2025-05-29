@@ -49,10 +49,7 @@ private slots:
     // UI状态管理
     void updateActionStates();
     void updateClipboardActions();
-    
-    // 性能监控相关
-    void onTogglePerformanceMonitor(bool checked);
-    void onShowPerformanceReport();
+    //高质量
     void onHighQualityRendering(bool checked);
 
     // 性能优化相关槽函数
@@ -73,11 +70,7 @@ private slots:
 private:
     void createActions();
     void createMenus();
-    void createToolbars();
     void createToolBars();
-    void createStatusBar();
-    void createDockWindows();
-    void createPerformanceMenu();
     void createToolOptions();
     void createFlowchartToolbar();
     void setupConnections();
@@ -155,10 +148,7 @@ private:
     
     QAction* m_gridAction;
     QAction* m_snapAction;
-    
-    // 性能监控相关
-    QAction* m_performanceMonitorAction;
-    QAction* m_showPerformanceReportAction;
+    //高质量
     QAction* m_highQualityRenderingAction;
     
     QComboBox* m_gridSizeComboBox;
@@ -167,9 +157,6 @@ private:
 
     // 更新定时器
     QTimer* m_updateTimer;
-
-    // 性能监控相关
-    void setupPerformanceMonitoring();
 
     // 性能相关动作
     QAction* m_cachingAction;

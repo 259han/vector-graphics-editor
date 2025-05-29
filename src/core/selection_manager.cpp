@@ -186,75 +186,59 @@ bool SelectionManager::applyFilter(QGraphicsItem* item) const
 
 void SelectionManager::clearSelection()
 {
-    try {
-        qDebug() << "SelectionManager::clearSelection: 开始清除选择";
-        
-        // 检查对象有效性
-        if (!m_scene) {
-            qDebug() << "SelectionManager::clearSelection: 场景为空，无需清除";
-            m_selectedItems.clear();
-            m_isDraggingSelection = false;
-            return;
-        }
-        
-        // 如果选择矩形在场景中，移除它
-        if (m_selectionRect && m_selectionRect->scene()) {
-            qDebug() << "SelectionManager::clearSelection: 移除选择矩形";
-            // 安全检查：确保m_selectionRect->scene()是m_scene
-            if (m_selectionRect->scene() == m_scene) {
-                m_scene->removeItem(m_selectionRect);
-            }
-        }
-        
-        // 记录被清除的项目数量
-        int itemCount = m_selectedItems.size();
-        qDebug() << "SelectionManager::clearSelection: 清除" << itemCount << "个选中项";
-        
-        // 安全清除当前选择
-        QSet<QGraphicsItem*> itemsToDeselect;
-        for (QGraphicsItem* item : m_selectedItems) {
-            if (item && m_scene->items().contains(item)) {
-                itemsToDeselect.insert(item);
-            }
-        }
-        
-        // 取消选中有效的项目
-        for (QGraphicsItem* item : itemsToDeselect) {
-            if (item) {
-                item->setSelected(false);
-            }
-        }
-        
-        // 清除选择集合
-        m_selectedItems.clear();
-        
-        // 应用选择到场景
-        if (m_scene) {
-            applySelectionToScene();
-        }
-        
-        // 重置拖动状态
-        m_isDraggingSelection = false;
-        
-        // 发出选择改变信号
-        emit selectionChanged();
-        
-        qDebug() << "SelectionManager::clearSelection: 选择已清除";
-    }
-    catch (const std::exception& e) {
-        qCritical() << "SelectionManager::clearSelection: 异常:" << e.what();
-        
-        // 即使出错，也要确保清除状态
+    qDebug() << "SelectionManager::clearSelection: 开始清除选择";
+    
+    // 检查对象有效性
+    if (!m_scene) {
+        qDebug() << "SelectionManager::clearSelection: 场景为空，无需清除";
         m_selectedItems.clear();
         m_isDraggingSelection = false;
+        return;
     }
-    catch (...) {
-        qCritical() << "SelectionManager::clearSelection: 未知异常";
-        
-        // 即使出错，也要确保清除状态
-        m_selectedItems.clear();
-        m_isDraggingSelection = false;
+    
+    // 如果选择矩形在场景中，移除它
+    if (m_selectionRect && m_selectionRect->scene()) {
+        qDebug() << "SelectionManager::clearSelection: 移除选择矩形";
+        // 安全检查：确保m_selectionRect->scene()是m_scene
+        if (m_selectionRect->scene() == m_scene) {
+            m_scene->removeItem(m_selectionRect);
+        }
     }
+    
+    // 记录被清除的项目数量
+    int itemCount = m_selectedItems.size();
+    qDebug() << "SelectionManager::clearSelection: 清除" << itemCount << "个选中项";
+    
+    // 安全清除当前选择
+    QSet<QGraphicsItem*> itemsToDeselect;
+    for (QGraphicsItem* item : m_selectedItems) {
+        if (item && m_scene->items().contains(item)) {
+            itemsToDeselect.insert(item);
+        }
+    }
+    
+    // 取消选中有效的项目
+    for (QGraphicsItem* item : itemsToDeselect) {
+        if (item) {
+            item->setSelected(false);
+        }
+    }
+    
+    // 清除选择集合
+    m_selectedItems.clear();
+    
+    // 应用选择到场景
+    if (m_scene) {
+        applySelectionToScene();
+    }
+    
+    // 重置拖动状态
+    m_isDraggingSelection = false;
+    
+    // 发出选择改变信号
+    emit selectionChanged();
+    
+    qDebug() << "SelectionManager::clearSelection: 选择已清除";
 }
 
 QRectF SelectionManager::getSelectionRect() const
@@ -711,108 +695,83 @@ void SelectionManager::applySelectionToScene()
         return;
     }
     
-    try {
-        // 先清除所有项的选择状态
-        QList<QGraphicsItem*> items = m_scene->items();
-        for (QGraphicsItem* item : items) {
-            if (item) {
-                item->setSelected(false);
-            }
-        }
-        
-        // 设置选中项的选择状态，检查项是否仍然有效
-        QSet<QGraphicsItem*> invalidItems;
-        for (QGraphicsItem* item : m_selectedItems) {
-            if (!item) {
-                qWarning() << "SelectionManager::applySelectionToScene: 尝试选择空项";
-                invalidItems.insert(item);
-                continue;
-            }
-            
-            // 检查项是否仍在场景中
-            if (item->scene() != m_scene) {
-                qWarning() << "SelectionManager::applySelectionToScene: 项不在当前场景中";
-                invalidItems.insert(item);
-                continue;
-            }
-            
-            // 确保调用setSelected不会导致崩溃
-            try {
-                // 确保选中项是可移动的
-                if (GraphicItem* graphicItem = dynamic_cast<GraphicItem*>(item)) {
-                    graphicItem->setMovable(true);
-                    graphicItem->setFlag(QGraphicsItem::ItemIsMovable, true);
-                } else {
-                    // 对于非GraphicItem的其他项，也确保可移动标志
-                    item->setFlag(QGraphicsItem::ItemIsMovable, true);
-                }
-                
-                // 设置选中状态
-                item->setSelected(true);
-            } catch (const std::exception& e) {
-                qWarning() << "SelectionManager::applySelectionToScene: 设置项选中状态时异常:" << e.what();
-                invalidItems.insert(item);
-            } catch (...) {
-                qWarning() << "SelectionManager::applySelectionToScene: 设置项选中状态时未知异常";
-                invalidItems.insert(item);
-            }
-        }
-        
-        // 从选择集合中移除无效项
-        for (QGraphicsItem* item : invalidItems) {
-            m_selectedItems.remove(item);
+    // 先清除所有项的选择状态
+    QList<QGraphicsItem*> items = m_scene->items();
+    for (QGraphicsItem* item : items) {
+        if (item) {
+            item->setSelected(false);
         }
     }
-    catch (const std::exception& e) {
-        qCritical() << "SelectionManager::applySelectionToScene: 异常:" << e.what();
+    
+    // 设置选中项的选择状态，检查项是否仍然有效
+    QSet<QGraphicsItem*> invalidItems;
+    for (QGraphicsItem* item : m_selectedItems) {
+        if (!item) {
+            qWarning() << "SelectionManager::applySelectionToScene: 尝试选择空项";
+            invalidItems.insert(item);
+            continue;
+        }
+        
+        // 检查项是否仍在场景中
+        if (item->scene() != m_scene) {
+            qWarning() << "SelectionManager::applySelectionToScene: 项不在当前场景中";
+            invalidItems.insert(item);
+            continue;
+        }
+        
+        // 确保选中项是可移动的
+        if (GraphicItem* graphicItem = dynamic_cast<GraphicItem*>(item)) {
+            graphicItem->setMovable(true);
+            graphicItem->setFlag(QGraphicsItem::ItemIsMovable, true);
+        } else {
+            // 对于非GraphicItem的其他项，也确保可移动标志
+            item->setFlag(QGraphicsItem::ItemIsMovable, true);
+        }
+        
+        // 设置选中状态
+        item->setSelected(true);
     }
-    catch (...) {
-        qCritical() << "SelectionManager::applySelectionToScene: 未知异常";
+    
+    // 从选择集合中移除无效项
+    for (QGraphicsItem* item : invalidItems) {
+        m_selectedItems.remove(item);
     }
 }
 
 void SelectionManager::syncSelectionFromScene()
 {
-    try {
-        qDebug() << "SelectionManager::syncSelectionFromScene: 开始从场景同步选择";
-        
-        // 如果没有场景，返回
-        if (!m_scene) {
-            qWarning() << "SelectionManager::syncSelectionFromScene: 场景为空";
-            return;
+    qDebug() << "SelectionManager::syncSelectionFromScene: 开始从场景同步选择";
+    
+    // 如果没有场景，返回
+    if (!m_scene) {
+        qWarning() << "SelectionManager::syncSelectionFromScene: 场景为空";
+        return;
+    }
+    
+    // 清除当前选择
+    int oldCount = m_selectedItems.size();
+    m_selectedItems.clear();
+    
+    // 将场景中所有选中的项添加到选择中
+    QList<QGraphicsItem*> sceneSelectedItems = m_scene->selectedItems();
+    int newCount = 0;
+    
+    for (QGraphicsItem* item : sceneSelectedItems) {
+        if (!item) {
+            qWarning() << "SelectionManager::syncSelectionFromScene: 遇到空项";
+            continue;
         }
         
-        // 清除当前选择
-        int oldCount = m_selectedItems.size();
-        m_selectedItems.clear();
-        
-        // 将场景中所有选中的项添加到选择中
-        QList<QGraphicsItem*> sceneSelectedItems = m_scene->selectedItems();
-        int newCount = 0;
-        
-        for (QGraphicsItem* item : sceneSelectedItems) {
-            if (!item) {
-                qWarning() << "SelectionManager::syncSelectionFromScene: 遇到空项";
-                continue;
-            }
-            
-            if (applyFilter(item)) {
-                m_selectedItems.insert(item);
-                newCount++;
-            }
+        if (applyFilter(item)) {
+            m_selectedItems.insert(item);
+            newCount++;
         }
-        
-        qDebug() << "SelectionManager::syncSelectionFromScene: 从" << oldCount << "项更新为" << newCount << "项";
-        
-        // 发出选择改变信号
-        emit selectionChanged();
-        
-        qDebug() << "SelectionManager::syncSelectionFromScene: 完成同步";
     }
-    catch (const std::exception& e) {
-        qCritical() << "SelectionManager::syncSelectionFromScene: 异常:" << e.what();
-    }
-    catch (...) {
-        qCritical() << "SelectionManager::syncSelectionFromScene: 未知异常";
-    }
+    
+    qDebug() << "SelectionManager::syncSelectionFromScene: 从" << oldCount << "项更新为" << newCount << "项";
+    
+    // 发出选择改变信号
+    emit selectionChanged();
+    
+    qDebug() << "SelectionManager::syncSelectionFromScene: 完成同步";
 } 
