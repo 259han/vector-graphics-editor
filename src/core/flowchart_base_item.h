@@ -29,6 +29,10 @@ public:
     void setTextColor(const QColor& color) { m_textColor = color; update(); }
     QColor getTextColor() const { return m_textColor; }
     
+    // ID处理
+    void setId(const QString& id) { m_id = id; }
+    QString id() const { return m_id; }
+    
     // 连接点处理
     virtual std::vector<QPointF> getConnectionPoints() const override;
     
@@ -42,6 +46,9 @@ protected:
     bool m_textVisible = false;
     QFont m_textFont = QFont("Arial", 10);
     QColor m_textColor = Qt::black;
+    
+    // ID
+    QString m_id;
     
     // 鼠标拖动相关
     QPointF m_lastMousePos;

@@ -128,11 +128,14 @@ std::vector<QPointF> FlowchartProcessItem::getDrawPoints() const
     std::vector<QPointF> points;
     QRectF rect = boundingRect();
     
-    // 矩形的四个角点
-    points.push_back(rect.topLeft());
-    points.push_back(rect.topRight());
-    points.push_back(rect.bottomRight());
-    points.push_back(rect.bottomLeft());
+    // 返回中心点
+    points.push_back(rect.center());
+    
+    // 返回大小点（中心点 + 半宽高）
+    points.push_back(QPointF(
+        rect.center().x() + rect.width() / 2,
+        rect.center().y() + rect.height() / 2
+    ));
     
     return points;
 }

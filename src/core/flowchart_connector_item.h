@@ -57,6 +57,21 @@ public:
     QPointF getStartPoint() const { return m_startPoint; }
     QPointF getEndPoint() const { return m_endPoint; }
     
+    // 连接关系处理
+    void setStartItem(FlowchartBaseItem* item) { m_startItem = item; }
+    void setEndItem(FlowchartBaseItem* item) { m_endItem = item; }
+    FlowchartBaseItem* getStartItem() const { return m_startItem; }
+    FlowchartBaseItem* getEndItem() const { return m_endItem; }
+    
+    void setStartPointIndex(int index) { m_startPointIndex = index; }
+    void setEndPointIndex(int index) { m_endPointIndex = index; }
+    int getStartPointIndex() const { return m_startPointIndex; }
+    int getEndPointIndex() const { return m_endPointIndex; }
+    
+    // 序列化和反序列化
+    void serialize(QDataStream& out) const override;
+    void deserialize(QDataStream& in) override;
+    
 protected:
     std::vector<QPointF> getDrawPoints() const override;
     
@@ -67,6 +82,12 @@ private:
     ArrowType m_arrowType;
     QList<QPointF> m_controlPoints; // 用于曲线和折线的控制点
     QPainterPath m_path; // 缓存的路径
+    
+    // 连接关系
+    FlowchartBaseItem* m_startItem = nullptr;
+    FlowchartBaseItem* m_endItem = nullptr;
+    int m_startPointIndex = -1;
+    int m_endPointIndex = -1;
     
     // 箭头参数
     qreal m_arrowSize = 10.0;

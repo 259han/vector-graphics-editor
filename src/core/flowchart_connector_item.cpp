@@ -1,5 +1,6 @@
 #include "flowchart_connector_item.h"
 #include <QtMath>
+#include <QDataStream>
 
 FlowchartConnectorItem::FlowchartConnectorItem(const QPointF& startPoint, const QPointF& endPoint, 
                                              ConnectorType type, ArrowType arrowType)
@@ -142,13 +143,13 @@ std::vector<QPointF> FlowchartConnectorItem::getDrawPoints() const
     // 返回图形的关键点，用于序列化等操作
     std::vector<QPointF> points;
     
-    // 添加起点和终点
-    points.push_back(m_startPoint);
-    points.push_back(m_endPoint);
+    // 添加起点和终点，使用相对于连接线的坐标
+    points.push_back(m_startPoint - pos());
+    points.push_back(m_endPoint - pos());
     
-    // 添加控制点
+    // 添加控制点，使用相对于连接线的坐标
     for (const QPointF& point : m_controlPoints) {
-        points.push_back(point);
+        points.push_back(point - pos());
     }
     
     return points;
@@ -300,4 +301,67 @@ void FlowchartConnectorItem::restoreFromPoints(const std::vector<QPointF>& point
         // 更新路径
         updatePath();
     }
+}
+
+void FlowchartConnectorItem::serialize(QDataStream& out) const
+{
+    // 先调用基类的序列化
+    FlowchartBaseItem::serialize(out);
+    
+    // 保存连接器特有的属性
+    out << m_startPoint;
+    out << m_endPoint;
+    out << static_cast<qint32>(m_connectorType);
+    out << static_cast<qint32>(m_arrowType);
+    
+    // 保存控制点
+    out << static_cast<qint32>(m_controlPoints.size());
+    for (const auto& point : m_controlPoints) {
+        out << point;
+    }
+    
+    // 保存连接关系
+    out << (m_startItem ? m_startItem->id() : QString());
+    out << m_startPointIndex;
+    out << (m_endItem ? m_endItem->id() : QString());
+    out << m_endPointIndex;
+}
+
+void FlowchartConnectorItem::deserialize(QDataStream& in)
+{
+    // 先调用基类的反序列化
+    FlowchartBaseItem::deserialize(in);
+    
+    // 读取连接器特有的属性
+    in >> m_startPoint;
+    in >> m_endPoint;
+    
+    qint32 connectorType, arrowType;
+    in >> connectorType;
+    in >> arrowType;
+    m_connectorType = static_cast<ConnectorType>(connectorType);
+    m_arrowType = static_cast<ArrowType>(arrowType);
+    
+    // 读取控制点
+    qint32 controlPointCount;
+    in >> controlPointCount;
+    m_controlPoints.clear();
+    for (qint32 i = 0; i < controlPointCount; ++i) {
+        QPointF point;
+        in >> point;
+        m_controlPoints.append(point);
+    }
+    
+    // 读取连接关系
+    QString startItemId, endItemId;
+    in >> startItemId;
+    in >> m_startPointIndex;
+    in >> endItemId;
+    in >> m_endPointIndex;
+    
+    // 注意：实际的连接关系需要在场景加载后重新建立
+    // 这里只保存ID和索引，实际的连接会在场景加载后处理
+    
+    // 更新路径
+    updatePath();
 } 

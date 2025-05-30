@@ -216,6 +216,17 @@ private:
         QPointF position;
         double rotation = 0.0;
         QPointF scale = QPointF(1.0, 1.0);
+        QString id; // 原始ID
+        QString startItemId;
+        int startPointIndex = -1;
+        QString endItemId;
+        int endPointIndex = -1;
+        FlowchartConnectorItem::ConnectorType connectorType = FlowchartConnectorItem::StraightLine;
+        FlowchartConnectorItem::ArrowType arrowType = FlowchartConnectorItem::SingleArrow;
+        QString text;
+        bool textVisible = true;
+        QFont textFont;
+        QColor textColor;
     };
     QList<ClipboardItem> m_clipboardData;
     bool m_isClipboardFromCut = false;

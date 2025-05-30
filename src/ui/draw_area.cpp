@@ -86,6 +86,7 @@
 #include <algorithm>
 #include <random>
 #include <QSvgGenerator>
+#include <QUuid>
 
 // Define the static MIME type constant
 const QString DrawArea::MIME_GRAPHICITEMS = "application/x-claudegraph-items";
@@ -524,18 +525,29 @@ void DrawArea::keyPressEvent(QKeyEvent *event)
                     }
                     
                     copySelectedItems();
+                    copyToSystemClipboard(); // 同时复制到系统剪贴板
                 }
                 event->accept();
                 return;
                 
             case Qt::Key_V: // 粘贴
-                pasteFromSystemClipboard();
+                Logger::debug("DrawArea::keyPressEvent: 检测到Ctrl+V快捷键");
+                if (!m_clipboardData.isEmpty()) {
+                    // 使用鼠标当前位置
+                    QPointF mousePos = mapToScene(mapFromGlobal(QCursor::pos()));
+                    Logger::debug(QString("DrawArea::keyPressEvent: 在鼠标位置 (%1, %2) 粘贴").arg(mousePos.x()).arg(mousePos.y()));
+                    pasteItemsAtPosition(mousePos);
+                } else if (canPasteFromClipboard()) {
+                    // 从系统剪贴板粘贴
+                    pasteFromSystemClipboard();
+                }
                 event->accept();
                 return;
                 
             case Qt::Key_X: // 剪切
                 if (m_selectionManager && !m_selectionManager->getSelectedItems().isEmpty()) {
                     copySelectedItems();
+                    copyToSystemClipboard(); // 同时复制到系统剪贴板
                     deleteSelectedGraphics();
                 }
                 event->accept();
@@ -1178,7 +1190,12 @@ QPointF DrawArea::getViewCenterScenePos() const
 // 保存图形项到内部剪贴板
 void DrawArea::saveGraphicItemToClipboard(GraphicItem* item)
 {
-    if (!item) return;
+    if (!item) {
+        Logger::warning("DrawArea::saveGraphicItemToClipboard: 图形项为空");
+        return;
+    }
+    
+    Logger::debug(QString("DrawArea::saveGraphicItemToClipboard: 开始保存图形项，类型: %1").arg(item->getGraphicType()));
     
     ClipboardItem clipData;
     clipData.type = item->getGraphicType();
@@ -1189,52 +1206,181 @@ void DrawArea::saveGraphicItemToClipboard(GraphicItem* item)
     clipData.rotation = item->rotation();
     clipData.scale = item->getScale();
     
+    // 保存ID和连接关系
+    if (auto* flowItem = dynamic_cast<FlowchartBaseItem*>(item)) {
+        clipData.id = flowItem->id();
+        
+        // 保存文本属性
+        clipData.text = flowItem->getText();
+        clipData.textVisible = flowItem->isTextVisible();
+        clipData.textFont = flowItem->getTextFont();
+        clipData.textColor = flowItem->getTextColor();
+        
+        Logger::debug(QString("DrawArea::saveGraphicItemToClipboard: 保存文本属性 - 文本: '%1', 可见: %2")
+            .arg(clipData.text)
+            .arg(clipData.textVisible));
+    }
+    
+    // 如果是连接线，保存完整的连接关系
+    if (auto* connector = dynamic_cast<FlowchartConnectorItem*>(item)) {
+        clipData.startItemId = connector->getStartItem() ? connector->getStartItem()->id() : QString();
+        clipData.startPointIndex = connector->getStartPointIndex();
+        clipData.endItemId = connector->getEndItem() ? connector->getEndItem()->id() : QString();
+        clipData.endPointIndex = connector->getEndPointIndex();
+        
+        // 保存连接线类型和箭头类型
+        clipData.connectorType = connector->getConnectorType();
+        clipData.arrowType = connector->getArrowType();
+    }
+    
     m_clipboardData.append(clipData);
+    Logger::debug(QString("DrawArea::saveGraphicItemToClipboard: 图形项保存完成，当前剪贴板中有 %1 个项")
+        .arg(m_clipboardData.size()));
 }
 
 // 从剪贴板数据创建图形项
 QGraphicsItem* DrawArea::createItemFromClipboardData(const ClipboardItem& data, const QPointF& pastePosition)
 {
-    // 创建图形项
-    QGraphicsItem* newItem = m_graphicFactory->createCustomItem(data.type, data.points);
+    Logger::debug(QString("DrawArea::createItemFromClipboardData: 开始创建图形项，类型: %1").arg(data.type));
     
-    if (!newItem) {
-        Logger::error("createItemFromClipboardData: 无法创建图形项");
-        return nullptr;
+    // 创建新的图形项
+    GraphicItem* item = nullptr;
+    
+    // 根据类型创建相应的图形项
+    switch (data.type) {
+        case GraphicItem::FLOWCHART_PROCESS:
+            if (data.points.size() >= 2) {
+                // 获取中心点和大小
+                QPointF center = data.points[0];
+                // 计算大小 - 如果是传递的中心点和大小点
+                QSizeF size;
+                if (data.points[1].x() >= center.x() && data.points[1].y() >= center.y()) {
+                    // 点集是中心点和大小点
+                    size = QSizeF(
+                        (data.points[1].x() - center.x()) * 2, 
+                        (data.points[1].y() - center.y()) * 2
+                    );
+                } else {
+                    // 点集是左上角和右下角 - 兼容旧格式
+                    QRectF rect = QRectF(data.points[0], data.points[1]).normalized();
+                    center = rect.center();
+                    size = rect.size();
+                }
+                item = new FlowchartProcessItem(center, size);
+                Logger::debug(QString("DrawArea::createItemFromClipboardData: 创建处理框 - 中心: (%1,%2), 大小: %3x%4")
+                    .arg(center.x()).arg(center.y())
+                    .arg(size.width()).arg(size.height()));
+            }
+            break;
+            
+        case GraphicItem::FLOWCHART_DECISION:
+            if (data.points.size() >= 2) {
+                // 获取中心点和大小
+                QPointF center = data.points[0];
+                // 计算大小 - 如果是传递的中心点和大小点
+                QSizeF size;
+                if (data.points[1].x() >= center.x() && data.points[1].y() >= center.y()) {
+                    // 点集是中心点和大小点
+                    size = QSizeF(
+                        (data.points[1].x() - center.x()) * 2, 
+                        (data.points[1].y() - center.y()) * 2
+                    );
+                } else {
+                    // 点集是左上角和右下角 - 兼容旧格式
+                    QRectF rect = QRectF(data.points[0], data.points[1]).normalized();
+                    center = rect.center();
+                    size = rect.size();
+                }
+                item = new FlowchartDecisionItem(center, size);
+            }
+            break;
+            
+        case GraphicItem::FLOWCHART_START_END:
+            if (data.points.size() >= 2) {
+                // 获取中心点和大小
+                QPointF center = data.points[0];
+                // 计算大小 - 如果是传递的中心点和大小点
+                QSizeF size;
+                if (data.points[1].x() >= center.x() && data.points[1].y() >= center.y()) {
+                    // 点集是中心点和大小点
+                    size = QSizeF(
+                        (data.points[1].x() - center.x()) * 2, 
+                        (data.points[1].y() - center.y()) * 2
+                    );
+                } else {
+                    // 点集是左上角和右下角 - 兼容旧格式
+                    QRectF rect = QRectF(data.points[0], data.points[1]).normalized();
+                    center = rect.center();
+                    size = rect.size();
+                }
+                item = new FlowchartStartEndItem(center, size);
+            }
+            break;
+            
+        case GraphicItem::FLOWCHART_IO:
+            if (data.points.size() >= 2) {
+                // 获取中心点和大小
+                QPointF center = data.points[0];
+                // 计算大小 - 如果是传递的中心点和大小点
+                QSizeF size;
+                if (data.points[1].x() >= center.x() && data.points[1].y() >= center.y()) {
+                    // 点集是中心点和大小点
+                    size = QSizeF(
+                        (data.points[1].x() - center.x()) * 2, 
+                        (data.points[1].y() - center.y()) * 2
+                    );
+                } else {
+                    // 点集是左上角和右下角 - 兼容旧格式
+                    QRectF rect = QRectF(data.points[0], data.points[1]).normalized();
+                    center = rect.center();
+                    size = rect.size();
+                }
+                item = new FlowchartIOItem(center, size);
+            }
+            break;
+            
+        case GraphicItem::FLOWCHART_CONNECTOR:
+            if (data.points.size() >= 2) {
+                item = new FlowchartConnectorItem(data.points[0], data.points[1], 
+                                                data.connectorType, data.arrowType);
+            }
+            break;
+            
+        default:
+            break;
     }
     
-    // 设置属性
-    if (auto* graphicItem = dynamic_cast<GraphicItem*>(newItem)) {
-        // 先设置基本属性
-        graphicItem->setPen(data.pen);
-        graphicItem->setBrush(data.brush);
+    if (item) {
+        Logger::debug("DrawArea::createItemFromClipboardData: 设置基本属性");
+        // 设置基本属性
+        item->setPen(data.pen);
+        item->setBrush(data.brush);
+        item->setPos(pastePosition);
+        item->setRotation(data.rotation);
+        item->setScale(data.scale);
         
-        // 应用旋转
-        graphicItem->setRotation(data.rotation);
-        
-        // 处理缩放 - 注意不同图形类型的特殊需求
-        QPointF scale = data.scale;
-        
-        // 所有图形类型都使用统一的缩放设置方法
-        // 对于椭圆类等特殊形状，它们已经重写了setScale方法来适当处理
-        graphicItem->setScale(scale);
-        
-        // 应用标志
-        graphicItem->setFlag(QGraphicsItem::ItemIsSelectable, true);
-        graphicItem->setFlag(QGraphicsItem::ItemIsMovable, true);
-        
-        Logger::debug(QString("创建图形项，类型:%1, 缩放:(%2,%3), 位置:(%4,%5)")
-                     .arg(GraphicItem::graphicTypeToString(data.type))
-                     .arg(scale.x(), 0, 'f', 3)
-                     .arg(scale.y(), 0, 'f', 3)
-                     .arg(pastePosition.x())
-                     .arg(pastePosition.y()));
+        // 如果是流程图元素，设置文本属性
+        if (auto* flowItem = dynamic_cast<FlowchartBaseItem*>(item)) {
+            Logger::debug(QString("DrawArea::createItemFromClipboardData: 设置文本属性 - 文本: '%1', 可见: %2")
+                .arg(data.text)
+                .arg(data.textVisible));
+            
+            // 设置文本属性 - 每个setter都会自动调用update()
+            flowItem->setText(data.text);
+            flowItem->setTextVisible(data.textVisible);
+            flowItem->setTextFont(data.textFont);
+            flowItem->setTextColor(data.textColor);
+            
+            // 验证文本是否设置成功
+            Logger::debug(QString("DrawArea::createItemFromClipboardData: 文本设置后验证 - 文本: '%1', 可见: %2")
+                .arg(flowItem->getText())
+                .arg(flowItem->isTextVisible()));
+        }
+    } else {
+        Logger::warning("DrawArea::createItemFromClipboardData: 创建图形项失败");
     }
     
-    // 设置位置
-    newItem->setPos(pastePosition);
-    
-    return newItem;
+    return item;
 }
 
 // 序列化图形项到字节数组
@@ -1244,7 +1390,7 @@ QByteArray DrawArea::serializeGraphicItems(const QList<QGraphicsItem*>& items)
     QDataStream stream(&data, QIODevice::WriteOnly);
     
     // 写入版本信息
-    stream << (qint32)1; // 版本号
+    stream << (qint32)3; // 版本号更新为3，以支持文本属性
     
     // 写入图形项数量
     stream << (qint32)items.size();
@@ -1278,6 +1424,33 @@ QByteArray DrawArea::serializeGraphicItems(const QList<QGraphicsItem*>& items)
         for (const auto& point : points) {
             stream << point;
         }
+        
+        // 写入ID和连接关系
+        if (auto* flowItem = dynamic_cast<FlowchartBaseItem*>(item)) {
+            stream << flowItem->id();
+            // 写入文本相关属性
+            stream << flowItem->getText();
+            stream << flowItem->isTextVisible();
+            stream << flowItem->getTextFont();
+            stream << flowItem->getTextColor();
+        } else {
+            stream << QString();
+            // 写入空文本属性
+            stream << QString() << false << QFont() << QColor();
+        }
+        
+        // 如果是连接线，写入连接关系
+        if (auto* connector = dynamic_cast<FlowchartConnectorItem*>(item)) {
+            stream << (connector->getStartItem() ? connector->getStartItem()->id() : QString());
+            stream << connector->getStartPointIndex();
+            stream << (connector->getEndItem() ? connector->getEndItem()->id() : QString());
+            stream << connector->getEndPointIndex();
+            stream << (qint32)connector->getConnectorType();
+            stream << (qint32)connector->getArrowType();
+        } else {
+            // 写入空连接关系
+            stream << QString() << -1 << QString() << -1 << (qint32)0 << (qint32)0;
+        }
     }
     
     return data;
@@ -1293,7 +1466,7 @@ QList<DrawArea::ClipboardItem> DrawArea::deserializeGraphicItems(const QByteArra
     qint32 version;
     stream >> version;
     
-    if (version != 1) {
+    if (version < 1 || version > 3) {
         Logger::error(QString("deserializeGraphicItems: 不支持的版本号 %1").arg(version));
         return result;
     }
@@ -1335,6 +1508,32 @@ QList<DrawArea::ClipboardItem> DrawArea::deserializeGraphicItems(const QByteArra
             QPointF point;
             stream >> point;
             item.points.push_back(point);
+        }
+        
+        // 读取ID
+        stream >> item.id;
+        
+        // 如果是版本3或更高，读取文本属性
+        if (version >= 3) {
+            stream >> item.text;
+            stream >> item.textVisible;
+            stream >> item.textFont;
+            stream >> item.textColor;
+        }
+        
+        // 读取连接关系
+        stream >> item.startItemId;
+        stream >> item.startPointIndex;
+        stream >> item.endItemId;
+        stream >> item.endPointIndex;
+        
+        // 如果是版本2或更高，读取连接线类型和箭头类型
+        if (version >= 2) {
+            qint32 connectorType, arrowType;
+            stream >> connectorType;
+            stream >> arrowType;
+            item.connectorType = static_cast<FlowchartConnectorItem::ConnectorType>(connectorType);
+            item.arrowType = static_cast<FlowchartConnectorItem::ArrowType>(arrowType);
         }
         
         result.append(item);
@@ -1635,34 +1834,57 @@ void DrawArea::pasteItemsAtPosition(const QPointF& pos) {
     try {
         // 为每个剪贴板项创建图形项
         for (const auto& clipData : m_clipboardData) {
-            // 创建图形项
-            QGraphicsItem* item = m_graphicFactory->createCustomItem(clipData.type, clipData.points);
-            if (!item) continue;
+            Logger::debug(QString("DrawArea::pasteItemsAtPosition: 开始处理剪贴板项，类型: %1").arg(clipData.type));
             
-            GraphicItem* graphicItem = dynamic_cast<GraphicItem*>(item);
-            if (!graphicItem) {
-                delete item;
+            // 创建图形项
+            QGraphicsItem* item = createItemFromClipboardData(clipData, pos);
+            if (!item) {
+                Logger::warning("DrawArea::pasteItemsAtPosition: 创建图形项失败");
                 continue;
             }
             
+            Logger::debug(QString("DrawArea::pasteItemsAtPosition: 图形项创建成功，指针: %1").arg(reinterpret_cast<quintptr>(item)));
+            
             // 设置图形项属性
-            graphicItem->setPen(clipData.pen);
-            graphicItem->setBrush(clipData.brush);
-            
-            // 计算相对位置 - 保持所有粘贴项之间的相对位置
-            QPointF relativePos = clipData.position - m_clipboardData.first().position;
-            graphicItem->setPos(pos + relativePos);
-            
-            graphicItem->setRotation(clipData.rotation);
-            graphicItem->setScale(clipData.scale);
-            graphicItem->setFlag(QGraphicsItem::ItemIsSelectable, true);
-            graphicItem->setFlag(QGraphicsItem::ItemIsMovable, true);
-            
-            // 创建添加图形命令并执行
-            CommandManager::getInstance().addCommandToGroup(
-                new CreateGraphicCommand(m_scene, graphicItem));
-            
-            pastedItems.append(graphicItem);
+            if (auto* graphicItem = dynamic_cast<GraphicItem*>(item)) {
+                Logger::debug("DrawArea::pasteItemsAtPosition: 设置基本属性");
+                graphicItem->setPen(clipData.pen);
+                graphicItem->setBrush(clipData.brush);
+                
+                // 计算相对位置 - 保持所有粘贴项之间的相对位置
+                QPointF relativePos = clipData.position - m_clipboardData.first().position;
+                item->setPos(pos + relativePos);
+                
+                graphicItem->setRotation(clipData.rotation);
+                graphicItem->setScale(clipData.scale);
+                item->setFlag(QGraphicsItem::ItemIsSelectable, true);
+                item->setFlag(QGraphicsItem::ItemIsMovable, true);
+                
+                // 如果是流程图元素，设置文本属性
+                if (auto* flowItem = dynamic_cast<FlowchartBaseItem*>(item)) {
+                    Logger::debug(QString("DrawArea::pasteItemsAtPosition: 设置文本属性 - 文本: '%1', 可见: %2")
+                        .arg(clipData.text)
+                        .arg(clipData.textVisible));
+                    
+                    flowItem->setText(clipData.text);
+                    flowItem->setTextVisible(clipData.textVisible);
+                    flowItem->setTextFont(clipData.textFont);
+                    flowItem->setTextColor(clipData.textColor);
+                    
+                    // 验证文本是否设置成功
+                    Logger::debug(QString("DrawArea::pasteItemsAtPosition: 文本设置后验证 - 文本: '%1', 可见: %2")
+                        .arg(flowItem->getText())
+                        .arg(flowItem->isTextVisible()));
+                }
+                
+                // 创建添加图形命令并执行
+                Logger::debug("DrawArea::pasteItemsAtPosition: 创建添加图形命令");
+                CommandManager::getInstance().addCommandToGroup(
+                    new CreateGraphicCommand(m_scene, graphicItem));
+                
+                pastedItems.append(item);
+                Logger::debug(QString("DrawArea::pasteItemsAtPosition: 图形项添加完成，当前已添加 %1 个").arg(pastedItems.size()));
+            }
         }
         
         // 结束并提交命令组
@@ -1693,85 +1915,117 @@ void DrawArea::pasteItemsAtPosition(const QPointF& pos) {
 
 // 粘贴复制的图形项（在默认位置）
 void DrawArea::pasteItems() {
-    // 使用智能定位
-    QPointF pastePosition = calculateSmartPastePosition();
-    
-    // 检查剪贴板是否为空
-    if (m_clipboardData.isEmpty() || !m_scene) {
-        Logger::warning("DrawArea::pasteItems: 剪贴板为空或场景无效，无法粘贴");
+    if (m_clipboardData.isEmpty()) {
+        Logger::debug("DrawArea::pasteItems: 剪贴板为空");
         return;
     }
     
-    Logger::debug(QString("DrawArea::pasteItems: 开始粘贴 %1 个项目").arg(m_clipboardData.size()));
+    // 先粘贴所有节点（不包括连接线）
+    QList<QGraphicsItem*> pastedItems;
+    QMap<QString, FlowchartBaseItem*> oldIdToNewItem;
     
-    // 取消当前所有选择
-    if (m_selectionManager) {
-        m_selectionManager->clearSelection();
+    for (const auto& item : m_clipboardData) {
+        if (item.type != GraphicItem::FLOWCHART_CONNECTOR) {
+            // 创建新的图形项
+            auto* newItem = m_graphicFactory->createCustomItem(item.type, item.points);
+            if (!newItem) continue;
+            
+            // 设置属性
+            if (auto* graphicItem = dynamic_cast<GraphicItem*>(newItem)) {
+                graphicItem->setPen(item.pen);
+                graphicItem->setBrush(item.brush);
+                graphicItem->setPos(item.position);
+                graphicItem->setRotation(item.rotation);
+                graphicItem->setScale(item.scale);
+                
+                // 如果是流程图元素，设置ID和文本
+                if (auto* flowItem = dynamic_cast<FlowchartBaseItem*>(newItem)) {
+                    // 生成新的ID
+                    QString newId = QUuid::createUuid().toString(QUuid::WithoutBraces);
+                    flowItem->setId(newId);
+                    
+                    // 保存ID映射关系
+                    oldIdToNewItem[item.id] = flowItem;
+                    
+                    // 设置文本
+                    flowItem->setText(item.text);
+                    flowItem->setTextVisible(item.textVisible);
+                    flowItem->setTextFont(item.textFont);
+                    flowItem->setTextColor(item.textColor);
+                }
+                
+                // 添加到场景
+                scene()->addItem(newItem);
+                pastedItems.append(newItem);
+            }
+        }
     }
     
-    // 开始命令组
-    CommandManager::getInstance().beginCommandGroup();
-    
-    // 新创建的图形项集合
-    QList<QGraphicsItem*> pastedItems;
-    
-    try {
-        // 为每个剪贴板项创建图形项
-        for (const auto& clipData : m_clipboardData) {
-            // 创建图形项
-            QGraphicsItem* item = m_graphicFactory->createCustomItem(clipData.type, clipData.points);
-            if (!item) continue;
+    // 然后粘贴所有连接线
+    for (const auto& item : m_clipboardData) {
+        if (item.type == GraphicItem::FLOWCHART_CONNECTOR) {
+            // 创建新的连接线，使用场景坐标
+            QPointF startPoint = item.points[0];
+            QPointF endPoint = item.points[1];
+            auto* newConnector = new FlowchartConnectorItem(
+                startPoint, endPoint,
+                item.connectorType,
+                item.arrowType
+            );
             
-            GraphicItem* graphicItem = dynamic_cast<GraphicItem*>(item);
-            if (!graphicItem) {
-                delete item;
-                continue;
+            // 设置属性
+            newConnector->setPen(item.pen);
+            newConnector->setBrush(item.brush);
+            // 连接线使用场景坐标，不需要设置位置
+            newConnector->setRotation(item.rotation);
+            newConnector->setScale(item.scale);
+            
+            // 设置控制点
+            if (item.points.size() > 2) {
+                QList<QPointF> controlPoints;
+                for (size_t i = 2; i < item.points.size(); ++i) {
+                    // 控制点使用相对于连接线的坐标
+                    controlPoints.append(item.points[i]);
+                }
+                newConnector->setControlPoints(controlPoints);
             }
             
-            // 设置图形项属性
-            graphicItem->setPen(clipData.pen);
-            graphicItem->setBrush(clipData.brush);
+            // 设置连接关系
+            if (oldIdToNewItem.contains(item.startItemId) && oldIdToNewItem.contains(item.endItemId)) {
+                newConnector->setStartItem(oldIdToNewItem[item.startItemId]);
+                newConnector->setEndItem(oldIdToNewItem[item.endItemId]);
+                newConnector->setStartPointIndex(item.startPointIndex);
+                newConnector->setEndPointIndex(item.endPointIndex);
+                
+                // 注册到连接管理器
+                if (m_connectionManager) {
+                    m_connectionManager->createConnection(
+                        oldIdToNewItem[item.startItemId],
+                        item.startPointIndex,
+                        oldIdToNewItem[item.endItemId],
+                        item.endPointIndex,
+                        item.connectorType,
+                        item.arrowType
+                    );
+                }
+            }
             
-            // 计算相对位置 - 保持所有粘贴项之间的相对位置
-            QPointF relativePos = clipData.position - m_clipboardData.first().position;
-            graphicItem->setPos(pastePosition + relativePos);
-            
-            graphicItem->setRotation(clipData.rotation);
-            graphicItem->setScale(clipData.scale);
-            graphicItem->setFlag(QGraphicsItem::ItemIsSelectable, true);
-            graphicItem->setFlag(QGraphicsItem::ItemIsMovable, true);
-            
-            // 创建添加图形命令并执行
-            CommandManager::getInstance().addCommandToGroup(
-                new CreateGraphicCommand(m_scene, graphicItem));
-            
-            pastedItems.append(graphicItem);
+            // 添加到场景
+            scene()->addItem(newConnector);
+            pastedItems.append(newConnector);
         }
-        
-        // 结束并提交命令组
-        CommandManager::getInstance().commitCommandGroup();
-        
-        // 选择新粘贴的图形
-        for (QGraphicsItem* item : pastedItems) {
-            item->setSelected(true);
-        }
-        
-        // 更新视图
-        viewport()->update();
-        
-        // 如果是剪切操作，粘贴后清空剪贴板
-        if (m_isClipboardFromCut) {
-            m_clipboardData.clear();
-            m_isClipboardFromCut = false;
-            Logger::info("DrawArea::pasteItems: 剪切操作，粘贴完成后清空剪贴板");
-        }
-        
-        Logger::info(QString("DrawArea::pasteItems: 已粘贴 %1 个图形项").arg(pastedItems.size()));
     }
-    catch (const std::exception& e) {
-        Logger::error(QString("DrawArea::pasteItems: 异常 - %1").arg(e.what()));
-        CommandManager::getInstance().endCommandGroup();
+    
+    // 如果是剪切操作，清空剪贴板
+    if (m_isClipboardFromCut) {
+        m_clipboardData.clear();
+        m_isClipboardFromCut = false;
     }
+    
+    // 更新视图
+    viewport()->update();
+    
+    Logger::debug(QString("DrawArea::pasteItems: 已粘贴 %1 个图形项").arg(pastedItems.size()));
 }
 
 // 启用/禁用图形项缓存

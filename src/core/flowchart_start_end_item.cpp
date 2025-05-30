@@ -125,19 +125,17 @@ QPainterPath FlowchartStartEndItem::toPath() const
 std::vector<QPointF> FlowchartStartEndItem::getDrawPoints() const
 {
     // 返回图形的顶点，用于序列化等操作
-    // 注意：圆角矩形不能仅用四个角点表示，但为简化，我们仍使用四个角点
-    // 在序列化时需要同时保存圆角半径
     std::vector<QPointF> points;
     QRectF rect = boundingRect();
     
-    // 矩形的四个角点
-    points.push_back(rect.topLeft());
-    points.push_back(rect.topRight());
-    points.push_back(rect.bottomRight());
-    points.push_back(rect.bottomLeft());
+    // 返回中心点
+    points.push_back(rect.center());
     
-    // 额外保存圆角半径和是否为开始节点的信息
-    // 可以使用特殊的点坐标编码这些信息，或在序列化时单独处理
+    // 返回大小点（中心点 + 半宽高）
+    points.push_back(QPointF(
+        rect.center().x() + rect.width() / 2,
+        rect.center().y() + rect.height() / 2
+    ));
     
     return points;
 }

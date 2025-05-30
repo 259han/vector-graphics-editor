@@ -147,13 +147,15 @@ std::vector<QPointF> FlowchartIOItem::getDrawPoints() const
     // 返回图形的顶点，用于序列化等操作
     std::vector<QPointF> points;
     QRectF rect = boundingRect();
-    qreal skewOffset = calculateSkewOffset();
     
-    // 平行四边形的四个顶点
-    points.push_back(QPointF(rect.left() + skewOffset, rect.top()));   // 左上
-    points.push_back(QPointF(rect.right(), rect.top()));               // 右上
-    points.push_back(QPointF(rect.right() - skewOffset, rect.bottom())); // 右下
-    points.push_back(QPointF(rect.left(), rect.bottom()));             // 左下
+    // 返回中心点
+    points.push_back(rect.center());
+    
+    // 返回大小点（中心点 + 半宽高）
+    points.push_back(QPointF(
+        rect.center().x() + rect.width() / 2,
+        rect.center().y() + rect.height() / 2
+    ));
     
     return points;
 }

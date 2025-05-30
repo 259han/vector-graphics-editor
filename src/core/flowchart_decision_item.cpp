@@ -143,11 +143,14 @@ std::vector<QPointF> FlowchartDecisionItem::getDrawPoints() const
     std::vector<QPointF> points;
     QRectF rect = boundingRect();
     
-    // 菱形的四个顶点
-    points.push_back(QPointF(rect.center().x(), rect.top()));      // 上
-    points.push_back(QPointF(rect.right(), rect.center().y()));    // 右
-    points.push_back(QPointF(rect.center().x(), rect.bottom()));   // 下
-    points.push_back(QPointF(rect.left(), rect.center().y()));     // 左
+    // 返回中心点
+    points.push_back(rect.center());
+    
+    // 返回大小点（中心点 + 半宽高）
+    points.push_back(QPointF(
+        rect.center().x() + rect.width() / 2,
+        rect.center().y() + rect.height() / 2
+    ));
     
     return points;
 }

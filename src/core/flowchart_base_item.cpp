@@ -130,6 +130,9 @@ void FlowchartBaseItem::serialize(QDataStream& out) const
     out << m_text;
     out << m_textFont;
     out << m_textColor;
+    
+    // 保存ID
+    out << m_id;
 }
 
 void FlowchartBaseItem::deserialize(QDataStream& in)
@@ -142,6 +145,9 @@ void FlowchartBaseItem::deserialize(QDataStream& in)
     in >> m_text;
     in >> m_textFont;
     in >> m_textColor;
+    
+    // 读取ID
+    in >> m_id;
 }
 
 // 鼠标按下事件处理
