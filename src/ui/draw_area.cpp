@@ -597,6 +597,26 @@ void DrawArea::clearGraphics()
         m_selectionManager->clearSelection();
     }
     
+    // 隐藏连接点覆盖层并重置其状态
+    if (m_connectionOverlay) {
+        Logger::debug("DrawArea::clearGraphics: 隐藏连接点覆盖层");
+        m_connectionOverlay->setConnectionPointsVisible(false);
+        m_connectionOverlay->clearHighlight();
+        
+        // 如果连接点覆盖层在场景中，先移除它
+        if (m_scene && m_scene->items().contains(m_connectionOverlay)) {
+            m_scene->removeItem(m_connectionOverlay);
+        }
+    }
+    
+    // 清除连接管理器
+    if (m_connectionManager) {
+        Logger::debug("DrawArea::clearGraphics: 清除连接管理器");
+        m_connectionManager->clearAllConnectionPoints();
+        m_connectionManager->hideConnectionPoints();
+        m_connectionManager->clearHighlight();
+    }
+    
     // 记录场景中项目的数量
     int itemCount = (m_scene != nullptr) ? m_scene->items().count() : 0;
     Logger::debug(QString("DrawArea::clearGraphics: 准备清除 %1 个项目").arg(itemCount));
@@ -608,7 +628,7 @@ void DrawArea::clearGraphics()
         
         // 逐个删除项目
         for (QGraphicsItem* item : itemsToRemove) {
-            if (item) {
+            if (item && item != m_connectionOverlay) {  // 保护连接点覆盖层
                 Logger::debug(QString("DrawArea::clearGraphics: 删除项目 %1").arg(reinterpret_cast<quintptr>(item)));
                 m_scene->removeItem(item);
                 delete item;
@@ -623,14 +643,22 @@ void DrawArea::clearGraphics()
         Logger::warning("DrawArea::clearGraphics: 场景为空，无需清除");
     }
     
+    // 重新添加连接点覆盖层到场景
+    if (m_connectionOverlay && m_scene) {
+        // 确保连接点覆盖层不在场景中
+        if (!m_scene->items().contains(m_connectionOverlay)) {
+            Logger::debug("DrawArea::clearGraphics: 重新添加连接点覆盖层到场景");
+            m_scene->addItem(m_connectionOverlay);
+            // 确保连接点覆盖层在最上层
+            m_connectionOverlay->setZValue(1000);
+        }
+    }
+    
     // 更新视图
     if (m_scene) {
         m_scene->update();
     }
     viewport()->update();
-    
-    // 在完成所有清理后一次性处理事件，而不是在循环中多次处理
-    QApplication::processEvents();
     
     Logger::info("DrawArea::clearGraphics: 场景清空完成");
 }
