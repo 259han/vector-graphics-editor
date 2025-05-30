@@ -37,6 +37,7 @@ void EditorState::resetCursor(DrawArea* drawArea) {
     // 清除DrawArea的自定义光标
     if (drawArea) {
         drawArea->unsetCursor();
+        drawArea->setCursor(Qt::ArrowCursor);
     }
 }
 

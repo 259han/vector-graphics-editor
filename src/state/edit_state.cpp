@@ -565,30 +565,36 @@ void EditState::updateCursor(GraphicItem::ControlHandle handle)
         QApplication::restoreOverrideCursor();
     }
     
+    // 根据控制点类型设置相应的光标
+    Qt::CursorShape cursorShape = Qt::ArrowCursor;
+    
     switch (handle) {
         case GraphicItem::TopLeft:
         case GraphicItem::BottomRight:
-            QApplication::setOverrideCursor(Qt::SizeFDiagCursor);
+            cursorShape = Qt::SizeFDiagCursor;
             break;
         case GraphicItem::TopRight:
         case GraphicItem::BottomLeft:
-            QApplication::setOverrideCursor(Qt::SizeBDiagCursor);
+            cursorShape = Qt::SizeBDiagCursor;
             break;
         case GraphicItem::TopCenter:
         case GraphicItem::BottomCenter:
-            QApplication::setOverrideCursor(Qt::SizeVerCursor);
+            cursorShape = Qt::SizeVerCursor;
             break;
         case GraphicItem::MiddleLeft:
         case GraphicItem::MiddleRight:
-            QApplication::setOverrideCursor(Qt::SizeHorCursor);
+            cursorShape = Qt::SizeHorCursor;
             break;
         case GraphicItem::Rotation:
-            QApplication::setOverrideCursor(Qt::PointingHandCursor);
+            cursorShape = Qt::PointingHandCursor;
             break;
         default:
-            // 默认不做任何事情，因为已经在函数开始时恢复了默认光标
+            cursorShape = Qt::ArrowCursor;
             break;
     }
+    
+    // 设置新的光标
+    QApplication::setOverrideCursor(cursorShape);
 }
 
 // 处理图形项旋转

@@ -432,8 +432,13 @@ void GraphicItem::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
 {
     // 只有在可移动状态下才改变光标
     if (m_isMovable && (flags() & ItemIsMovable)) {
-        // 设置鼠标光标为移动光标
+        // 先清除所有已存在的光标
+        while (QApplication::overrideCursor()) {
+            QApplication::restoreOverrideCursor();
+        }
+        // 设置新的光标
         QApplication::setOverrideCursor(Qt::SizeAllCursor);
+        Logger::debug("GraphicItem::hoverEnterEvent: 设置移动光标");
     }
     QGraphicsItem::hoverEnterEvent(event);
 }
@@ -445,6 +450,7 @@ void GraphicItem::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
     while (QApplication::overrideCursor()) {
         QApplication::restoreOverrideCursor();
     }
+    Logger::debug("GraphicItem::hoverLeaveEvent: 恢复默认光标");
     QGraphicsItem::hoverLeaveEvent(event);
 }
 

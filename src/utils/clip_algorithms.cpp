@@ -37,7 +37,6 @@ struct Intersection {
     QPointF point;
     size_t subjectEdgeIndex;
     size_t clipEdgeIndex;
-    bool isValid;
 };
 
 // 顶点类型
@@ -84,7 +83,6 @@ bool isInside(const QPointF& p, ClipEdge edge, const QRectF& clipRect) {
 
 // 计算两点与裁剪边缘的交点
 QPointF computeIntersection(const QPointF& p1, const QPointF& p2, ClipEdge edge, const QRectF& clipRect) {
-    // 避免除以零
     const double EPSILON = 1e-8;
     
     switch (edge) {
@@ -113,7 +111,7 @@ QPointF computeIntersection(const QPointF& p1, const QPointF& p2, ClipEdge edge,
             return QPointF(x, y);
         }
     }
-    return QPointF(); // 不应该到达这里
+    return QPointF();
 }
 
 // 对多边形在单条边上进行裁剪
@@ -125,29 +123,22 @@ std::vector<QPointF> clipPolygonToEdge(const std::vector<QPointF>& vertices, Cli
         return outputList;
     }
     
-    // 获取最后一个点作为当前起点
     QPointF s = vertices[size - 1];
     bool sInside = isInside(s, edge, clipRect);
     
-    // 遍历多边形的所有边
     for (size_t i = 0; i < size; i++) {
         QPointF e = vertices[i];
         bool eInside = isInside(e, edge, clipRect);
         
-        // 根据Sutherland-Hodgman算法的规则处理
         if (eInside) {
             if (!sInside) {
-                // 从外到内，添加交点
                 outputList.push_back(computeIntersection(s, e, edge, clipRect));
             }
-            // 内部点总是添加
             outputList.push_back(e);
         } else if (sInside) {
-            // 从内到外，只添加交点
             outputList.push_back(computeIntersection(s, e, edge, clipRect));
         }
         
-        // 更新起点为当前终点
         s = e;
         sInside = eInside;
     }
@@ -159,24 +150,19 @@ std::vector<QPointF> clipPolygonToEdge(const std::vector<QPointF>& vertices, Cli
 bool lineIntersection(const QPointF& p1, const QPointF& p2, 
                      const QPointF& p3, const QPointF& p4, 
                      QPointF& intersection) {
-    // 计算分母
     double denominator = (p4.y() - p3.y()) * (p2.x() - p1.x()) - 
                         (p4.x() - p3.x()) * (p2.y() - p1.y());
     
-    // 如果分母为0，则线段平行或共线
     if (qFuzzyIsNull(denominator)) {
         return false;
     }
     
-    // 计算ua和ub
     double ua = ((p4.x() - p3.x()) * (p1.y() - p3.y()) - 
                 (p4.y() - p3.y()) * (p1.x() - p3.x())) / denominator;
     double ub = ((p2.x() - p1.x()) * (p1.y() - p3.y()) - 
                 (p2.y() - p1.y()) * (p1.x() - p3.x())) / denominator;
     
-    // 如果ua和ub都在[0,1]范围内，则交点在两条线段上
     if (ua >= 0.0 && ua <= 1.0 && ub >= 0.0 && ub <= 1.0) {
-        // 计算交点坐标
         intersection.setX(p1.x() + ua * (p2.x() - p1.x()));
         intersection.setY(p1.y() + ua * (p2.y() - p1.y()));
         return true;
@@ -194,40 +180,6 @@ bool pointInPolygon(const QPointF& point, const std::vector<QPointF>& polygon) {
     bool inside = false;
     size_t i, j;
     for (i = 0, j = polygon.size() - 1; i < polygon.size(); j = i++) {
-        // 检查点是否在多边形的边上
-        QLineF edge(polygon[j], polygon[i]);
-        // 计算点到线段的距离，使用点到直线距离公式
-        QPointF v = edge.p2() - edge.p1();
-        QPointF w = point - edge.p1();
-        
-        // 计算投影点的参数
-        double c1 = QPointF::dotProduct(w, v);
-        if (c1 <= 0) {
-            // 点在线段起点外侧
-            double distance = QLineF(point, edge.p1()).length();
-            if (distance < 0.001) {
-                return true; // 点在边上
-            }
-        } else {
-            double c2 = QPointF::dotProduct(v, v);
-            if (c2 <= c1) {
-                // 点在线段终点外侧
-                double distance = QLineF(point, edge.p2()).length();
-                if (distance < 0.001) {
-                    return true; // 点在边上
-                }
-            } else {
-                // 点到线段的垂直距离
-                double b = c1 / c2;
-                QPointF pb = edge.p1() + b * v;
-                double distance = QLineF(point, pb).length();
-                if (distance < 0.001) {
-                    return true; // 点在边上
-                }
-            }
-        }
-        
-        // 射线法：从点向右发射一条射线，计算与多边形边的交点数
         if (((polygon[i].y() > point.y()) != (polygon[j].y() > point.y())) &&
             (point.x() < (polygon[j].x() - polygon[i].x()) * (point.y() - polygon[i].y()) / 
                          (polygon[j].y() - polygon[i].y()) + polygon[i].x())) {
@@ -240,26 +192,21 @@ bool pointInPolygon(const QPointF& point, const std::vector<QPointF>& polygon) {
 
 // 点是否在线段上
 bool isPointOnLineSegment(const QPointF& p, const QPointF& lineStart, const QPointF& lineEnd) {
-    // 计算点到线段的距离
     QLineF line(lineStart, lineEnd);
     double lineLength = line.length();
     
     if (lineLength < 0.001) {
-        // 线段长度接近于0，检查点是否与起点重合
         return QLineF(p, lineStart).length() < 0.001;
     }
     
-    // 计算点在线段上的参数t
     double t = ((p.x() - lineStart.x()) * (lineEnd.x() - lineStart.x()) + 
                (p.y() - lineStart.y()) * (lineEnd.y() - lineStart.y())) / 
               (lineLength * lineLength);
     
-    // 如果t在[0,1]之间，点在线段上
     if (t < 0 || t > 1) {
         return false;
     }
     
-    // 计算点到线段的距离
     QPointF projection = lineStart + t * (lineEnd - lineStart);
     return QLineF(p, projection).length() < 0.001;
 }
@@ -277,6 +224,59 @@ double parameterAlongLine(const QPointF& lineStart, const QPointF& lineEnd, cons
     double proj = QPointF::dotProduct(w, v) / vLengthSquared;
     
     return proj;
+}
+
+// 检查点是否在路径边界附近
+bool isPointNearBoundary(const QPointF& point, const QPainterPath& path, double tolerance) {
+    QPainterPathStroker stroker;
+    stroker.setWidth(tolerance * 2);
+    return stroker.createStroke(path).contains(point);
+}
+
+// 验证裁剪结果
+bool validateIntersection(const QPainterPath& result, const QPainterPath& clip) {
+    //检查结果是否为空
+    if (result.isEmpty()) {
+        Logger::debug("validateIntersection: 结果路径为空");
+        return false;
+    }
+    
+    //检查边界框
+    QRectF resultBounds = result.boundingRect();
+    QRectF clipBounds = clip.boundingRect();
+    if (!clipBounds.contains(resultBounds)) {
+        Logger::debug("validateIntersection: 结果边界框超出裁剪路径边界");
+        return false;
+    }
+    
+    //检查面积
+    double resultArea = resultBounds.width() * resultBounds.height();
+    double clipArea = clipBounds.width() * clipBounds.height();
+    if (resultArea > clipArea) {
+        Logger::debug("validateIntersection: 结果面积大于裁剪路径面积");
+        return false;
+    }
+    
+    //检查顶点
+    std::vector<QPointF> vertices = pathToPoints(result, 1.0); // 使用较大的flatness值只获取顶点
+    const double tolerance = 0.001; // 容差值
+    
+    int validPoints = 0;
+    for (const auto& vertex : vertices) {
+        if (clip.contains(vertex) || isPointNearBoundary(vertex, clip, tolerance)) {
+            validPoints++;
+        }
+    }
+    
+    // 允许95%的点
+    double validRatio = static_cast<double>(validPoints) / vertices.size();
+    bool isValid = validRatio > 0.95;
+    
+    if (!isValid) {
+        Logger::debug(QString("validateIntersection: 有效点比例 %1 低于阈值 0.95").arg(validRatio));
+    }
+    
+    return isValid;
 }
 
 } // namespace Internal
@@ -319,13 +319,6 @@ bool cohenSutherlandClip(QPointF& p1, QPointF& p2, const QRectF& clipRect) {
                  .arg(p1.x()).arg(p1.y())
                  .arg(p2.x()).arg(p2.y()));
     
-    // 定义区域码的位标志
-    const int INSIDE = 0; // 0000
-    const int LEFT = 1;   // 0001
-    const int RIGHT = 2;  // 0010
-    const int BOTTOM = 4; // 0100
-    const int TOP = 8;    // 1000
-    
     // 计算初始点的区域码
     int code1 = Internal::computeOutCode(p1, clipRect);
     int code2 = Internal::computeOutCode(p2, clipRect);
@@ -348,19 +341,19 @@ bool cohenSutherlandClip(QPointF& p1, QPointF& p2, const QRectF& clipRect) {
             QPointF intersection;
             
             // 根据区域码计算交点
-            if (codeOut & TOP) {
+            if (codeOut & Internal::TOP) {
                 // 与上边界相交
                 intersection.setX(p1.x() + (p2.x() - p1.x()) * (clipRect.top() - p1.y()) / (p2.y() - p1.y()));
                 intersection.setY(clipRect.top());
-            } else if (codeOut & BOTTOM) {
+            } else if (codeOut & Internal::BOTTOM) {
                 // 与下边界相交
                 intersection.setX(p1.x() + (p2.x() - p1.x()) * (clipRect.bottom() - p1.y()) / (p2.y() - p1.y()));
                 intersection.setY(clipRect.bottom());
-            } else if (codeOut & RIGHT) {
+            } else if (codeOut & Internal::RIGHT) {
                 // 与右边界相交
                 intersection.setY(p1.y() + (p2.y() - p1.y()) * (clipRect.right() - p1.x()) / (p2.x() - p1.x()));
                 intersection.setX(clipRect.right());
-            } else if (codeOut & LEFT) {
+            } else if (codeOut & Internal::LEFT) {
                 // 与左边界相交
                 intersection.setY(p1.y() + (p2.y() - p1.y()) * (clipRect.left() - p1.x()) / (p2.x() - p1.x()));
                 intersection.setX(clipRect.left());
@@ -650,20 +643,9 @@ QPainterPath customIntersected(const QPainterPath& subject, const QPainterPath& 
         // 将点集转换为路径
         resultPath = pointsToPath(resultPoints);
         
-        // 检查结果点是否全部位于裁剪路径内部
-        bool valid = true;
-        std::vector<QPointF> pathPoints = pathToPoints(resultPath, flatness);
-        for (const auto& point : pathPoints) {
-            if (!clip.contains(point)) {
-                valid = false;
-                Logger::warning("customIntersected: 验证失败，结果路径部分点不在裁剪路径内");
-                break;
-            }
-        }
-        
-        // 如果结果无效，尝试使用栅格化方法
-        if (!valid) {
-            Logger::debug("customIntersected: 使用栅格化方法修正结果");
+        // 使用新的验证方法检查结果
+        if (!Internal::validateIntersection(resultPath, clip)) {
+            Logger::debug("customIntersected: 验证失败，尝试使用栅格化方法");
             QPainterPath rasterPath = rasterizeIntersection(subject, clip);
             
             if (!rasterPath.isEmpty()) {
@@ -684,7 +666,6 @@ std::vector<QPointF> weilerAthertonClip(const std::vector<QPointF>& subjectPolyg
                  .arg(subjectPolygon.size())
                  .arg(clipPolygon.size()));
     
-    // 检查输入是否有效
     if (subjectPolygon.size() < 3 || clipPolygon.size() < 3) {
         Logger::warning("WeilerAtherton: 输入多边形顶点数不足");
         return {};
@@ -694,13 +675,11 @@ std::vector<QPointF> weilerAthertonClip(const std::vector<QPointF>& subjectPolyg
     std::vector<Internal::Edge> subjectEdges;
     std::vector<Internal::Edge> clipEdges;
     
-    // 构建主体多边形边
     for (size_t i = 0; i < subjectPolygon.size(); ++i) {
         size_t j = (i + 1) % subjectPolygon.size();
         subjectEdges.push_back({subjectPolygon[i], subjectPolygon[j]});
     }
     
-    // 构建裁剪多边形边
     for (size_t i = 0; i < clipPolygon.size(); ++i) {
         size_t j = (i + 1) % clipPolygon.size();
         clipEdges.push_back({clipPolygon[i], clipPolygon[j]});
@@ -709,7 +688,6 @@ std::vector<QPointF> weilerAthertonClip(const std::vector<QPointF>& subjectPolyg
     // 计算所有交点
     std::vector<Internal::Intersection> intersections;
     
-    // 用于检测重复交点的辅助函数
     auto isPointNear = [](const QPointF& p1, const QPointF& p2, double epsilon = 0.001) -> bool {
         return QLineF(p1, p2).length() < epsilon;
     };
@@ -720,11 +698,9 @@ std::vector<QPointF> weilerAthertonClip(const std::vector<QPointF>& subjectPolyg
             if (Internal::lineIntersection(subjectEdges[i].start, subjectEdges[i].end,
                                          clipEdges[j].start, clipEdges[j].end,
                                          intersection)) {
-                // 检查交点是否位于两个线段上
                 if (Internal::isPointOnLineSegment(intersection, subjectEdges[i].start, subjectEdges[i].end) &&
                     Internal::isPointOnLineSegment(intersection, clipEdges[j].start, clipEdges[j].end)) {
                     
-                    // 检查是否已经存在相同或非常接近的交点
                     bool isDuplicate = false;
                     for (const auto& existingIntersection : intersections) {
                         if (isPointNear(existingIntersection.point, intersection)) {
@@ -734,8 +710,7 @@ std::vector<QPointF> weilerAthertonClip(const std::vector<QPointF>& subjectPolyg
                     }
                     
                     if (!isDuplicate) {
-                        // 添加交点，记录边索引
-                        intersections.push_back({intersection, i, j, true});
+                        intersections.push_back({intersection, i, j});
                     }
                 }
             }
@@ -744,11 +719,8 @@ std::vector<QPointF> weilerAthertonClip(const std::vector<QPointF>& subjectPolyg
     
     Logger::debug(QString("WeilerAtherton: 计算出 %1 个交点").arg(intersections.size()));
     
-    // 如果没有交点，检查一个多边形是否在另一个内部
+    // 如果没有交点，检查包含关系
     if (intersections.empty()) {
-        Logger::debug("WeilerAtherton: 未找到交点，检查包含关系");
-        
-        // 检查主体多边形是否在裁剪多边形内部
         bool subjectInsideClip = true;
         for (const QPointF& point : subjectPolygon) {
             if (!Internal::pointInPolygon(point, clipPolygon)) {
@@ -762,7 +734,6 @@ std::vector<QPointF> weilerAthertonClip(const std::vector<QPointF>& subjectPolyg
             return subjectPolygon;
         }
         
-        // 检查裁剪多边形是否在主体多边形内部
         bool clipInsideSubject = true;
         for (const QPointF& point : clipPolygon) {
             if (!Internal::pointInPolygon(point, subjectPolygon)) {
@@ -776,490 +747,67 @@ std::vector<QPointF> weilerAthertonClip(const std::vector<QPointF>& subjectPolyg
             return clipPolygon;
         }
         
-        // 没有交点且多边形不互相包含，没有交集
         Logger::debug("WeilerAtherton: 多边形无交点且不互相包含，无交集");
         return {};
     }
     
-    // 尝试简化版的交集计算 - 当交点少时更可靠
-    if (intersections.size() <= 6) {
-        Logger::debug("WeilerAtherton: 使用简化版交集计算（交点少于6个）");
-        
-        // 检查主体多边形的点是否在裁剪多边形内
-        std::vector<QPointF> resultPoints;
-        
-        // 添加位于裁剪多边形内的主体多边形点
-        for (const QPointF& point : subjectPolygon) {
-            if (Internal::pointInPolygon(point, clipPolygon)) {
-                // 检查是否已存在相同点
-                bool isDuplicate = false;
-                for (const QPointF& existing : resultPoints) {
-                    if (isPointNear(existing, point)) {
-                        isDuplicate = true;
-                        break;
-                    }
-                }
-                if (!isDuplicate) {
-                    resultPoints.push_back(point);
-                }
-            }
-        }
-        
-        // 添加位于主体多边形内的裁剪多边形点
-        for (const QPointF& point : clipPolygon) {
-            if (Internal::pointInPolygon(point, subjectPolygon)) {
-                // 检查是否已存在相同点
-                bool isDuplicate = false;
-                for (const QPointF& existing : resultPoints) {
-                    if (isPointNear(existing, point)) {
-                        isDuplicate = true;
-                        break;
-                    }
-                }
-                if (!isDuplicate) {
-                    resultPoints.push_back(point);
-                }
-            }
-        }
-        
-        // 添加所有交点
-        for (const auto& intersection : intersections) {
-            // 检查是否已存在相同点
-            bool isDuplicate = false;
-            for (const QPointF& existing : resultPoints) {
-                if (isPointNear(existing, intersection.point)) {
-                    isDuplicate = true;
-                    break;
-                }
-            }
-            if (!isDuplicate) {
-                resultPoints.push_back(intersection.point);
-            }
-        }
-        
-        // 如果点数足够，尝试计算凸包
-        if (resultPoints.size() >= 3) {
-            Logger::debug(QString("WeilerAtherton: 简化算法找到 %1 个点，尝试形成凸多边形").arg(resultPoints.size()));
-            
-            // 对交集点集排序，创建凸多边形
-            // 计算质心
-            QPointF centroid(0, 0);
-            for (const QPointF& point : resultPoints) {
-                centroid += point;
-            }
-            centroid /= resultPoints.size();
-            
-            // 按照点到质心的角度排序
-            std::sort(resultPoints.begin(), resultPoints.end(), 
-                     [&centroid](const QPointF& a, const QPointF& b) {
-                         return std::atan2(a.y() - centroid.y(), a.x() - centroid.x()) < 
-                                std::atan2(b.y() - centroid.y(), b.x() - centroid.x());
-                     });
-            
-            // 确保闭合
-            if (resultPoints.size() > 0 && !isPointNear(resultPoints.front(), resultPoints.back())) {
-                resultPoints.push_back(resultPoints.front());
-            }
-            
-            Logger::debug(QString("WeilerAtherton: 简化算法创建了凸多边形，顶点数: %1").arg(resultPoints.size()));
-            return resultPoints;
-        }
-        
-        Logger::debug("WeilerAtherton: 简化算法未能找到足够的点");
-    }
-    
-    // 使用完整的Weiler-Atherton算法
-    // 构建主体多边形的有序顶点列表（包括交点）
-    std::vector<Internal::VertexType> subjectVertices;
-    for (size_t i = 0; i < subjectPolygon.size(); ++i) {
-        subjectVertices.push_back({subjectPolygon[i], false, i, 0, false});
-    }
-    
-    // 将交点添加到主体顶点列表
-    for (const auto& intersection : intersections) {
-        double t = Internal::parameterAlongLine(subjectEdges[intersection.subjectEdgeIndex].start,
-                                              subjectEdges[intersection.subjectEdgeIndex].end,
-                                              intersection.point);
-        
-        subjectVertices.push_back({
-            intersection.point,
-            true,  // 是交点
-            intersection.subjectEdgeIndex,
-            t,
-            false
-        });
-    }
-    
-    // 构建裁剪多边形的有序顶点列表（包括交点）
-    std::vector<Internal::VertexType> clipVertices;
-    for (size_t i = 0; i < clipPolygon.size(); ++i) {
-        clipVertices.push_back({clipPolygon[i], false, i, 0, false});
-    }
-    
-    // 将交点添加到裁剪顶点列表
-    for (const auto& intersection : intersections) {
-        double t = Internal::parameterAlongLine(clipEdges[intersection.clipEdgeIndex].start,
-                                              clipEdges[intersection.clipEdgeIndex].end,
-                                              intersection.point);
-        
-        clipVertices.push_back({
-            intersection.point,
-            true,  // 是交点
-            intersection.clipEdgeIndex,
-            t,
-            false
-        });
-    }
-    
-    // 按照边索引和参数t排序，使顶点沿多边形边界顺序排列
-    std::sort(subjectVertices.begin(), subjectVertices.end(),
-             [](const Internal::VertexType& a, const Internal::VertexType& b) {
-                 if (a.edgeIndex != b.edgeIndex)
-                     return a.edgeIndex < b.edgeIndex;
-                 return a.t < b.t;
-             });
-    
-    std::sort(clipVertices.begin(), clipVertices.end(),
-             [](const Internal::VertexType& a, const Internal::VertexType& b) {
-                 if (a.edgeIndex != b.edgeIndex)
-                     return a.edgeIndex < b.edgeIndex;
-                 return a.t < b.t;
-             });
-    
-    // 为交点创建两个列表之间的链接
-    // 创建一个自定义比较函数用于QPointF
-    auto pointCompare = [](const QPointF& a, const QPointF& b) -> bool {
-        if (qFuzzyCompare(a.x(), b.x())) {
-            return a.y() < b.y();
-        }
-        return a.x() < b.x();
-    };
-    
-    // 使用自定义比较函数的映射
-    std::map<QPointF, size_t, decltype(pointCompare)> subjectPointToIndex(pointCompare);
-    std::map<QPointF, size_t, decltype(pointCompare)> clipPointToIndex(pointCompare);
-    
-    for (size_t i = 0; i < subjectVertices.size(); ++i) {
-        if (subjectVertices[i].isIntersection) {
-            subjectPointToIndex[subjectVertices[i].point] = i;
-        }
-    }
-    
-    for (size_t i = 0; i < clipVertices.size(); ++i) {
-        if (clipVertices[i].isIntersection) {
-            clipPointToIndex[clipVertices[i].point] = i;
-        }
-    }
-    
-    // 为每个交点建立交叉引用
-    for (const auto& point : subjectPointToIndex) {
-        auto clipIt = clipPointToIndex.find(point.first);
-        if (clipIt != clipPointToIndex.end()) {
-            size_t subjectIndex = point.second;
-            size_t clipIndex = clipIt->second;
-            
-            // 设置交叉引用标志
-            subjectVertices[subjectIndex].correspondingIndex = clipIndex;
-            clipVertices[clipIndex].correspondingIndex = subjectIndex;
-        }
-    }
-    
-    // 标记每个顶点是入点还是出点（相对于另一个多边形）
-    for (size_t i = 0; i < subjectVertices.size(); ++i) {
-        if (subjectVertices[i].isIntersection) {
-            // 获取前一个顶点
-            size_t prevIndex = (i > 0) ? (i - 1) : (subjectVertices.size() - 1);
-            
-            // 前一个顶点是否在裁剪多边形内
-            bool prevInside = Internal::pointInPolygon(subjectVertices[prevIndex].point, clipPolygon);
-            
-            // 设置入点/出点标志
-            subjectVertices[i].isEntry = !prevInside;
-        }
-    }
-    
-    for (size_t i = 0; i < clipVertices.size(); ++i) {
-        if (clipVertices[i].isIntersection) {
-            // 获取前一个顶点
-            size_t prevIndex = (i > 0) ? (i - 1) : (clipVertices.size() - 1);
-            
-            // 前一个顶点是否在主体多边形内
-            bool prevInside = Internal::pointInPolygon(clipVertices[prevIndex].point, subjectPolygon);
-            
-            // 设置入点/出点标志
-            clipVertices[i].isEntry = !prevInside;
-        }
-    }
-    
-    // 从主体多边形的入点开始遍历
+    // 使用交点构建结果
     std::vector<QPointF> result;
     
-    // 寻找一个入点作为起点
-    size_t startIndex = 0;
-    bool found = false;
-    
-    for (size_t i = 0; i < subjectVertices.size(); ++i) {
-        if (subjectVertices[i].isIntersection && subjectVertices[i].isEntry) {
-            startIndex = i;
-            found = true;
-            break;
+    // 添加位于裁剪多边形内的主体多边形点
+    for (const QPointF& point : subjectPolygon) {
+        if (Internal::pointInPolygon(point, clipPolygon)) {
+            result.push_back(point);
         }
     }
     
-    // 如果找不到入点，尝试更进一步的检查
-    if (!found) {
-        Logger::debug("WeilerAtherton: 未找到入点，尝试另一种方法");
-        
-        // 检查是否所有主体点都在裁剪多边形内
-        bool allSubjectInClip = true;
-        for (const auto& vertex : subjectVertices) {
-            if (!vertex.isIntersection && !Internal::pointInPolygon(vertex.point, clipPolygon)) {
-                allSubjectInClip = false;
-                break;
-            }
-        }
-        
-        if (allSubjectInClip) {
-            Logger::debug("WeilerAtherton: 所有主体点都在裁剪多边形内，返回主体多边形");
-            return subjectPolygon;
-        }
-        
-        // 检查是否所有裁剪点都在主体多边形内
-        bool allClipInSubject = true;
-        for (const auto& vertex : clipVertices) {
-            if (!vertex.isIntersection && !Internal::pointInPolygon(vertex.point, subjectPolygon)) {
-                allClipInSubject = false;
-                break;
-            }
-        }
-        
-        if (allClipInSubject) {
-            Logger::debug("WeilerAtherton: 所有裁剪点都在主体多边形内，返回裁剪多边形");
-            return clipPolygon;
-        }
-        
-        // 如果找不到入点，但有交点，可能是算法问题
-        // 尝试使用所有交点和在对方多边形内的点构建结果
-        if (!intersections.empty()) {
-            Logger::debug("WeilerAtherton: 有交点但找不到入点，尝试构建结果");
-            
-            std::vector<QPointF> allIntersectionPoints;
-            for (const auto& intersection : intersections) {
-                allIntersectionPoints.push_back(intersection.point);
-            }
-            
-            // 添加位于裁剪多边形内的主体多边形点
-            for (const auto& vertex : subjectVertices) {
-                if (!vertex.isIntersection && Internal::pointInPolygon(vertex.point, clipPolygon)) {
-                    allIntersectionPoints.push_back(vertex.point);
-                }
-            }
-            
-            // 添加位于主体多边形内的裁剪多边形点
-            for (const auto& vertex : clipVertices) {
-                if (!vertex.isIntersection && Internal::pointInPolygon(vertex.point, subjectPolygon)) {
-                    allIntersectionPoints.push_back(vertex.point);
-                }
-            }
-            
-            // 如果有足够的点，构建凸包
-            if (allIntersectionPoints.size() >= 3) {
-                // 计算质心
-                QPointF centroid(0, 0);
-                for (const QPointF& point : allIntersectionPoints) {
-                    centroid += point;
-                }
-                centroid /= allIntersectionPoints.size();
-                
-                // 按照点到质心的角度排序
-                std::sort(allIntersectionPoints.begin(), allIntersectionPoints.end(), 
-                         [&centroid](const QPointF& a, const QPointF& b) {
-                             return std::atan2(a.y() - centroid.y(), a.x() - centroid.x()) < 
-                                    std::atan2(b.y() - centroid.y(), b.x() - centroid.x());
-                         });
-                
-                // 移除太接近的点
-                auto it = std::unique(allIntersectionPoints.begin(), allIntersectionPoints.end(), 
-                                     [](const QPointF& a, const QPointF& b) {
-                                         return QLineF(a, b).length() < 0.001;
-                                     });
-                allIntersectionPoints.erase(it, allIntersectionPoints.end());
-                
-                // 确保闭合
-                if (allIntersectionPoints.size() > 0 && 
-                    QLineF(allIntersectionPoints.front(), allIntersectionPoints.back()).length() > 0.001) {
-                    allIntersectionPoints.push_back(allIntersectionPoints.front());
-                }
-                
-                Logger::debug(QString("WeilerAtherton: 构建了替代结果，点数: %1").arg(allIntersectionPoints.size()));
-                return allIntersectionPoints;
-            }
-        }
-        
-        Logger::debug("WeilerAtherton: 无法找到有效入点，无交集");
-        return {};
-    }
-    
-    // 开始从入点遍历
-    size_t currentIndex = startIndex;
-    bool inSubject = true;  // 从主体多边形开始
-    std::set<size_t> visitedIntersections;
-    
-    // 防止无限循环
-    int maxIterations = (subjectVertices.size() + clipVertices.size()) * 2;
-    int iterations = 0;
-    
-    while (iterations < maxIterations) {
-        ++iterations;
-        
-        if (inSubject) {
-            // 在主体多边形中遍历
-            result.push_back(subjectVertices[currentIndex].point);
-            
-            // 如果是交点，跳转到裁剪多边形
-            if (subjectVertices[currentIndex].isIntersection) {
-                // 标记该交点已访问
-                std::pair<size_t, size_t> intersection = {currentIndex, subjectVertices[currentIndex].correspondingIndex};
-                if (visitedIntersections.count(intersection.first) > 0) {
-                    // 如果已经访问过该交点，结束遍历
-                    break;
-                }
-                visitedIntersections.insert(intersection.first);
-                
-                // 切换到裁剪多边形
-                currentIndex = subjectVertices[currentIndex].correspondingIndex;
-                inSubject = false;
-                
-                // 如果是出点，则结束遍历
-                if (!subjectVertices[intersection.first].isEntry) {
-                    break;
-                }
-            } else {
-                // 移动到主体多边形中的下一个顶点
-                currentIndex = (currentIndex + 1) % subjectVertices.size();
-                
-                // 如果回到起点，结束遍历
-                if (currentIndex == startIndex) {
-                    break;
-                }
-            }
-        } else {
-            // 在裁剪多边形中遍历
-            result.push_back(clipVertices[currentIndex].point);
-            
-            // 如果是交点，跳转回主体多边形
-            if (clipVertices[currentIndex].isIntersection) {
-                // 标记该交点已访问
-                std::pair<size_t, size_t> intersection = {clipVertices[currentIndex].correspondingIndex, currentIndex};
-                if (visitedIntersections.count(intersection.first) > 0) {
-                    // 如果已经访问过该交点，结束遍历
-                    break;
-                }
-                
-                // 切换回主体多边形
-                currentIndex = clipVertices[currentIndex].correspondingIndex;
-                inSubject = true;
-                
-                // 如果是出点，则结束遍历
-                if (!clipVertices[intersection.second].isEntry) {
-                    break;
-                }
-            } else {
-                // 移动到裁剪多边形中的下一个顶点
-                currentIndex = (currentIndex + 1) % clipVertices.size();
-            }
-        }
-        
-        // 防止无限循环
-        if (iterations == maxIterations) {
-            Logger::warning("WeilerAtherton: 达到最大迭代次数，可能存在算法问题");
-            break;
+    // 添加位于主体多边形内的裁剪多边形点
+    for (const QPointF& point : clipPolygon) {
+        if (Internal::pointInPolygon(point, subjectPolygon)) {
+            result.push_back(point);
         }
     }
     
-    // 检查结果是否有效
-    if (result.size() < 3) {
-        Logger::warning(QString("WeilerAtherton: 结果点数不足 (%1)，返回空结果").arg(result.size()));
-        return {};
+    // 添加所有交点
+    for (const auto& intersection : intersections) {
+        result.push_back(intersection.point);
     }
     
-    // 移除重复相邻点
-    auto it = std::unique(result.begin(), result.end(), 
-                         [](const QPointF& a, const QPointF& b) {
-                             return QLineF(a, b).length() < 0.001;
-                         });
-    result.erase(it, result.end());
-    
-    // 确保结果是闭合的
-    if (result.size() > 0 && QLineF(result.front(), result.back()).length() > 0.001) {
-        result.push_back(result.front());
+    // 如果点数足够，按照凸包方式排序
+    if (result.size() >= 3) {
+        // 计算质心
+        QPointF centroid(0, 0);
+        for (const QPointF& point : result) {
+            centroid += point;
+        }
+        centroid /= result.size();
+        
+        // 按照点到质心的角度排序
+        std::sort(result.begin(), result.end(), 
+                 [&centroid](const QPointF& a, const QPointF& b) {
+                     return std::atan2(a.y() - centroid.y(), a.x() - centroid.x()) < 
+                            std::atan2(b.y() - centroid.y(), b.x() - centroid.x());
+                 });
+        
+        // 移除太接近的点
+        auto it = std::unique(result.begin(), result.end(), 
+                             [](const QPointF& a, const QPointF& b) {
+                                 return QLineF(a, b).length() < 0.001;
+                             });
+        result.erase(it, result.end());
+        
+        // 确保闭合
+        if (result.size() > 0 && 
+            QLineF(result.front(), result.back()).length() > 0.001) {
+            result.push_back(result.front());
+        }
+        
+        Logger::debug(QString("WeilerAtherton: 裁剪完成，结果顶点数: %1").arg(result.size()));
+        return result;
     }
     
-    // 如果点数仍然不足，尝试使用前面的简化算法
-    if (result.size() < 3) {
-        Logger::warning("WeilerAtherton: 标准算法失败，尝试简化方法");
-        
-        // 重新计算，使用所有交点和内部点
-        std::vector<QPointF> allPoints;
-        
-        // 添加所有交点
-        for (const auto& intersection : intersections) {
-            allPoints.push_back(intersection.point);
-        }
-        
-        // 添加位于裁剪多边形内的主体多边形点
-        for (const QPointF& point : subjectPolygon) {
-            if (Internal::pointInPolygon(point, clipPolygon)) {
-                allPoints.push_back(point);
-            }
-        }
-        
-        // 添加位于主体多边形内的裁剪多边形点
-        for (const QPointF& point : clipPolygon) {
-            if (Internal::pointInPolygon(point, subjectPolygon)) {
-                allPoints.push_back(point);
-            }
-        }
-        
-        // 如果点数足够，按照凸包方式排序
-        if (allPoints.size() >= 3) {
-            // 计算质心
-            QPointF centroid(0, 0);
-            for (const QPointF& point : allPoints) {
-                centroid += point;
-            }
-            centroid /= allPoints.size();
-            
-            // 按照点到质心的角度排序
-            std::sort(allPoints.begin(), allPoints.end(), 
-                     [&centroid](const QPointF& a, const QPointF& b) {
-                         return std::atan2(a.y() - centroid.y(), a.x() - centroid.x()) < 
-                                std::atan2(b.y() - centroid.y(), b.x() - centroid.x());
-                     });
-            
-            // 移除太接近的点
-            auto it = std::unique(allPoints.begin(), allPoints.end(), 
-                                 [](const QPointF& a, const QPointF& b) {
-                                     return QLineF(a, b).length() < 0.001;
-                                 });
-            allPoints.erase(it, allPoints.end());
-            
-            // 确保闭合
-            if (allPoints.size() > 0 && 
-                QLineF(allPoints.front(), allPoints.back()).length() > 0.001) {
-                allPoints.push_back(allPoints.front());
-            }
-            
-            Logger::debug(QString("WeilerAtherton: 简化算法创建了结果，点数: %1").arg(allPoints.size()));
-            return allPoints;
-        }
-        
-        Logger::warning("WeilerAtherton: 简化方法也失败，无法生成有效结果");
-        return {};
-    }
-    
-    Logger::debug(QString("WeilerAtherton: 裁剪完成，结果顶点数: %1").arg(result.size()));
-    return result;
+    Logger::warning("WeilerAtherton: 无法生成有效结果");
+    return {};
 }
 
 // 当Weiler-Atherton算法无法找到有效结果时，使用栅格化方法作为备选
