@@ -28,7 +28,7 @@ public:
     // 自定义矢量格式 (.cvg) 操作
     bool saveToCustomFormat(const QString& filePath, QGraphicsScene* scene);
     bool loadFromCustomFormat(const QString& filePath, QGraphicsScene* scene, 
-                              std::function<void(Graphic::GraphicType, const QPointF&, const QPen&, const QBrush&, 
+                              std::function<GraphicItem*(Graphic::GraphicType, const QPointF&, const QPen&, const QBrush&, 
                                                  const std::vector<QPointF>&, double, const QPointF&)> itemFactory);
 
     // SVG导出
@@ -46,7 +46,7 @@ private:
     // 序列化图形项辅助方法
     bool serializeGraphicItems(QDataStream& stream, const QList<QGraphicsItem*>& items);
     bool deserializeGraphicItems(QDataStream& stream, QGraphicsScene* scene,
-                                std::function<void(Graphic::GraphicType, const QPointF&, const QPen&, const QBrush&, 
+                                std::function<GraphicItem*(Graphic::GraphicType, const QPointF&, const QPen&, const QBrush&, 
                                                  const std::vector<QPointF>&, double, const QPointF&)> itemFactory);
 
     // 图层信息序列化辅助方法

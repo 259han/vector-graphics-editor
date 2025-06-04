@@ -2,30 +2,33 @@
 #define FLOWCHART_CONNECTOR_ITEM_H
 
 #include "flowchart_base_item.h"
+#include <QPainterPath>
+#include <QUuid>
 
 /**
- * @brief 流程图连接器类 - 带箭头的线
+ * @brief 流程图连接线类
  * 
- * 表示流程图中的连接关系，带箭头的线条
+ * 表示流程图元素之间的连接关系，支持多种连接线样式和箭头类型
  */
 class FlowchartConnectorItem : public FlowchartBaseItem {
 public:
-    // 连接类型枚举
+    // 连接线类型
     enum ConnectorType {
-        StraightLine,   // 直线
-        OrthogonalLine, // 正交线（折线）
-        CurveLine       // 曲线
+        StraightLine,    // 直线
+        BezierCurve,     // 贝塞尔曲线
+        Polyline         // 折线
     };
     
-    // 箭头类型枚举
+    // 箭头类型
     enum ArrowType {
-        NoArrow,      // 无箭头
-        SingleArrow,  // 单箭头（起点到终点）
-        DoubleArrow   // 双箭头（两端都有）
+        NoArrow,         // 无箭头
+        SingleArrow,     // 单箭头
+        DoubleArrow      // 双箭头
     };
     
-    FlowchartConnectorItem(const QPointF& startPoint, const QPointF& endPoint, 
-                          ConnectorType type = StraightLine, 
+    FlowchartConnectorItem(const QPointF& startPoint = QPointF(), 
+                          const QPointF& endPoint = QPointF(),
+                          ConnectorType type = StraightLine,
                           ArrowType arrowType = SingleArrow);
     ~FlowchartConnectorItem() override = default;
     
@@ -72,16 +75,42 @@ public:
     void serialize(QDataStream& out) const override;
     void deserialize(QDataStream& in) override;
     
-protected:
-    std::vector<QPointF> getDrawPoints() const override;
+    // 延迟连接解析
+    void resolveConnections(const QHash<QUuid, FlowchartBaseItem*>& itemMap);
     
+    // 补充声明：重写基类的纯虚函数，和私有路径生成函数
+    std::vector<QPointF> getDrawPoints() const override;
+    QPainterPath createStraightPath() const;
+    QPainterPath createOrthogonalPath() const;
+    QPainterPath createCurvePath() const;
+
+protected:
+    // 更新路径
+    void updatePath();
+    
+    // 绘制箭头
+    void drawArrow(QPainter* painter, const QPointF& point, const QPointF& direction);
+    
+    // 计算箭头大小
+    qreal calculateArrowSize() const;
+
 private:
-    QPointF m_startPoint;
-    QPointF m_endPoint;
+    // 连接线类型
     ConnectorType m_connectorType;
     ArrowType m_arrowType;
-    QList<QPointF> m_controlPoints; // 用于曲线和折线的控制点
-    QPainterPath m_path; // 缓存的路径
+    
+    // 起点和终点
+    QPointF m_startPoint;
+    QPointF m_endPoint;
+    
+    // 控制点（用于曲线和折线）
+    QList<QPointF> m_controlPoints;
+    
+    // 路径
+    QPainterPath m_path;
+    
+    // 箭头大小
+    qreal m_arrowSize = 10.0;
     
     // 连接关系
     FlowchartBaseItem* m_startItem = nullptr;
@@ -89,19 +118,9 @@ private:
     int m_startPointIndex = -1;
     int m_endPointIndex = -1;
     
-    // 箭头参数
-    qreal m_arrowSize = 10.0;
-    
-    // 更新路径
-    void updatePath();
-    
-    // 绘制箭头
-    void drawArrow(QPainter* painter, const QPointF& start, const QPointF& end);
-    
-    // 生成各种类型的路径
-    QPainterPath createStraightPath() const;
-    QPainterPath createOrthogonalPath() const;
-    QPainterPath createCurvePath() const;
+    // 延迟连接解析
+    QUuid m_pendingStartUuid;
+    QUuid m_pendingEndUuid;
 };
 
 #endif // FLOWCHART_CONNECTOR_ITEM_H 

@@ -602,8 +602,6 @@ void DrawArea::clearGraphics()
         Logger::debug("DrawArea::clearGraphics: 隐藏连接点覆盖层");
         m_connectionOverlay->setConnectionPointsVisible(false);
         m_connectionOverlay->clearHighlight();
-        
-        // 如果连接点覆盖层在场景中，先移除它
         if (m_scene && m_scene->items().contains(m_connectionOverlay)) {
             m_scene->removeItem(m_connectionOverlay);
         }
@@ -617,44 +615,42 @@ void DrawArea::clearGraphics()
         m_connectionManager->clearHighlight();
     }
     
-    // 记录场景中项目的数量
     int itemCount = (m_scene != nullptr) ? m_scene->items().count() : 0;
     Logger::debug(QString("DrawArea::clearGraphics: 准备清除 %1 个项目").arg(itemCount));
     
-    // 手动清除场景中的每个项目，而不是直接调用clear()
     if (m_scene) {
-        // 先获取所有项目的副本
         QList<QGraphicsItem*> itemsToRemove = m_scene->items();
-        
-        // 逐个删除项目
         for (QGraphicsItem* item : itemsToRemove) {
-            if (item && item != m_connectionOverlay) {  // 保护连接点覆盖层
-                Logger::debug(QString("DrawArea::clearGraphics: 删除项目 %1").arg(reinterpret_cast<quintptr>(item)));
+            if (item && item != m_connectionOverlay) {
+                QString typeStr = "Unknown";
+                if (auto* gi = dynamic_cast<GraphicItem*>(item)) {
+                    typeStr = QString::number(gi->getGraphicType());
+                }
+                Logger::debug(QString("DrawArea::clearGraphics: 删除项目 %1, type=%2, parent=%3, scene=%4")
+                    .arg(reinterpret_cast<quintptr>(item))
+                    .arg(typeStr)
+                    .arg(reinterpret_cast<quintptr>(item->parentItem()))
+                    .arg(reinterpret_cast<quintptr>(item->scene())));
                 m_scene->removeItem(item);
-                delete item;
+                // 只delete parent为nullptr且scene为当前scene的GraphicItem
+                if (dynamic_cast<GraphicItem*>(item) && !item->parentItem() && item->scene() == m_scene) {
+                    delete item;
+                }
             }
         }
-        
-        // 最后再调用clear确保清空
-        m_scene->clear();
-        
         Logger::debug("DrawArea::clearGraphics: 所有项目已清除");
     } else {
         Logger::warning("DrawArea::clearGraphics: 场景为空，无需清除");
     }
     
-    // 重新添加连接点覆盖层到场景
     if (m_connectionOverlay && m_scene) {
-        // 确保连接点覆盖层不在场景中
         if (!m_scene->items().contains(m_connectionOverlay)) {
             Logger::debug("DrawArea::clearGraphics: 重新添加连接点覆盖层到场景");
             m_scene->addItem(m_connectionOverlay);
-            // 确保连接点覆盖层在最上层
             m_connectionOverlay->setZValue(1000);
         }
     }
     
-    // 更新视图
     if (m_scene) {
         m_scene->update();
     }
@@ -2464,35 +2460,42 @@ bool DrawArea::loadFromCustomFormat(const QString& filePath)
         
         // 创建图形项的工厂函数
         auto itemFactory = [this](GraphicItem::GraphicType type, const QPointF& pos, const QPen& pen, const QBrush& brush, 
-                                 const std::vector<QPointF>& points, double rotation, const QPointF& scale) {
-            // 使用图形工厂创建图形项
+                                 const std::vector<QPointF>& points, double rotation, const QPointF& scale) -> GraphicItem* {
             QGraphicsItem* item = nullptr;
             if (points.empty()) {
                 item = m_graphicFactory->createItem(type, pos);
             } else {
-                // 先创建自定义图形
                 item = m_graphicFactory->createCustomItem(type, points);
-                
-                // 然后显式设置位置，确保位置与保存时一致
                 if (item) {
                     item->setPos(pos);
                 }
             }
-            
-            // 转换为GraphicItem设置属性
             if (auto* graphicItem = dynamic_cast<GraphicItem*>(item)) {
-                // 设置图形属性
                 graphicItem->setPen(pen);
                 graphicItem->setBrush(brush);
                 graphicItem->setRotation(rotation);
                 graphicItem->setScale(scale);
-                
-                // 添加到场景
-                m_scene->addItem(item);
+                // 不再在此处添加到场景
+                return graphicItem;
             }
+            return nullptr;
         };
         
         bool success = formatManager.loadFromCustomFormat(filePath, m_scene, itemFactory);
+        
+        // 加载完成后，恢复自动连接线的附着关系
+        if (success && m_connectionManager) {
+            // 1. 建立uuid到item的映射
+            QHash<QUuid, FlowchartBaseItem*> uuidMap;
+            for (QGraphicsItem* item : m_scene->items()) {
+                auto* flowItem = dynamic_cast<FlowchartBaseItem*>(item);
+                if (flowItem) {
+                    uuidMap.insert(flowItem->uuid(), flowItem);
+                }
+            }
+            // 2. 恢复连接线的附着
+            m_connectionManager->resolvePendingConnections(uuidMap);
+        }
         
         if (success) {
             Logger::info(QString("成功加载文件: %1").arg(filePath));
@@ -2754,10 +2757,10 @@ void DrawArea::setConnectorType(FlowchartConnectorItem::ConnectorType type)
                 case FlowchartConnectorItem::StraightLine:
                     typeStr = "直线";
                     break;
-                case FlowchartConnectorItem::OrthogonalLine:
+                case FlowchartConnectorItem::Polyline:
                     typeStr = "折线";
                     break;
-                case FlowchartConnectorItem::CurveLine:
+                case FlowchartConnectorItem::BezierCurve:
                     typeStr = "曲线";
                     break;
             }
@@ -2785,10 +2788,10 @@ void DrawArea::setConnectorType(FlowchartConnectorItem::ConnectorType type)
                 case FlowchartConnectorItem::StraightLine:
                     typeStr = "直线";
                     break;
-                case FlowchartConnectorItem::OrthogonalLine:
+                case FlowchartConnectorItem::Polyline:
                     typeStr = "折线";
                     break;
-                case FlowchartConnectorItem::CurveLine:
+                case FlowchartConnectorItem::BezierCurve:
                     typeStr = "曲线";
                     break;
             }

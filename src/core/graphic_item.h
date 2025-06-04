@@ -31,7 +31,6 @@ public:
         TRIANGLE = 6,   // 三角形
         FILL = 7,       // 填充
         // 后续添加更多图形...
-        CONNECTION = 8, // 连接线
         CLIP = 9,       // 裁剪操作
         // 流程图图元
         FLOWCHART_PROCESS = 10,    // 流程图处理框（矩形）
@@ -52,7 +51,6 @@ public:
             case BEZIER: return "贝塞尔曲线";
             case TRIANGLE: return "三角形";
             case FILL: return "填充";
-            case CONNECTION: return "连接线";
             case CLIP: return "裁剪";
             case FLOWCHART_PROCESS: return "流程图处理框（矩形）";
             case FLOWCHART_DECISION: return "流程图判断框（菱形）";

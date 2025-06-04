@@ -1,5 +1,6 @@
 #include "flowchart_start_end_item.h"
 #include <QPainterPathStroker>
+#include "../utils/logger.h"
 
 FlowchartStartEndItem::FlowchartStartEndItem(const QPointF& position, const QSizeF& size, bool isStart)
     : FlowchartBaseItem(), m_size(size), m_isStart(isStart)
@@ -142,26 +143,41 @@ std::vector<QPointF> FlowchartStartEndItem::getDrawPoints() const
 
 void FlowchartStartEndItem::restoreFromPoints(const std::vector<QPointF>& points)
 {
-    // 从点集恢复图形，用于撤销裁剪等操作
+    Logger::debug("FlowchartStartEndItem::restoreFromPoints: 恢复图形");
+    // 支持2点（中心+右下）和4点（多边形）两种情况
+    if (points.size() >= 2) {
+        // 兼容新老格式：第1点为中心，第2点为右下角
+        QPointF center = points[0];
+        QPointF rightBottom = points[1];
+        QSizeF size(qAbs(rightBottom.x() - center.x()) * 2, qAbs(rightBottom.y() - center.y()) * 2);
+        setPos(center);
+        m_size = size;
+        invalidateCache();
+        update();
+        Logger::debug("FlowchartStartEndItem::restoreFromPoints: 恢复图形成功(2点)");
+        return;
+    }
+    // 兼容4点（多边形）
     if (points.size() >= 4) {
-        // 计算边界矩形
         qreal minX = std::numeric_limits<qreal>::max();
         qreal minY = std::numeric_limits<qreal>::max();
         qreal maxX = std::numeric_limits<qreal>::lowest();
         qreal maxY = std::numeric_limits<qreal>::lowest();
-        
         for (const auto& point : points) {
             minX = std::min(minX, point.x());
             minY = std::min(minY, point.y());
             maxX = std::max(maxX, point.x());
             maxY = std::max(maxY, point.y());
         }
-        
-        // 更新大小
         m_size = QSizeF(maxX - minX, maxY - minY);
-        
-        // 更新缓存
+        setPos(QPointF((minX + maxX) / 2, (minY + maxY) / 2));
         invalidateCache();
         update();
+        Logger::debug("FlowchartStartEndItem::restoreFromPoints: 恢复图形成功(4点)");
+        return;
     }
+
+     // 兜底：点集数量不足，什么都不做，不调用基类
+    Logger::warning("FlowchartStartEndItem::restoreFromPoints: 点集数量不足，无法恢复");
+    return;
 } 

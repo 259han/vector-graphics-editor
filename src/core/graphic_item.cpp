@@ -560,64 +560,84 @@ bool GraphicItem::contains(const QPointF& point) const
 // 序列化方法
 void GraphicItem::serialize(QDataStream& out) const
 {
-    // 保存图形类型
-    out << static_cast<int>(getGraphicType());
+    Logger::debug("GraphicItem::serialize: 序列化");
+    // 类型安全：写入类型
+    int actualType = static_cast<int>(getGraphicType());
+    out << actualType;
     
     // 保存位置
     out << pos();
-    
     // 保存画笔和画刷
     out << m_pen;
     out << m_brush;
-    
     // 保存旋转角度和缩放
     out << m_rotation;
     out << m_scale;
-    
+    // 完整状态
+    out << isVisible() << isEnabled() << zValue();
     // 保存绘图点
     std::vector<QPointF> points = getDrawPoints();
     out << static_cast<qint32>(points.size());
     for (const auto& point : points) {
         out << point;
     }
-    
-    // 保存连接点
+    // 保存连接点（转换为场景坐标）
     out << static_cast<qint32>(m_connectionPoints.size());
     for (const auto& point : m_connectionPoints) {
-        out << point;
+        out << mapToScene(point);
     }
 }
 
 // 反序列化方法
 void GraphicItem::deserialize(QDataStream& in)
 {
-    // 图形类型已经确定，跳过
-    int type;
-    in >> type;
-    
+    Logger::debug(QString("GraphicItem::deserialize: 反序列化 this=%1").arg((quintptr)this));
+    // 类型安全：读取并比对类型
+    int storedType;
+    in >> storedType;
+    int actualType = static_cast<int>(getGraphicType());
+    if (storedType != actualType) {
+        Logger::error("GraphicItem::deserialize: Type mismatch! storedType=" + QString::number(storedType) + ", actualType=" + QString::number(actualType));
+        // 可选：抛出异常或返回
+    }
     // 读取位置
     QPointF position;
     in >> position;
     setPos(position);
-    
     // 读取画笔和画刷
     in >> m_pen;
     in >> m_brush;
-    
     // 读取旋转角度和缩放
     in >> m_rotation;
     in >> m_scale;
     setRotation(m_rotation);
     setScale(m_scale);
-    
-    // 读取连接点
+    // 完整状态
+    bool visible, enabled;
+    qreal z;
+    in >> visible >> enabled >> z;
+    setVisible(visible);
+    setEnabled(enabled);
+    setZValue(z);
+    // 读取点集
+    qint32 pointCount;
+    in >> pointCount;
+    std::vector<QPointF> points;
+    points.reserve(pointCount);
+    for (qint32 i = 0; i < pointCount; ++i) {
+        QPointF pt;
+        in >> pt;
+        points.push_back(pt);
+    }
+    restoreFromPoints(points);
+    // 读取连接点（场景坐标->局部坐标）
     qint32 connectionPointCount;
     in >> connectionPointCount;
     m_connectionPoints.clear();
     for (qint32 i = 0; i < connectionPointCount; ++i) {
-        QPointF point;
-        in >> point;
-        m_connectionPoints.push_back(point);
+        QPointF scenePoint;
+        in >> scenePoint;
+        m_connectionPoints.push_back(mapFromScene(scenePoint));
     }
 }
 
@@ -638,5 +658,5 @@ QPainterPath GraphicItem::toPath() const
 void GraphicItem::restoreFromPoints(const std::vector<QPointF>& points)
 {
     // 基类默认实现，子类应该重写以支持从点集恢复图形
-    Logger::warning("GraphicItem::restoreFromPoints: 基类默认实现被调用，未执行实际恢复");
+    //Logger::warning("GraphicItem::restoreFromPoints: 基类默认实现被调用");
 } 

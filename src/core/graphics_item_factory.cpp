@@ -9,6 +9,7 @@
 #include "flowchart_start_end_item.h"
 #include "flowchart_io_item.h"
 #include "flowchart_connector_item.h"
+#include "concrete_flowchart_connector_item.h"
 // 后续可导入其他图形项类
 
 QGraphicsItem* DefaultGraphicsItemFactory::createItem(GraphicItem::GraphicType type, const QPointF& position)
@@ -45,7 +46,7 @@ QGraphicsItem* DefaultGraphicsItemFactory::createItem(GraphicItem::GraphicType t
             
         case GraphicItem::FLOWCHART_CONNECTOR:
             // 创建默认的连接器，从当前位置到偏移位置
-            return new FlowchartConnectorItem(position, position + QPointF(100, 0), 
+            return new ConcreteFlowchartConnectorItem(position, position + QPointF(100, 0), 
                                             FlowchartConnectorItem::StraightLine, 
                                             FlowchartConnectorItem::SingleArrow);
             
@@ -210,7 +211,7 @@ QGraphicsItem* DefaultGraphicsItemFactory::createCustomItem(GraphicItem::Graphic
         case GraphicItem::FLOWCHART_CONNECTOR:
             if (points.size() >= 2) {
                 // 创建连接器 - 使用当前设置的连接器类型和箭头类型
-                FlowchartConnectorItem* connector = new FlowchartConnectorItem(
+                ConcreteFlowchartConnectorItem* connector = new ConcreteFlowchartConnectorItem(
                     points[0], points[1], 
                     m_connectorType, 
                     m_arrowType);

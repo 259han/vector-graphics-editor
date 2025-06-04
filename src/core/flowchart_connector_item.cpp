@@ -1,6 +1,7 @@
 #include "flowchart_connector_item.h"
 #include <QtMath>
 #include <QDataStream>
+#include <QUuid>
 
 FlowchartConnectorItem::FlowchartConnectorItem(const QPointF& startPoint, const QPointF& endPoint, 
                                              ConnectorType type, ArrowType arrowType)
@@ -159,13 +160,13 @@ void FlowchartConnectorItem::updatePath()
 {
     // 根据连接类型创建路径
     switch (m_connectorType) {
-        case StraightLine:
+        case ConnectorType::StraightLine:
             m_path = createStraightPath();
             break;
-        case OrthogonalLine:
+        case ConnectorType::Polyline:
             m_path = createOrthogonalPath();
             break;
-        case CurveLine:
+        case ConnectorType::BezierCurve:
             m_path = createCurvePath();
             break;
     }
@@ -305,63 +306,65 @@ void FlowchartConnectorItem::restoreFromPoints(const std::vector<QPointF>& point
 
 void FlowchartConnectorItem::serialize(QDataStream& out) const
 {
-    // 先调用基类的序列化
+    // 先序列化基类
     FlowchartBaseItem::serialize(out);
     
-    // 保存连接器特有的属性
+    // 保存连接线类型和箭头类型
+    out << static_cast<int>(m_connectorType);
+    out << static_cast<int>(m_arrowType);
+    
+    // 保存起点和终点
     out << m_startPoint;
     out << m_endPoint;
-    out << static_cast<qint32>(m_connectorType);
-    out << static_cast<qint32>(m_arrowType);
     
     // 保存控制点
-    out << static_cast<qint32>(m_controlPoints.size());
-    for (const auto& point : m_controlPoints) {
-        out << point;
-    }
+    out << m_controlPoints;
     
-    // 保存连接关系
-    out << (m_startItem ? m_startItem->id() : QString());
-    out << m_startPointIndex;
-    out << (m_endItem ? m_endItem->id() : QString());
-    out << m_endPointIndex;
+    // 保存连接关系（使用UUID代替指针）
+    out << (m_startItem ? m_startItem->uuid() : QUuid())
+        << m_startPointIndex
+        << (m_endItem ? m_endItem->uuid() : QUuid())
+        << m_endPointIndex;
 }
 
 void FlowchartConnectorItem::deserialize(QDataStream& in)
 {
-    // 先调用基类的反序列化
+    // 先反序列化基类
     FlowchartBaseItem::deserialize(in);
     
-    // 读取连接器特有的属性
-    in >> m_startPoint;
-    in >> m_endPoint;
-    
-    qint32 connectorType, arrowType;
-    in >> connectorType;
-    in >> arrowType;
+    // 读取连接线类型和箭头类型
+    int connectorType, arrowType;
+    in >> connectorType >> arrowType;
     m_connectorType = static_cast<ConnectorType>(connectorType);
     m_arrowType = static_cast<ArrowType>(arrowType);
     
+    // 读取起点和终点
+    in >> m_startPoint;
+    in >> m_endPoint;
+    
     // 读取控制点
-    qint32 controlPointCount;
-    in >> controlPointCount;
-    m_controlPoints.clear();
-    for (qint32 i = 0; i < controlPointCount; ++i) {
-        QPointF point;
-        in >> point;
-        m_controlPoints.append(point);
-    }
+    in >> m_controlPoints;
     
-    // 读取连接关系
-    QString startItemId, endItemId;
-    in >> startItemId;
-    in >> m_startPointIndex;
-    in >> endItemId;
-    in >> m_endPointIndex;
+    // 读取连接关系（使用UUID）
+    QUuid startUuid, endUuid;
+    in >> startUuid >> m_startPointIndex
+       >> endUuid >> m_endPointIndex;
     
-    // 注意：实际的连接关系需要在场景加载后重新建立
-    // 这里只保存ID和索引，实际的连接会在场景加载后处理
+    // 延迟绑定
+    m_pendingStartUuid = startUuid;
+    m_pendingEndUuid = endUuid;
     
     // 更新路径
     updatePath();
+}
+
+void FlowchartConnectorItem::resolveConnections(const QHash<QUuid, FlowchartBaseItem*>& itemMap)
+{
+    if (!m_pendingStartUuid.isNull()) {
+        m_startItem = itemMap.value(m_pendingStartUuid, nullptr);
+    }
+    if (!m_pendingEndUuid.isNull()) {
+        m_endItem = itemMap.value(m_pendingEndUuid, nullptr);
+    }
+    updatePath(); // 更新连接线位置
 } 

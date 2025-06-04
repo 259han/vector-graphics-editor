@@ -1,5 +1,6 @@
 #include "file_format_manager.h"
 #include "../core/graphic_item.h"
+#include "../core/flowchart_connector_item.h"
 #include "../utils/logger.h"
 #include <QFile>
 #include <QXmlStreamWriter>
@@ -29,6 +30,17 @@ bool FileFormatManager::saveToCustomFormat(const QString& filePath, QGraphicsSce
         return false;
     }
 
+    // 保存前遍历并打印所有QGraphicsItem的类型
+    QList<QGraphicsItem*> items = scene->items();
+    Logger::debug(QString("FileFormatManager::saveToCustomFormat: 保存前场景共有%1个图元").arg(items.size()));
+    for (auto* item : items) {
+        if (auto* gi = dynamic_cast<GraphicItem*>(item)) {
+            Logger::debug(QString("FileFormatManager::saveToCustomFormat: 图元 type=%1").arg(gi->getGraphicType()));
+        } else {
+            Logger::debug("FileFormatManager::saveToCustomFormat: 图元 非GraphicItem");
+        }
+    }
+
     QFile file(filePath);
     if (!file.open(QIODevice::WriteOnly)) {
         Logger::error(QString("FileFormatManager::saveToCustomFormat: 无法打开文件 %1: %2")
@@ -47,7 +59,6 @@ bool FileFormatManager::saveToCustomFormat(const QString& filePath, QGraphicsSce
     stream << scene->backgroundBrush();
 
     // 获取并序列化所有图形项
-    QList<QGraphicsItem*> items = scene->items();
     if (!serializeGraphicItems(stream, items)) {
         file.close();
         return false;
@@ -65,8 +76,8 @@ bool FileFormatManager::saveToCustomFormat(const QString& filePath, QGraphicsSce
 
 // 从自定义矢量格式加载
 bool FileFormatManager::loadFromCustomFormat(const QString& filePath, QGraphicsScene* scene, 
-                                           std::function<void(Graphic::GraphicType, const QPointF&, const QPen&, const QBrush&, 
-                                                            const std::vector<QPointF>&, double, const QPointF&)> itemFactory) {
+    std::function<GraphicItem*(Graphic::GraphicType, const QPointF&, const QPen&, const QBrush&, 
+        const std::vector<QPointF>&, double, const QPointF&)> itemFactory) {
     if (!scene) {
         Logger::error("FileFormatManager::loadFromCustomFormat: 场景为空");
         return false;
@@ -114,12 +125,14 @@ bool FileFormatManager::loadFromCustomFormat(const QString& filePath, QGraphicsS
     // 反序列化图形项
     if (!deserializeGraphicItems(stream, scene, itemFactory)) {
         file.close();
+        Logger::error("FileFormatManager::loadFromCustomFormat: 反序列化图形项失败");
         return false;
     }
     
     // 反序列化图层信息
     if (!deserializeLayers(stream, scene)) {
         file.close();
+        Logger::error("FileFormatManager::loadFromCustomFormat: 反序列化图层信息失败");
         return false;
     }
 
@@ -163,118 +176,101 @@ bool FileFormatManager::exportToSVG(const QString& filePath, QGraphicsScene* sce
 
 // 序列化图形项辅助方法
 bool FileFormatManager::serializeGraphicItems(QDataStream& stream, const QList<QGraphicsItem*>& items) {
-    // 写入图形项数量
-    stream << (qint32)items.size();
-    
-    // 序列化每个图形项
-    for (auto item : items) {
-        auto* graphicItem = dynamic_cast<GraphicItem*>(item);
-        if (!graphicItem) continue;
-        
-        // 写入图形类型
-        stream << (qint32)graphicItem->getGraphicType();
-        
-        // 写入位置
-        stream << graphicItem->pos();
-        
-        // 写入画笔
-        stream << graphicItem->getPen();
-        
-        // 写入画刷
-        stream << graphicItem->getBrush();
-        
-        // 写入旋转
-        stream << (qreal)graphicItem->rotation();
-        
-        // 写入缩放
-        stream << graphicItem->getScale();
-        
-        // 写入Z值
-        stream << (qreal)graphicItem->zValue();
-        
-        // 写入点集
-        auto points = graphicItem->getClipboardPoints();
-        stream << (qint32)points.size();
-        for (const auto& point : points) {
-            stream << point;
-        }
-        
-        // 写入是否可见
-        stream << graphicItem->isVisible();
-        
-        // 写入是否可移动
-        stream << graphicItem->isMovable();
-        
-        // 写入自定义数据
-        // TODO: 如果需要，这里可以扩展保存更多自定义数据
+    // 先统计实际要序列化的数量
+    int realCount = 0;
+    for (auto* item : items) {
+        if (dynamic_cast<GraphicItem*>(item)) realCount++;
     }
-    
+    stream << (qint32)realCount;
+    int idx = 0;
+    for (auto* item : items) {
+        auto* graphicItem = dynamic_cast<GraphicItem*>(item);
+        if (!graphicItem) {
+            Logger::debug(QString("FileFormatManager::serializeGraphicItems: [%1] 非GraphicItem，跳过").arg(idx));
+            idx++;
+            continue;
+        }
+        Logger::debug(QString("FileFormatManager::serializeGraphicItems: [%1] type=%2").arg(idx).arg(graphicItem->getGraphicType()));
+        graphicItem->serialize(stream);
+        idx++;
+    }
     return stream.status() == QDataStream::Ok;
+}
+
+// 辅助函数：跳过一个图元的数据块
+static void skipOneGraphicItem(QDataStream& stream) {
+    int type;
+    stream >> type;
+    Logger::debug(QString("FileFormatManager::skipOneGraphicItem: 跳过一个图元，类型=%1").arg(type));
+    QPointF pos;
+    QPen pen;
+    QBrush brush;
+    double rotation;
+    QPointF scale;
+    bool visible, enabled;
+    qreal z;
+    stream >> pos >> pen >> brush >> rotation >> scale >> visible >> enabled >> z;
+    qint32 pointCount;
+    stream >> pointCount;
+    Logger::debug(QString("FileFormatManager::skipOneGraphicItem: 跳过点集，数量=%1").arg(pointCount));
+    for (int i = 0; i < pointCount; ++i) {
+        QPointF pt;
+        stream >> pt;
+    }
+    qint32 connectionPointCount;
+    stream >> connectionPointCount;
+    Logger::debug(QString("FileFormatManager::skipOneGraphicItem: 跳过连接点，数量=%1").arg(connectionPointCount));
+    for (int i = 0; i < connectionPointCount; ++i) {
+        QPointF pt;
+        stream >> pt;
+    }
+    // 跳过FlowchartBaseItem等子类字段（如有）
+    bool textVisible;
+    QString text;
+    QFont textFont;
+    QColor textColor;
+    QString id;
+    QString uuid;
+    stream >> textVisible >> text >> textFont >> textColor >> id >> uuid;
+    Logger::debug("FileFormatManager::skipOneGraphicItem: 跳过图元结束");
 }
 
 // 反序列化图形项辅助方法
 bool FileFormatManager::deserializeGraphicItems(QDataStream& stream, QGraphicsScene* scene,
-                            std::function<void(Graphic::GraphicType, const QPointF&, const QPen&, const QBrush&, 
-                                              const std::vector<QPointF>&, double, const QPointF&)> itemFactory) {
-    // 读取图形项数量
+                            std::function<GraphicItem*(Graphic::GraphicType, const QPointF&, const QPen&, const QBrush&, 
+                                                      const std::vector<QPointF>&, double, const QPointF&)> itemFactory) {
     qint32 itemCount;
     stream >> itemCount;
-    
-    // 反序列化每个图形项
+    Logger::debug(QString("FileFormatManager::deserializeGraphicItems: 开始反序列化，共%1个图元").arg(itemCount));
     for (qint32 i = 0; i < itemCount; ++i) {
-        // 读取图形类型
-        qint32 type;
-        stream >> type;
-        Graphic::GraphicType graphicType = static_cast<Graphic::GraphicType>(type);
-        
-        // 读取位置
-        QPointF position;
-        stream >> position;
-        
-        // 读取画笔
-        QPen pen;
-        stream >> pen;
-        
-        // 读取画刷
-        QBrush brush;
-        stream >> brush;
-        
-        // 读取旋转
-        qreal rotation;
-        stream >> rotation;
-        
-        // 读取缩放
-        QPointF scale;
-        stream >> scale;
-        
-        // 读取Z值
-        qreal zValue;
-        stream >> zValue;
-        
-        // 读取点集
-        qint32 pointCount;
-        stream >> pointCount;
-        std::vector<QPointF> points;
-        points.reserve(pointCount);
-        
-        for (qint32 j = 0; j < pointCount; ++j) {
-            QPointF point;
-            stream >> point;
-            points.push_back(point);
+        int storedType = 0;
+        qint64 oldPos = stream.device()->pos();
+        stream >> storedType;
+        stream.device()->seek(oldPos);
+        Graphic::GraphicType graphicType = static_cast<Graphic::GraphicType>(storedType);
+        Logger::debug(QString("FileFormatManager::deserializeGraphicItems: [%1] 类型=%2").arg(i).arg(storedType));
+        GraphicItem* item = nullptr;
+        if (graphicType == GraphicItem::FLOWCHART_CONNECTOR) {
+            item = new FlowchartConnectorItem();
+            Logger::debug(QString("FileFormatManager::deserializeGraphicItems: [%1] 创建FlowchartConnectorItem, 指针=%2").arg(i).arg((quintptr)item));
+            item->deserialize(stream);
+            Logger::debug(QString("FileFormatManager::deserializeGraphicItems: [%1] 反序列化完成, type=%2, 指针=%3").arg(i).arg(item->getGraphicType()).arg((quintptr)item));
+            scene->addItem(item);
+        } else {
+            item = itemFactory(graphicType, QPointF(), QPen(), QBrush(), std::vector<QPointF>(), 0.0, QPointF(1,1));
+            Logger::debug(QString("FileFormatManager::deserializeGraphicItems: [%1] 工厂创建item, 指针=%2").arg(i).arg((quintptr)item));
+            if (item) {
+                item->deserialize(stream);
+                Logger::debug(QString("FileFormatManager::deserializeGraphicItems: [%1] 反序列化完成, type=%2, 指针=%3").arg(i).arg(item->getGraphicType()).arg((quintptr)item));
+                scene->addItem(item);
+            } else {
+                Logger::error(QString("FileFormatManager::deserializeGraphicItems: [%1] 创建失败, 跳过数据").arg(i));
+                skipOneGraphicItem(stream);
+            }
         }
-        
-        // 读取是否可见
-        bool visible;
-        stream >> visible;
-        
-        // 读取是否可移动
-        bool movable;
-        stream >> movable;
-        
-        // 使用工厂函数创建图形对象
-        itemFactory(graphicType, position, pen, brush, points, rotation, scale);
+        Logger::debug(QString("FileFormatManager::deserializeGraphicItems: [%1] 反序列化后stream状态=%2").arg(i).arg(stream.status()));
     }
-    
+    Logger::debug("FileFormatManager::deserializeGraphicItems: 反序列化结束");
     return stream.status() == QDataStream::Ok;
 }
 

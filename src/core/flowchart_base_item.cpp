@@ -124,6 +124,7 @@ void FlowchartBaseItem::serialize(QDataStream& out) const
 {
     // 先调用基类的序列化
     GraphicItem::serialize(out);
+    Logger::debug("FlowchartBaseItem::serialize: 序列化");
     
     // 保存文本相关属性
     out << m_textVisible;
@@ -133,12 +134,17 @@ void FlowchartBaseItem::serialize(QDataStream& out) const
     
     // 保存ID
     out << m_id;
+    
+    // 保存UUID
+    out << m_uuid;
 }
 
 void FlowchartBaseItem::deserialize(QDataStream& in)
 {
     // 先调用基类的反序列化
+
     GraphicItem::deserialize(in);
+    Logger::debug(QString("FlowchartBaseItem::deserialize: 反序列化 this=%1").arg((quintptr)this));
     
     // 读取文本相关属性
     in >> m_textVisible;
@@ -148,6 +154,9 @@ void FlowchartBaseItem::deserialize(QDataStream& in)
     
     // 读取ID
     in >> m_id;
+    
+    // 读取UUID
+    in >> m_uuid;
 }
 
 // 鼠标按下事件处理

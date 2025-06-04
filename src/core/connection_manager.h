@@ -9,6 +9,7 @@
 #include <QTimer>
 #include <QPainter>
 #include <QGraphicsScene>
+#include <QUuid>
 #include "flowchart_base_item.h"
 #include "flowchart_connector_item.h"
 
@@ -102,6 +103,13 @@ public:
     
     void setConnectionPointSize(double size) { m_connectionPointSize = size; }
     double getConnectionPointSize() const { return m_connectionPointSize; }
+
+    // 连接关系解析
+    void resolvePendingConnections(const QHash<QUuid, FlowchartBaseItem*>& itemMap);
+    
+    // 序列化和反序列化
+    void serialize(QDataStream& out) const;
+    void deserialize(QDataStream& in);
 
 signals:
     void connectionCreated(FlowchartBaseItem* fromItem, FlowchartBaseItem* toItem, FlowchartConnectorItem* connector);

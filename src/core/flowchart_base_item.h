@@ -8,6 +8,7 @@
 #include <QGraphicsSceneHoverEvent>
 #include <QInputDialog>
 #include <QApplication>
+#include <QUuid>
 
 /**
  * @brief 流程图图元基类
@@ -33,6 +34,10 @@ public:
     void setId(const QString& id) { m_id = id; }
     QString id() const { return m_id; }
     
+    // UUID处理
+    QUuid uuid() const { return m_uuid; }
+    void setUuid(const QUuid& uuid) { m_uuid = uuid; }
+    
     // 连接点处理
     virtual std::vector<QPointF> getConnectionPoints() const override;
     
@@ -49,6 +54,9 @@ protected:
     
     // ID
     QString m_id;
+    
+    // UUID
+    QUuid m_uuid = QUuid::createUuid();
     
     // 鼠标拖动相关
     QPointF m_lastMousePos;

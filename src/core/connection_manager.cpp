@@ -750,4 +750,114 @@ void ConnectionManager::onUpdateTimer()
             }
         });
     }
+}
+
+void ConnectionManager::resolvePendingConnections(const QHash<QUuid, FlowchartBaseItem*>& itemMap)
+{
+    for (Connection& conn : m_connections) {
+        if (conn.connector) {
+            conn.connector->resolveConnections(itemMap);
+            
+            // 重建连接关系
+            if (conn.fromItem && conn.toItem) {
+                m_connectionPoints[conn.fromItem][conn.fromPointIndex].isOccupied = true;
+                m_connectionPoints[conn.toItem][conn.toPointIndex].isOccupied = true;
+            }
+        }
+    }
+}
+
+void ConnectionManager::serialize(QDataStream& out) const
+{
+    // 保存连接点数据
+    out << static_cast<int>(m_connectionPoints.size());
+    for (auto it = m_connectionPoints.begin(); it != m_connectionPoints.end(); ++it) {
+        FlowchartBaseItem* item = it.key();
+        const QList<ConnectionPoint>& points = it.value();
+        
+        // 保存项目UUID
+        out << item->uuid();
+        
+        // 保存连接点数据
+        out << static_cast<int>(points.size());
+        for (const ConnectionPoint& point : points) {
+            out << point.scenePos;
+            out << point.localPos;
+            out << point.index;
+            out << point.isOccupied;
+        }
+    }
+    
+    // 保存连接关系
+    out << static_cast<int>(m_connections.size());
+    for (const Connection& conn : m_connections) {
+        // 保存连接器
+        if (conn.connector) {
+            out << true; // 标记有连接器
+            conn.connector->serialize(out);
+        } else {
+            out << false; // 标记无连接器
+        }
+    }
+}
+
+void ConnectionManager::deserialize(QDataStream& in)
+{
+    // 清空现有数据
+    clearAllConnectionPoints();
+    
+    // 读取连接点数据
+    int connectionPointsCount;
+    in >> connectionPointsCount;
+    
+    // 临时存储连接点数据，等待所有项目加载完成后再处理
+    QMap<QUuid, QList<ConnectionPoint>> pendingConnectionPoints;
+    
+    for (int i = 0; i < connectionPointsCount; ++i) {
+        QUuid itemUuid;
+        in >> itemUuid;
+        
+        int pointsCount;
+        in >> pointsCount;
+        
+        QList<ConnectionPoint> points;
+        for (int j = 0; j < pointsCount; ++j) {
+            ConnectionPoint point;
+            in >> point.scenePos;
+            in >> point.localPos;
+            in >> point.index;
+            in >> point.isOccupied;
+            points.append(point);
+        }
+        
+        pendingConnectionPoints[itemUuid] = points;
+    }
+    
+    // 读取连接关系
+    int connectionsCount;
+    in >> connectionsCount;
+    
+    for (int i = 0; i < connectionsCount; ++i) {
+        bool hasConnector;
+        in >> hasConnector;
+        
+        if (hasConnector) {
+            // 创建新的连接器并反序列化
+            FlowchartConnectorItem* connector = new FlowchartConnectorItem();
+            connector->deserialize(in);
+            
+            // 添加到场景
+            if (m_scene) {
+                m_scene->addItem(connector);
+            }
+            
+            // 添加到连接列表
+            Connection conn;
+            conn.connector = connector;
+            m_connections.append(conn);
+        }
+    }
+    
+    // 注意：实际的连接点分配和连接关系解析将在所有项目加载完成后进行
+    // 通过调用 resolvePendingConnections 完成
 } 
