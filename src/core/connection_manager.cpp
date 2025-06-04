@@ -860,4 +860,34 @@ void ConnectionManager::deserialize(QDataStream& in)
     
     // 注意：实际的连接点分配和连接关系解析将在所有项目加载完成后进行
     // 通过调用 resolvePendingConnections 完成
+}
+
+void ConnectionManager::prepareForSceneClear() {
+    Logger::debug("ConnectionManager::prepareForSceneClear: 开始彻底清理连接管理器状态");
+    
+    // 清除连接点数据
+    m_connectionPoints.clear();
+    Logger::debug("ConnectionManager::prepareForSceneClear: 已清除连接点数据");
+
+    // 清除连接关系数据
+    m_connections.clear();
+    Logger::debug("ConnectionManager::prepareForSceneClear: 已清除连接关系数据");
+
+    // 重置可视化状态和高亮
+    m_connectionPointsVisible = false;
+    m_currentVisibleItem = nullptr;
+    m_hasHighlight = false;
+    m_highlightedPoint = ConnectionPoint();
+    Logger::debug("ConnectionManager::prepareForSceneClear: 已重置可视化状态和高亮");
+
+    // 清除待更新项和缓存
+    if (m_updateTimer && m_updateTimer->isActive()) {
+        m_updateTimer->stop();
+    }
+    m_itemsToUpdate.clear();
+    m_lastItemBounds.clear();
+    m_lastConnectionCount.clear();
+    Logger::debug("ConnectionManager::prepareForSceneClear: 已清除待更新项和缓存");
+    
+    Logger::debug("ConnectionManager::prepareForSceneClear: 彻底清理完成");
 } 

@@ -589,74 +589,7 @@ void DrawArea::keyReleaseEvent(QKeyEvent *event)
 
 void DrawArea::clearGraphics()
 {
-    Logger::info("DrawArea::clearGraphics: 开始清空场景");
-    
-    // 首先清除所有选择状态，以避免删除时引用已删除的对象
-    if (m_selectionManager) {
-        Logger::debug("DrawArea::clearGraphics: 清除选择状态");
-        m_selectionManager->clearSelection();
-    }
-    
-    // 隐藏连接点覆盖层并重置其状态
-    if (m_connectionOverlay) {
-        Logger::debug("DrawArea::clearGraphics: 隐藏连接点覆盖层");
-        m_connectionOverlay->setConnectionPointsVisible(false);
-        m_connectionOverlay->clearHighlight();
-        if (m_scene && m_scene->items().contains(m_connectionOverlay)) {
-            m_scene->removeItem(m_connectionOverlay);
-        }
-    }
-    
-    // 清除连接管理器
-    if (m_connectionManager) {
-        Logger::debug("DrawArea::clearGraphics: 清除连接管理器");
-        m_connectionManager->clearAllConnectionPoints();
-        m_connectionManager->hideConnectionPoints();
-        m_connectionManager->clearHighlight();
-    }
-    
-    int itemCount = (m_scene != nullptr) ? m_scene->items().count() : 0;
-    Logger::debug(QString("DrawArea::clearGraphics: 准备清除 %1 个项目").arg(itemCount));
-    
-    if (m_scene) {
-        QList<QGraphicsItem*> itemsToRemove = m_scene->items();
-        for (QGraphicsItem* item : itemsToRemove) {
-            if (item && item != m_connectionOverlay) {
-                QString typeStr = "Unknown";
-                if (auto* gi = dynamic_cast<GraphicItem*>(item)) {
-                    typeStr = QString::number(gi->getGraphicType());
-                }
-                Logger::debug(QString("DrawArea::clearGraphics: 删除项目 %1, type=%2, parent=%3, scene=%4")
-                    .arg(reinterpret_cast<quintptr>(item))
-                    .arg(typeStr)
-                    .arg(reinterpret_cast<quintptr>(item->parentItem()))
-                    .arg(reinterpret_cast<quintptr>(item->scene())));
-                m_scene->removeItem(item);
-                // 只delete parent为nullptr且scene为当前scene的GraphicItem
-                if (dynamic_cast<GraphicItem*>(item) && !item->parentItem() && item->scene() == m_scene) {
-                    delete item;
-                }
-            }
-        }
-        Logger::debug("DrawArea::clearGraphics: 所有项目已清除");
-    } else {
-        Logger::warning("DrawArea::clearGraphics: 场景为空，无需清除");
-    }
-    
-    if (m_connectionOverlay && m_scene) {
-        if (!m_scene->items().contains(m_connectionOverlay)) {
-            Logger::debug("DrawArea::clearGraphics: 重新添加连接点覆盖层到场景");
-            m_scene->addItem(m_connectionOverlay);
-            m_connectionOverlay->setZValue(1000);
-        }
-    }
-    
-    if (m_scene) {
-        m_scene->update();
-    }
-    viewport()->update();
-    
-    Logger::info("DrawArea::clearGraphics: 场景清空完成");
+    SceneUtils::clearScene(m_scene, this, m_connectionManager.get(), m_connectionOverlay, m_selectionManager.get());
 }
 
 void DrawArea::setImage(const QImage &image)
@@ -2445,7 +2378,7 @@ bool DrawArea::saveToCustomFormat(const QString& filePath)
         }
         
         return success;
-    } catch (const std::exception& e) {
+        } catch (const std::exception& e) {
         Logger::error(QString("保存文件时发生异常: %1").arg(e.what()));
         QMessageBox::critical(this, tr("保存失败"), tr("保存文件时发生错误: %1").arg(e.what()));
         return false;
@@ -2481,7 +2414,8 @@ bool DrawArea::loadFromCustomFormat(const QString& filePath)
             return nullptr;
         };
         
-        bool success = formatManager.loadFromCustomFormat(filePath, m_scene, itemFactory);
+        bool success = formatManager.loadFromCustomFormat(filePath, m_scene, itemFactory, 
+            m_connectionManager.get(), m_connectionOverlay, m_selectionManager.get());
         
         // 加载完成后，恢复自动连接线的附着关系
         if (success && m_connectionManager) {
@@ -2491,10 +2425,14 @@ bool DrawArea::loadFromCustomFormat(const QString& filePath)
                 auto* flowItem = dynamic_cast<FlowchartBaseItem*>(item);
                 if (flowItem) {
                     uuidMap.insert(flowItem->uuid(), flowItem);
+                    // 重新注册所有流程图元素到 ConnectionManager
+                    m_connectionManager->registerFlowchartItem(flowItem);
+                    Logger::debug("DrawArea::loadFromCustomFormat: 流程图元素已注册到 ConnectionManager");
                 }
             }
             // 2. 恢复连接线的附着
             m_connectionManager->resolvePendingConnections(uuidMap);
+            Logger::debug("DrawArea::loadFromCustomFormat: 连接线已恢复");
         }
         
         if (success) {
@@ -2508,7 +2446,7 @@ bool DrawArea::loadFromCustomFormat(const QString& filePath)
         
         return success;
     } catch (const std::exception& e) {
-        Logger::error(QString("加载文件时发生异常: %1").arg(e.what()));
+        Logger::error(QString("DrawArea::loadFromCustomFormat: 加载失败 - %1").arg(e.what()));
         QMessageBox::critical(this, tr("加载失败"), tr("加载文件时发生错误: %1").arg(e.what()));
         return false;
     }

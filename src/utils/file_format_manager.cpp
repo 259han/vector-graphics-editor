@@ -2,6 +2,7 @@
 #include "../core/graphic_item.h"
 #include "../core/flowchart_connector_item.h"
 #include "../utils/logger.h"
+#include "../utils/scene_utils.h"
 #include <QFile>
 #include <QXmlStreamWriter>
 #include <QSvgGenerator>
@@ -77,7 +78,10 @@ bool FileFormatManager::saveToCustomFormat(const QString& filePath, QGraphicsSce
 // 从自定义矢量格式加载
 bool FileFormatManager::loadFromCustomFormat(const QString& filePath, QGraphicsScene* scene, 
     std::function<GraphicItem*(Graphic::GraphicType, const QPointF&, const QPen&, const QBrush&, 
-        const std::vector<QPointF>&, double, const QPointF&)> itemFactory) {
+        const std::vector<QPointF>&, double, const QPointF&)> itemFactory,
+    ConnectionManager* connectionManager,
+    ConnectionPointOverlay* connectionOverlay,
+    SelectionManager* selectionManager) {
     if (!scene) {
         Logger::error("FileFormatManager::loadFromCustomFormat: 场景为空");
         return false;
@@ -111,7 +115,7 @@ bool FileFormatManager::loadFromCustomFormat(const QString& filePath, QGraphicsS
     }
     
     // 清空当前场景
-    scene->clear();
+    SceneUtils::clearScene(scene, nullptr, connectionManager, connectionOverlay, selectionManager);
     
     // 读取场景信息
     QRectF sceneRect;

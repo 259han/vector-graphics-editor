@@ -10,6 +10,7 @@
 #include "../core/connection_manager.h"
 #include "../core/connection_point_overlay.h"
 #include "../state/editor_state.h"
+#include "../utils/scene_utils.h"
 
 #include "image_resizer.h"
 #include "../core/flowchart_connector_item.h"

@@ -111,6 +111,8 @@ public:
     void serialize(QDataStream& out) const;
     void deserialize(QDataStream& in);
 
+    void prepareForSceneClear(); // 新增方法，用于彻底清理连接管理器状态
+
 signals:
     void connectionCreated(FlowchartBaseItem* fromItem, FlowchartBaseItem* toItem, FlowchartConnectorItem* connector);
     void connectionRemoved(FlowchartConnectorItem* connector);

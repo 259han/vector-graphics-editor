@@ -12,6 +12,9 @@
 
 class QIODevice;
 class GraphicItem;
+class ConnectionManager;
+class ConnectionPointOverlay;
+class SelectionManager;
 
 /**
  * @brief 文件格式管理器 - 用于处理自定义矢量文件格式和SVG导出
@@ -29,7 +32,10 @@ public:
     bool saveToCustomFormat(const QString& filePath, QGraphicsScene* scene);
     bool loadFromCustomFormat(const QString& filePath, QGraphicsScene* scene, 
                               std::function<GraphicItem*(Graphic::GraphicType, const QPointF&, const QPen&, const QBrush&, 
-                                                 const std::vector<QPointF>&, double, const QPointF&)> itemFactory);
+                                                 const std::vector<QPointF>&, double, const QPointF&)> itemFactory,
+                              ConnectionManager* connectionManager = nullptr,
+                              ConnectionPointOverlay* connectionOverlay = nullptr,
+                              SelectionManager* selectionManager = nullptr);
 
     // SVG导出
     bool exportToSVG(const QString& filePath, QGraphicsScene* scene, const QSize& size = QSize());
