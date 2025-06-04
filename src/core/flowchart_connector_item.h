@@ -90,9 +90,7 @@ protected:
     
     // 绘制箭头
     void drawArrow(QPainter* painter, const QPointF& point, const QPointF& direction);
-    
-    // 计算箭头大小
-    qreal calculateArrowSize() const;
+
 
 private:
     // 连接线类型

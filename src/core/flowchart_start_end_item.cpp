@@ -143,41 +143,38 @@ std::vector<QPointF> FlowchartStartEndItem::getDrawPoints() const
 
 void FlowchartStartEndItem::restoreFromPoints(const std::vector<QPointF>& points)
 {
-    Logger::debug("FlowchartStartEndItem::restoreFromPoints: 恢复图形");
-    // 支持2点（中心+右下）和4点（多边形）两种情况
-    if (points.size() >= 2) {
-        // 兼容新老格式：第1点为中心，第2点为右下角
-        QPointF center = points[0];
-        QPointF rightBottom = points[1];
-        QSizeF size(qAbs(rightBottom.x() - center.x()) * 2, qAbs(rightBottom.y() - center.y()) * 2);
-        setPos(center);
-        m_size = size;
-        invalidateCache();
-        update();
-        Logger::debug("FlowchartStartEndItem::restoreFromPoints: 恢复图形成功(2点)");
-        return;
-    }
-    // 兼容4点（多边形）
-    if (points.size() >= 4) {
-        qreal minX = std::numeric_limits<qreal>::max();
-        qreal minY = std::numeric_limits<qreal>::max();
-        qreal maxX = std::numeric_limits<qreal>::lowest();
-        qreal maxY = std::numeric_limits<qreal>::lowest();
-        for (const auto& point : points) {
-            minX = std::min(minX, point.x());
-            minY = std::min(minY, point.y());
-            maxX = std::max(maxX, point.x());
-            maxY = std::max(maxY, point.y());
-        }
-        m_size = QSizeF(maxX - minX, maxY - minY);
-        setPos(QPointF((minX + maxX) / 2, (minY + maxY) / 2));
-        invalidateCache();
-        update();
-        Logger::debug("FlowchartStartEndItem::restoreFromPoints: 恢复图形成功(4点)");
+    Logger::debug("FlowchartStartEndItem::restoreFromPoints: 恢复图形形状和大小");
+
+    if (points.empty()) {
+        Logger::warning("FlowchartStartEndItem::restoreFromPoints: 点集为空，无法恢复形状和大小");
         return;
     }
 
-     // 兜底：点集数量不足，什么都不做，不调用基类
-    Logger::warning("FlowchartStartEndItem::restoreFromPoints: 点集数量不足，无法恢复");
-    return;
-} 
+    qreal minX = std::numeric_limits<qreal>::max();
+    qreal minY = std::numeric_limits<qreal>::max();
+    qreal maxX = std::numeric_limits<qreal>::lowest();
+    qreal maxY = std::numeric_limits<qreal>::lowest();
+
+    // 统一处理，无论是2点还是4点，都通过遍历点来确定边界
+    for (const auto& point : points) {
+        minX = std::min(minX, point.x());
+        minY = std::min(minY, point.y());
+        maxX = std::max(maxX, point.x());
+        maxY = std::max(maxY, point.y());
+    }
+
+    // 如果只有1个点，则将其视为中心点，并使用默认大小
+    if (points.size() == 1) {
+        // 仅设置大小，位置由GraphicItem::deserialize处理
+        m_size = QSizeF(120, 60); // 使用默认大小
+        Logger::debug("FlowchartStartEndItem::restoreFromPoints: 恢复图形形状成功(1点，默认大小)");
+    } else {
+        // 计算新的大小
+        m_size = QSizeF(maxX - minX, maxY - minY);
+        Logger::debug("FlowchartStartEndItem::restoreFromPoints: 恢复图形形状成功(多点)");
+    }
+    
+    invalidateCache();
+    update();
+    // 注意：这里不再设置pos，pos由GraphicItem::deserialize处理
+}
