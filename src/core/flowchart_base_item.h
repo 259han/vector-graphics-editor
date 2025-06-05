@@ -46,6 +46,9 @@ public:
     virtual void serialize(QDataStream& out) const override;
     virtual void deserialize(QDataStream& in) override;
 
+    std::vector<QPointF> getClipboardPoints() const override;
+    virtual void restoreFromPoints(const std::vector<QPointF>& points) override;
+
 protected:
     // 文本处理
     QString m_text;

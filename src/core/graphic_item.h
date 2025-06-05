@@ -148,7 +148,7 @@ public:
     void drawSelectionHandles(QPainter* painter);
     
     // 用于剪贴板功能的公共接口，获取绘图点集
-    std::vector<QPointF> getClipboardPoints() const { return getDrawPoints(); }
+    virtual std::vector<QPointF> getClipboardPoints() const { return getDrawPoints(); }
 
     // 获取控制点大小
     static int getHandleSize() { return HANDLE_SIZE; }

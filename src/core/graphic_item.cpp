@@ -564,27 +564,45 @@ void GraphicItem::serialize(QDataStream& out) const
     // 类型安全：写入类型
     int actualType = static_cast<int>(getGraphicType());
     out << actualType;
+    Logger::debug(QString("GraphicItem::serialize: 类型=%1").arg(actualType));
     
     // 保存位置
-    out << pos();
+    QPointF pos = this->pos();
+    out << pos;
+    Logger::debug(QString("GraphicItem::serialize: 位置=(%1, %2)").arg(pos.x()).arg(pos.y()));
+    
     // 保存画笔和画刷
     out << m_pen;
     out << m_brush;
+    Logger::debug(QString("GraphicItem::serialize: 画笔颜色=%1, 宽度=%2").arg(m_pen.color().name()).arg(m_pen.width()));
+    
     // 保存旋转角度和缩放
     out << m_rotation;
     out << m_scale;
+    Logger::debug(QString("GraphicItem::serialize: 旋转=%1, 缩放=(%2, %3)").arg(m_rotation).arg(m_scale.x()).arg(m_scale.y()));
+    
     // 完整状态
     out << isVisible() << isEnabled() << zValue();
+    Logger::debug(QString("GraphicItem::serialize: 可见=%1, 启用=%2, Z值=%3").arg(isVisible()).arg(isEnabled()).arg(zValue()));
+    
     // 保存绘图点
-    std::vector<QPointF> points = getDrawPoints();
+    std::vector<QPointF> points = getClipboardPoints();
     out << static_cast<qint32>(points.size());
+    Logger::debug(QString("GraphicItem::serialize: 点集大小=%1").arg(points.size()));
+    
     for (const auto& point : points) {
         out << point;
+        Logger::debug(QString("GraphicItem::serialize: 点=(%1, %2)").arg(point.x()).arg(point.y()));
     }
+    
     // 保存连接点（转换为场景坐标）
     out << static_cast<qint32>(m_connectionPoints.size());
+    Logger::debug(QString("GraphicItem::serialize: 连接点数量=%1").arg(m_connectionPoints.size()));
+    
     for (const auto& point : m_connectionPoints) {
-        out << mapToScene(point);
+        QPointF scenePoint = mapToScene(point);
+        out << scenePoint;
+        Logger::debug(QString("GraphicItem::serialize: 连接点=(%1, %2)").arg(scenePoint.x()).arg(scenePoint.y()));
     }
 }
 
@@ -592,26 +610,35 @@ void GraphicItem::serialize(QDataStream& out) const
 void GraphicItem::deserialize(QDataStream& in)
 {
     Logger::debug(QString("GraphicItem::deserialize: 反序列化 this=%1").arg((quintptr)this));
+    
     // 类型安全：读取并比对类型
     int storedType;
     in >> storedType;
     int actualType = static_cast<int>(getGraphicType());
+    Logger::debug(QString("GraphicItem::deserialize: 存储类型=%1, 实际类型=%2").arg(storedType).arg(actualType));
+    
     if (storedType != actualType) {
-        Logger::error("GraphicItem::deserialize: Type mismatch! storedType=" + QString::number(storedType) + ", actualType=" + QString::number(actualType));
-        // 可选：抛出异常或返回
+        Logger::error(QString("GraphicItem::deserialize: 类型不匹配! storedType=%1, actualType=%2").arg(storedType).arg(actualType));
     }
+    
     // 读取位置
     QPointF position;
     in >> position;
     setPos(position);
+    Logger::debug(QString("GraphicItem::deserialize: 位置=(%1, %2)").arg(position.x()).arg(position.y()));
+    
     // 读取画笔和画刷
     in >> m_pen;
     in >> m_brush;
+    Logger::debug(QString("GraphicItem::deserialize: 画笔颜色=%1, 宽度=%2").arg(m_pen.color().name()).arg(m_pen.width()));
+    
     // 读取旋转角度和缩放
     in >> m_rotation;
     in >> m_scale;
     setRotation(m_rotation);
     setScale(m_scale);
+    Logger::debug(QString("GraphicItem::deserialize: 旋转=%1, 缩放=(%2, %3)").arg(m_rotation).arg(m_scale.x()).arg(m_scale.y()));
+    
     // 完整状态
     bool visible, enabled;
     qreal z;
@@ -619,25 +646,59 @@ void GraphicItem::deserialize(QDataStream& in)
     setVisible(visible);
     setEnabled(enabled);
     setZValue(z);
+    Logger::debug(QString("GraphicItem::deserialize: 可见=%1, 启用=%2, Z值=%3").arg(visible).arg(enabled).arg(z));
+    
     // 读取点集
     qint32 pointCount;
     in >> pointCount;
+    Logger::debug(QString("GraphicItem::deserialize: 点集大小=%1").arg(pointCount));
+    
     std::vector<QPointF> points;
     points.reserve(pointCount);
     for (qint32 i = 0; i < pointCount; ++i) {
         QPointF pt;
         in >> pt;
         points.push_back(pt);
+        Logger::debug(QString("GraphicItem::deserialize: 点[%1]=(%2, %3)").arg(i).arg(pt.x()).arg(pt.y()));
     }
+    
+    // 计算并记录大小信息
+    if (points.size() >= 2) {
+        QPointF center = points[0];
+        QPointF sizePoint = points[1];
+        QSizeF size;
+        if (sizePoint.x() >= center.x() && sizePoint.y() >= center.y()) {
+            size = QSizeF(
+                (sizePoint.x() - center.x()) * 2,
+                (sizePoint.y() - center.y()) * 2
+            );
+            Logger::debug(QString("GraphicItem::deserialize: 标准格式 - 中心=(%1, %2), 大小=(%3, %4)")
+                .arg(center.x()).arg(center.y())
+                .arg(size.width()).arg(size.height()));
+        } else {
+            QRectF rect = QRectF(points[0], points[1]).normalized();
+            size = rect.size();
+            Logger::debug(QString("GraphicItem::deserialize: 旧格式 - 矩形=(%1, %2, %3, %4), 大小=(%5, %6)")
+                .arg(rect.left()).arg(rect.top())
+                .arg(rect.width()).arg(rect.height())
+                .arg(size.width()).arg(size.height()));
+        }
+    }
+    
     restoreFromPoints(points);
+    
     // 读取连接点（场景坐标->局部坐标）
     qint32 connectionPointCount;
     in >> connectionPointCount;
+    Logger::debug(QString("GraphicItem::deserialize: 连接点数量=%1").arg(connectionPointCount));
+    
     m_connectionPoints.clear();
     for (qint32 i = 0; i < connectionPointCount; ++i) {
         QPointF scenePoint;
         in >> scenePoint;
-        m_connectionPoints.push_back(mapFromScene(scenePoint));
+        QPointF localPoint = mapFromScene(scenePoint);
+        m_connectionPoints.push_back(localPoint);
+        Logger::debug(QString("GraphicItem::deserialize: 连接点[%1]=(%2, %3)").arg(i).arg(localPoint.x()).arg(localPoint.y()));
     }
 }
 

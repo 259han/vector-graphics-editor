@@ -1,4 +1,5 @@
 #include "flowchart_process_item.h"
+#include "../utils/logger.h"
 #include <QPainterPathStroker>
 
 FlowchartProcessItem::FlowchartProcessItem(const QPointF& position, const QSizeF& size)
@@ -142,26 +143,32 @@ std::vector<QPointF> FlowchartProcessItem::getDrawPoints() const
 
 void FlowchartProcessItem::restoreFromPoints(const std::vector<QPointF>& points)
 {
-    // 从点集恢复图形，用于撤销裁剪等操作
-    if (points.size() >= 4) {
-        // 计算边界矩形
-        qreal minX = std::numeric_limits<qreal>::max();
-        qreal minY = std::numeric_limits<qreal>::max();
-        qreal maxX = std::numeric_limits<qreal>::lowest();
-        qreal maxY = std::numeric_limits<qreal>::lowest();
-        
-        for (const auto& point : points) {
-            minX = std::min(minX, point.x());
-            minY = std::min(minY, point.y());
-            maxX = std::max(maxX, point.x());
-            maxY = std::max(maxY, point.y());
-        }
-        
-        // 更新大小
-        m_size = QSizeF(maxX - minX, maxY - minY);
-        
-        // 更新缓存
-        invalidateCache();
-        update();
+    Logger::debug("FlowchartProcessItem::restoreFromPoints: 开始恢复处理框形状和大小");
+
+    if (points.empty()) {
+        Logger::warning("FlowchartProcessItem::restoreFromPoints: 点集为空，无法恢复形状和大小");
+        return;
     }
+
+    // 调用基类方法设置位置
+    FlowchartBaseItem::restoreFromPoints(points);
+
+    // 如果只有1个点，使用默认大小
+    if (points.size() == 1) {
+        m_size = QSizeF(120, 60);
+        Logger::debug("FlowchartProcessItem::restoreFromPoints: 恢复处理框形状成功(1点，默认大小)");
+    } else {
+        // 使用第二个点计算大小
+        QPointF center = points[0];
+        QPointF sizePoint = points[1];
+        m_size = QSizeF(std::abs(sizePoint.x() - center.x()) * 2, 
+                       std::abs(sizePoint.y() - center.y()) * 2);
+        
+        Logger::debug(QString("FlowchartProcessItem::restoreFromPoints: 恢复处理框形状成功(多点) - 中心=(%1,%2), 大小=(%3,%4)")
+            .arg(center.x()).arg(center.y())
+            .arg(m_size.width()).arg(m_size.height()));
+    }
+    
+    invalidateCache();
+    update();
 } 

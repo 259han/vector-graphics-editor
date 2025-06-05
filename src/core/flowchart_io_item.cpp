@@ -1,4 +1,5 @@
 #include "flowchart_io_item.h"
+#include "../utils/logger.h"
 #include <QPainterPathStroker>
 
 FlowchartIOItem::FlowchartIOItem(const QPointF& position, const QSizeF& size, bool isInput)
@@ -162,29 +163,32 @@ std::vector<QPointF> FlowchartIOItem::getDrawPoints() const
 
 void FlowchartIOItem::restoreFromPoints(const std::vector<QPointF>& points)
 {
-    // 从点集恢复图形，用于撤销裁剪等操作
-    if (points.size() >= 4) {
-        // 计算边界矩形
-        qreal minX = std::numeric_limits<qreal>::max();
-        qreal minY = std::numeric_limits<qreal>::max();
-        qreal maxX = std::numeric_limits<qreal>::lowest();
-        qreal maxY = std::numeric_limits<qreal>::lowest();
-        
-        for (const auto& point : points) {
-            minX = std::min(minX, point.x());
-            minY = std::min(minY, point.y());
-            maxX = std::max(maxX, point.x());
-            maxY = std::max(maxY, point.y());
-        }
-        
-        // 更新大小，考虑倾斜因子
-        qreal height = maxY - minY;
-        qreal width = maxX - minX;
-        qreal skewOffset = qMin(height * 0.2, width * 0.3);
-        m_size = QSizeF(width - skewOffset, height);
-        
-        // 更新缓存
-        invalidateCache();
-        update();
+    Logger::debug("FlowchartIOItem::restoreFromPoints: 开始恢复输入/输出框形状和大小");
+
+    if (points.empty()) {
+        Logger::warning("FlowchartIOItem::restoreFromPoints: 点集为空，无法恢复形状和大小");
+        return;
     }
+
+    // 调用基类方法设置位置
+    FlowchartBaseItem::restoreFromPoints(points);
+
+    // 如果只有1个点，使用默认大小
+    if (points.size() == 1) {
+        m_size = QSizeF(120, 60);
+        Logger::debug("FlowchartIOItem::restoreFromPoints: 恢复输入/输出框形状成功(1点，默认大小)");
+    } else {
+        // 使用第二个点计算大小
+        QPointF center = points[0];
+        QPointF sizePoint = points[1];
+        m_size = QSizeF(std::abs(sizePoint.x() - center.x()) * 2, 
+                       std::abs(sizePoint.y() - center.y()) * 2);
+        
+        Logger::debug(QString("FlowchartIOItem::restoreFromPoints: 恢复输入/输出框形状成功(多点) - 中心=(%1,%2), 大小=(%3,%4)")
+            .arg(center.x()).arg(center.y())
+            .arg(m_size.width()).arg(m_size.height()));
+    }
+    
+    invalidateCache();
+    update();
 } 

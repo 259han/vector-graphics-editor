@@ -131,18 +131,30 @@ void FlowchartBaseItem::serialize(QDataStream& out) const
     out << m_text;
     out << m_textFont;
     out << m_textColor;
+    Logger::debug(QString("FlowchartBaseItem::serialize: 文本='%1', 可见=%2, 字体=%3, 颜色=%4")
+        .arg(m_text)
+        .arg(m_textVisible)
+        .arg(m_textFont.toString())
+        .arg(m_textColor.name()));
     
     // 保存ID
     out << m_id;
+    Logger::debug(QString("FlowchartBaseItem::serialize: ID='%1'").arg(m_id));
     
     // 保存UUID
     out << m_uuid;
+    Logger::debug(QString("FlowchartBaseItem::serialize: UUID='%1'").arg(m_uuid.toString()));
+    
+    // 记录边界矩形信息
+    QRectF rect = boundingRect();
+    Logger::debug(QString("FlowchartBaseItem::serialize: 边界矩形=(%1, %2, %3, %4)")
+        .arg(rect.left()).arg(rect.top())
+        .arg(rect.width()).arg(rect.height()));
 }
 
 void FlowchartBaseItem::deserialize(QDataStream& in)
 {
     // 先调用基类的反序列化
-
     GraphicItem::deserialize(in);
     Logger::debug(QString("FlowchartBaseItem::deserialize: 反序列化 this=%1").arg((quintptr)this));
     
@@ -151,12 +163,25 @@ void FlowchartBaseItem::deserialize(QDataStream& in)
     in >> m_text;
     in >> m_textFont;
     in >> m_textColor;
+    Logger::debug(QString("FlowchartBaseItem::deserialize: 文本='%1', 可见=%2, 字体=%3, 颜色=%4")
+        .arg(m_text)
+        .arg(m_textVisible)
+        .arg(m_textFont.toString())
+        .arg(m_textColor.name()));
     
     // 读取ID
     in >> m_id;
+    Logger::debug(QString("FlowchartBaseItem::deserialize: ID='%1'").arg(m_id));
     
     // 读取UUID
     in >> m_uuid;
+    Logger::debug(QString("FlowchartBaseItem::deserialize: UUID='%1'").arg(m_uuid.toString()));
+    
+    // 记录边界矩形信息
+    QRectF rect = boundingRect();
+    Logger::debug(QString("FlowchartBaseItem::deserialize: 边界矩形=(%1, %2, %3, %4)")
+        .arg(rect.left()).arg(rect.top())
+        .arg(rect.width()).arg(rect.height()));
 }
 
 // 鼠标按下事件处理
@@ -238,4 +263,44 @@ QPointF FlowchartBaseItem::connectionPoint(int index) const
         return points[index];
     }
     return QPointF();
+}
+
+void FlowchartBaseItem::restoreFromPoints(const std::vector<QPointF>& points)
+{
+    Logger::debug("FlowchartBaseItem::restoreFromPoints: 开始恢复图形形状和大小");
+
+    if (points.empty()) {
+        Logger::warning("FlowchartBaseItem::restoreFromPoints: 点集为空，无法恢复形状和大小");
+        return;
+    }
+
+    // 如果只有1个点，则将其视为中心点
+    if (points.size() == 1) {
+        setPos(points[0]);
+        Logger::debug("FlowchartBaseItem::restoreFromPoints: 恢复图形位置成功(1点)");
+    } else {
+        // 直接使用第一个点作为中心点
+        setPos(points[0]);
+        
+        Logger::debug(QString("FlowchartBaseItem::restoreFromPoints: 恢复图形位置成功(多点) - 中心=(%1,%2)")
+            .arg(points[0].x()).arg(points[0].y()));
+    }
+    
+    invalidateCache();
+    update();
+}
+
+std::vector<QPointF> FlowchartBaseItem::getClipboardPoints() const
+{
+    QPointF center = scenePos(); // 图元中心
+    QSizeF size = boundingRect().size(); // 图元大小（局部坐标系）
+    
+    QPointF sizePoint = center + QPointF(size.width() / 2, size.height() / 2);
+    
+    Logger::debug(QString("FlowchartBaseItem::getClipboardPoints: 中心=(%1, %2), 大小=(%3, %4), 大小点=(%5, %6)")
+        .arg(center.x()).arg(center.y())
+        .arg(size.width()).arg(size.height())
+        .arg(sizePoint.x()).arg(sizePoint.y()));
+    
+    return {center, sizePoint};
 } 

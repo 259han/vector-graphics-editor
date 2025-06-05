@@ -62,6 +62,21 @@ QGraphicsItem* DefaultGraphicsItemFactory::createItem(GraphicItem::GraphicType t
     }
 }
 
+// 添加尺寸解析函数
+static void parseSizeFromPoints(const std::vector<QPointF>& points, QPointF& center, QSizeF& size) {
+    center = points[0];
+    if (points[1].x() >= center.x() && points[1].y() >= center.y()) {
+        size = QSizeF(
+            (points[1].x() - center.x()) * 2,
+            (points[1].y() - center.y()) * 2
+        );
+    } else {
+        QRectF rect = QRectF(points[0], points[1]).normalized();
+        center = rect.center();
+        size = rect.size();
+    }
+}
+
 QGraphicsItem* DefaultGraphicsItemFactory::createCustomItem(GraphicItem::GraphicType type, const std::vector<QPointF>& points)
 {
     if (points.empty()) {
@@ -88,27 +103,19 @@ QGraphicsItem* DefaultGraphicsItemFactory::createCustomItem(GraphicItem::Graphic
             
         case GraphicItem::RECTANGLE:
             if (points.size() >= 2) {
-                // 使用两点确定矩形，确保是标准化的矩形
-                QRectF rect = QRectF(points[0], points[1]).normalized();
-                return new RectangleGraphicItem(rect.topLeft(), rect.size());
+                QPointF center;
+                QSizeF size;
+                parseSizeFromPoints(points, center, size);
+                return new RectangleGraphicItem(center - QPointF(size.width()/2, size.height()/2), size);
             }
             break;
             
         case GraphicItem::ELLIPSE:
             if (points.size() >= 2) {
-                // 创建标准化矩形，匹配预览椭圆的方式
-                QRectF rect = QRectF(points[0], points[1]).normalized();
-                
-                // 计算中心点和尺寸
-                QPointF center = rect.center();
-                double width = rect.width();
-                double height = rect.height();
-                
-                // 确保最小尺寸
-                width = width < 1.0 ? 1.0 : width;
-                height = height < 1.0 ? 1.0 : height;
-                
-                return new EllipseGraphicItem(center, width, height);
+                QPointF center;
+                QSizeF size;
+                parseSizeFromPoints(points, center, size);
+                return new EllipseGraphicItem(center, size.width(), size.height());
             }
             break;
             
@@ -122,89 +129,37 @@ QGraphicsItem* DefaultGraphicsItemFactory::createCustomItem(GraphicItem::Graphic
         // 流程图图元
         case GraphicItem::FLOWCHART_PROCESS:
             if (points.size() >= 2) {
-                // 获取中心点和大小
-                QPointF center = points[0];
-                // 计算大小 - 如果是传递的中心点和大小点
+                QPointF center;
                 QSizeF size;
-                if (points[1].x() >= center.x() && points[1].y() >= center.y()) {
-                    // 点集是中心点和大小点
-                    size = QSizeF(
-                        (points[1].x() - center.x()) * 2, 
-                        (points[1].y() - center.y()) * 2
-                    );
-                } else {
-                    // 点集是左上角和右下角 - 兼容旧格式
-                    QRectF rect = QRectF(points[0], points[1]).normalized();
-                    center = rect.center();
-                    size = rect.size();
-                }
+                parseSizeFromPoints(points, center, size);
                 return new FlowchartProcessItem(center, size);
             }
             break;
             
         case GraphicItem::FLOWCHART_DECISION:
             if (points.size() >= 2) {
-                // 获取中心点和大小
-                QPointF center = points[0];
-                // 计算大小 - 如果是传递的中心点和大小点
+                QPointF center;
                 QSizeF size;
-                if (points[1].x() >= center.x() && points[1].y() >= center.y()) {
-                    // 点集是中心点和大小点
-                    size = QSizeF(
-                        (points[1].x() - center.x()) * 2, 
-                        (points[1].y() - center.y()) * 2
-                    );
-                } else {
-                    // 点集是左上角和右下角 - 兼容旧格式
-                    QRectF rect = QRectF(points[0], points[1]).normalized();
-                    center = rect.center();
-                    size = rect.size();
-                }
+                parseSizeFromPoints(points, center, size);
                 return new FlowchartDecisionItem(center, size);
             }
             break;
             
         case GraphicItem::FLOWCHART_START_END:
             if (points.size() >= 2) {
-                // 获取中心点和大小
-                QPointF center = points[0];
-                // 计算大小 - 如果是传递的中心点和大小点
+                QPointF center;
                 QSizeF size;
-                if (points[1].x() >= center.x() && points[1].y() >= center.y()) {
-                    // 点集是中心点和大小点
-                    size = QSizeF(
-                        (points[1].x() - center.x()) * 2, 
-                        (points[1].y() - center.y()) * 2
-                    );
-                } else {
-                    // 点集是左上角和右下角 - 兼容旧格式
-                    QRectF rect = QRectF(points[0], points[1]).normalized();
-                    center = rect.center();
-                    size = rect.size();
-                }
-                return new FlowchartStartEndItem(center, size);
+                parseSizeFromPoints(points, center, size);
+                return new FlowchartStartEndItem(center, size, true); // 默认设置为"开始"
             }
             break;
             
         case GraphicItem::FLOWCHART_IO:
             if (points.size() >= 2) {
-                // 获取中心点和大小
-                QPointF center = points[0];
-                // 计算大小 - 如果是传递的中心点和大小点
+                QPointF center;
                 QSizeF size;
-                if (points[1].x() >= center.x() && points[1].y() >= center.y()) {
-                    // 点集是中心点和大小点
-                    size = QSizeF(
-                        (points[1].x() - center.x()) * 2, 
-                        (points[1].y() - center.y()) * 2
-                    );
-                } else {
-                    // 点集是左上角和右下角 - 兼容旧格式
-                    QRectF rect = QRectF(points[0], points[1]).normalized();
-                    center = rect.center();
-                    size = rect.size();
-                }
-                return new FlowchartIOItem(center, size);
+                parseSizeFromPoints(points, center, size);
+                return new FlowchartIOItem(center, size, true); // 默认设置为"输入"
             }
             break;
             
@@ -229,18 +184,11 @@ QGraphicsItem* DefaultGraphicsItemFactory::createCustomItem(GraphicItem::Graphic
             }
             break;
             
-        // 其他类型图形的自定义创建，后续实现
-        /*
-        case GraphicItem::TRIANGLE:
-            // 处理三角形
-            break;
-        */
-            
         default:
-            // 默认行为
-            qDebug() << "未知的图形类型，无法创建";
-            break;
+            qDebug() << "创建图形失败: 不支持的图形类型" << type;
+            return nullptr;
     }
     
+    qDebug() << "创建图形失败: 点集数量不足";
     return nullptr;
 } 
