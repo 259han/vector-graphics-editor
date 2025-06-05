@@ -40,6 +40,7 @@ public:
     
     // 连接点处理
     virtual std::vector<QPointF> getConnectionPoints() const override;
+    QPointF connectionPoint(int index) const;
     
     // 序列化和反序列化
     virtual void serialize(QDataStream& out) const override;

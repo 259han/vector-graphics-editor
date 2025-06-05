@@ -229,4 +229,13 @@ void FlowchartBaseItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
     
     // 调用父类方法确保事件正确传递
     GraphicItem::mouseReleaseEvent(event);
+}
+
+QPointF FlowchartBaseItem::connectionPoint(int index) const
+{
+    std::vector<QPointF> points = getConnectionPoints();
+    if (index >= 0 && index < static_cast<int>(points.size())) {
+        return points[index];
+    }
+    return QPointF();
 } 

@@ -340,6 +340,12 @@ bool ConnectionManager::createConnection(FlowchartBaseItem* fromItem, int fromPo
     // 创建连接器
     FlowchartConnectorItem* connector = new FlowchartConnectorItem(startPos, endPos, connectorType, arrowType);
     
+    // 设置连接关系
+    connector->setStartItem(fromItem);
+    connector->setEndItem(toItem);
+    connector->setStartPointIndex(fromPointIndex);
+    connector->setEndPointIndex(toPointIndex);
+    
     // 添加到场景
     if (m_scene) {
         m_scene->addItem(connector);
@@ -754,112 +760,99 @@ void ConnectionManager::onUpdateTimer()
 
 void ConnectionManager::resolvePendingConnections(const QHash<QUuid, FlowchartBaseItem*>& itemMap)
 {
-    for (Connection& conn : m_connections) {
-        if (conn.connector) {
-            conn.connector->resolveConnections(itemMap);
-            
-            // 重建连接关系
-            if (conn.fromItem && conn.toItem) {
-                m_connectionPoints[conn.fromItem][conn.fromPointIndex].isOccupied = true;
-                m_connectionPoints[conn.toItem][conn.toPointIndex].isOccupied = true;
+    Logger::debug(QString("ConnectionManager::resolvePendingConnections: 开始解析连接关系"));
+    
+    // 处理所有需要解析的连接器
+    for (auto* item : m_scene->items()) {
+        if (auto* connector = dynamic_cast<FlowchartConnectorItem*>(item)) {
+            if (connector->needsConnectionResolution()) {
+                Logger::debug(QString("ConnectionManager::resolvePendingConnections: 处理连接器 UUID=%1").arg(connector->uuid().toString()));
+                
+                connector->resolveConnections(itemMap);
+                
+                // 如果连接成功，注册到ConnectionManager
+                if (connector->getStartItem() && connector->getEndItem()) {
+                    Connection connection(
+                        connector->getStartItem(),
+                        connector->getStartPointIndex(),
+                        connector->getEndItem(),
+                        connector->getEndPointIndex(),
+                        connector
+                    );
+                    m_connections.append(connection);
+                    
+                    // 标记连接点为已占用
+                    if (m_connectionPoints.contains(connector->getStartItem()) && 
+                        connector->getStartPointIndex() >= 0 && 
+                        connector->getStartPointIndex() < m_connectionPoints[connector->getStartItem()].size()) {
+                        m_connectionPoints[connector->getStartItem()][connector->getStartPointIndex()].isOccupied = true;
+                    }
+                    
+                    if (m_connectionPoints.contains(connector->getEndItem()) && 
+                        connector->getEndPointIndex() >= 0 && 
+                        connector->getEndPointIndex() < m_connectionPoints[connector->getEndItem()].size()) {
+                        m_connectionPoints[connector->getEndItem()][connector->getEndPointIndex()].isOccupied = true;
+                    }
+                    
+                    Logger::debug(QString("ConnectionManager::resolvePendingConnections: 连接成功 - 从%1到%2")
+                        .arg(connector->getStartItem()->id())
+                        .arg(connector->getEndItem()->id()));
+                } else {
+                    Logger::debug(QString("ConnectionManager::resolvePendingConnections: 连接失败 - 连接器UUID=%1").arg(connector->uuid().toString()));
+                }
             }
         }
     }
+    
+    Logger::debug(QString("ConnectionManager::resolvePendingConnections: 连接关系解析完成，共%1个连接").arg(m_connections.size()));
 }
 
 void ConnectionManager::serialize(QDataStream& out) const
 {
-    // 保存连接点数据
-    out << static_cast<int>(m_connectionPoints.size());
-    for (auto it = m_connectionPoints.begin(); it != m_connectionPoints.end(); ++it) {
-        FlowchartBaseItem* item = it.key();
-        const QList<ConnectionPoint>& points = it.value();
-        
-        // 保存项目UUID
-        out << item->uuid();
-        
-        // 保存连接点数据
-        out << static_cast<int>(points.size());
-        for (const ConnectionPoint& point : points) {
-            out << point.scenePos;
-            out << point.localPos;
-            out << point.index;
-            out << point.isOccupied;
-        }
-    }
+    Logger::debug(QString("ConnectionManager::serialize: 开始序列化%1个连接关系").arg(m_connections.size()));
     
     // 保存连接关系
     out << static_cast<int>(m_connections.size());
     for (const Connection& conn : m_connections) {
-        // 保存连接器
-        if (conn.connector) {
-            out << true; // 标记有连接器
-            conn.connector->serialize(out);
-        } else {
-            out << false; // 标记无连接器
-        }
+        // 保存连接器UUID和连接信息
+        QUuid connectorUuid = conn.connector->uuid();
+        QUuid fromUuid = conn.fromItem ? conn.fromItem->uuid() : QUuid();
+        QUuid toUuid = conn.toItem ? conn.toItem->uuid() : QUuid();
+        
+        out << connectorUuid << fromUuid << conn.fromPointIndex << toUuid << conn.toPointIndex;
+        
+        Logger::debug(QString("ConnectionManager::serialize: 序列化连接 - 连接器UUID=%1, 起点UUID=%2, 终点UUID=%3")
+            .arg(connectorUuid.toString())
+            .arg(fromUuid.toString())
+            .arg(toUuid.toString()));
     }
+    
+    Logger::debug("ConnectionManager::serialize: 连接关系序列化完成");
 }
 
 void ConnectionManager::deserialize(QDataStream& in)
 {
-    // 清空现有数据
-    clearAllConnectionPoints();
-    
-    // 读取连接点数据
-    int connectionPointsCount;
-    in >> connectionPointsCount;
-    
-    // 临时存储连接点数据，等待所有项目加载完成后再处理
-    QMap<QUuid, QList<ConnectionPoint>> pendingConnectionPoints;
-    
-    for (int i = 0; i < connectionPointsCount; ++i) {
-        QUuid itemUuid;
-        in >> itemUuid;
-        
-        int pointsCount;
-        in >> pointsCount;
-        
-        QList<ConnectionPoint> points;
-        for (int j = 0; j < pointsCount; ++j) {
-            ConnectionPoint point;
-            in >> point.scenePos;
-            in >> point.localPos;
-            in >> point.index;
-            in >> point.isOccupied;
-            points.append(point);
-        }
-        
-        pendingConnectionPoints[itemUuid] = points;
-    }
-    
     // 读取连接关系
     int connectionsCount;
     in >> connectionsCount;
     
+    Logger::debug(QString("ConnectionManager::deserialize: 开始反序列化%1个连接关系").arg(connectionsCount));
+    
+    m_pendingConnections.clear();
     for (int i = 0; i < connectionsCount; ++i) {
-        bool hasConnector;
-        in >> hasConnector;
+        QUuid connectorUuid, fromUuid, toUuid;
+        int fromIndex, toIndex;
+        in >> connectorUuid >> fromUuid >> fromIndex >> toUuid >> toIndex;
         
-        if (hasConnector) {
-            // 创建新的连接器并反序列化
-            FlowchartConnectorItem* connector = new FlowchartConnectorItem();
-            connector->deserialize(in);
-            
-            // 添加到场景
-            if (m_scene) {
-                m_scene->addItem(connector);
-            }
-            
-            // 添加到连接列表
-            Connection conn;
-            conn.connector = connector;
-            m_connections.append(conn);
-        }
+        m_pendingConnections.append({connectorUuid, fromUuid, fromIndex, toUuid, toIndex});
+        
+        Logger::debug(QString("ConnectionManager::deserialize: 读取连接 - 连接器UUID=%1, 起点UUID=%2, 终点UUID=%3")
+            .arg(connectorUuid.toString())
+            .arg(fromUuid.toString())
+            .arg(toUuid.toString()));
     }
     
-    // 注意：实际的连接点分配和连接关系解析将在所有项目加载完成后进行
-    // 通过调用 resolvePendingConnections 完成
+    Logger::debug(QString("ConnectionManager::deserialize: 连接关系反序列化完成，共%1个待处理连接").arg(m_pendingConnections.size()));
 }
 
 void ConnectionManager::prepareForSceneClear() {

@@ -1,10 +1,10 @@
-#ifndef CONNECTION_COMMAND_H
-#define CONNECTION_COMMAND_H
+#pragma once
 
 #include "command.h"
 #include "../core/flowchart_base_item.h"
 #include "../core/flowchart_connector_item.h"
 #include <QGraphicsScene>
+#include <QUuid>
 
 class ConnectionManager;
 
@@ -64,6 +64,18 @@ public:
      */
     FlowchartConnectorItem* getConnector() const { return m_connector; }
 
+    /**
+     * @brief 序列化命令
+     * @param out 输出数据流
+     */
+    void serialize(QDataStream& out) const;
+
+    /**
+     * @brief 反序列化命令
+     * @param in 输入数据流
+     */
+    void deserialize(QDataStream& in);
+
 private:
     ConnectionManager* m_connectionManager;
     FlowchartBaseItem* m_fromItem;
@@ -78,6 +90,9 @@ private:
     // 保存连接创建前的状态信息，用于撤销
     bool m_fromPointWasOccupied;
     bool m_toPointWasOccupied;
-};
 
-#endif // CONNECTION_COMMAND_H 
+    // 用于延迟解析的UUID
+    QUuid m_pendingConnectorUuid;
+    QUuid m_pendingFromUuid;
+    QUuid m_pendingToUuid;
+}; 

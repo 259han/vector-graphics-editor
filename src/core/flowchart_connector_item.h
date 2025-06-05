@@ -16,7 +16,8 @@ public:
     enum ConnectorType {
         StraightLine,    // 直线
         BezierCurve,     // 贝塞尔曲线
-        Polyline         // 折线
+        Polyline,         // 折线
+        OrthogonalLine   // 正交线
     };
     
     // 箭头类型
@@ -75,8 +76,9 @@ public:
     void serialize(QDataStream& out) const override;
     void deserialize(QDataStream& in) override;
     
-    // 延迟连接解析
+    // 连接关系解析
     void resolveConnections(const QHash<QUuid, FlowchartBaseItem*>& itemMap);
+    bool needsConnectionResolution() const { return !m_pendingStartUuid.isNull() || !m_pendingEndUuid.isNull(); }
     
     // 补充声明：重写基类的纯虚函数，和私有路径生成函数
     std::vector<QPointF> getDrawPoints() const override;
@@ -84,13 +86,12 @@ public:
     QPainterPath createOrthogonalPath() const;
     QPainterPath createCurvePath() const;
 
-protected:
     // 更新路径
     void updatePath();
     
+protected:
     // 绘制箭头
     void drawArrow(QPainter* painter, const QPointF& point, const QPointF& direction);
-
 
 private:
     // 连接线类型
@@ -119,6 +120,7 @@ private:
     // 延迟连接解析
     QUuid m_pendingStartUuid;
     QUuid m_pendingEndUuid;
+    bool m_needsConnectionResolution = false;
 };
 
 #endif // FLOWCHART_CONNECTOR_ITEM_H 

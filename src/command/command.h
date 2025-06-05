@@ -2,6 +2,7 @@
 #define COMMAND_H
 
 #include <QString>
+#include <QDataStream>
 
 class GraphicManager;
 

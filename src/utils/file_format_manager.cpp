@@ -127,7 +127,7 @@ bool FileFormatManager::loadFromCustomFormat(const QString& filePath, QGraphicsS
     scene->setBackgroundBrush(backgroundBrush);
     
     // 反序列化图形项
-    if (!deserializeGraphicItems(stream, scene, itemFactory)) {
+    if (!deserializeGraphicItems(stream, scene, itemFactory, connectionManager, connectionOverlay, selectionManager)) {
         file.close();
         Logger::error("FileFormatManager::loadFromCustomFormat: 反序列化图形项失败");
         return false;
@@ -180,24 +180,25 @@ bool FileFormatManager::exportToSVG(const QString& filePath, QGraphicsScene* sce
 
 // 序列化图形项辅助方法
 bool FileFormatManager::serializeGraphicItems(QDataStream& stream, const QList<QGraphicsItem*>& items) {
-    // 先统计实际要序列化的数量
-    int realCount = 0;
+    // 统计所有GraphicItem（包括连接器）
+    QList<QGraphicsItem*> graphicItems;
     for (auto* item : items) {
-        if (dynamic_cast<GraphicItem*>(item)) realCount++;
-    }
-    stream << (qint32)realCount;
-    int idx = 0;
-    for (auto* item : items) {
-        auto* graphicItem = dynamic_cast<GraphicItem*>(item);
-        if (!graphicItem) {
-            Logger::debug(QString("FileFormatManager::serializeGraphicItems: [%1] 非GraphicItem，跳过").arg(idx));
-            idx++;
-            continue;
+        if (dynamic_cast<GraphicItem*>(item)) {
+            graphicItems.append(item);
         }
-        Logger::debug(QString("FileFormatManager::serializeGraphicItems: [%1] type=%2").arg(idx).arg(graphicItem->getGraphicType()));
-        graphicItem->serialize(stream);
-        idx++;
     }
+    
+    Logger::debug(QString("FileFormatManager::serializeGraphicItems: 开始序列化，共有%1个图元需要序列化").arg(graphicItems.size()));
+    stream << (qint32)graphicItems.size();
+    
+    // 序列化所有图形项（不再区分连接器）
+    for (auto* item : graphicItems) {
+        auto* graphicItem = static_cast<GraphicItem*>(item);
+        Logger::debug(QString("FileFormatManager::serializeGraphicItems: 序列化图元，类型=%1").arg(graphicItem->getGraphicType()));
+        graphicItem->serialize(stream);
+    }
+    
+    Logger::debug(QString("FileFormatManager::serializeGraphicItems: 序列化完成，流状态=%1").arg(stream.status()));
     return stream.status() == QDataStream::Ok;
 }
 
@@ -241,40 +242,69 @@ static void skipOneGraphicItem(QDataStream& stream) {
 
 // 反序列化图形项辅助方法
 bool FileFormatManager::deserializeGraphicItems(QDataStream& stream, QGraphicsScene* scene,
-                            std::function<GraphicItem*(Graphic::GraphicType, const QPointF&, const QPen&, const QBrush&, 
-                                                      const std::vector<QPointF>&, double, const QPointF&)> itemFactory) {
+    std::function<GraphicItem*(Graphic::GraphicType, const QPointF&, const QPen&, const QBrush&, 
+                              const std::vector<QPointF>&, double, const QPointF&)> itemFactory,
+    ConnectionManager* connectionManager,
+    ConnectionPointOverlay* connectionOverlay,
+    SelectionManager* selectionManager) {
+    
     qint32 itemCount;
     stream >> itemCount;
     Logger::debug(QString("FileFormatManager::deserializeGraphicItems: 开始反序列化，共%1个图元").arg(itemCount));
+    
+    QHash<QUuid, FlowchartBaseItem*> itemMap;
+    
+    // 第一阶段：创建所有图形项（但不解析连接）
     for (qint32 i = 0; i < itemCount; ++i) {
-        int storedType = 0;
+        int storedType;
         qint64 oldPos = stream.device()->pos();
         stream >> storedType;
         stream.device()->seek(oldPos);
-        Graphic::GraphicType graphicType = static_cast<Graphic::GraphicType>(storedType);
-        Logger::debug(QString("FileFormatManager::deserializeGraphicItems: [%1] 类型=%2").arg(i).arg(storedType));
-        GraphicItem* item = nullptr;
-        if (graphicType == GraphicItem::FLOWCHART_CONNECTOR) {
-            item = new FlowchartConnectorItem();
-            Logger::debug(QString("FileFormatManager::deserializeGraphicItems: [%1] 创建FlowchartConnectorItem, 指针=%2").arg(i).arg((quintptr)item));
+        
+        Logger::debug(QString("FileFormatManager::deserializeGraphicItems: 处理第%1个图元，类型=%2").arg(i).arg(storedType));
+        
+        GraphicItem* item = itemFactory(static_cast<Graphic::GraphicType>(storedType), 
+                                       QPointF(), QPen(), QBrush(), std::vector<QPointF>(), 0.0, QPointF(1,1));
+        if (item) {
+            Logger::debug(QString("FileFormatManager::deserializeGraphicItems: 创建图元成功，开始反序列化"));
             item->deserialize(stream);
-            Logger::debug(QString("FileFormatManager::deserializeGraphicItems: [%1] 反序列化完成, type=%2, 指针=%3").arg(i).arg(item->getGraphicType()).arg((quintptr)item));
             scene->addItem(item);
+            
+            // 收集所有流程图元素的UUID映射
+            if (auto* flowchartItem = dynamic_cast<FlowchartBaseItem*>(item)) {
+                itemMap[flowchartItem->uuid()] = flowchartItem;
+            }
         } else {
-            item = itemFactory(graphicType, QPointF(), QPen(), QBrush(), std::vector<QPointF>(), 0.0, QPointF(1,1));
-            Logger::debug(QString("FileFormatManager::deserializeGraphicItems: [%1] 工厂创建item, 指针=%2").arg(i).arg((quintptr)item));
-            if (item) {
-                item->deserialize(stream);
-                Logger::debug(QString("FileFormatManager::deserializeGraphicItems: [%1] 反序列化完成, type=%2, 指针=%3").arg(i).arg(item->getGraphicType()).arg((quintptr)item));
-                scene->addItem(item);
-            } else {
-                Logger::error(QString("FileFormatManager::deserializeGraphicItems: [%1] 创建失败, 跳过数据").arg(i));
-                skipOneGraphicItem(stream);
+            Logger::debug(QString("FileFormatManager::deserializeGraphicItems: 创建图元失败，跳过"));
+            skipOneGraphicItem(stream);
+        }
+    }
+    
+    // 第二阶段：注册所有流程图元素
+    Logger::debug("FileFormatManager::deserializeGraphicItems: 开始注册流程图元素");
+    for (auto* item : scene->items()) {
+        if (auto* flowchartItem = dynamic_cast<FlowchartBaseItem*>(item)) {
+            if (connectionManager) {
+                connectionManager->registerFlowchartItem(flowchartItem);
+                Logger::debug(QString("FileFormatManager::deserializeGraphicItems: 注册流程图元素到ConnectionManager，UUID=%1")
+                    .arg(flowchartItem->uuid().toString()));
             }
         }
-        Logger::debug(QString("FileFormatManager::deserializeGraphicItems: [%1] 反序列化后stream状态=%2").arg(i).arg(stream.status()));
     }
-    Logger::debug("FileFormatManager::deserializeGraphicItems: 反序列化结束");
+    
+    // 第三阶段：解析连接关系
+    Logger::debug("FileFormatManager::deserializeGraphicItems: 开始解析连接关系");
+    for (auto* item : scene->items()) {
+        if (auto* connector = dynamic_cast<FlowchartConnectorItem*>(item)) {
+            if (connector->needsConnectionResolution()) {
+                Logger::debug(QString("FileFormatManager::deserializeGraphicItems: 解析连接关系，UUID=%1")
+                    .arg(connector->uuid().toString()));
+                connector->resolveConnections(itemMap);
+            }
+        }
+    }
+    
+    Logger::debug(QString("FileFormatManager::deserializeGraphicItems: 反序列化完成，流状态=%1").arg(stream.status()));
     return stream.status() == QDataStream::Ok;
 }
 

@@ -2,6 +2,7 @@
 #include <QtMath>
 #include <QDataStream>
 #include <QUuid>
+#include "../utils/logger.h" // 确保包含日志头文件
 
 FlowchartConnectorItem::FlowchartConnectorItem(const QPointF& startPoint, const QPointF& endPoint, 
                                              ConnectorType type, ArrowType arrowType)
@@ -9,7 +10,11 @@ FlowchartConnectorItem::FlowchartConnectorItem(const QPointF& startPoint, const 
       m_startPoint(startPoint), 
       m_endPoint(endPoint),
       m_connectorType(type),
-      m_arrowType(arrowType)
+      m_arrowType(arrowType),
+      m_startItem(nullptr),
+      m_endItem(nullptr),
+      m_startPointIndex(-1),
+      m_endPointIndex(-1)
 {
     // 连接器不需要设置位置，使用场景坐标
     setFlag(QGraphicsItem::ItemIsSelectable, true);
@@ -23,7 +28,7 @@ FlowchartConnectorItem::FlowchartConnectorItem(const QPointF& startPoint, const 
     setPen(QPen(Qt::black, 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
     setBrush(Qt::black); // 用于箭头
     
-    // 默认连接点为空，会根据路径自动生成
+    // 默认控制点为空，会根据路径自动生成
     m_controlPoints.clear();
     
     // 初始化路径
@@ -57,9 +62,9 @@ void FlowchartConnectorItem::paint(QPainter *painter, const QStyleOptionGraphics
     if (m_arrowType == SingleArrow || m_arrowType == DoubleArrow) {
         // 获取路径上的最后一个点和倒数第二个点，用于绘制箭头
         qreal len = m_path.length();
-        qreal arrowPos = len - 0.1; // 稍微偏移，避免在路径末端
+        qreal percent = qMax(0.0, (len - 0.1) / len); // 稍微偏移，避免在路径末端
         QPointF endPoint = m_path.pointAtPercent(1.0);
-        QPointF beforeEndPoint = m_path.pointAtPercent(qMax(0.0, (len - m_arrowSize) / len));
+        QPointF beforeEndPoint = m_path.pointAtPercent(percent);
         
         drawArrow(painter, beforeEndPoint, endPoint);
     }
@@ -67,7 +72,8 @@ void FlowchartConnectorItem::paint(QPainter *painter, const QStyleOptionGraphics
     // 如果是双箭头，绘制起点的箭头
     if (m_arrowType == DoubleArrow) {
         QPointF startPoint = m_path.pointAtPercent(0.0);
-        QPointF afterStartPoint = m_path.pointAtPercent(qMin(1.0, m_arrowSize / m_path.length()));
+        qreal percent = qMin(1.0, m_arrowSize / m_path.length());
+        QPointF afterStartPoint = m_path.pointAtPercent(percent);
         
         drawArrow(painter, afterStartPoint, startPoint);
     }
@@ -145,12 +151,14 @@ std::vector<QPointF> FlowchartConnectorItem::getDrawPoints() const
     std::vector<QPointF> points;
     
     // 添加起点和终点，使用相对于连接线的坐标
-    points.push_back(m_startPoint - pos());
-    points.push_back(m_endPoint - pos());
+    // 注意：连接器通常直接使用场景坐标，所以这里直接返回m_startPoint和m_endPoint
+    // 如果连接器被设置为子项，则需要mapFromParent或mapFromItem
+    points.push_back(m_startPoint);
+    points.push_back(m_endPoint);
     
-    // 添加控制点，使用相对于连接线的坐标
+    // 添加控制点
     for (const QPointF& point : m_controlPoints) {
-        points.push_back(point - pos());
+        points.push_back(point);
     }
     
     return points;
@@ -306,65 +314,127 @@ void FlowchartConnectorItem::restoreFromPoints(const std::vector<QPointF>& point
 
 void FlowchartConnectorItem::serialize(QDataStream& out) const
 {
+    Logger::debug(QString("FlowchartConnectorItem::serialize: 开始序列化连接器，UUID=%1").arg(uuid().toString()));
+    
     // 先序列化基类
     FlowchartBaseItem::serialize(out);
+    Logger::debug("FlowchartConnectorItem::serialize: 基类序列化完成");
     
-    // 保存连接线类型和箭头类型
+    // 保存基本属性
+    out << m_startPoint << m_endPoint;
     out << static_cast<int>(m_connectorType);
     out << static_cast<int>(m_arrowType);
-    
-    // 保存起点和终点
-    out << m_startPoint;
-    out << m_endPoint;
-    
-    // 保存控制点
     out << m_controlPoints;
     
-    // 保存连接关系（使用UUID代替指针）
-    out << (m_startItem ? m_startItem->uuid() : QUuid())
-        << m_startPointIndex
-        << (m_endItem ? m_endItem->uuid() : QUuid())
-        << m_endPointIndex;
+    Logger::debug(QString("FlowchartConnectorItem::serialize: 序列化基本属性 - 起点=(%1,%2), 终点=(%3,%4), 类型=%5, 箭头=%6, 控制点数量=%7")
+        .arg(QString::number(m_startPoint.x()))
+        .arg(QString::number(m_startPoint.y()))
+        .arg(QString::number(m_endPoint.x()))
+        .arg(QString::number(m_endPoint.y()))
+        .arg(static_cast<int>(m_connectorType))
+        .arg(static_cast<int>(m_arrowType))
+        .arg(m_controlPoints.size()));
+    
+    // 序列化连接关系
+    QUuid startUuid = m_startItem ? m_startItem->uuid() : m_pendingStartUuid;
+    QUuid endUuid = m_endItem ? m_endItem->uuid() : m_pendingEndUuid;
+    out << startUuid << m_startPointIndex << endUuid << m_endPointIndex;
+    
+    Logger::debug(QString("FlowchartConnectorItem::serialize: 序列化连接关系 - 起点UUID=%1, 起点索引=%2, 终点UUID=%3, 终点索引=%4")
+        .arg(startUuid.toString())
+        .arg(m_startPointIndex)
+        .arg(endUuid.toString())
+        .arg(m_endPointIndex));
+    
+    Logger::debug("FlowchartConnectorItem::serialize: 序列化完成");
 }
 
 void FlowchartConnectorItem::deserialize(QDataStream& in)
 {
+    Logger::debug(QString("FlowchartConnectorItem::deserialize: 开始反序列化连接器，UUID=%1").arg(uuid().toString()));
+    
     // 先反序列化基类
     FlowchartBaseItem::deserialize(in);
+    Logger::debug("FlowchartConnectorItem::deserialize: 基类反序列化完成");
     
-    // 读取连接线类型和箭头类型
-    int connectorType, arrowType;
-    in >> connectorType >> arrowType;
-    m_connectorType = static_cast<ConnectorType>(connectorType);
-    m_arrowType = static_cast<ArrowType>(arrowType);
-    
-    // 读取起点和终点
-    in >> m_startPoint;
-    in >> m_endPoint;
-    
-    // 读取控制点
+    // 反序列化连接器特有属性
+    in >> m_startPoint >> m_endPoint;
+    int type;
+    in >> type;
+    m_connectorType = static_cast<ConnectorType>(type);
+    in >> type;
+    m_arrowType = static_cast<ArrowType>(type);
     in >> m_controlPoints;
     
-    // 读取连接关系（使用UUID）
-    QUuid startUuid, endUuid;
-    in >> startUuid >> m_startPointIndex
-       >> endUuid >> m_endPointIndex;
+    Logger::debug(QString("FlowchartConnectorItem::deserialize: 反序列化基本属性 - 起点=(%1,%2), 终点=(%3,%4), 类型=%5, 箭头=%6, 控制点数量=%7")
+        .arg(QString::number(m_startPoint.x()))
+        .arg(QString::number(m_startPoint.y()))
+        .arg(QString::number(m_endPoint.x()))
+        .arg(QString::number(m_endPoint.y()))
+        .arg(static_cast<int>(m_connectorType))
+        .arg(static_cast<int>(m_arrowType))
+        .arg(m_controlPoints.size()));
+
+    // 读取连接关系
+    in >> m_pendingStartUuid >> m_startPointIndex 
+       >> m_pendingEndUuid >> m_endPointIndex;
     
-    // 延迟绑定
-    m_pendingStartUuid = startUuid;
-    m_pendingEndUuid = endUuid;
+    // 延迟解析连接关系
+    if (!m_pendingStartUuid.isNull() || !m_pendingEndUuid.isNull()) {
+        m_needsConnectionResolution = true;
+    }
     
-    // 更新路径
     updatePath();
+    Logger::debug("FlowchartConnectorItem::deserialize: 反序列化完成，路径已更新");
 }
 
 void FlowchartConnectorItem::resolveConnections(const QHash<QUuid, FlowchartBaseItem*>& itemMap)
 {
-    if (!m_pendingStartUuid.isNull()) {
+    Logger::debug(QString("FlowchartConnectorItem::resolveConnections: 开始解析连接关系，UUID=%1").arg(uuid().toString()));
+    
+    // 如果有连接的连接器
+    if (!m_pendingStartUuid.isNull() || !m_pendingEndUuid.isNull()) {
         m_startItem = itemMap.value(m_pendingStartUuid, nullptr);
-    }
-    if (!m_pendingEndUuid.isNull()) {
         m_endItem = itemMap.value(m_pendingEndUuid, nullptr);
+        
+        Logger::debug(QString("FlowchartConnectorItem::resolveConnections: 查找连接元素 - 起点UUID=%1, 终点UUID=%2")
+            .arg(m_pendingStartUuid.toString())
+            .arg(m_pendingEndUuid.toString()));
+        
+        // 更新连接点位置
+        if (m_startItem && m_startPointIndex >= 0) {
+            auto points = m_startItem->getConnectionPoints();
+            if (m_startPointIndex < points.size()) {
+                setStartPoint(points[m_startPointIndex]);
+                Logger::debug(QString("FlowchartConnectorItem::resolveConnections: 设置起点位置=(%1,%2)")
+                    .arg(QString::number(points[m_startPointIndex].x()))
+                    .arg(QString::number(points[m_startPointIndex].y())));
+            } else {
+                Logger::warning(QString("FlowchartConnectorItem::resolveConnections: 起点索引无效 - 索引=%1, 总数=%2")
+                    .arg(m_startPointIndex)
+                    .arg(points.size()));
+            }
+        }
+        
+        if (m_endItem && m_endPointIndex >= 0) {
+            auto points = m_endItem->getConnectionPoints();
+            if (m_endPointIndex < points.size()) {
+                setEndPoint(points[m_endPointIndex]);
+                Logger::debug(QString("FlowchartConnectorItem::resolveConnections: 设置终点位置=(%1,%2)")
+                    .arg(QString::number(points[m_endPointIndex].x()))
+                    .arg(QString::number(points[m_endPointIndex].y())));
+            } else {
+                Logger::warning(QString("FlowchartConnectorItem::resolveConnections: 终点索引无效 - 索引=%1, 总数=%2")
+                    .arg(m_endPointIndex)
+                    .arg(points.size()));
+            }
+        }
+        
+        // 设置连接点索引
+        setStartPointIndex(m_startPointIndex);
+        setEndPointIndex(m_endPointIndex);
     }
-    updatePath(); // 更新连接线位置
-} 
+    
+    updatePath();
+    Logger::debug("FlowchartConnectorItem::resolveConnections: 连接关系解析完成，路径已更新");
+}

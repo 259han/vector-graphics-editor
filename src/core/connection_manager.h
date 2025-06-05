@@ -13,6 +13,8 @@
 #include "flowchart_base_item.h"
 #include "flowchart_connector_item.h"
 
+class ConnectionPointOverlay;
+
 /**
  * @brief 连接管理器 - 管理流程图元素之间的自动连接
  * 
@@ -46,6 +48,15 @@ public:
         Connection() : fromItem(nullptr), fromPointIndex(-1), toItem(nullptr), toPointIndex(-1), connector(nullptr) {}
         Connection(FlowchartBaseItem* from, int fromIdx, FlowchartBaseItem* to, int toIdx, FlowchartConnectorItem* conn)
             : fromItem(from), fromPointIndex(fromIdx), toItem(to), toPointIndex(toIdx), connector(conn) {}
+    };
+
+    // 待处理连接结构
+    struct PendingConnection {
+        QUuid connectorUuid;
+        QUuid fromUuid;
+        int fromPointIndex;
+        QUuid toUuid;
+        int toPointIndex;
     };
 
     explicit ConnectionManager(QGraphicsScene* scene, QObject* parent = nullptr);
@@ -128,6 +139,7 @@ private:
     // 连接点数据
     QMap<FlowchartBaseItem*, QList<ConnectionPoint>> m_connectionPoints;
     QList<Connection> m_connections;
+    QList<PendingConnection> m_pendingConnections;
     
     // 可视化状态
     bool m_connectionPointsVisible;
@@ -159,6 +171,8 @@ private:
     QColor m_highlightColor;
     QPen m_connectionPointPen;
     QBrush m_connectionPointBrush;
+
+    ConnectionPointOverlay* m_overlay = nullptr;
 };
 
 #endif // CONNECTION_MANAGER_H 

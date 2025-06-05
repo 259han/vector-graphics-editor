@@ -2,6 +2,7 @@
 #include "../core/connection_manager.h"
 #include "../utils/logger.h"
 #include <QApplication>
+#include <QDataStream>
 
 ConnectionCommand::ConnectionCommand(ConnectionManager* connectionManager,
                                    FlowchartBaseItem* fromItem, int fromPointIndex,
@@ -146,4 +147,32 @@ QString ConnectionCommand::getDescription() const
 QString ConnectionCommand::getType() const
 {
     return "connection";
-} 
+}
+
+void ConnectionCommand::serialize(QDataStream& out) const
+{
+    out << m_connector->uuid(); // 保存连接器UUID
+    out << (m_fromItem ? m_fromItem->uuid() : QUuid());
+    out << m_fromPointIndex;
+    out << (m_toItem ? m_toItem->uuid() : QUuid());
+    out << m_toPointIndex;
+    out << static_cast<int>(m_connectorType);
+    out << static_cast<int>(m_arrowType);
+}
+
+void ConnectionCommand::deserialize(QDataStream& in)
+{
+    QUuid connectorUuid, fromUuid, toUuid;
+    int connectorType, arrowType;
+    
+    in >> connectorUuid >> fromUuid >> m_fromPointIndex 
+       >> toUuid >> m_toPointIndex >> connectorType >> arrowType;
+    
+    m_connectorType = static_cast<FlowchartConnectorItem::ConnectorType>(connectorType);
+    m_arrowType = static_cast<FlowchartConnectorItem::ArrowType>(arrowType);
+    
+    // 保存UUID用于延迟解析
+    m_pendingConnectorUuid = connectorUuid;
+    m_pendingFromUuid = fromUuid;
+    m_pendingToUuid = toUuid;
+}

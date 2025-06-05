@@ -53,7 +53,10 @@ private:
     bool serializeGraphicItems(QDataStream& stream, const QList<QGraphicsItem*>& items);
     bool deserializeGraphicItems(QDataStream& stream, QGraphicsScene* scene,
                                 std::function<GraphicItem*(Graphic::GraphicType, const QPointF&, const QPen&, const QBrush&, 
-                                                 const std::vector<QPointF>&, double, const QPointF&)> itemFactory);
+                                                 const std::vector<QPointF>&, double, const QPointF&)> itemFactory,
+                                ConnectionManager* connectionManager = nullptr,
+                                ConnectionPointOverlay* connectionOverlay = nullptr,
+                                SelectionManager* selectionManager = nullptr);
 
     // 图层信息序列化辅助方法
     bool serializeLayers(QDataStream& stream, QGraphicsScene* scene);
