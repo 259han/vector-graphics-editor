@@ -54,7 +54,7 @@ public:
 private:
     // 当前连接器类型和箭头类型设置
     FlowchartConnectorItem::ConnectorType m_connectorType = FlowchartConnectorItem::StraightLine;
-    FlowchartConnectorItem::ArrowType m_arrowType = FlowchartConnectorItem::SingleArrow;
+    FlowchartConnectorItem::ArrowType m_arrowType = FlowchartConnectorItem::NoArrow;
 };
 
 #endif // GRAPHICS_ITEM_FACTORY_H 

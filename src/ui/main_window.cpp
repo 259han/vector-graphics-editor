@@ -1495,9 +1495,9 @@ void MainWindow::createFlowchartToolbar()
     m_flowchartToolBar->addWidget(connectorTypeLabel);
     
     m_connectorTypeComboBox = new QComboBox();
-    m_connectorTypeComboBox->addItem("直线", 0);
-    m_connectorTypeComboBox->addItem("折线", 1);
-    m_connectorTypeComboBox->addItem("曲线", 2);
+    m_connectorTypeComboBox->addItem("直线", FlowchartConnectorItem::StraightLine);
+    m_connectorTypeComboBox->addItem("曲线", FlowchartConnectorItem::BezierCurve);
+    m_connectorTypeComboBox->addItem("折线", FlowchartConnectorItem::Polyline);
     m_flowchartToolBar->addWidget(m_connectorTypeComboBox);
     
     // 添加箭头样式选择

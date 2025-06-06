@@ -166,15 +166,21 @@ QGraphicsItem* DefaultGraphicsItemFactory::createCustomItem(GraphicItem::Graphic
         case GraphicItem::FLOWCHART_CONNECTOR:
             if (points.size() >= 2) {
                 // 创建连接器 - 使用当前设置的连接器类型和箭头类型
+                FlowchartConnectorItem::ArrowType arrowType = FlowchartConnectorItem::NoArrow;  // 默认为无箭头
+                if (points.size() >= 3) {
+                    // 从第三个点获取箭头类型
+                    arrowType = static_cast<FlowchartConnectorItem::ArrowType>(static_cast<int>(points[2].x()));
+                }
+                
                 ConcreteFlowchartConnectorItem* connector = new ConcreteFlowchartConnectorItem(
                     points[0], points[1], 
                     m_connectorType, 
-                    m_arrowType);
+                    arrowType);
                 
                 // 如果有更多点，作为控制点
-                if (points.size() > 2) {
+                if (points.size() > 3) {
                     QList<QPointF> controlPoints;
-                    for (size_t i = 2; i < points.size(); ++i) {
+                    for (size_t i = 3; i < points.size(); ++i) {
                         controlPoints.append(points[i]);
                     }
                     connector->setControlPoints(controlPoints);

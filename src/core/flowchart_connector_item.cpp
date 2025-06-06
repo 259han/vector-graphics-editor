@@ -26,7 +26,7 @@ FlowchartConnectorItem::FlowchartConnectorItem(const QPointF& startPoint, const 
     
     // 默认样式
     setPen(QPen(Qt::black, 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
-    setBrush(Qt::black); // 用于箭头
+    setBrush(Qt::NoBrush); // 默认无填充
     
     // 默认控制点为空，会根据路径自动生成
     m_controlPoints.clear();
@@ -45,89 +45,77 @@ QRectF FlowchartConnectorItem::boundingRect() const
     return baseRect.adjusted(-m_arrowSize, -m_arrowSize, m_arrowSize, m_arrowSize);
 }
 
-void FlowchartConnectorItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
+void FlowchartConnectorItem::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget)
 {
-    // 使用缓存时调用基类方法
-    if (m_cachingEnabled && !m_cacheInvalid) {
-        GraphicItem::paint(painter, option, widget);
-        return;
-    }
+    // 调用基类的绘制方法
+    FlowchartBaseItem::paint(painter, option, widget);
     
-    // 绘制路径
+    // 设置画笔
     painter->setPen(m_pen);
     painter->setBrush(Qt::NoBrush);
+    
+    // 绘制路径
     painter->drawPath(m_path);
     
     // 绘制箭头
-    if (m_arrowType == SingleArrow || m_arrowType == DoubleArrow) {
-        // 获取路径上的最后一个点和倒数第二个点，用于绘制箭头
-        qreal len = m_path.length();
-        qreal percent = qMax(0.0, (len - 0.1) / len); // 稍微偏移，避免在路径末端
-        QPointF endPoint = m_path.pointAtPercent(1.0);
-        QPointF beforeEndPoint = m_path.pointAtPercent(percent);
+    if (m_path.length() > 0) {
+        // 设置箭头填充色
+        painter->setBrush(m_pen.color());
         
-        drawArrow(painter, beforeEndPoint, endPoint);
-    }
-    
-    // 如果是双箭头，绘制起点的箭头
-    if (m_arrowType == DoubleArrow) {
-        QPointF startPoint = m_path.pointAtPercent(0.0);
-        qreal percent = qMin(1.0, m_arrowSize / m_path.length());
-        QPointF afterStartPoint = m_path.pointAtPercent(percent);
-        
-        drawArrow(painter, afterStartPoint, startPoint);
-    }
-    
-    // 如果有文本，在路径中间绘制
-    if (m_textVisible && !m_text.isEmpty()) {
-        // 保存画笔状态
-        painter->save();
-        
-        // 在路径中间绘制文本
-        qreal percent = 0.5; // 路径的中点
-        QPointF textPoint = m_path.pointAtPercent(percent);
-        
-        // 绘制背景
-        QFontMetricsF fm(m_textFont);
-        QRectF textRect = fm.boundingRect(m_text);
-        textRect.moveCenter(textPoint);
-        textRect.adjust(-5, -2, 5, 2);
-        
-        painter->fillRect(textRect, Qt::white);
-        
-        // 设置文本绘制属性
-        painter->setFont(m_textFont);
-        painter->setPen(m_textColor);
-        
-        // 绘制文本
-        painter->drawText(textRect, Qt::AlignCenter, m_text);
-        
-        // 恢复画笔状态
-        painter->restore();
-    }
-    
-    // 如果被选中，绘制选择控制点
-    if (option->state & QStyle::State_Selected) {
-        // 在线段的起点、终点和控制点处绘制控制柄
-        painter->setPen(QPen(Qt::blue, 1, Qt::DashLine));
-        painter->setBrush(Qt::white);
-        
-        // 起点
-        painter->drawEllipse(m_startPoint, 5, 5);
-        
-        // 终点
-        painter->drawEllipse(m_endPoint, 5, 5);
-        
-        // 控制点
-        for (const QPointF& point : m_controlPoints) {
-            painter->drawEllipse(point, 5, 5);
+        // 绘制终点箭头
+        if (m_arrowType == SingleArrow) {
+            // 计算箭头位置
+            qreal percent = 1.0;
+            QPointF endPoint = m_path.pointAtPercent(percent);
+            QPointF prevPoint = m_path.pointAtPercent(percent - 0.01);
+            
+            // 计算箭头方向
+            QPointF direction = endPoint - prevPoint;
+            drawArrow(painter, endPoint, direction);
         }
+        // 绘制双箭头
+        else if (m_arrowType == DoubleArrow) {
+            // 绘制终点箭头
+            qreal percent = 1.0;
+            QPointF endPoint = m_path.pointAtPercent(percent);
+            QPointF prevPoint = m_path.pointAtPercent(percent - 0.01);
+            QPointF direction = endPoint - prevPoint;
+            drawArrow(painter, endPoint, direction);
+            
+            // 绘制起点箭头
+            QPointF startPoint = m_path.pointAtPercent(0);
+            QPointF nextPoint = m_path.pointAtPercent(0.01);
+            QPointF startDirection = nextPoint - startPoint;
+            drawArrow(painter, startPoint, startDirection);
+        }
+        
+        // 恢复无填充状态
+        painter->setBrush(Qt::NoBrush);
     }
+}
+
+void FlowchartConnectorItem::drawArrow(QPainter* painter, const QPointF& point, const QPointF& direction)
+{
+    // 计算箭头方向角度
+    qreal angle = std::atan2(direction.y(), direction.x()) * 180.0 / M_PI;
     
-    // 更新缓存
-    if (m_cachingEnabled) {
-        updateCache(painter, option);
-    }
+    // 箭头大小
+    qreal arrowSize = m_arrowSize;
+    
+    // 计算箭头顶点
+    QPointF arrowPoint1 = point + QPointF(
+        -arrowSize * cos((angle + 30) * M_PI / 180.0),
+        -arrowSize * sin((angle + 30) * M_PI / 180.0)
+    );
+    QPointF arrowPoint2 = point + QPointF(
+        -arrowSize * cos((angle - 30) * M_PI / 180.0),
+        -arrowSize * sin((angle - 30) * M_PI / 180.0)
+    );
+    
+    // 绘制箭头
+    QPolygonF arrow;
+    arrow << point << arrowPoint1 << arrowPoint2;
+    painter->drawPolygon(arrow);
 }
 
 QPainterPath FlowchartConnectorItem::shape() const
@@ -171,59 +159,17 @@ void FlowchartConnectorItem::updatePath()
         case ConnectorType::StraightLine:
             m_path = createStraightPath();
             break;
-        case ConnectorType::Polyline:
-            m_path = createOrthogonalPath();
-            break;
         case ConnectorType::BezierCurve:
             m_path = createCurvePath();
+            break;
+        case ConnectorType::Polyline:
+            m_path = createOrthogonalPath();
             break;
     }
     
     // 更新缓存
     invalidateCache();
     update();
-}
-
-void FlowchartConnectorItem::drawArrow(QPainter* painter, const QPointF& start, const QPointF& end)
-{
-    // 计算箭头方向
-    QLineF line(start, end);
-    
-    // 如果线段太短，不绘制箭头
-    if (line.length() < 1.0)
-        return;
-    
-    // 保存画笔状态
-    painter->save();
-    
-    // 计算线条的角度（从水平方向开始的弧度）
-    double angle = std::atan2(line.dy(), line.dx());
-    
-    // 确保箭头底边垂直于线条
-    // 计算垂直于线条的方向（顺时针旋转90度）
-    double perpAngle = angle + M_PI/2;
-    
-    // 设置箭头大小
-    double arrowWidth = m_arrowSize * 0.8; // 箭头宽度
-    double arrowHeight = m_arrowSize * 1.2; // 箭头高度
-    
-    // 计算垂直于线条的方向上的箭头两端点
-    QPointF baseCenter = end - QPointF(cos(angle) * arrowHeight/2, sin(angle) * arrowHeight/2);
-    QPointF baseLeft = baseCenter + QPointF(cos(perpAngle) * arrowWidth/2, sin(perpAngle) * arrowWidth/2);
-    QPointF baseRight = baseCenter - QPointF(cos(perpAngle) * arrowWidth/2, sin(perpAngle) * arrowWidth/2);
-    
-    // 箭头尖端向前延伸，确保是一个完整的三角形
-    QPointF tip = baseCenter + QPointF(cos(angle) * arrowHeight, sin(angle) * arrowHeight);
-    
-    // 绘制箭头
-    QPolygonF arrowHead;
-    arrowHead << tip << baseLeft << baseRight;
-    
-    painter->setBrush(m_brush);
-    painter->drawPolygon(arrowHead);
-    
-    // 恢复画笔状态
-    painter->restore();
 }
 
 QPainterPath FlowchartConnectorItem::createStraightPath() const

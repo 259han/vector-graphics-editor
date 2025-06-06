@@ -17,7 +17,6 @@ public:
         StraightLine,    // 直线
         BezierCurve,     // 贝塞尔曲线
         Polyline,         // 折线
-        OrthogonalLine   // 正交线
     };
     
     // 箭头类型
