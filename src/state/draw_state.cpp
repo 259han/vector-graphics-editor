@@ -371,10 +371,23 @@ QGraphicsItem* DrawState::createFinalItem(DrawArea* drawArea)
         }
         // 对于椭圆类型，确保使用与预览相同的标准化矩形
         else if (m_graphicType == Graphic::ELLIPSE) {
-            // 清除之前添加的点
-            points.clear();
-            // 使用标准化矩形的左上角和右下角点，与预览完全匹配
+            // 使用与预览相同的标准化矩形
             QRectF rect = QRectF(m_startPoint, m_currentPoint).normalized();
+            points.clear();
+            // 使用左上角和右下角点，与预览完全匹配
+            points.push_back(rect.topLeft());
+            points.push_back(rect.bottomRight());
+            
+            Logger::debug(QString("DrawState::createFinalItem: 标准化矩形: (%1,%2)-(%3,%4)")
+                         .arg(rect.left()).arg(rect.top())
+                         .arg(rect.right()).arg(rect.bottom()));
+        }
+        // 对于矩形类型，使用与预览相同的标准化矩形
+        else if (m_graphicType == Graphic::RECTANGLE) {
+            // 使用与预览相同的标准化矩形
+            QRectF rect = QRectF(m_startPoint, m_currentPoint).normalized();
+            points.clear();
+            // 使用左上角和右下角点，与预览完全匹配
             points.push_back(rect.topLeft());
             points.push_back(rect.bottomRight());
             

@@ -103,19 +103,18 @@ QGraphicsItem* DefaultGraphicsItemFactory::createCustomItem(GraphicItem::Graphic
             
         case GraphicItem::RECTANGLE:
             if (points.size() >= 2) {
-                QPointF center;
-                QSizeF size;
-                parseSizeFromPoints(points, center, size);
-                return new RectangleGraphicItem(center - QPointF(size.width()/2, size.height()/2), size);
+                // 直接使用左上角和右下角点创建矩形
+                return new RectangleGraphicItem(points[0], 
+                    QSizeF(points[1].x() - points[0].x(), points[1].y() - points[0].y()));
             }
             break;
             
         case GraphicItem::ELLIPSE:
             if (points.size() >= 2) {
-                QPointF center;
-                QSizeF size;
-                parseSizeFromPoints(points, center, size);
-                return new EllipseGraphicItem(center, size.width(), size.height());
+                // 直接使用左上角和右下角点创建椭圆
+                QRectF rect(points[0], points[1]);
+                return new EllipseGraphicItem(rect.center(), 
+                    rect.width(), rect.height());
             }
             break;
             
