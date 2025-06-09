@@ -378,7 +378,7 @@ bool cohenSutherlandClip(QPointF& p1, QPointF& p2, const QRectF& clipRect) {
     return accept;
 }
 
-// 将路径转换为点集合，优化曲线处理
+// 将路径转换为点集合
 std::vector<QPointF> pathToPoints(const QPainterPath& path, qreal flatness) {
     Logger::debug(QString("pathToPoints: 开始转换路径，元素数量: %1，平滑度: %2")
                  .arg(path.elementCount())
@@ -591,9 +591,6 @@ bool isPathRectangular(const QPainterPath& path, qreal tolerance) {
     
     // 计算边界矩形的面积
     qreal rectArea = bounds.width() * bounds.height();
-    
-    // 如果路径是矩形，则它应该有大约4个角点，
-    // 并且它的面积应该接近边界矩形的面积
     
     // 计算多边形的面积
     qreal polyArea = 0;

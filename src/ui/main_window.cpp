@@ -16,7 +16,7 @@
 #include <QSpinBox>
 #include <QStatusBar>
 #include <QDebug>
-#include "../core/graphic.h"
+#include "../core/graphic_item.h"
 #include "../command/command_manager.h"
 #include <QApplication>
 #include <QTimer>
@@ -1129,25 +1129,25 @@ void MainWindow::onDrawActionTriggered(QAction* action) {
         m_drawArea->setEditState();
         statusBar()->showMessage(tr("选择工具: 点击选择图形，拖动移动图形"));
     } else if (action == m_lineAction) {
-        m_drawArea->setDrawState(Graphic::LINE);
+        m_drawArea->setDrawState(GraphicItem::LINE);
         m_drawArea->setLineColor(m_currentLineColor);
         m_drawArea->setLineWidth(m_lineWidth);
         m_drawArea->setFillColor(m_currentFillColor);
         statusBar()->showMessage(tr("直线工具: 点击并拖动绘制直线"));
     } else if (action == m_rectAction) {
-        m_drawArea->setDrawState(Graphic::RECTANGLE);
+        m_drawArea->setDrawState(GraphicItem::RECTANGLE);
         m_drawArea->setLineColor(m_currentLineColor);
         m_drawArea->setLineWidth(m_lineWidth);
         m_drawArea->setFillColor(m_currentFillColor);
         statusBar()->showMessage(tr("矩形工具: 点击并拖动绘制矩形"));
     } else if (action == m_ellipseAction) {
-        m_drawArea->setDrawState(Graphic::ELLIPSE);
+        m_drawArea->setDrawState(GraphicItem::ELLIPSE);
         m_drawArea->setLineColor(m_currentLineColor);
         m_drawArea->setLineWidth(m_lineWidth);
         m_drawArea->setFillColor(m_currentFillColor);
         statusBar()->showMessage(tr("椭圆工具: 点击并拖动绘制椭圆"));
     } else if (action == m_bezierAction) {
-        m_drawArea->setDrawState(Graphic::BEZIER);
+        m_drawArea->setDrawState(GraphicItem::BEZIER);
         m_drawArea->setLineColor(m_currentLineColor);
         m_drawArea->setLineWidth(m_lineWidth);
         m_drawArea->setFillColor(m_currentFillColor);

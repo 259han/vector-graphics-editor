@@ -19,7 +19,6 @@
 FillState::FillState(const QColor& fillColor)
     : m_fillColor(fillColor)
 {
-    // 构造函数简化，只初始化填充颜色
     Logger::debug(QString("FillState: 创建填充状态，颜色: %1").arg(fillColor.name(QColor::HexArgb)));
 }
 

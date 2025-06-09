@@ -53,7 +53,6 @@ void ClipCommand::execute()
     
     m_executed = true;
     
-    // 更新场景显示
     m_scene->update();
     
     Logger::info(QString("ClipCommand::execute: 裁剪命令执行成功 - 图形类型: %1")
@@ -81,7 +80,6 @@ void ClipCommand::undo()
             graphicItem->restoreFromPoints(m_originalPoints);
         }
         
-        // 更新场景显示
         m_scene->update();
         
         m_executed = false;
@@ -99,7 +97,7 @@ void ClipCommand::undo()
 
 QString ClipCommand::getDescription() const
 {
-    return QString("裁剪%1").arg(m_item ? Graphic::graphicTypeToString(m_item->getGraphicType()) : "图形");
+    return QString("裁剪%1").arg(m_item ? GraphicItem::graphicTypeToString(m_item->getGraphicType()) : "图形");
 }
 
 QString ClipCommand::getType() const

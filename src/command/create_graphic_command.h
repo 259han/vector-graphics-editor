@@ -2,7 +2,6 @@
 #define CREATE_GRAPHIC_COMMAND_H
 
 #include "command.h"
-#include "../core/graphic.h"
 #include "../core/graphic_item.h"
 #include <QGraphicsItem>
 #include <QPointF>
@@ -26,7 +25,7 @@ public:
      * @param brush 图形的画刷
      */
     CreateGraphicCommand(DrawArea* drawArea, 
-                        Graphic::GraphicType type,
+                        GraphicItem::GraphicType type,
                         const std::vector<QPointF>& points,
                         const QPen& pen,
                         const QBrush& brush);
@@ -74,7 +73,7 @@ public:
 private:
     DrawArea* m_drawArea = nullptr;
     QGraphicsScene* m_scene = nullptr;
-    Graphic::GraphicType m_type;
+    GraphicItem::GraphicType m_type;
     std::vector<QPointF> m_points;
     QPen m_pen;
     QBrush m_brush;

@@ -85,7 +85,6 @@ void SelectionCommand::undo()
                 break;
         }
         
-        // 更新场景
         scene->update();
         if (m_drawArea->viewport()) {
             m_drawArea->viewport()->update();

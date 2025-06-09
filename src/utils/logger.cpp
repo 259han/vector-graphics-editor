@@ -135,7 +135,6 @@ void Logger::log(LogLevel level, const QString& message,
     
     QMutexLocker locker(&s_mutex);
     
-    // 确保已初始化
     if (!s_initialized) {
         init();
     }
@@ -146,9 +145,7 @@ void Logger::log(LogLevel level, const QString& message,
     
     QString entry;
     
-    // 如果提供了文件和行号信息，则包含它们
     if (file && line > 0 && function) {
-        // 提取仅文件名，不包含路径
         QString filename(file);
         int lastSlash = filename.lastIndexOf('/');
         if (lastSlash >= 0) {
@@ -199,7 +196,6 @@ void Logger::log(LogLevel level, const QString& message,
         s_logStream.flush();
     }
     
-    // 如果是致命错误，终止应用程序
     if (level == Fatal) {
         abort();
     }
@@ -230,13 +226,12 @@ bool Logger::ensureLogFileOpen() {
     
     if (success) {
         s_logStream.setDevice(&s_logFile);
-        // 添加日志文件头
+
         s_logStream << "\n=== Log started at " 
                    << QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss")
                    << " ===\n";
         s_logStream.flush();
         
-        // 记录日志目录路径，方便查找
         s_logStream << "=== Log directory: " << s_logDirectory << " ===\n";
         s_logStream.flush();
     } else {

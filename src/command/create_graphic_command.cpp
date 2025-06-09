@@ -8,7 +8,7 @@
 #include <QTimer>
 
 CreateGraphicCommand::CreateGraphicCommand(DrawArea* drawArea, 
-                                         Graphic::GraphicType type,
+                                         GraphicItem::GraphicType type,
                                          const std::vector<QPointF>& points,
                                          const QPen& pen,
                                          const QBrush& brush)
@@ -38,13 +38,11 @@ CreateGraphicCommand::CreateGraphicCommand(QGraphicsScene* scene, GraphicItem* g
 
 CreateGraphicCommand::~CreateGraphicCommand()
 {
-    // 注意：不删除 m_createdItem，因为它属于场景
     Logger::debug("CreateGraphicCommand: 销毁图形创建命令");
 }
 
 void CreateGraphicCommand::execute()
 {
-    // 对于直接创建模式，直接使用m_scene
     if (m_directCreation) {
         if (m_executed || !m_scene || !m_createdItem) {
             Logger::warning("CreateGraphicCommand::execute: 直接创建模式 - 命令已执行或场景/图形项无效");
@@ -53,14 +51,12 @@ void CreateGraphicCommand::execute()
         
         Logger::debug("CreateGraphicCommand::execute: 开始执行直接创建图形命令");
         
-        // 添加到场景
         Logger::debug(QString("CreateGraphicCommand::execute: 将图形项添加到场景, 指针: %1")
             .arg(reinterpret_cast<quintptr>(m_createdItem)));
         
         m_scene->addItem(m_createdItem);
         m_executed = true;
         
-        // 直接更新场景
         if (m_scene) {
             m_scene->update();
         }
@@ -70,7 +66,6 @@ void CreateGraphicCommand::execute()
         return;
     }
     
-    // 原有的创建模式
     if (m_executed || !m_drawArea) {
         Logger::warning("CreateGraphicCommand::execute: 命令已执行或DrawArea无效");
         return;
@@ -78,14 +73,12 @@ void CreateGraphicCommand::execute()
     
     Logger::debug("CreateGraphicCommand::execute: 开始执行创建图形命令");
     
-    // 确保场景可用
     QGraphicsScene* scene = m_drawArea->scene();
     if (!scene) {
         Logger::error("CreateGraphicCommand::execute: 场景无效");
         return;
     }
     
-    // 创建图形项
     if (m_createdItem == nullptr) {
         Logger::debug(QString("CreateGraphicCommand::execute: 创建图形项 - 类型: %1, 点数: %2")
             .arg(static_cast<int>(m_type))
@@ -98,20 +91,17 @@ void CreateGraphicCommand::execute()
             return;
         }
         
-        // 设置样式
         if (GraphicItem* graphicItem = dynamic_cast<GraphicItem*>(m_createdItem)) {
             graphicItem->setPen(m_pen);
             graphicItem->setBrush(m_brush);
             Logger::debug("CreateGraphicCommand::execute: 设置图形样式完成");
         }
         
-        // 设置图形项标志，确保它可以被选择和移动
         m_createdItem->setFlag(QGraphicsItem::ItemIsSelectable, true);
         m_createdItem->setFlag(QGraphicsItem::ItemIsMovable, true);
         Logger::debug("CreateGraphicCommand::execute: 设置图形标志完成");
     }
     
-    // 添加到场景
     if (m_createdItem) {
         Logger::debug(QString("CreateGraphicCommand::execute: 将图形项添加到场景, 指针: %1")
             .arg(reinterpret_cast<quintptr>(m_createdItem)));
@@ -119,12 +109,10 @@ void CreateGraphicCommand::execute()
         scene->addItem(m_createdItem);
         m_executed = true;
         
-        // 直接处理新图形项（包括自动注册流程图元素）
         if (m_drawArea && m_createdItem) {
             m_drawArea->handleNewGraphicItem(m_createdItem);
         }
         
-        // 直接更新场景和视图
         scene->update();
         if (m_drawArea && m_drawArea->viewport()) {
             m_drawArea->viewport()->update();
@@ -144,14 +132,12 @@ void CreateGraphicCommand::undo()
         return;
     }
     
-    // 获取场景
     QGraphicsScene* scene = m_directCreation ? m_scene : m_drawArea->scene();
     if (!scene) {
         Logger::warning("CreateGraphicCommand::undo: 场景无效");
         return;
     }
     
-    // 检查图形项是否在场景中，避免操作已删除的项目
     if (!m_createdItem->scene() || m_createdItem->scene() != scene) {
         Logger::warning("CreateGraphicCommand::undo: 图形项不在当前场景中，可能已被删除");
         m_executed = false;
@@ -159,10 +145,8 @@ void CreateGraphicCommand::undo()
     }
     
     try {
-        // 从场景中移除图形项
         scene->removeItem(m_createdItem);
         
-        // 强制更新场景和视图
         scene->update();
         if (!m_directCreation && m_drawArea && m_drawArea->viewport()) {
             m_drawArea->viewport()->update();
@@ -184,7 +168,7 @@ void CreateGraphicCommand::undo()
 
 QString CreateGraphicCommand::getDescription() const
 {
-    return QString("创建%1").arg(Graphic::graphicTypeToString(m_type));
+    return QString("创建%1").arg(GraphicItem::graphicTypeToString(m_type));
 }
 
 QString CreateGraphicCommand::getType() const

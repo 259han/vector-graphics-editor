@@ -2,7 +2,7 @@
 #define PASTE_COMMAND_H
 
 #include "command.h"
-#include "../core/graphic.h"
+#include "../core/graphic_item.h"
 #include <QGraphicsItem>
 #include <QList>
 #include <QPointF>

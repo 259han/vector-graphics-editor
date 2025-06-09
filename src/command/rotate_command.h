@@ -2,11 +2,11 @@
 #define ROTATE_COMMAND_H
 
 #include "command.h"
-#include "../core/graphic.h"
+#include "../core/graphic_item.h"
 
 class RotateCommand : public Command {
 public:
-    RotateCommand(Graphic* graphic, double angle);
+    RotateCommand(GraphicItem* graphic, double angle);
     
     void execute() override;
     void undo() override;
@@ -14,7 +14,7 @@ public:
     QString getType() const override;
 
 private:
-    Graphic* m_graphic;
+    GraphicItem* m_graphic;
     double m_angle;
 };
 

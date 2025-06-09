@@ -30,7 +30,6 @@ public:
         BEZIER = 5,     // Bezier曲线
         TRIANGLE = 6,   // 三角形
         FILL = 7,       // 填充
-        // 后续添加更多图形...
         CLIP = 9,       // 裁剪操作
         // 流程图图元
         FLOWCHART_PROCESS = 10,    // 流程图处理框（矩形）
@@ -71,13 +70,13 @@ public:
     // 从Graphic继承的核心绘制方法
     virtual void draw(QPainter& painter) const;
     
-    // 几何变换方法（提供一致的API）
+    // 几何变换方法
     virtual void moveBy(const QPointF& offset);
     virtual void rotateBy(double angle);
     virtual void scaleBy(double factor);
     virtual void mirror(bool horizontal);
     
-    // 从Graphic继承的几何变换方法别名，保持API兼容性
+    // 变换方法的别名
     virtual void move(const QPointF& offset) { moveBy(offset); }
     virtual void rotate(double angle) { rotateBy(angle); }
     virtual void scale(double factor) { scaleBy(factor); }
@@ -208,8 +207,5 @@ protected:
     // 更新缓存
     void updateCache(QPainter *painter, const QStyleOptionGraphicsItem *option);
 };
-
-// 为保持兼容性，是GraphicItem的别名
-typedef GraphicItem Graphic;
 
 #endif // GRAPHIC_ITEM_H 

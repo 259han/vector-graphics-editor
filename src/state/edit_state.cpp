@@ -2,8 +2,6 @@
 #include "../ui/draw_area.h"
 #include "../core/graphic_item.h"
 #include "../core/selection_manager.h"
-// 裁剪功能已移至future/clip目录
-// #include "../core/graphics_clipper.h"
 #include "../command/selection_command.h"
 #include "../command/style_change_command.h"
 #include "../command/transform_command.h"

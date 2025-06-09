@@ -9,7 +9,6 @@
 #include <QToolTip>
 
 EditorState::EditorState() : m_isPressed(false) {
-    // 构造函数简单初始化基本属性
     logDebug("创建新的编辑器状态");
 }
 

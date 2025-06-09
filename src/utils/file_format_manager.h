@@ -8,7 +8,7 @@
 #include <QDataStream>
 #include <functional>
 #include <memory>
-#include "../core/graphic.h"
+#include "../core/graphic_item.h"
 
 class QIODevice;
 class GraphicItem;
@@ -31,7 +31,7 @@ public:
     // 自定义矢量格式 (.cvg) 操作
     bool saveToCustomFormat(const QString& filePath, QGraphicsScene* scene);
     bool loadFromCustomFormat(const QString& filePath, QGraphicsScene* scene, 
-                              std::function<GraphicItem*(Graphic::GraphicType, const QPointF&, const QPen&, const QBrush&, 
+                              std::function<GraphicItem*(GraphicItem::GraphicType, const QPointF&, const QPen&, const QBrush&, 
                                                  const std::vector<QPointF>&, double, const QPointF&)> itemFactory,
                               ConnectionManager* connectionManager = nullptr,
                               ConnectionPointOverlay* connectionOverlay = nullptr,
@@ -52,7 +52,7 @@ private:
     // 序列化图形项辅助方法
     bool serializeGraphicItems(QDataStream& stream, const QList<QGraphicsItem*>& items);
     bool deserializeGraphicItems(QDataStream& stream, QGraphicsScene* scene,
-                                std::function<GraphicItem*(Graphic::GraphicType, const QPointF&, const QPen&, const QBrush&, 
+                                std::function<GraphicItem*(GraphicItem::GraphicType, const QPointF&, const QPen&, const QBrush&, 
                                                  const std::vector<QPointF>&, double, const QPointF&)> itemFactory,
                                 ConnectionManager* connectionManager = nullptr,
                                 ConnectionPointOverlay* connectionOverlay = nullptr,

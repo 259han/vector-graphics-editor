@@ -1,5 +1,4 @@
 #include "file_format_manager.h"
-#include "../core/graphic_item.h"
 #include "../core/flowchart_connector_item.h"
 #include "../utils/logger.h"
 #include "../utils/scene_utils.h"
@@ -77,7 +76,7 @@ bool FileFormatManager::saveToCustomFormat(const QString& filePath, QGraphicsSce
 
 // 从自定义矢量格式加载
 bool FileFormatManager::loadFromCustomFormat(const QString& filePath, QGraphicsScene* scene, 
-    std::function<GraphicItem*(Graphic::GraphicType, const QPointF&, const QPen&, const QBrush&, 
+    std::function<GraphicItem*(GraphicItem::GraphicType, const QPointF&, const QPen&, const QBrush&, 
         const std::vector<QPointF>&, double, const QPointF&)> itemFactory,
     ConnectionManager* connectionManager,
     ConnectionPointOverlay* connectionOverlay,
@@ -242,7 +241,7 @@ static void skipOneGraphicItem(QDataStream& stream) {
 
 // 反序列化图形项辅助方法
 bool FileFormatManager::deserializeGraphicItems(QDataStream& stream, QGraphicsScene* scene,
-    std::function<GraphicItem*(Graphic::GraphicType, const QPointF&, const QPen&, const QBrush&, 
+    std::function<GraphicItem*(GraphicItem::GraphicType, const QPointF&, const QPen&, const QBrush&, 
                               const std::vector<QPointF>&, double, const QPointF&)> itemFactory,
     ConnectionManager* connectionManager,
     ConnectionPointOverlay* connectionOverlay,
@@ -263,7 +262,7 @@ bool FileFormatManager::deserializeGraphicItems(QDataStream& stream, QGraphicsSc
         
         Logger::debug(QString("FileFormatManager::deserializeGraphicItems: 处理第%1个图元，类型=%2").arg(i).arg(storedType));
         
-        GraphicItem* item = itemFactory(static_cast<Graphic::GraphicType>(storedType), 
+        GraphicItem* item = itemFactory(static_cast<GraphicItem::GraphicType>(storedType), 
                                        QPointF(), QPen(), QBrush(), std::vector<QPointF>(), 0.0, QPointF(1,1));
         if (item) {
             Logger::debug(QString("FileFormatManager::deserializeGraphicItems: 创建图元成功，开始反序列化"));
@@ -311,8 +310,6 @@ bool FileFormatManager::deserializeGraphicItems(QDataStream& stream, QGraphicsSc
 // 序列化图层信息
 bool FileFormatManager::serializeLayers(QDataStream& stream, QGraphicsScene* scene) {
     // 在当前版本中，我们只简单地保存Z顺序
-    // 未来可以扩展支持真正的图层功能
-    
     // 写入图层数量（目前为1，表示无图层）
     stream << (qint32)1;
     
@@ -324,8 +321,6 @@ bool FileFormatManager::deserializeLayers(QDataStream& stream, QGraphicsScene* s
     // 读取图层数量
     qint32 layerCount;
     stream >> layerCount;
-    
-    // 目前不做任何特殊处理，因为我们只有一个图层
     
     return stream.status() == QDataStream::Ok;
 } 

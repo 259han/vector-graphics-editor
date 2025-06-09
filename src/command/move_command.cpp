@@ -1,6 +1,6 @@
 #include "move_command.h"
 
-MoveCommand::MoveCommand(Graphic* graphic, const QPointF& offset)
+MoveCommand::MoveCommand(GraphicItem* graphic, const QPointF& offset)
     : m_graphic(graphic), m_offset(offset) {}
 
 void MoveCommand::execute() {
@@ -18,7 +18,7 @@ void MoveCommand::undo() {
 QString MoveCommand::getDescription() const {
     if (!m_graphic) return "移动图形";
     
-    QString graphicType = Graphic::graphicTypeToString(m_graphic->getType());
+    QString graphicType = GraphicItem::graphicTypeToString(m_graphic->getType());
     return QString("移动%1 (%2, %3)").arg(graphicType)
             .arg(m_offset.x()).arg(m_offset.y());
 }

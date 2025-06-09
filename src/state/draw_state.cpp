@@ -1,6 +1,5 @@
 #include "draw_state.h"
 #include "../ui/draw_area.h"
-#include "../core/graphic_item.h"
 #include "../core/graphics_item_factory.h"
 #include "../command/create_graphic_command.h"
 #include "../command/command_manager.h"
@@ -25,29 +24,29 @@
 #include "../utils/logger.h"
 #include <QTimer>
 
-DrawState::DrawState(Graphic::GraphicType type)
+DrawState::DrawState(GraphicItem::GraphicType type)
     : m_graphicType(type)
 {
     // 根据图形类型选择适当的绘制策略
     switch (type) {
-        case Graphic::LINE:
+        case GraphicItem::LINE:
             m_drawStrategy = std::make_shared<LineDrawStrategy>();
             break;
-        case Graphic::RECTANGLE:
+        case GraphicItem::RECTANGLE:
             m_drawStrategy = std::make_shared<RectangleDrawStrategy>();
             break;
-        case Graphic::CIRCLE:
+        case GraphicItem::CIRCLE:
             m_drawStrategy = std::make_shared<CircleDrawStrategy>();
             break;
-        case Graphic::ELLIPSE:
+        case GraphicItem::ELLIPSE:
             m_drawStrategy = std::make_shared<EllipseDrawStrategy>();
             break;
-        case Graphic::BEZIER:
+        case GraphicItem::BEZIER:
             m_drawStrategy = std::make_shared<BezierDrawStrategy>();
             break;
         // 其他类型的绘制策略初始化
         /*
-        case Graphic::TRIANGLE:
+        case GraphicItem::TRIANGLE:
             // 处理三角形
             break;
         */
@@ -94,28 +93,28 @@ void DrawState::mouseMoveEvent(DrawArea* drawArea, QMouseEvent* event)
         // 更新鼠标移动时的提示信息
         QString statusMsg;
         if (m_isDrawing) {
-            if (m_graphicType == Graphic::BEZIER) {
+            if (m_graphicType == GraphicItem::BEZIER) {
                 statusMsg = QString("贝塞尔曲线: 点击添加控制点，右键结束绘制");
             } else {
                 double width = qAbs(m_currentPoint.x() - m_startPoint.x());
                 double height = qAbs(m_currentPoint.y() - m_startPoint.y());
                 
-                if (m_graphicType == Graphic::LINE) {
+                if (m_graphicType == GraphicItem::LINE) {
                     double length = QLineF(m_startPoint, m_currentPoint).length();
                     statusMsg = QString("正在绘制直线: 长度 %1").arg(length, 0, 'f', 1);
-                } else if (m_graphicType == Graphic::RECTANGLE) {
+                } else if (m_graphicType == GraphicItem::RECTANGLE) {
                     statusMsg = QString("正在绘制矩形: %1 x %2").arg(width, 0, 'f', 1).arg(height, 0, 'f', 1);
-                } else if (m_graphicType == Graphic::ELLIPSE) {
+                } else if (m_graphicType == GraphicItem::ELLIPSE) {
                     statusMsg = QString("正在绘制椭圆: %1 x %2").arg(width, 0, 'f', 1).arg(height, 0, 'f', 1);
-                } else if (m_graphicType == Graphic::FLOWCHART_PROCESS) {
+                } else if (m_graphicType == GraphicItem::FLOWCHART_PROCESS) {
                     statusMsg = QString("正在绘制流程图处理框: %1 x %2").arg(width, 0, 'f', 1).arg(height, 0, 'f', 1);
-                } else if (m_graphicType == Graphic::FLOWCHART_DECISION) {
+                } else if (m_graphicType == GraphicItem::FLOWCHART_DECISION) {
                     statusMsg = QString("正在绘制流程图判断框: %1 x %2").arg(width, 0, 'f', 1).arg(height, 0, 'f', 1);
-                } else if (m_graphicType == Graphic::FLOWCHART_START_END) {
+                } else if (m_graphicType == GraphicItem::FLOWCHART_START_END) {
                     statusMsg = QString("正在绘制流程图开始/结束框: %1 x %2").arg(width, 0, 'f', 1).arg(height, 0, 'f', 1);
-                } else if (m_graphicType == Graphic::FLOWCHART_IO) {
+                } else if (m_graphicType == GraphicItem::FLOWCHART_IO) {
                     statusMsg = QString("正在绘制流程图输入/输出框: %1 x %2").arg(width, 0, 'f', 1).arg(height, 0, 'f', 1);
-                } else if (m_graphicType == Graphic::FLOWCHART_CONNECTOR) {
+                } else if (m_graphicType == GraphicItem::FLOWCHART_CONNECTOR) {
                     double length = QLineF(m_startPoint, m_currentPoint).length();
                     statusMsg = QString("正在绘制流程图连接器: 长度 %1").arg(length, 0, 'f', 1);
                 }
@@ -132,7 +131,7 @@ void DrawState::mouseReleaseEvent(DrawArea* drawArea, QMouseEvent* event)
 {
     if (event->button() == Qt::LeftButton) {
         // 对于非Bezier曲线类型，鼠标释放即完成绘制
-        if (m_isDrawing && m_graphicType != Graphic::BEZIER) {
+        if (m_isDrawing && m_graphicType != GraphicItem::BEZIER) {
             // 移除预览项
             if (m_previewItem) {
                 drawArea->scene()->removeItem(m_previewItem);
@@ -143,7 +142,7 @@ void DrawState::mouseReleaseEvent(DrawArea* drawArea, QMouseEvent* event)
             // 记录绘制完成时的信息
             QPointF startPoint = m_startPoint;
             QPointF endPoint = m_currentPoint;
-            Graphic::GraphicType type = m_graphicType;
+            GraphicItem::GraphicType type = m_graphicType;
             
             // 重置状态变量
             m_isDrawing = false;
@@ -161,31 +160,31 @@ void DrawState::mouseReleaseEvent(DrawArea* drawArea, QMouseEvent* event)
             // 更新状态栏消息
             QString statusMsg;
             switch (m_graphicType) {
-                case Graphic::LINE:
+                case GraphicItem::LINE:
                     statusMsg = "直线工具: 按住左键并拖动鼠标绘制直线";
                     break;
-                case Graphic::RECTANGLE:
+                case GraphicItem::RECTANGLE:
                     statusMsg = "矩形工具: 按住左键并拖动鼠标绘制矩形";
                     break;
-                case Graphic::ELLIPSE:
+                case GraphicItem::ELLIPSE:
                     statusMsg = "椭圆工具: 按住左键并拖动鼠标绘制椭圆";
                     break;
-                case Graphic::BEZIER:
+                case GraphicItem::BEZIER:
                     statusMsg = "贝塞尔曲线工具: 点击添加控制点, 右键点击完成曲线";
                     break;
-                case Graphic::FLOWCHART_PROCESS:
+                case GraphicItem::FLOWCHART_PROCESS:
                     statusMsg = "流程图处理框: 按住左键并拖动鼠标绘制处理框（矩形）";
                     break;
-                case Graphic::FLOWCHART_DECISION:
+                case GraphicItem::FLOWCHART_DECISION:
                     statusMsg = "流程图判断框: 按住左键并拖动鼠标绘制判断框（菱形）";
                     break;
-                case Graphic::FLOWCHART_START_END:
+                case GraphicItem::FLOWCHART_START_END:
                     statusMsg = "流程图开始/结束框: 按住左键并拖动鼠标绘制开始/结束框（圆角矩形）";
                     break;
-                case Graphic::FLOWCHART_IO:
+                case GraphicItem::FLOWCHART_IO:
                     statusMsg = "流程图输入/输出框: 按住左键并拖动鼠标绘制输入/输出框（平行四边形）";
                     break;
-                case Graphic::FLOWCHART_CONNECTOR:
+                case GraphicItem::FLOWCHART_CONNECTOR:
                     statusMsg = "流程图连接器: 按住左键并拖动鼠标绘制连接线（带箭头）";
                     break;
                 default:
@@ -299,17 +298,17 @@ QGraphicsItem* DrawState::createFinalItem(DrawArea* drawArea)
     QBrush brush;
     
     // 为流程图元素设置默认的白色填充，除非已经设置了填充色
-    if (m_graphicType == Graphic::FLOWCHART_PROCESS || 
-        m_graphicType == Graphic::FLOWCHART_DECISION || 
-        m_graphicType == Graphic::FLOWCHART_START_END || 
-        m_graphicType == Graphic::FLOWCHART_IO) {
+    if (m_graphicType == GraphicItem::FLOWCHART_PROCESS || 
+        m_graphicType == GraphicItem::FLOWCHART_DECISION || 
+        m_graphicType == GraphicItem::FLOWCHART_START_END || 
+        m_graphicType == GraphicItem::FLOWCHART_IO) {
         if (m_fillMode) {
             brush = QBrush(m_fillColor);
         } else {
             brush = QBrush(Qt::white); // 默认白色填充
         }
         Logger::debug(QString("DrawState::createFinalItem: 设置流程图元素填充色: %1").arg(brush.color().name()));
-    } else if (m_graphicType == Graphic::FLOWCHART_CONNECTOR) {
+    } else if (m_graphicType == GraphicItem::FLOWCHART_CONNECTOR) {
         // 对于连接器，画刷用于箭头填充，应与线条颜色一致
         brush = QBrush(m_lineColor);
         Logger::debug(QString("DrawState::createFinalItem: 设置流程图连接器箭头填充色: %1").arg(brush.color().name()));
@@ -321,7 +320,7 @@ QGraphicsItem* DrawState::createFinalItem(DrawArea* drawArea)
     // 创建命令
     std::vector<QPointF> points;
     
-    if (m_graphicType == Graphic::BEZIER) {
+    if (m_graphicType == GraphicItem::BEZIER) {
         // 为Bezier曲线只使用控制点，不计算曲线上的点
         points = m_bezierControlPoints;
         Logger::debug(QString("DrawState::createFinalItem: 贝塞尔曲线控制点数量: %1").arg(points.size()));
@@ -334,7 +333,7 @@ QGraphicsItem* DrawState::createFinalItem(DrawArea* drawArea)
         points.push_back(m_currentPoint);
         
         // 对于流程图连接器，确保起点和终点顺序正确
-        if (m_graphicType == Graphic::FLOWCHART_CONNECTOR) {
+        if (m_graphicType == GraphicItem::FLOWCHART_CONNECTOR) {
             // 清除之前添加的点
             points.clear();
             // 确保连接器的起点和终点与预览一致
@@ -346,10 +345,10 @@ QGraphicsItem* DrawState::createFinalItem(DrawArea* drawArea)
                          .arg(m_currentPoint.x()).arg(m_currentPoint.y()));
         }
         // 对于基于矩形的流程图元素，需要特殊处理
-        else if (m_graphicType == Graphic::FLOWCHART_PROCESS || 
-                 m_graphicType == Graphic::FLOWCHART_DECISION || 
-                 m_graphicType == Graphic::FLOWCHART_START_END || 
-                 m_graphicType == Graphic::FLOWCHART_IO) {
+        else if (m_graphicType == GraphicItem::FLOWCHART_PROCESS || 
+                 m_graphicType == GraphicItem::FLOWCHART_DECISION || 
+                 m_graphicType == GraphicItem::FLOWCHART_START_END || 
+                 m_graphicType == GraphicItem::FLOWCHART_IO) {
             // 清除之前添加的点
             points.clear();
             
@@ -370,7 +369,7 @@ QGraphicsItem* DrawState::createFinalItem(DrawArea* drawArea)
                          .arg(rect.width()).arg(rect.height()));
         }
         // 对于椭圆类型，确保使用与预览相同的标准化矩形
-        else if (m_graphicType == Graphic::ELLIPSE) {
+        else if (m_graphicType == GraphicItem::ELLIPSE) {
             // 使用与预览相同的标准化矩形
             QRectF rect = QRectF(m_startPoint, m_currentPoint).normalized();
             points.clear();
@@ -383,7 +382,7 @@ QGraphicsItem* DrawState::createFinalItem(DrawArea* drawArea)
                          .arg(rect.right()).arg(rect.bottom()));
         }
         // 对于矩形类型，使用与预览相同的标准化矩形
-        else if (m_graphicType == Graphic::RECTANGLE) {
+        else if (m_graphicType == GraphicItem::RECTANGLE) {
             // 使用与预览相同的标准化矩形
             QRectF rect = QRectF(m_startPoint, m_currentPoint).normalized();
             points.clear();
@@ -435,13 +434,13 @@ QGraphicsItem* DrawState::createFinalItem(DrawArea* drawArea)
         if (item) {
             Logger::debug(QString("DrawState::createFinalItem: 图形项创建成功，指针: %1")
                         .arg(reinterpret_cast<quintptr>(item)));
-            Logger::info(QString("DrawState: 创建了 %1 图形").arg(Graphic::graphicTypeToString(m_graphicType)));
+            Logger::info(QString("DrawState: 创建了 %1 图形").arg(GraphicItem::graphicTypeToString(m_graphicType)));
             
             // 立即通知DrawArea处理新创建的流程图元素
-            if (m_graphicType == Graphic::FLOWCHART_PROCESS || 
-                m_graphicType == Graphic::FLOWCHART_DECISION || 
-                m_graphicType == Graphic::FLOWCHART_START_END || 
-                m_graphicType == Graphic::FLOWCHART_IO) {
+            if (m_graphicType == GraphicItem::FLOWCHART_PROCESS || 
+                m_graphicType == GraphicItem::FLOWCHART_DECISION || 
+                m_graphicType == GraphicItem::FLOWCHART_START_END || 
+                m_graphicType == GraphicItem::FLOWCHART_IO) {
                 drawArea->handleNewGraphicItem(item);
             }
         } else {
@@ -473,7 +472,7 @@ void DrawState::updatePreviewItem(DrawArea* drawArea)
 
     // 为不同的图形类型创建或更新预览
     switch (m_graphicType) {
-        case Graphic::LINE: {
+        case GraphicItem::LINE: {
             // 线条预览
             if (!m_previewItem) {
                 // 创建新的线条预览
@@ -489,7 +488,7 @@ void DrawState::updatePreviewItem(DrawArea* drawArea)
             }
             break;
         }
-        case Graphic::RECTANGLE: {
+        case GraphicItem::RECTANGLE: {
             // 矩形预览
             QRectF rect = QRectF(m_startPoint, m_currentPoint).normalized();
             
@@ -512,7 +511,7 @@ void DrawState::updatePreviewItem(DrawArea* drawArea)
             }
             break;
         }
-        case Graphic::ELLIPSE: {
+        case GraphicItem::ELLIPSE: {
             // 椭圆预览
             QRectF rect = QRectF(m_startPoint, m_currentPoint).normalized();
             
@@ -535,7 +534,7 @@ void DrawState::updatePreviewItem(DrawArea* drawArea)
             }
             break;
         }
-        case Graphic::BEZIER: {
+        case GraphicItem::BEZIER: {
             // 贝塞尔曲线预览
             if (m_bezierControlPoints.size() >= 2) {
                 QPainterPath path;
@@ -586,7 +585,7 @@ void DrawState::updatePreviewItem(DrawArea* drawArea)
         }
         
         // 流程图元素预览
-        case Graphic::FLOWCHART_PROCESS: {
+        case GraphicItem::FLOWCHART_PROCESS: {
             // 处理框（矩形）预览
             QRectF rect = QRectF(m_startPoint, m_currentPoint).normalized();
             
@@ -612,7 +611,7 @@ void DrawState::updatePreviewItem(DrawArea* drawArea)
             break;
         }
         
-        case Graphic::FLOWCHART_DECISION: {
+        case GraphicItem::FLOWCHART_DECISION: {
             // 判断框（菱形）预览
             QRectF rect = QRectF(m_startPoint, m_currentPoint).normalized();
             
@@ -653,7 +652,7 @@ void DrawState::updatePreviewItem(DrawArea* drawArea)
             break;
         }
         
-        case Graphic::FLOWCHART_START_END: {
+        case GraphicItem::FLOWCHART_START_END: {
             // 开始/结束框（圆角矩形）预览
             QRectF rect = QRectF(m_startPoint, m_currentPoint).normalized();
             
@@ -684,7 +683,7 @@ void DrawState::updatePreviewItem(DrawArea* drawArea)
             break;
         }
         
-        case Graphic::FLOWCHART_IO: {
+        case GraphicItem::FLOWCHART_IO: {
             // 输入/输出框（平行四边形）预览
             QRectF rect = QRectF(m_startPoint, m_currentPoint).normalized();
             
@@ -736,7 +735,7 @@ void DrawState::updatePreviewItem(DrawArea* drawArea)
             break;
         }
         
-        case Graphic::FLOWCHART_CONNECTOR: {
+        case GraphicItem::FLOWCHART_CONNECTOR: {
             // 连接器（带箭头的线）预览
             if (!m_previewItem) {
                 // 创建新的路径预览（使用QPainterPath而不是简单线段）
@@ -903,7 +902,7 @@ void DrawState::updatePreviewItem(DrawArea* drawArea)
 
 void DrawState::handleRightMousePress(DrawArea* drawArea, QPointF scenePos)
 {
-    if (m_isDrawing && m_graphicType == Graphic::BEZIER) {
+    if (m_isDrawing && m_graphicType == GraphicItem::BEZIER) {
         // 完成贝塞尔曲线绘制
         if (m_bezierControlPoints.size() >= 2) {
             // 移除预览项
@@ -921,7 +920,6 @@ void DrawState::handleRightMousePress(DrawArea* drawArea, QPointF scenePos)
             m_bezierControlPoints.clear();
             clearControlPointMarkers(drawArea);
             
-            // 更新场景
             if (drawArea && drawArea->scene()) {
                 drawArea->scene()->update();
             }
@@ -937,7 +935,7 @@ void DrawState::handleLeftMousePress(DrawArea* drawArea, QPointF scenePos)
         m_currentPoint = scenePos;
         m_isDrawing = true;
         
-        if (m_graphicType == Graphic::BEZIER) {
+        if (m_graphicType == GraphicItem::BEZIER) {
             m_bezierControlPoints.push_back(scenePos);
             // 绘制第一个控制点
             drawControlPoints(drawArea);
@@ -946,7 +944,7 @@ void DrawState::handleLeftMousePress(DrawArea* drawArea, QPointF scenePos)
         // 继续绘制
         m_currentPoint = scenePos;
         
-        if (m_graphicType == Graphic::BEZIER) {
+        if (m_graphicType == GraphicItem::BEZIER) {
             m_bezierControlPoints.push_back(scenePos);
             // 更新控制点显示
             drawControlPoints(drawArea);
@@ -1050,31 +1048,31 @@ void DrawState::onEnterState(DrawArea* drawArea)
     // 基于状态类型更新状态栏消息
     QString statusMsg;
     switch (m_graphicType) {
-        case Graphic::LINE:
+        case GraphicItem::LINE:
             statusMsg = "直线工具: 按住左键并拖动鼠标绘制直线";
             break;
-        case Graphic::RECTANGLE:
+        case GraphicItem::RECTANGLE:
             statusMsg = "矩形工具: 按住左键并拖动鼠标绘制矩形";
             break;
-        case Graphic::ELLIPSE:
+        case GraphicItem::ELLIPSE:
             statusMsg = "椭圆工具: 按住左键并拖动鼠标绘制椭圆";
             break;
-        case Graphic::BEZIER:
+        case GraphicItem::BEZIER:
             statusMsg = "贝塞尔曲线工具: 点击添加控制点, 右键点击完成曲线";
             break;
-        case Graphic::FLOWCHART_PROCESS:
+        case GraphicItem::FLOWCHART_PROCESS:
             statusMsg = "流程图处理框: 按住左键并拖动鼠标绘制处理框（矩形）";
             break;
-        case Graphic::FLOWCHART_DECISION:
+        case GraphicItem::FLOWCHART_DECISION:
             statusMsg = "流程图判断框: 按住左键并拖动鼠标绘制判断框（菱形）";
             break;
-        case Graphic::FLOWCHART_START_END:
+        case GraphicItem::FLOWCHART_START_END:
             statusMsg = "流程图开始/结束框: 按住左键并拖动鼠标绘制开始/结束框（圆角矩形）";
             break;
-        case Graphic::FLOWCHART_IO:
+        case GraphicItem::FLOWCHART_IO:
             statusMsg = "流程图输入/输出框: 按住左键并拖动鼠标绘制输入/输出框（平行四边形）";
             break;
-        case Graphic::FLOWCHART_CONNECTOR:
+        case GraphicItem::FLOWCHART_CONNECTOR:
             statusMsg = "流程图连接器: 按住左键并拖动鼠标绘制连接线（带箭头）";
             break;
         default:

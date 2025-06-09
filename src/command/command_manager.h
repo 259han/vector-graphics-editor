@@ -14,10 +14,9 @@ class CommandManager : public QObject {
     Q_OBJECT
     
 public:
-    // 获取单例实例（线程安全，使用C++11的Magic Static特性）
+    // 获取单例实例
     static CommandManager& getInstance();
-    
-    // 析构函数必须为public，使unique_ptr能够正确删除
+
     ~CommandManager();
     
     // 执行命令并将其放入撤销栈

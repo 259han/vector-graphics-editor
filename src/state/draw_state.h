@@ -2,7 +2,7 @@
 #define DRAW_STATE_H
 
 #include "editor_state.h"
-#include "../core/graphic.h"
+#include "../core/graphic_item.h"
 #include "../core/draw_strategy.h"
 #include "../core/graphics_item_factory.h"
 #include <QColor>
@@ -17,7 +17,7 @@
 
 class DrawState : public EditorState {
 public:
-    explicit DrawState(Graphic::GraphicType type);
+    explicit DrawState(GraphicItem::GraphicType type);
     ~DrawState() override = default;
     
     void mousePressEvent(DrawArea* drawArea, QMouseEvent* event) override;
@@ -49,23 +49,23 @@ public:
     StateType getStateType() const override { return StateType::DrawState; }
     QString getStateName() const override { 
         switch (m_graphicType) {
-            case Graphic::LINE: return "绘制直线";
-            case Graphic::RECTANGLE: return "绘制矩形";
-            case Graphic::ELLIPSE: return "绘制椭圆";
-            case Graphic::CIRCLE: return "绘制圆形";
-            case Graphic::BEZIER: return "绘制贝塞尔曲线";
-            case Graphic::TRIANGLE: return "绘制三角形";
-            case Graphic::FLOWCHART_PROCESS: return "绘制流程图处理框";
-            case Graphic::FLOWCHART_DECISION: return "绘制流程图判断框";
-            case Graphic::FLOWCHART_START_END: return "绘制流程图开始/结束框";
-            case Graphic::FLOWCHART_IO: return "绘制流程图输入/输出框";
-            case Graphic::FLOWCHART_CONNECTOR: return "绘制流程图连接器";
+            case GraphicItem::LINE: return "绘制直线";
+            case GraphicItem::RECTANGLE: return "绘制矩形";
+            case GraphicItem::ELLIPSE: return "绘制椭圆";
+            case GraphicItem::CIRCLE: return "绘制圆形";
+            case GraphicItem::BEZIER: return "绘制贝塞尔曲线";
+            case GraphicItem::TRIANGLE: return "绘制三角形";
+            case GraphicItem::FLOWCHART_PROCESS: return "绘制流程图处理框";
+            case GraphicItem::FLOWCHART_DECISION: return "绘制流程图判断框";
+            case GraphicItem::FLOWCHART_START_END: return "绘制流程图开始/结束框";
+            case GraphicItem::FLOWCHART_IO: return "绘制流程图输入/输出框";
+            case GraphicItem::FLOWCHART_CONNECTOR: return "绘制流程图连接器";
             default: return "绘制模式";
         }
     }
     
     // 调试方法 - 用于检查当前状态
-    Graphic::GraphicType getCurrentGraphicType() const { return m_graphicType; }
+    GraphicItem::GraphicType getCurrentGraphicType() const { return m_graphicType; }
     bool isDrawing() const { return m_isDrawing; }
 
     bool isFillMode() const { return m_fillMode; }
@@ -92,7 +92,7 @@ private:
     bool handleZoomAndPan(DrawArea* drawArea, QWheelEvent* event);
     
     // 状态数据
-    Graphic::GraphicType m_graphicType;
+    GraphicItem::GraphicType m_graphicType;
     QPointF m_startPoint;
     QPointF m_currentPoint;
     bool m_isDrawing = false;

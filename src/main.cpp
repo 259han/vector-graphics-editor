@@ -6,8 +6,7 @@
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
-    
-    // 在创建 QApplication 后立即初始化日志系统
+
     Logger::init(Logger::Debug, true, true);
     
     Logger::info("应用程序启动");

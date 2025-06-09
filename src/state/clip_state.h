@@ -2,7 +2,7 @@
 #define CLIP_STATE_H
 
 #include "editor_state.h"
-#include "../core/graphic.h"
+#include "../core/graphic_item.h"
 #include <QPointF>
 #include <QColor>
 #include <vector>

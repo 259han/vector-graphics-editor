@@ -51,7 +51,6 @@ void PasteGraphicCommand::execute()
     
     m_executed = true;
     
-    // 更新场景
     scene->update();
     if (m_drawArea) {
         m_drawArea->viewport()->update();
@@ -90,7 +89,6 @@ void PasteGraphicCommand::undo()
         
         m_executed = false;
         
-        // 更新场景
         scene->update();
         if (m_drawArea) {
             m_drawArea->viewport()->update();

@@ -88,7 +88,6 @@
 #include <QSvgGenerator>
 #include <QUuid>
 
-// Define the static MIME type constant
 const QString DrawArea::MIME_GRAPHICITEMS = "application/x-claudegraph-items";
 
 DrawArea::DrawArea(QWidget *parent)
@@ -110,7 +109,6 @@ DrawArea::DrawArea(QWidget *parent)
     setTransformationAnchor(QGraphicsView::AnchorUnderMouse);
     setViewportUpdateMode(QGraphicsView::FullViewportUpdate);
     
-    // 设置场景大小为更合理的尺寸（从-5000,-5000,10000,10000改为-1000,-1000,2000,2000）
     m_scene->setSceneRect(-1000, -1000, 2000, 2000);
     
     // 初始化连接点覆盖层
@@ -151,23 +149,23 @@ DrawArea::~DrawArea()
     // 断开所有信号连接
     this->disconnect();
     
-    // 安全地清理图像调整器
+    // 清理图像调整器
     qDeleteAll(m_imageResizers);
     m_imageResizers.clear();
     
-    // 安全地清理连接管理器
+    // 清理连接管理器
     if (m_connectionManager) {
         m_connectionManager->disconnect();
         m_connectionManager->clearAllConnectionPoints();
     }
     
-    // 安全地清除选择，防止在对象析构过程中引用已释放对象
+    // 清除选择
     if (m_selectionManager) {
         m_selectionManager->disconnect();
         m_selectionManager->clearSelection();
     }
     
-    // 安全地处理场景
+    // 处理场景
     if (m_scene) {
         // 断开场景的连接
         m_scene->disconnect();
@@ -271,7 +269,7 @@ void DrawArea::setFillState()
     m_currentState = std::make_unique<FillState>(m_fillColor);
     
     // 设置填充工具的光标
-    setCursor(QCursor(QPixmap(":/icons/bucket_cursor.png"), 0, 15)); // 如果有自定义光标图片
+    setCursor(QCursor(QPixmap(":/icons/bucket_cursor.png"), 0, 15));
     if (cursor().shape() == Qt::ArrowCursor) {
         // 如果没有自定义光标，则使用指向手
         setCursor(Qt::PointingHandCursor);
@@ -322,9 +320,7 @@ void DrawArea::drawBackground(QPainter *painter, const QRectF &rect)
 {  
     QGraphicsView::drawBackground(painter, rect);
     
-    // 只有在启用网格时才绘制
     if (m_gridEnabled) {
-        // 计算网格线
         qreal left = int(rect.left()) - (int(rect.left()) % m_gridSize);
         qreal top = int(rect.top()) - (int(rect.top()) % m_gridSize);
         
@@ -365,7 +361,7 @@ void DrawArea::wheelEvent(QWheelEvent *event)
 
 void DrawArea::mousePressEvent(QMouseEvent *event)
 {
-    // 1. 检查是否处于平移模式
+    // 检查是否处于平移模式
     if (event->button() == Qt::LeftButton && m_spaceKeyPressed) {
         m_isPanning = true;
         m_lastPanPoint = event->pos();
@@ -374,13 +370,13 @@ void DrawArea::mousePressEvent(QMouseEvent *event)
         return;
     }
     
-    // 2. 如果没有状态对象，则直接交给基类处理
+    // 如果没有状态对象，则直接交给基类处理
     if (!m_currentState) {
         QGraphicsView::mousePressEvent(event);
         return;
     }
     
-    // 3. 优化的状态事件处理
+    // 状态事件处理
     QPointF scenePos = mapToScene(event->pos());
     
     // 使用新的handleLeftMousePress/handleRightMousePress接口
@@ -393,21 +389,20 @@ void DrawArea::mousePressEvent(QMouseEvent *event)
         m_currentState->mousePressEvent(this, event);
     }
     
-    // 安排一次更新
     scheduleUpdate();
     
-    // 4. 事件已被接受或者当前是绘制状态，则不再传递
+    // 事件已被接受或者当前是绘制状态，则不再传递
     if (event->isAccepted() || dynamic_cast<DrawState*>(m_currentState.get())) {
         return;
     }
     
-    // 5. 其他情况交给基类处理
+    // 基类处理
     QGraphicsView::mousePressEvent(event);
 }
 
 void DrawArea::mouseMoveEvent(QMouseEvent *event)
 {
-    // 1. 检查是否处于平移模式
+    // 检查是否处于平移模式
     if (m_isPanning) {
         QPointF delta = mapToScene(event->pos()) - mapToScene(m_lastPanPoint.toPoint());
         m_lastPanPoint = event->pos();
@@ -419,16 +414,14 @@ void DrawArea::mouseMoveEvent(QMouseEvent *event)
         return;
     }
     
-    // 2. 如果没有状态对象，则直接交给基类处理
+    // 如果没有状态对象，则直接交给基类处理
     if (!m_currentState) {
         QGraphicsView::mouseMoveEvent(event);
         return;
     }
     
-    // 3. 调用状态的鼠标移动处理
+    // 调用状态的鼠标移动处理
     m_currentState->mouseMoveEvent(this, event);
-    
-    // 优化：只在特定情况下更新连接管理器，避免每次鼠标移动都触发
     // 只有在以下情况下才需要更新：
     // 1. 当前状态是编辑状态且有选中的流程图元素正在移动
     // 2. 当前状态是自动连接状态
@@ -454,16 +447,15 @@ void DrawArea::mouseMoveEvent(QMouseEvent *event)
     if (needUpdateConnections) {
         updateConnectionManager();
     }
-    
-    // 安排一次更新
+
     scheduleUpdate();
     
-    // 4. 事件已被接受或者当前是绘制状态，则不再传递
+    // 事件已被接受或者当前是绘制状态，则不再传递
     if (event->isAccepted() || dynamic_cast<DrawState*>(m_currentState.get())) {
         return;
     }
     
-    // 5. 其他情况交给基类处理
+    // 基类处理
     QGraphicsView::mouseMoveEvent(event);
 }
 
@@ -482,10 +474,8 @@ void DrawArea::mouseReleaseEvent(QMouseEvent *event)
     
     // 委托给当前状态处理
     if (m_currentState) {
-        // 调用当前状态的鼠标释放事件处理
         m_currentState->mouseReleaseEvent(this, event);
         
-        // 确保视口更新
         viewport()->update();
         scene()->update();
         
@@ -494,15 +484,14 @@ void DrawArea::mouseReleaseEvent(QMouseEvent *event)
             return;
         }
         
-        // 如果使用了绘制状态，则不要继续传递事件到QGraphicsView
-        // 即使事件未被明确接受
+        // 如果使用了绘制状态，则不继续传递事件
         if (dynamic_cast<DrawState*>(m_currentState.get())) {
             event->accept();
             return;
         }
     }
     
-    // 最后才调用基类方法
+    // 调用基类方法
     QGraphicsView::mouseReleaseEvent(event);
 }
 
@@ -511,7 +500,7 @@ void DrawArea::keyPressEvent(QKeyEvent *event)
     // 根据按键处理不同的操作
     if (event->modifiers() == Qt::ControlModifier) {
         switch (event->key()) {
-            case Qt::Key_C: // 复制
+            case Qt::Key_C:
                 if (m_selectionManager && !m_selectionManager->getSelectedItems().isEmpty()) {
                     QGraphicsScene* scene = m_selectionManager->scene();
                     if (!scene) {
@@ -525,12 +514,12 @@ void DrawArea::keyPressEvent(QKeyEvent *event)
                     }
                     
                     copySelectedItems();
-                    copyToSystemClipboard(); // 同时复制到系统剪贴板
+                    copyToSystemClipboard(); // 复制到系统剪贴板
                 }
                 event->accept();
                 return;
                 
-            case Qt::Key_V: // 粘贴
+            case Qt::Key_V:
                 Logger::debug("DrawArea::keyPressEvent: 检测到Ctrl+V快捷键");
                 if (!m_clipboardData.isEmpty()) {
                     // 使用鼠标当前位置
@@ -544,20 +533,19 @@ void DrawArea::keyPressEvent(QKeyEvent *event)
                 event->accept();
                 return;
                 
-            case Qt::Key_X: // 剪切
+            case Qt::Key_X:
                 if (m_selectionManager && !m_selectionManager->getSelectedItems().isEmpty()) {
                     copySelectedItems();
-                    copyToSystemClipboard(); // 同时复制到系统剪贴板
+                    copyToSystemClipboard(); // 复制到系统剪贴板
                     deleteSelectedGraphics();
                 }
                 event->accept();
                 return;
                 
-            // 其他快捷键...
         }
     }
     
-    // 继续默认处理
+    // 默认处理
     QGraphicsView::keyPressEvent(event);
 }
 
@@ -752,13 +740,13 @@ void DrawArea::deleteSelectedGraphics()
     CommandManager& cmdManager = CommandManager::getInstance();
     cmdManager.beginCommandGroup();
     
-    // 先删除连接器（使用连接删除命令）
+    // 先删除连接器
     for (FlowchartConnectorItem* connector : connectors) {
         ConnectionDeleteCommand* connDeleteCmd = new ConnectionDeleteCommand(m_connectionManager.get(), connector);
         cmdManager.addCommandToGroup(connDeleteCmd);
     }
     
-    // 再删除普通图形项（使用选择删除命令）
+    // 再删除普通图形项
     if (!normalItems.isEmpty()) {
         SelectionCommand* deleteCommand = new SelectionCommand(this, SelectionCommand::DeleteSelection);
         deleteCommand->setDeleteInfo(normalItems);
@@ -828,7 +816,6 @@ void DrawArea::sendToBack(QGraphicsItem* item)
 {
     if (!item) return;
     
-    // 找到最低的Z值并设置当前项更低一级
     qreal minZ = 1;
     for (QGraphicsItem* otherItem : m_scene->items()) {
         if (otherItem != item && otherItem->zValue() < minZ) {
@@ -943,12 +930,12 @@ void DrawArea::cutSelectedItems() {
     
     // 首先复制图形项到剪贴板
     copySelectedItems();
-    copyToSystemClipboard(); // 同时复制到系统剪贴板
+    copyToSystemClipboard();
     
-    // 设置剪贴板标志，此为剪切操作
+    // 设置剪贴板标志
     m_isClipboardFromCut = true;
     
-    // 创建删除命令并执行，确保操作可撤销
+    // 创建删除命令并执行
     SelectionCommand* deleteCommand = new SelectionCommand(this, SelectionCommand::DeleteSelection);
     deleteCommand->setDeleteInfo(selectedItems);
     
@@ -1007,7 +994,6 @@ void DrawArea::pasteFromSystemClipboard() {
         
         // 设置从系统剪贴板获取的数据
         m_clipboardData = clipItems;
-        // 假定系统剪贴板数据是复制而来，不是剪切操作
         m_isClipboardFromCut = false;
         
         // 粘贴图形项
@@ -1034,17 +1020,14 @@ void DrawArea::contextMenuEvent(QContextMenuEvent* event)
 {
     // 只有在编辑状态下才显示上下文菜单
     if (m_currentState && m_currentState->getStateType() == EditorState::EditState) {
-        // 创建并显示上下文菜单
         createContextMenu(event->pos());
         event->accept();
     } else {
-        // 在其他状态下（如绘图状态），传递事件给当前状态处理
+        // 在其他状态下，传递事件给当前状态处理
         if (m_currentState) {
-            // 获取场景坐标
             QPointF scenePos = mapToScene(event->pos());
             m_currentState->handleRightMousePress(this, scenePos);
         }
-        // 如果当前状态未处理，则调用基类方法
         if (!event->isAccepted()) {
             QGraphicsView::contextMenuEvent(event);
         }
@@ -1105,7 +1088,7 @@ void DrawArea::createContextMenu(const QPoint& pos)
             const QMimeData* mimeData = QApplication::clipboard()->mimeData();
             QByteArray itemData = mimeData->data(MIME_GRAPHICITEMS);
             m_clipboardData = deserializeGraphicItems(itemData);
-            // 假定系统剪贴板数据是复制而来，不是剪切操作
+
             m_isClipboardFromCut = false;
             
             // 粘贴到指定位置
@@ -1243,7 +1226,7 @@ QGraphicsItem* DrawArea::createItemFromClipboardData(const ClipboardItem& data, 
                         (data.points[1].y() - center.y()) * 2
                     );
                 } else {
-                    // 点集是左上角和右下角 - 兼容旧格式
+                    // 点集是左上角和右下角
                     QRectF rect = QRectF(data.points[0], data.points[1]).normalized();
                     center = rect.center();
                     size = rect.size();
@@ -1265,7 +1248,7 @@ QGraphicsItem* DrawArea::createItemFromClipboardData(const ClipboardItem& data, 
                         (data.points[1].y() - center.y()) * 2
                     );
                 } else {
-                    // 点集是左上角和右下角 - 兼容旧格式
+                    // 点集是左上角和右下角
                     QRectF rect = QRectF(data.points[0], data.points[1]).normalized();
                     center = rect.center();
                     size = rect.size();
@@ -1287,7 +1270,7 @@ QGraphicsItem* DrawArea::createItemFromClipboardData(const ClipboardItem& data, 
                         (data.points[1].y() - center.y()) * 2
                     );
                 } else {
-                    // 点集是左上角和右下角 - 兼容旧格式
+                    // 点集是左上角和右下角
                     QRectF rect = QRectF(data.points[0], data.points[1]).normalized();
                     center = rect.center();
                     size = rect.size();
@@ -1359,20 +1342,10 @@ QByteArray DrawArea::serializeGraphicItems(const QList<QGraphicsItem*>& items)
         
         // 写入图形类型
         stream << (qint32)graphicItem->getGraphicType();
-        
-        // 写入画笔
         stream << graphicItem->getPen();
-        
-        // 写入画刷
         stream << graphicItem->getBrush();
-        
-        // 写入位置
         stream << graphicItem->pos();
-        
-        // 写入旋转
         stream << (qreal)graphicItem->rotation();
-        
-        // 写入缩放
         stream << graphicItem->getScale();
         
         // 写入点集
@@ -1443,17 +1416,9 @@ QList<DrawArea::ClipboardItem> DrawArea::deserializeGraphicItems(const QByteArra
         
         // 读取画笔
         stream >> item.pen;
-        
-        // 读取画刷
         stream >> item.brush;
-        
-        // 读取位置
         stream >> item.position;
-        
-        // 读取旋转
         stream >> item.rotation;
-        
-        // 读取缩放
         stream >> item.scale;
         
         // 读取点集
@@ -1577,8 +1542,6 @@ void DrawArea::drawForeground(QPainter *painter, const QRectF &rect)
         
         // 应用视图到场景的转换矩阵的逆变换，确保在场景坐标系中绘制
         painter->setTransform(viewportTransform().inverted(), true);
-        
-        // 现在可以安全地在场景坐标系统中绘制，传递this作为QGraphicsView*
         m_selectionManager->paint(painter, this);
         
         // 恢复原始转换矩阵
@@ -1612,11 +1575,10 @@ void DrawArea::setHighQualityRendering(bool enable)
 // 添加paintEvent实现，以支持性能数据收集
 void DrawArea::paintEvent(QPaintEvent *event)
 {
-    // 调用基类的paintEvent进行基本绘制
     QGraphicsView::paintEvent(event);
 }
 
-// 修改scheduleUpdate方法，以便在更新过程中进行性能监控
+// 在更新过程中进行性能监控
 void DrawArea::scheduleUpdate()
 {
     if (!m_updatePending) {
@@ -1642,7 +1604,6 @@ void DrawArea::dragEnterEvent(QDragEnterEvent *event)
     if (event->mimeData()->hasImage() || event->mimeData()->hasUrls()) {
         event->acceptProposedAction();
     } else {
-        // 如果不接受这种数据，则调用基类方法
         QGraphicsView::dragEnterEvent(event);
     }
 }
@@ -1657,7 +1618,6 @@ void DrawArea::dragMoveEvent(QDragMoveEvent *event)
     if (event->mimeData()->hasImage() || event->mimeData()->hasUrls()) {
         event->acceptProposedAction();
     } else {
-        // 如果不接受这种数据，则调用基类方法
         QGraphicsView::dragMoveEvent(event);
     }
 }
@@ -1709,14 +1669,13 @@ void DrawArea::dropEvent(QDropEvent *event)
                         QPointF pos = event->position();
                         importImageAt(image, pos.toPoint());
                         event->acceptProposedAction();
-                        return; // 只处理第一个图像文件
+                        return; 
                     }
                 }
             }
         }
     }
     
-    // 如果走到这里，说明我们没有处理这个拖放事件，调用基类方法
     QGraphicsView::dropEvent(event);
 }
 
@@ -1741,9 +1700,6 @@ void DrawArea::importImageAt(const QImage &image, const QPoint &pos)
 
 void DrawArea::flipSelectedGraphics(bool horizontal)
 {
-    // 性能监控
-    
-    
     if (!m_selectionManager || m_selectionManager->getSelectedItems().isEmpty()) {
         return;
     }
@@ -1756,11 +1712,9 @@ void DrawArea::flipSelectedGraphics(bool horizontal)
     // 创建翻转命令并执行
     TransformCommand* command = TransformCommand::createFlipCommand(selectedItems, horizontal, center);
     CommandManager::getInstance().executeCommand(command);
-    
-    // 更新视图
+
     viewport()->update();
-    
-    // 发出选择变更信号，以便更新UI状态
+
     emit selectionChanged();
 }
 
@@ -1870,7 +1824,7 @@ void DrawArea::pasteItemsAtPosition(const QPointF& pos) {
     }
 }
 
-// 粘贴复制的图形项（在默认位置）
+// 粘贴复制的图形项
 void DrawArea::pasteItems() {
     if (m_clipboardData.isEmpty()) {
         Logger::debug("DrawArea::pasteItems: 剪贴板为空");
@@ -2047,7 +2001,7 @@ void DrawArea::optimizeVisibleItems()
     // 获取当前可见区域
     QRectF visibleRect = mapToScene(viewport()->rect()).boundingRect();
     
-    // 扩大可见区域，添加一定的边距，避免边缘物体突然消失
+    // 扩大可见区域，添加一定的边距
     const qreal margin = 50.0; // 50像素的边距
     visibleRect.adjust(-margin, -margin, margin, margin);
     
@@ -2165,7 +2119,7 @@ void DrawArea::saveImageWithOptions() {
         bool useHighQuality = highQuality.isChecked();
         
         // 检查导出大小，如果超过特定阈值使用分块导出
-        const int MAX_REGULAR_SIZE = 4000; // 像素，假设超过这个大小使用分块导出
+        const int MAX_REGULAR_SIZE = 4000;
         if (size.width() > MAX_REGULAR_SIZE || size.height() > MAX_REGULAR_SIZE) {
             // 使用分块导出
             exportLargeImage(fileName, size, transparent);
@@ -2186,8 +2140,6 @@ void DrawArea::saveImageWithOptions() {
                 painter.setRenderHint(QPainter::Antialiasing, true);
                 painter.setRenderHint(QPainter::TextAntialiasing, true);
                 painter.setRenderHint(QPainter::SmoothPixmapTransform, true);
-                // 修复：移除不存在的渲染提示
-                // painter.setRenderHint(QPainter::HighQualityAntialiasing, true);
             }
             
             // 渲染场景
@@ -2328,7 +2280,7 @@ QImage DrawArea::renderSceneToImage(const QRectF& sceneRect, bool transparent) {
     return GraphicsUtils::renderSceneRectToImage(m_scene, sceneRect, transparent, true);
 }
 
-// 优化版保存图像功能
+// 保存图像功能
 void DrawArea::saveImageOptimized() {
     if (!m_scene) return;
     
@@ -2820,8 +2772,6 @@ void DrawArea::updateConnectionManager()
     if (!m_connectionManager || !m_scene) {
         return;
     }
-    
-    // 优化：避免在每次鼠标移动时都更新所有连接
     // 只在选中项发生移动时才更新相关连接
     if (!m_selectionManager) {
         return;

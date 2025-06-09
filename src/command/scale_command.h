@@ -2,11 +2,11 @@
 #define SCALE_COMMAND_H
 
 #include "command.h"
-#include "../core/graphic.h"
+#include "../core/graphic_item.h"
 
 class ScaleCommand : public Command {
 public:
-    ScaleCommand(Graphic* graphic, double factor);
+    ScaleCommand(GraphicItem* graphic, double factor);
     
     void execute() override;
     void undo() override;
@@ -14,7 +14,7 @@ public:
     QString getType() const override;
 
 private:
-    Graphic* m_graphic;
+    GraphicItem* m_graphic;
     double m_scaleFactor;
 };
 

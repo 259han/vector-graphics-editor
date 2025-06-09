@@ -1,6 +1,6 @@
 #include "scale_command.h"
 
-ScaleCommand::ScaleCommand(Graphic* graphic, double factor)
+ScaleCommand::ScaleCommand(GraphicItem* graphic, double factor)
     : m_graphic(graphic), m_scaleFactor(factor) {}
 
 void ScaleCommand::execute() {
@@ -18,7 +18,7 @@ void ScaleCommand::undo() {
 QString ScaleCommand::getDescription() const {
     if (!m_graphic) return "缩放图形";
     
-    QString graphicType = Graphic::graphicTypeToString(m_graphic->getType());
+    QString graphicType = GraphicItem::graphicTypeToString(m_graphic->getType());
     return QString("缩放%1 (%2x)").arg(graphicType).arg(m_scaleFactor);
 }
 
